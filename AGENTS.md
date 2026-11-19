@@ -100,3 +100,6 @@ python3.12 -m venv .venv && .venv/bin/pip install -e '.[test]'   # entorno local
   y comprobar que el contenedor `bodylens` queda `healthy`.
 - Ningún secreto ni dato personal añadido al repo.
 - Si cambia el comportamiento, actualizado `docs/MIGRACION.md` o `docs/DESPLIEGUE.md`.
+- `CHANGELOG.md` al día: cada cambio que se note en la app, el servidor o el despliegue va en la versión actual
+  (la de la rama), en su apartado (Breaking Changes, New Features, Enhancements, Bug fixes, Documentation), con el
+  formato de las entradas que ya hay.
