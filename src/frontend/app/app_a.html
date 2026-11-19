@@ -81,7 +81,7 @@ h1,h2,h3{text-wrap:balance;margin:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.iconbtn.spin svg{animation:none}}
 @media (min-width:900px){.only-m{display:none}}
-@media (max-width:520px){.appbar .pill{display:none}.appbar{gap:6px}.appbar h1{font-size:1.55rem}.pfbtn{padding:2px}.pfbtn span{display:none}.pfbtn i{width:30px;height:30px}}
+@media (max-width:520px){.appbar .pill{display:none}.appbar{gap:6px}.appbar h1{font-size:1.55rem}.pfbtn{padding:2px}.pfbtn span{display:none}.pfbtn i{width:42px;height:42px;font-size:.95rem}}
 .notice{border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 14px;font-size:.9rem;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .notice[data-kind="err"]{border-color:var(--bad)}
 
@@ -98,6 +98,14 @@ h1,h2,h3{text-wrap:balance;margin:0}
 .card{background:var(--surface);border:1px solid var(--line2);border-radius:18px;padding:18px;min-width:0;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow)}
 .card h2{font-family:var(--display);font-weight:700;font-size:1.25rem;letter-spacing:.03em;text-transform:uppercase;line-height:1.1}
 .card .lead{font-size:.86rem;color:var(--muted);margin:0;max-width:72ch}
+/* phones: the explanation of each chart card waits behind an ⓘ next to its title (tap the title), so the charts come first */
+@media (max-width:699px){
+  .view:not(#v-ajustes) .card:not(.lopen)>.lead.lfold{display:none}
+  .view:not(#v-ajustes) .card:has(>.lead.lfold)>h2{cursor:pointer;display:flex;align-items:center;gap:8px}
+  .view:not(#v-ajustes) .card:has(>.lead.lfold)>h2::after{content:"i";flex:none;display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--faint);color:var(--muted);font:700 11px/1 var(--body);text-transform:none;letter-spacing:0}
+  .view:not(#v-ajustes) .card.lopen:has(>.lead.lfold)>h2::after{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+  .view:not(#v-ajustes) .lead.wnote{display:none}
+}
 .chead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .g2{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
 @media (min-width:860px){.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g2>.span2{grid-column:1/-1}.g2.wide-l{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}}
@@ -226,7 +234,7 @@ body.locked .app{visibility:hidden}.whl{position:fixed;inset:0;z-index:190;backg
 .bkn-b{position:relative;height:12px;background:linear-gradient(var(--line),var(--line)) center/1px 100% no-repeat}.bkn-b i{position:absolute;top:0;bottom:0;border-radius:4px}.bkn-b i.p{left:50%;background:var(--good)}.bkn-b i.n{right:50%;background:var(--bad)}
 .bkn .ok,.bkt .ok,.bklink .ok{color:var(--good)}.bkn .ko,.bkt .ko,.bklink .ko{color:var(--bad)}.tblwrap{overflow-x:auto}.bkt{width:100%;border-collapse:collapse;font-size:.84rem}.bkt th{font-size:.68rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);text-align:right;font-weight:600;padding:6px 4px}.bkt th:first-child,.bkt td:first-child{text-align:left}.bkt td{padding:8px 4px;border-top:1px solid var(--line);text-align:right}
 .bklink{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin:12px 0;padding:12px 14px;border-radius:14px;background:var(--line2);text-decoration:none;color:inherit}.bklink span{font-weight:700;text-transform:uppercase;font-size:.75rem;letter-spacing:.05em;color:var(--muted)}.bklink b{font-size:1.25rem}.bklink em{font-style:normal;font-size:.8rem;color:var(--weight);margin-left:auto}
-.pfwrap{position:relative}.pfbtn{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:3px 10px 3px 3px;font:inherit;font-size:.82rem;font-weight:600;cursor:pointer}.pfbtn i,.pfmenu i,.pfrow>i{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#fff;font-style:normal;font-size:.7rem;font-weight:700;flex:none}
+.pfwrap{position:relative}.pfbtn{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:3px 10px 3px 3px;font:inherit;font-size:.82rem;font-weight:600;cursor:pointer}.pfbtn i,.pfmenu i,.pfrow>i{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#fff;font-style:normal;font-size:.7rem;font-weight:700;flex:none}.pfbtn i{width:36px;height:36px;font-size:.85rem}@media (max-width:520px){.pfbtn i{width:42px;height:42px;font-size:.95rem}}
 .pfmenu{position:absolute;top:calc(100% + 6px);left:0;z-index:60;min-width:220px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:6px}.pfm-h{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:6px 8px}
 .pfmenu button{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;color:var(--ink);font:inherit;padding:8px;border-radius:10px;cursor:pointer;text-align:left}.pfmenu button:hover,.pfmenu button[aria-checked="true"]{background:var(--line2)}.pfmenu button span{flex:1}.pfmenu a{display:block;padding:8px;color:var(--weight);font-weight:600;text-decoration:none;border-top:1px solid var(--line);margin-top:4px}
 .pfrow{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}.nomod{display:none!important}.pfdrag{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;opacity:.5;font-weight:700;letter-spacing:-3px;padding:6px 4px 6px 0}.pfdrag:hover{opacity:.9}.pfdragging{opacity:.65;outline:2px dashed var(--weight);outline-offset:3px;border-radius:10px}.pfdragging .pfdrag{cursor:grabbing}.pfmods{flex-wrap:wrap;align-items:center}.pfmod{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:.8rem;cursor:pointer;user-select:none}.pfpin .pfmod input{width:auto;margin:0;padding:0;border:0;accent-color:var(--weight)}.pfmod:has(input:checked){border-color:var(--weight);background:color-mix(in srgb,var(--weight) 14%,transparent)}.pfrow input[type=text]{flex:1;min-width:120px;font:inherit;padding:7px 9px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}.pfrow input[type=color]{width:34px;height:34px;border:0;background:none;padding:0}.pfcy{display:flex;align-items:center;gap:4px;font-size:.8rem;color:var(--muted)}.pfmain{font-size:.75rem;color:var(--muted)}
@@ -433,6 +441,11 @@ table.t tr.cur td{background:var(--raised)}table.t .xs-s{display:none}
 .kv b{font-family:var(--display);font-size:1.5rem;font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums}
 .kv b.dn{color:var(--good)} .kv b.up{color:var(--bad)}
 .kv em{font-style:normal;font-size:.76rem;color:var(--muted)}
+/* coloured tiles: a tint of the metric's colour, a dot by the name and a mini chart or bar at the bottom */
+.kv div.kvc{position:relative;overflow:hidden;background:linear-gradient(155deg,color-mix(in srgb,var(--kc) 16%,var(--raised)) 0%,var(--raised) 70%);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--kc) 22%,transparent)}
+.kv div.kvc small{display:flex;align-items:center;gap:6px}.kv div.kvc small::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:var(--kc)}
+.kv div.kvc .spark{display:block;width:100%;height:24px;margin-top:4px}
+.kv .kvp{display:block;height:5px;border-radius:3px;margin-top:6px;background:color-mix(in srgb,var(--kc) 18%,transparent);overflow:hidden}.kv .kvp i{display:block;height:100%;border-radius:3px;background:var(--kc)}
 
 /* ---------- panel de la última noche ---------- */
 .night #nightCard,.night #dayCard{display:flex;flex-direction:column;gap:14px}
@@ -1037,7 +1050,7 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
         </section>
         <h2 data-tg="hoy" class="vsec" id="wellTitle">Bienestar de la última noche</h2>
         <div data-tg="hoy" class="wgrid" id="wellGrid"></div>
-        <p class="lead wnote">Sacado de tus noches de las últimas semanas. La SpO₂, el índice respiratorio, la apnea, la variabilidad del pulso (VFC) y la temperatura de la muñeca llegan de Apple Salud o Android; de Withings solo vienen horarios, fases y pulso.</p>
+        <p data-tg="hoy" class="lead wnote">Sacado de tus noches de las últimas semanas. La SpO₂, el índice respiratorio, la apnea, la variabilidad del pulso (VFC) y la temperatura de la muñeca llegan de Apple Salud o Android; de Withings solo vienen horarios, fases y pulso.</p>
         <h2 data-tg="evo" class="vsec">Histórico</h2>
         <section data-tg="evo" class="card"><div class="shtabs" id="shTabs" role="group" aria-label="Qué ver"></div><p class="lead" id="shDesc"></p><div id="shBars"></div><div class="hmons" id="shCal"></div></section>
         <h2 data-tg="evo" class="vsec">Tendencias y detalles</h2>
@@ -1085,8 +1098,8 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
         <section data-tg="int" class="card">
           <h2>Tus intentos de pérdida de peso</h2>
           <p class="lead">Detectados en todo tu historial: cada bajada de al menos 4 kg sostenida durante 4 semanas o más, del pico al punto más bajo. Cada línea parte de 0 en el pico y baja con los kilos perdidos; el punto marca el mínimo y la línea sigue 6 meses más para ver el rebote (la subida máxima en ese tiempo). Toca una fila de la tabla para mostrar u ocultar ese intento en la gráfica.</p>
-          <div class="tbl" id="attTable"></div>
           <div class="chart" id="chCmp"></div>
+          <div class="tbl" id="attTable"></div>
         </section>
       </section>
 

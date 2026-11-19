@@ -1,4 +1,4 @@
-<!-- en: 7549040571fe3ec9 -->
+<!-- en: 3b28389ad1538ad6 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -27,7 +27,7 @@
 - **Correo saliente (SMTP)** para peticiones, aprobaciones, contraseñas temporales, invitaciones de pareja y avisos, configurable desde Administración. El servidor saluda al servidor de correo con su nombre público, y el correo de prueba es como un aviso real; Administración → Correo explica qué hacer si llega al spam.
 - **Parejas:** dos cuentas se pueden unir para compartir y editar juntas los registros de ciclo e intimidad. Invitas a tu pareja con su usuario o su correo desde Tu cuenta → Cuenta → Pareja; le llega un correo con la invitación (si no hay ninguna cuenta con ese usuario o correo, te lo dice al momento) y a ti otro cuando la acepta. Un perfil de la app se puede mover a la cuenta propia de esa persona.
 - **Tu cuenta:**
-  - **Cuenta:** perfil, correo, idioma, tamaño del texto (Pequeño, Normal, Grande, Muy grande; el nuevo Normal es algo más grande que antes), tema (Automático según el dispositivo, Diurno, Nocturno, Sepia, Océano, Bosque o Alto contraste, para la app y las páginas del servidor), minutos sin actividad hasta que un perfil con PIN se bloquea (1 por defecto), contraseña, datos personales (altura, sexo, fecha de nacimiento), pareja y fuentes de datos.
+  - **Cuenta:** perfil, correo, idioma, tamaño del texto (Pequeño, Normal, Grande, Muy grande; el nuevo Normal es algo más grande que antes), tema (Automático según el dispositivo, Diurno, Nocturno, Sepia, Océano, Bosque, Alto contraste, Rosa, Lavanda, Menta, Atardecer o Grafito, para la app y las páginas del servidor), minutos sin actividad hasta que un perfil con PIN se bloquea (1 por defecto), contraseña, datos personales (altura, sexo, fecha de nacimiento), pareja y fuentes de datos.
   - **Perfiles** y **Datos y copias** (de dónde llegan los datos del móvil, origen de los datos, copia completa e importación, exportación a CSV).
 - **Perfiles** (Tu cuenta → Perfiles):
   - Niveles de acceso a los datos de la cuenta: todos los perfiles ven los mismos datos, y cada uno, también el principal, ve solo los módulos elegidos con fichas (como en DriveTest Analyzer), incluidos Objetivos, plan y comidas, Tu cuenta y Administración. Al menos un perfil tiene que tener esos tres. Un perfil solo exporta a PDF los módulos que tiene, y en el móvil la barra de abajo muestra más grandes las secciones cuando son menos.
@@ -88,6 +88,7 @@
 - **Menú del avatar:** muestra el nombre completo e incluye Tu cuenta, Administración, Ayuda y **Cerrar sesión**, en rojo.
 - **Línea de comandos de administración** (`python -m app.accounts.cli`): crear cuentas con contraseña temporal, invitaciones, contraseñas, usuarios, fuentes y mover perfiles.
 - **Reloj de sueño (ampliado):** muestra solo la noche elegida, como un anillo grueso coloreado por fases (profundo, ligero, REM, despierto) cuando el reloj registra fases, con la media de las 14 noches anteriores como una barra gris por dentro, el horario objetivo de ese día (entre semana o fin de semana) discontinuo por fuera y el tiempo dormido más grande en el centro.
+- **Móvil:** cada pestaña muestra un gráfico o un panel de cifras completo sin desplazarte: la explicación de cada tarjeta con gráfico espera tras una ⓘ junto a su título (toca el título), las tarjetas para apuntar datos a mano van al final de la pestaña, las tarjetas de cifras tienen colores y minigráficos, y el avatar del perfil es más grande.
 - **Tarjetas ampliadas:** deslizar el dedo a un lado en el móvil o la tableta, o las flechas de cada lado en el ordenador, pasa al día anterior o al siguiente.
 #### 🐛 Correcciones:
 - **Seguridad:** el registro de accesos ya no guarda la dirección de subida de Apple Salud, los códigos OAuth ni las invitaciones.

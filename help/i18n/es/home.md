@@ -1,4 +1,4 @@
-<!-- en: 7f88512a66096e9f -->
+<!-- en: d9bba33ca8dffb17 -->
 # Ayuda de BodyLens
 
 Un fichero por módulo. Las secciones de la app son las de la barra de navegación; las de la cuenta están en «Tu cuenta».
@@ -15,6 +15,8 @@ Un fichero por módulo. Las secciones de la app son las de la barra de navegaci�
 | [Íntimo](intimate.md) | Ciclo, sexualidad y ánimo, para los perfiles que tienen el módulo Íntimo |
 | [Historial](history.md) | Todo tu historial de pesos por años e intentos de pérdida |
 | [Objetivos, plan y comidas](settings.md) | Objetivos y plan de pérdida, fórmula de Comidas; además perfiles, PIN, datos personales, copias y exportar a PDF (en «Tu cuenta») |
+
+En el móvil, cada pestaña empieza con un gráfico o sus cifras; la explicación de cada gráfico espera tras la **ⓘ** junto a su título (toca el título para verla u ocultarla), y las tarjetas para apuntar datos a mano están al final de la pestaña.
 
 ## Tu cuenta y el servidor
 | Módulo | Qué es |

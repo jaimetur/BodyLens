@@ -26,7 +26,7 @@
 - **Outgoing email (SMTP)** for requests, approvals, temporary passwords, partner invitations and notices, configurable from Administration. The server greets the mail server with its public name, and the test email reads like a real notice; Administration → Mail explains what to do if it lands in spam.
 - **Couples:** two accounts can be linked to share and edit the cycle and intimacy records together. You invite your partner with their username or email from Your account → Account → Partner; they get an email with the invitation (you are told at once if no account has that username or email), and you get one when they accept. An app profile can be moved to that person's own account.
 - **Your account:**
-  - **Account:** profile, email, language, text size (Small, Normal, Large, Extra large; the new Normal is slightly bigger than before), theme (Automatic as the device, Daytime, Night-time, Sepia, Ocean, Forest or High contrast, for the app and the server pages), minutes without activity before a profile with a PIN locks itself (1 by default), password, personal data (height, sex, date of birth), partner and data sources.
+  - **Account:** profile, email, language, text size (Small, Normal, Large, Extra large; the new Normal is slightly bigger than before), theme (Automatic as the device, Daytime, Night-time, Sepia, Ocean, Forest, High contrast, Rose, Lavender, Mint, Sunset or Graphite, for the app and the server pages), minutes without activity before a profile with a PIN locks itself (1 by default), password, personal data (height, sex, date of birth), partner and data sources.
   - **Profiles** and **Data and backups** (where your phone data comes from, data source, full backup and import, CSV export).
 - **Profiles** (Your account → Profiles):
   - Access levels over the account's data: every profile sees the same data, and each one, the main one included, sees only the modules chosen with chips (as in DriveTest Analyzer), Goals, plan and meals, Your account and Administration included. At least one profile must keep those three. A profile only exports to PDF the modules it has, and on mobile the bottom bar shows fewer sections bigger.
@@ -87,6 +87,7 @@
 - **Avatar menu:** shows the full name and includes Your account, Administration, Help and **Sign out**, in red.
 - **Administration command line** (`python -m app.accounts.cli`): create accounts with a temporary password, invitations, passwords, users, sources and move profiles.
 - **Sleep clock (enlarged):** shows only the chosen night, as a thick ring coloured by phase (deep, light, REM, awake) when the watch records phases, with the average of the 14 earlier nights as a grey bar inside, the target schedule for that day (weekday or weekend) dashed outside and a larger time asleep in the centre.
+- **Phones:** every tab shows a chart or a full set of figures without scrolling: the explanation of each chart card waits behind an ⓘ by its title (tap the title), the cards to enter data by hand go to the end of the tab, the figure tiles have colours and mini charts, and the profile avatar is bigger.
 - **Enlarged cards:** a sideways swipe on phones and tablets, or the arrows at each side on a computer, goes to the previous or next day.
 #### 🐛 Bug fixes:
 - **Security:** the access log no longer stores the Apple Health upload address, OAuth codes or invitations.

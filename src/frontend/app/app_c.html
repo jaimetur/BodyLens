@@ -658,7 +658,10 @@ function renderMain(){
     tipExtra:(k,p)=>{const n=M.notes[k];const q=all[nearestIdx(all,k)];return (q&&q.fp!=null&&q.k===k?`<div class="r"><span>Grasa</span><span>${fmtN(q.fp,1)} %</span></div>`:'')+(n?`<div style="margin-top:3px;color:var(--muted)">${esc(n)}</div>`:'')}});
 }
 REDRAW.main=()=>{if(M&&!M.empty&&VIEW==='peso')renderMain()};
-function kvCell(label,val,unit,note,cls){return `<div><small>${label}</small><b class="${cls||''}">${val}${unit?`<span style="font-size:.55em;color:var(--muted);font-weight:600"> ${unit}</span>`:''}</b><em>${note||''}</em></div>`}
+// o: c colour of the tile, s values for a mini chart (oldest first), p share (0–1) for a small bar
+function kvCell(label,val,unit,note,cls,o){o=o||{};let vs=(o.s||[]).filter(v=>v!=null&&isFinite(v));if(vs.length>60){const n=Math.ceil(vs.length/60);vs=vs.filter((_,i)=>i%n===0)}
+  const viz=vs.length>=3?sparkSvg(vs.map(v=>({v})),o.c||'var(--muted)'):o.p!=null?`<i class="kvp"><i style="width:${Math.max(0,Math.min(1,o.p))*100}%"></i></i>`:'';
+  return `<div${o.c?` class="kvc" style="--kc:${o.c}"`:''}><small>${label}</small><b class="${cls||''}">${val}${unit?`<span style="font-size:.55em;color:var(--muted);font-weight:600"> ${unit}</span>`:''}</b><em>${note||''}</em>${viz}</div>`}
 /* ---------- peso por semana: rango de la semana (mín–máx), mediana y cambio frente a la anterior ---------- */
 let wkRange=pesoRange?Math.max(4,Math.ceil(pesoRange/7)):0;
 function syncPeso(){mainRange=pesoRange;wkRange=pesoRange?Math.max(4,Math.ceil(pesoRange/7)):0}
@@ -741,14 +744,14 @@ function renderPeso(){
   const nd=needed();const next=milestones.find(m=>!m.hitK);const goalEta=eta(cfg.goal);
   const vp=M.hasPlan?tNow-planAt(plan,lastK):null;
   $('pesoKv').innerHTML=[
-    kvCell('Ritmo 4 semanas',r28?sgn(r28.perWeek,2):'—','kg/sem','Regresión de las pesadas',r28?(r28.perWeek<0?'dn':'up'):''),
-    kvCell('Ritmo 2 semanas',r14?sgn(r14.perWeek,2):'—','kg/sem','Lo más reciente',r14?(r14.perWeek<0?'dn':'up'):''),
-    kvCell('Frente al plan',vp!=null?sgn(vp,1):'—','kg',vp!=null?`Plan de hoy: ${fmtN(planAt(plan,lastK),1)} kg`:'',vp!=null?(vp>0?'up':'dn'):''),
-    kvCell('Ritmo necesario',nd!=null?sgn(nd,2):'—','kg/sem',`Para ${fmtN(cfg.goal,0)} kg en la fecha del plan`),
-    kvCell('Próximo hito',next?fmtN(next.kg,next.kg%1?1:0):'—','kg',next?(next.etaK?`A tu ritmo: ${fmtK(next.etaK,true)}`:'Sin estimación al ritmo actual'):'Todos conseguidos'),
-    kvCell('Meta final',goalEta?fmtK(goalEta,true):'—','',`Plan: ${fmtK(planDateFor(plan,cfg.goal)||plan[plan.length-1].k,true)}`),
-    kvCell('Ruido diario',noise!=null?'±'+fmtN(noise,2):'—','kg','Oscilación típica de un día a otro'),
-    kvCell('Racha',String(streak),streak===1?'semana':'semanas',bestW?`Mejor semana: ${sgn(bestW.diff)} kg`:'Semanas seguidas bajando')
+    kvCell('Ritmo 4 semanas',r28?sgn(r28.perWeek,2):'—','kg/sem','Regresión de las pesadas',r28?(r28.perWeek<0?'dn':'up'):'',{c:'var(--weight)'}),
+    kvCell('Ritmo 2 semanas',r14?sgn(r14.perWeek,2):'—','kg/sem','Lo más reciente',r14?(r14.perWeek<0?'dn':'up'):'',{c:'var(--weight)'}),
+    kvCell('Frente al plan',vp!=null?sgn(vp,1):'—','kg',vp!=null?`Plan de hoy: ${fmtN(planAt(plan,lastK),1)} kg`:'',vp!=null?(vp>0?'up':'dn'):'',{c:'var(--warn)'}),
+    kvCell('Ritmo necesario',nd!=null?sgn(nd,2):'—','kg/sem',`Para ${fmtN(cfg.goal,0)} kg en la fecha del plan`,'',{c:'var(--a5)'}),
+    kvCell('Próximo hito',next?fmtN(next.kg,next.kg%1?1:0):'—','kg',next?(next.etaK?`A tu ritmo: ${fmtK(next.etaK,true)}`:'Sin estimación al ritmo actual'):'Todos conseguidos','',{c:'var(--good)'}),
+    kvCell('Meta final',goalEta?fmtK(goalEta,true):'—','',`Plan: ${fmtK(planDateFor(plan,cfg.goal)||plan[plan.length-1].k,true)}`,'',{c:'var(--good)'}),
+    kvCell('Ruido diario',noise!=null?'±'+fmtN(noise,2):'—','kg','Oscilación típica de un día a otro','',{c:'var(--a5)'}),
+    kvCell('Racha',String(streak),streak===1?'semana':'semanas',bestW?`Mejor semana: ${sgn(bestW.diff)} kg`:'Semanas seguidas bajando','',{c:'var(--a3)'})
   ].join('');
   // semana a semana: semanas naturales o de sábado a viernes; peso de tendencia, mediana o percentil 20
   const WM=UI.wkMode||'nat',WT=UI.wkMet||'trend',endDow=WM==='nat'?6:4;const MET_L={trend:'peso de tendencia al final de la semana',med:'mediana de las pesadas de la semana',p20:'percentil 20 de las pesadas de la semana'};
@@ -1917,7 +1920,7 @@ function schedChart(host,items,o){
   top.innerHTML=`<div class="schh"></div><div class="seg schseg" role="group" aria-label="Ventana de los horarios habituales">${[['auto','Auto'],['semana','Semana'],['mes','Mes'],['trimestre','Trimestre'],['año','Año']].map(([v,l])=>`<button type="button" data-schw="${v}" class="${(UI.schWin||'auto')===v?'on':''}">${l}</button>`).join('')}</div>`;
   if(SCH_SEL&&!HWo[SCH_SEL])SCH_SEL=null;hdr();
   const lg=document.createElement('div');lg.className='schlg';lg.innerHTML=`<span><i style="border-color:var(--warn);width:14px"></i><i style="border-color:var(--wat);width:14px;margin-left:-4px"></i>Habitual por ${WM}${(UI.schWin||'auto')==='auto'?' (auto)':''}</span><span><i class="sol" style="border-color:var(--warn)"></i><i class="sol" style="border-color:var(--wat);margin-left:-4px"></i>Media móvil (${MAL})</span><span><i class="obj"></i><i class="objno"></i>Hasta / después de tu hora objetivo de levantarte (horario <b style="color:var(--good)">${fmtClock(SLP_SCHED.wd.bed)}–${fmtClock(SLP_SCHED.wd.wake)}</b>${SLP_SCHED.we.bed!==SLP_SCHED.wd.bed||SLP_SCHED.we.wake!==SLP_SCHED.wd.wake?` · finde <b style="color:var(--good)">${fmtClock(SLP_SCHED.we.bed)}–${fmtClock(SLP_SCHED.we.wake)}</b>`:''})</span><span><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M7 3h10v5a5 5 0 0 1-10 0z" style="fill:var(--warn)"/><path d="M7 5H4v1.5A3.5 3.5 0 0 0 7.5 10M17 5h3v1.5A3.5 3.5 0 0 1 16.5 10" style="fill:none;stroke:var(--warn);stroke-width:2;stroke-linecap:round"/><path d="M12 13v4M8 21h8M9.5 17h5v4h-5z" style="fill:var(--warn);stroke:var(--warn);stroke-width:2;stroke-linecap:round"/></svg>Levantarte a tu hora (o antes) y dormir 6 h o más</span><span class="schtip">Toca una barra para ver los horarios de su ${WM}</span>`;
-  host.insertBefore(lg,host.firstChild);host.insertBefore(top,host.firstChild);
+  host.appendChild(lg);host.insertBefore(top,host.firstChild); // the legend under the chart, so the chart is seen first
   top.addEventListener('click',e=>{if(e.target.closest('[data-schx]')){SCH_SEL=null;hdr()}});
   const tip=document.createElement('div');tip.className='tip';tip.hidden=true;host.append(tip);
   const band=el('rect',{y:m.t,height:H-m.t-m.b,style:'fill:var(--ink);opacity:.07',visibility:'hidden'},svg);
@@ -1948,14 +1951,14 @@ function renderActividad(){
   const steps=av(rows,a=>a.steps),stepsP=av(prev,a=>a.steps);
   const woMin=wos.reduce((s,x)=>s+(x.dur||0),0),woMinP=wosP.reduce((s,x)=>s+(x.dur||0),0);
   $('actKv').innerHTML=[
-    kvCell('Pasos al día',fmtInt(steps),'',cmpTxt(steps,stepsP,0,'',1)),
-    kvCell('Distancia al día',fmtN(av(rows,a=>a.dist!=null?a.dist/1000:null),1),'km',cmpTxt(av(rows,a=>a.dist!=null?a.dist/1000:null),av(prev,a=>a.dist!=null?a.dist/1000:null),1,'km',1)),
-    kvCell('Minutos activos',fmtInt(av(rows,actMin)),'min/día','Actividad moderada e intensa'),
-    kvCell('Calorías activas',fmtInt(av(rows,a=>a.calA)),'kcal/día',cmpTxt(av(rows,a=>a.calA),av(prev,a=>a.calA),0,'kcal',1)),
-    kvCell('Entrenamientos',fmtN(wos.length/weeks,1),'por semana',`${wos.length} en el periodo`),
-    kvCell('Entrenando',fmtInt(woMin/weeks),'min/semana',actRange?cmpTxt(woMin/weeks,woMinP/weeks,0,'min',1):''),
-    kvCell('FC en reposo',fmtInt(av(rows,a=>a.hrMin)),'lpm','Media de la FC mínima de cada día'),
-    kvCell('Días con datos',String(rows.length),'',`de ${W.days} del periodo`)].join('');
+    kvCell('Pasos al día',fmtInt(steps),'',cmpTxt(steps,stepsP,0,'',1),'',{c:'var(--act)',s:rows.map(a=>a.steps)}),
+    kvCell('Distancia al día',fmtN(av(rows,a=>a.dist!=null?a.dist/1000:null),1),'km',cmpTxt(av(rows,a=>a.dist!=null?a.dist/1000:null),av(prev,a=>a.dist!=null?a.dist/1000:null),1,'km',1),'',{c:'var(--wat)',s:rows.map(a=>a.dist)}),
+    kvCell('Minutos activos',fmtInt(av(rows,actMin)),'min/día','Actividad moderada e intensa','',{c:'var(--ph-awake)',s:rows.map(actMin)}),
+    kvCell('Calorías activas',fmtInt(av(rows,a=>a.calA)),'kcal/día',cmpTxt(av(rows,a=>a.calA),av(prev,a=>a.calA),0,'kcal',1),'',{c:'var(--mus)',s:rows.map(a=>a.calA)}),
+    kvCell('Entrenamientos',fmtN(wos.length/weeks,1),'por semana',`${wos.length} en el periodo`,'',{c:'var(--a3)'}),
+    kvCell('Entrenando',fmtInt(woMin/weeks),'min/semana',actRange?cmpTxt(woMin/weeks,woMinP/weeks,0,'min',1):'','',{c:'var(--a3)',p:woMin/weeks/(MIN_GOAL*7)}),
+    kvCell('FC en reposo',fmtInt(av(rows,a=>a.hrMin)),'lpm','Media de la FC mínima de cada día','',{c:'var(--bad)',s:rows.map(a=>a.hrMin)}),
+    kvCell('Días con datos',String(rows.length),'',`de ${W.days} del periodo`,'',{c:'var(--good)',p:rows.length/(W.days||1)})].join('');
   const goalDays=rows.filter(a=>a.steps>=STEP_GOAL).length;
   $('stepsLead').textContent=W.weekly?`Media de pasos de cada semana. La línea discontinua marca ${fmtInt(STEP_GOAL)} pasos; ${goalDays} de ${rows.length} días la superaste.`:`Pasos de cada día y la media de los últimos 7 días. La línea discontinua marca ${fmtInt(STEP_GOAL)} pasos; la superaste ${goalDays} de ${rows.length} días.`;
   const sb=bins(rows,a=>a.steps,W.weekly);
@@ -2021,8 +2024,8 @@ function renderActExtra(L,W,rows,wos){const today=d2k(new Date()),am=x=>(x.mod||
   $('actWeek').innerHTML=`<div class="kv">${kv}</div><div class="wkd">${days}</div><p class="bc-note">Objetivo de ${fmtInt(STEP_GOAL)} pasos cumplido ${hit} de ${cur.length} ${cur.length===1?'día':'días'} esta semana.</p>`;
   // --- entrenos ---
   const woMin=sum(wos,x=>x.dur),wk=Math.max(1,W.days/7);
-  $('woKv').innerHTML=[kvCell('Sesiones',String(wos.length),'',`${fmtN(wos.length/wk,1)} por semana`),kvCell('Tiempo total',fmtN(woMin/60,1),'h',`${fmtInt(woMin/wk)} min por semana`),
-    kvCell('Calorías',fmtInt(sum(wos,x=>x.cal)),'kcal',wos.length?`${fmtInt(sum(wos,x=>x.cal)/wos.length)} por sesión`:''),kvCell('Duración media',wos.length?fmtInt(woMin/wos.length):'—','min',wos.length?`la más larga ${fmtInt(Math.max(...wos.map(x=>x.dur||0)))} min`:'')].join('');
+  $('woKv').innerHTML=[kvCell('Sesiones',String(wos.length),'',`${fmtN(wos.length/wk,1)} por semana`,'',{c:'var(--a3)'}),kvCell('Tiempo total',fmtN(woMin/60,1),'h',`${fmtInt(woMin/wk)} min por semana`,'',{c:'var(--ph-awake)',p:woMin/wk/(MIN_GOAL*7)}),
+    kvCell('Calorías',fmtInt(sum(wos,x=>x.cal)),'kcal',wos.length?`${fmtInt(sum(wos,x=>x.cal)/wos.length)} por sesión`:'','',{c:'var(--mus)'}),kvCell('Duración media',wos.length?fmtInt(woMin/wos.length):'—','min',wos.length?`la más larga ${fmtInt(Math.max(...wos.map(x=>x.dur||0)))} min`:'','',{c:'var(--wat)',s:wos.map(x=>x.dur)})].join('');
   const wks=[];for(let k=monday(W.k0);k<=W.k1;k=addK(k,7)){const ws=wos.filter(x=>x.k>=k&&x.k<addK(k,7));wks.push({k,days:7,v:sum(ws,x=>x.dur),n:ws.length})}
   $('woWkLead').textContent=`Suma de la duración de los entrenamientos de cada semana. Línea discontinua: ${MIN_GOAL*7} min (tu objetivo de ${MIN_GOAL} min al día).`;
   if(!wos.length)$('chWoWk').innerHTML=emptyBox('Sin entrenamientos en este periodo.');
@@ -2286,14 +2289,14 @@ function renderSueno(){
   const beds=rows.map(s=>s.bed).filter(x=>x!=null),wakes=rows.map(s=>s.wake).filter(x=>x!=null);
   const bedM=median(beds),wakeM=median(wakes),bedSd=sdev(beds);
   $('slpKv').innerHTML=[
-    kvCell('Dormido',fmtDur(asleep),'por noche',cmpTxt(asleep!=null?asleep/60:null,asleepP!=null?asleepP/60:null,1,'h',1)),
-    kvCell('En la cama',fmtDur(av(rows,s=>s.inBed)),'por noche',`Eficiencia ${fmtInt(av(rows,s=>s.eff))} %`),
-    kvCell('Te duermes',fmtClock(bedM),'','Hora mediana'),
-    kvCell('Te levantas',fmtClock(wakeM),'','Hora mediana'),
-    kvCell('Regularidad',bedSd!=null?'±'+fmtInt(bedSd):'—','min','Variación de la hora de dormirte'),
-    kvCell(`Noches de ${fmtN(SLEEP_GOAL,SLEEP_GOAL%1?1:0)} h o más`,rows.length?fmtInt(rows.filter(s=>s.asleep>=SLEEP_GOAL*60).length/rows.length*100):'—','%',`${rows.length} noches registradas`),
-    kvCell('Sueño profundo',fmtInt(pct('deep')),'%',`REM ${fmtInt(pct('rem'))} % · ligero ${fmtInt(pct('light'))} %`),
-    kvCell('FC durmiendo',fmtInt(av(rows,s=>s.hrAvg)),'lpm',`Mínima ${fmtInt(av(rows,s=>s.hrMin))} lpm`)].join('');
+    kvCell('Dormido',fmtDur(asleep),'por noche',cmpTxt(asleep!=null?asleep/60:null,asleepP!=null?asleepP/60:null,1,'h',1),'',{c:'var(--slp)',s:rows.map(s=>s.asleep)}),
+    kvCell('En la cama',fmtDur(av(rows,s=>s.inBed)),'por noche',`Eficiencia ${fmtInt(av(rows,s=>s.eff))} %`,'',{c:'var(--wat)',s:rows.map(s=>s.inBed)}),
+    kvCell('Te duermes',fmtClock(bedM),'','Hora mediana','',{c:'var(--ph-deep)',s:rows.map(s=>s.bed)}),
+    kvCell('Te levantas',fmtClock(wakeM),'','Hora mediana','',{c:'var(--ph-awake)',s:rows.map(s=>s.wake)}),
+    kvCell('Regularidad',bedSd!=null?'±'+fmtInt(bedSd):'—','min','Variación de la hora de dormirte','',{c:'var(--a5)'}),
+    kvCell(`Noches de ${fmtN(SLEEP_GOAL,SLEEP_GOAL%1?1:0)} h o más`,rows.length?fmtInt(rows.filter(s=>s.asleep>=SLEEP_GOAL*60).length/rows.length*100):'—','%',`${rows.length} noches registradas`,'',{c:'var(--good)',p:rows.length?rows.filter(s=>s.asleep>=SLEEP_GOAL*60).length/rows.length:0}),
+    kvCell('Sueño profundo',fmtInt(pct('deep')),'%',`REM ${fmtInt(pct('rem'))} % · ligero ${fmtInt(pct('light'))} %`,'',{c:'var(--ph-deep)',p:(pct('deep')||0)/25}),
+    kvCell('FC durmiendo',fmtInt(av(rows,s=>s.hrAvg)),'lpm',`Mínima ${fmtInt(av(rows,s=>s.hrMin))} lpm`,'',{c:'var(--bad)',s:rows.map(s=>s.hrAvg)})].join('');
   $('slpLead').textContent=W.weekly?`Horas dormidas de media cada semana. La línea discontinua marca ${SLEEP_GOAL} horas.`:`Horas dormidas cada noche (la fecha es la del día en que te levantas) y la media de 7 noches. La línea discontinua marca ${SLEEP_GOAL} horas.`;
   const hb=bins(rows,s=>s.asleep!=null?s.asleep/60:null,W.weekly);
   $('lgSlp').innerHTML=legendHtml('slp',[{id:'bar',label:W.weekly?'Media semanal':'Horas de la noche',color:'var(--slp)'},W.weekly?null:{id:'avg',label:'Media de 7 noches',sw:'ln',color:'var(--ink)'}].filter(Boolean));
@@ -2520,6 +2523,15 @@ document.addEventListener('click',e=>{const s=e.target.closest('.shside');if(!s)
   box.addEventListener('touchstart',e=>{const p=e.touches[0];t0=e.touches.length===1&&!own(e.target)?{x:p.clientX,y:p.clientY,t:Date.now()}:null},{passive:true});
   box.addEventListener('touchend',e=>{if(!t0)return;const p=e.changedTouches[0],dx=p.clientX-t0.x,dy=p.clientY-t0.y;const ok=Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5&&Date.now()-t0.t<800;t0=null;if(!ok)return;
     const b=$('sheetBody').querySelectorAll('.shnav [data-nav]')[dx<0?1:0];if(b&&!b.disabled)b.click()},{passive:true})})();
+// phones: plain explanations of the chart cards fold behind their title (those with links or buttons stay, and so do
+// the live texts of cards without a chart, such as an empty state)
+function leadFold(root){(root||document).querySelectorAll('.view:not(#v-ajustes) .card>p.lead:not(.lfold)').forEach(p=>{if(!p.querySelector('a,button,input,select')&&p.textContent.trim().length>40&&(!p.id||p.parentElement.querySelector('svg,table,canvas')))p.classList.add('lfold')})}
+// phones: the cards to enter data by hand go last in their tab, after the charts
+const PHONE=matchMedia('(max-width:699px)');
+function phoneOrder(){document.querySelectorAll('.view[id^="v-"]:not(#v-ajustes)>.qm').forEach(e=>{e.style.order=PHONE.matches?'50':''})}
+PHONE.addEventListener('change',phoneOrder);
+let LF_T=0;new MutationObserver(()=>{if(!LF_T)LF_T=setTimeout(()=>{LF_T=0;leadFold();phoneOrder()},150)}).observe(document.querySelector('.view')?.parentElement||document.body,{childList:true,subtree:true});leadFold();
+document.addEventListener('click',e=>{const h=e.target.closest('.card>h2');if(!h||!matchMedia('(max-width:699px)').matches)return;const c=h.parentElement;if(!c.querySelector(':scope>.lead.lfold')||e.target.closest('a,button,input,select'))return;c.classList.toggle('lopen')});
 function sheetNav(keys,k,label){const i=keys.indexOf(k);return `<div class="shnav"><button type="button" data-nav="${keys[i-1]||''}" ${i>0?'':'disabled'} aria-label="Anterior">‹</button><b>${label}</b><button type="button" data-nav="${keys[i+1]||''}" ${i<keys.length-1?'':'disabled'} aria-label="Siguiente">›</button></div>`}
 function sheetWin(keys,k,n){const i=keys.indexOf(k);let end=SHEET.win!=null?keys.indexOf(SHEET.win):-1;if(end<0)end=keys.length-1;
   if(i>end)end=i;if(i<=end-n)end=Math.min(keys.length-1,i+n-1);SHEET.win=keys[end];return keys.slice(Math.max(0,end-n+1),end+1)}

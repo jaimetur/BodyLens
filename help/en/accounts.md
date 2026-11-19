@@ -25,7 +25,7 @@ Open it from the profile menu (top left) → **Your account**.
 - **Full name** and **email**: the email receives all notifications.
 - **Language**: the language of the whole app and of the emails you receive. Before signing in, choose it with the 🌐 selector on the sign-in screen. New accounts start in English (or in the language chosen when requesting the account).
 - **Text size**: Small, Normal, Large or Extra large, for the whole app.
-- **Theme**: the colours of the app and of these pages. **Automatic** follows your device (light by day, dark at night if your device does so); **Daytime** is always light, **Night-time** always dark, and there are also **Sepia** (warm light), **Ocean** (deep blue), **Forest** (dark green) and **High contrast** (black and white, for reading more easily).
+- **Theme**: the colours of the app and of these pages. **Automatic** follows your device (light by day, dark at night if your device does so); **Daytime** is always light, **Night-time** always dark, and there are also **Sepia** (warm light), **Ocean** (deep blue), **Forest** (dark green), **High contrast** (black and white, for reading more easily), **Rose**, **Lavender** and **Mint** (soft light colours), **Sunset** (warm dark) and **Graphite** (neutral dark grey).
 - **Lock profiles with a PIN after**: the minutes without activity (1, 2, 5, 10, 15 or 30; 1 by default) after which a profile with a PIN locks itself.
 - **Password**: asks for the current one; changing it signs you out on your other devices.
 - **Partner** and **Sync**: see [partner](couples.md) and [sync](sync.md). Importing backups is in Your account → Data and backups ([import](import.md)).

@@ -188,7 +188,7 @@ def set_nav(con: sqlite3.Connection, user_id: int, nav: dict) -> None:
 
 
 # colour themes of the interface (CSS in src/frontend/common/themes.css); "auto" follows the device
-THEMES = ("auto", "light", "dark", "sepia", "ocean", "forest", "contrast")
+THEMES = ("auto", "light", "dark", "sepia", "ocean", "forest", "contrast", "rose", "lavender", "mint", "sunset", "graphite")
 # minutes without activity before a profile with a PIN locks itself
 LOCK_MINUTES = (1, 2, 5, 10, 15, 30)
 
