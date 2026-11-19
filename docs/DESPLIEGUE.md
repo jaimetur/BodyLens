@@ -3,7 +3,10 @@
 Imagen: `jaimetur/bodylens` en Docker Hub (la construye GitHub Actions en cada push a `main`).
 Stack de Dockhand: `/volume1/docker/stacks/bodylens` (`compose.yml` + `.env`).
 Datos: `/volume1/docker/data/bodylens` (base SQLite, workbooks de cada cuenta, `secrets/`, `import/`).
-Puerto en el NAS: **7280** → 8000 del contenedor. HTTPS: el **Caddy** del NAS.
+Puerto en el NAS: **7280** → 8000 del contenedor. HTTPS: `https://bodylens.jaimetur.cloud` (proxy inverso del NAS).
+El servidor corre como `docker_limited:docker_users` (`PUID=1034`, `PGID=65544`): en Synology mandan las ACL y la
+carpeta de datos solo da escritura a `docker_users`/`administrators`. Si el contenedor no arranca y el log dice que no
+puede escribir en `/data`, revisa PUID/PGID.
 
 ## Una vez, antes del primer despliegue
 
