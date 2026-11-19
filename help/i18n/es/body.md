@@ -1,4 +1,4 @@
-<!-- en: 0159245ccc4fa179 -->
+<!-- en: af1783ec4d470a8a -->
 # Cuerpo
 
 Reúne todo lo que describe tu cuerpo en cuatro secciones: la composición que mide la báscula, las medidas con cinta, el corazón y la forma física, y el bienestar (síntomas y hábitos).
@@ -65,6 +65,7 @@ Medidas con cinta (cintura, cadera, pecho, cuello, brazo y muslo), porque la bá
 - **Saturación de oxígeno**: media de la noche con una barra de rango (Baja, Por debajo de la media, Normal, con cortes en el 90 y el 95 %) y el mínimo de la noche. Aviso: si está de forma continuada por debajo del 95 % o tienes síntomas, consulta a tu médico.
 - **VO2 máx**: valor en ml/kg/min con su categoría según tu sexo y edad, comparación con la media de tu grupo, percentil, «edad cardiovascular» equivalente y el valor de hace un año si lo hay.
 - **Avisos del reloj**: notificaciones del Apple Watch tal como las registra Salud, con el número de avisos de frecuencia cardiaca baja en los últimos 12 meses. No son un diagnóstico.
+- **Apuntar datos del corazón a mano**: fecha, pulso en reposo, VFC, saturación de oxígeno y VO2 máx (rellena lo que tengas), por ejemplo si usas un pulsioxímetro sin reloj. La tarjeta lista los días que has apuntado, con **Quitar**. Si después llegan datos de tus fuentes para ese día, mandan los de las fuentes; un día que ya tiene datos de tus fuentes no se puede apuntar a mano.
 - **ECG**: lista de electrocardiogramas con la clasificación del propio reloj y la frecuencia cardiaca. Al tocar uno se abre el trazado.
 - **Evolución**: un gráfico por día de frecuencia cardiaca en reposo, HRV nocturna, SpO2 nocturna, frecuencia respiratoria, VO2 máx, temperatura de la muñeca, alteraciones de la respiración y frecuencia cardiaca al caminar.
 

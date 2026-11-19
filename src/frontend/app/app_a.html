@@ -901,6 +901,19 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
         <section class="card wdash" id="hrtDash"></section>
         <div class="g2"><section class="card" id="hrtSpo"></section><section class="card" id="hrtVo2"></section></div>
         <section class="card" id="hrtAlerts"></section>
+        <section class="card owner-only qm" id="mhCard">
+          <h2>Apuntar datos del corazón a mano</h2>
+          <p class="lead">Si mides tu pulso o tu oxígeno sin reloj (con un pulsioxímetro, por ejemplo), apúntalo aquí. Rellena lo que tengas. Si después llegan datos de tus fuentes para ese día, mandan los de las fuentes.</p>
+          <div class="form">
+            <label for="mhDate">Fecha<input id="mhDate" type="date"></label>
+            <label for="mhRhr">Pulso en reposo (lpm)<input id="mhRhr" type="number" step="1" inputmode="numeric" placeholder="60"></label>
+            <label for="mhHrv">VFC (ms)<input id="mhHrv" type="number" step="1" inputmode="numeric" placeholder="45"></label>
+            <label for="mhSpo">Saturación de oxígeno (%)<input id="mhSpo" type="number" step="0.1" inputmode="decimal" placeholder="97"></label>
+            <label for="mhVo2">VO2 máx<input id="mhVo2" type="number" step="0.1" inputmode="decimal" placeholder="40"></label>
+            <div class="row full"><button class="btn" id="mhAdd" type="button">Guardar el día</button><span class="msg" id="mhMsg" aria-live="polite"></span></div>
+          </div>
+          <div class="list" id="mhList"></div>
+        </section>
         <section class="card"><h2>ECG</h2><p class="lead">Electrocardiogramas de tu Apple Watch, con la clasificación que da el propio reloj. Toca uno para ver el trazado.</p><div id="hrtEcg"></div></section>
         <section class="card"><h2>Evolución</h2><p class="lead" id="hrtLead"></p><div class="smgrid" id="hrtCharts"></div></section>
       </section>

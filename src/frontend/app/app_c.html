@@ -179,7 +179,7 @@ function applySheet(parsed){
   // Apple Salud desde la hoja (Health Auto Export): rellena por columnas, sin borrar lo que ya hay
   const hl=parsed.health;
   if(hl&&hl.has){for(const [k,row] of Object.entries(hl.hk)){const y=k.slice(0,4);const Y=HK[y]?{...HK[y],d:{...HK[y].d}}:{y:+y,d:{}};const cur=Y.d[k]||[];const nr=HK_COLS.map((_,i)=>row[i]!=null?row[i]:(cur[i]??null));
-      if(canon(nr)!==canon(cur)){Y.d[k]=nr;HK[y]=Y;changed=true;HKDIRTY.add(y)}}}
+      if(canon(nr)!==canon(cur)){Y.d[k]=nr;if(Y.m&&Y.m[k]){Y.m={...Y.m};delete Y.m[k]}HK[y]=Y;changed=true;HKDIRTY.add(y)}}}
   if(hl){for(const [t,e] of Object.entries(hl.ecg)){const y=t.slice(0,4);if(ECG[y]&&ECG[y].d&&ECG[y].d[t])continue;ECG[y]={y:+y,d:{...((ECG[y]||{}).d||{}),[t]:e}};changed=true;if(col)enqueue('ecg-'+y,ECG[y])}
     if(hl.ev.length){const m=mergeEv(HKEV,{e:hl.ev});if(m.e.length!==HKEV.e.length){HKEV=m;changed=true;if(col)enqueue('hkev',HKEV)}}
     if(hl.logs.length){const m=mergeEv(HKLOG,{e:hl.logs});if(m.e.length!==HKLOG.e.length){HKLOG=m;changed=true;if(col)enqueue('hklog',HKLOG)}}}
@@ -2821,6 +2821,22 @@ document.addEventListener('click',e=>{const a=e.target.closest('[data-slpadd]');
   const sv=e.target.closest('[data-slpsave]');if(sv){const b=(document.getElementById('slpEdBed')||{}).value,w=(document.getElementById('slpEdWake')||{}).value;
     if(!b||!w){toast('Pon la hora a la que te acostaste y la de levantarte');return}const k=sv.dataset.slpsave;SLP_ED=null;const r=slpManual(k,b,w);if(r==='dur'){SLP_ED=k;toast('Revisa las horas: la noche tiene que durar entre 30 min y 20 h');return}if(r!==true)renderView();toast('Noche apuntada');return}
   const dl=e.target.closest('[data-slpdel]');if(dl){SLP_ED=null;if(slpManual(dl.dataset.slpdel,null)!==true)renderView();toast('Noche borrada')}});
+/* ---------- manual entry of heart data (HK row of the day; HK[year].m marks the days logged by hand) ---------- */
+const MH=[['mhRhr',0,30,200,0],['mhHrv',1,5,300,0],['mhSpo',3,70,100,1],['mhVo2',9,10,90,1]];
+function renderManualHeart(){if(!$('mhList'))return;if(!$('mhDate').value)$('mhDate').value=d2k(new Date());
+  const out=[];for(const y of Object.keys(HK||{}))for(const k of Object.keys((HK[y]||{}).m||{})){const v=(HK[y].d||{})[k];if(v)out.push([k,v])}
+  out.sort((a,b)=>a[0]<b[0]?1:-1);
+  $('mhList').innerHTML=out.slice(0,30).map(([k,v])=>`<div class="it"><span>${fmtK(k,true)}${v[0]!=null?` · <b class="num">${fmtInt(v[0])}</b> lpm`:''}${v[1]!=null?` · VFC ${fmtInt(v[1])} ms`:''}${v[3]!=null?` · SpO2 ${fmtN(v[3],1)} %`:''}${v[9]!=null?` · VO2 máx ${fmtN(v[9],1)}`:''}</span><span class="owner-only"><button type="button" data-mhdel="${k}">Quitar</button></span></div>`).join('')}
+$('mhAdd').addEventListener('click',()=>{const k=$('mhDate').value,msg=$('mhMsg');if(!k){msg.textContent='Elige la fecha.';return}if(k>d2k(new Date())){msg.textContent='La fecha no puede ser futura.';return}
+  const vals=MH.map(([id])=>numOf(id));if(vals.every(v=>v==null)){msg.textContent='Apunta al menos un dato.';return}
+  if(MH.some(([,,lo,hi],i)=>vals[i]!=null&&(isNaN(vals[i])||vals[i]<lo||vals[i]>hi))){msg.textContent='Revisa los valores: pulso 30–200 lpm, VFC 5–300 ms, oxígeno 70–100 % y VO2 máx 10–90.';return}
+  const y=k.slice(0,4),Y=HK[y]?{...HK[y],d:{...(HK[y].d||{})},m:{...(HK[y].m||{})}}:{y:+y,d:{},m:{}};
+  if(Y.d[k]&&!Y.m[k]){msg.textContent='Ese día ya tiene datos de tus fuentes.';return}
+  const row=Array(HK_COLS.length).fill(null);MH.forEach(([,i,,,dec],j)=>{if(vals[j]!=null)row[i]=dec?r1(vals[j]):Math.round(vals[j])});
+  Y.d[k]=row;Y.m[k]=1;HK[y]=Y;saveLocal();if(col)enqueue('hk-'+y,HK[y]);refresh();
+  for(const [id] of MH)$(id).value='';msg.textContent=`Datos del ${fmtK(k,true)} guardados.`;renderView()});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-mhdel]');if(!b)return;const k=b.dataset.mhdel,y=k.slice(0,4);if(!HK[y]||!(HK[y].m||{})[k])return;
+  const Y={...HK[y],d:{...HK[y].d},m:{...HK[y].m}};delete Y.d[k];delete Y.m[k];HK[y]=Y;saveLocal();if(col)enqueue('hk-'+y,HK[y]);refresh();renderView()});
 /* ---------- manual entry: the day's activity, workouts and nights (for those without a watch or a connected phone) ---------- */
 const numOf=id=>{const v=String($(id).value).replace(',','.').trim();return v===''?null:parseFloat(v)};
 function putYearly(store,pre,y,d){store[y]={...(store[y]||{}),y:+y,d};saveLocal();if(col)enqueue(pre+y,store[y]);refresh()}
@@ -3386,6 +3402,7 @@ function renderBienestar(){const today=d2k(new Date()),E=logsOf(BIEN_T),types=[.
   $('bienSum').innerHTML=`<h2>Bienestar</h2><p class="lead">Síntomas y hábitos que apuntas en Apple Salud (iPhone) o aquí. Cada fila marca las semanas del último año en que hubo algún registro.</p>${E.length?grp.filter(g=>g[1].length).map(([l,ts])=>`<h3 class="lgs-t">${l}</h3>${ts.map(card).join('')}`).join(''):emptyBox('Sin registros todavía.')}`;
   $('bienLog').innerHTML=`<h2>Registrar</h2>${logForm('bien',BIEN_T.filter(t=>!['symptom','mood'].includes(t)))}<h3 class="lgs-t">Últimos registros</h3>${logList(E,20,'bien')}`}
 function renderCorazon(){
+  renderManualHeart();
   const L=LIFE,hk=(L&&L.hk)||[];const has=hk.length>0,dash=$('hrtDash');
   if(!has&&!ecgList().length){dash.innerHTML=`<h2>Corazón</h2>${emptyBox('Todavía no hay datos del corazón. Llegan solos del iPhone (Apple Salud, con Health Auto Export) o de Android (Health Connect, con la app de BodyLens): conéctalos en Tu cuenta → Fuentes de datos.')}`;for(const id of ['hrtSpo','hrtVo2','hrtAlerts'])$(id).innerHTML='';$('hrtEcg').innerHTML='';$('hrtCharts').innerHTML='';return}
   const lastOf=c=>{for(let i=hk.length-1;i>=0;i--)if(hk[i][c]!=null)return hk[i];return null};
@@ -3395,7 +3412,7 @@ function renderCorazon(){
     return `<div class="htile tap" data-sheet="kpi" data-k="hk|${c}|${lab}|${unit.trim()}|${dec}|${goodUp?1:-1}" role="button" tabindex="0"><small>${lab}</small><b style="color:${col}">${fmtN(v,dec)}<i>${unit}</i></b><em>${note?note(v,r):''}${d!=null?`${note?' · ':''}${d>=0?'+':'−'}${fmtN(Math.abs(d),dec)} vs. 30 días`:''}${r.k!==hk[hk.length-1].k?` · ${fmtK(r.k)}`:''}</em>${spark(pts,'var(--weight)')}</div>`};
   const sex=M&&M.cfg&&M.cfg.sex,w=sex==='m',age=userAge();
   const tr=lastOf('temp'),tb=tr?mean(win('temp',30,addK(tr.k,-1))):null;
-  dash.innerHTML=`<h2>Corazón y forma física</h2><p class="lead">Últimas mediciones de tu Apple Watch y cómo van frente a tus 30 días anteriores. La saturación y el VO2 máx tienen su panel justo debajo.</p><div class="hc-grid">
+  dash.innerHTML=`<h2>Corazón y forma física</h2><p class="lead">Últimas mediciones de tu reloj, de tu móvil o apuntadas a mano, y cómo van frente a tus 30 días anteriores. La saturación y el VO2 máx tienen su panel justo debajo.</p><div class="hc-grid">
     ${tile('Pulso en reposo','rhr',' lpm',0,null,false)}
     ${tile('VFC nocturna','hrvN',' ms',0,null,true)||tile('VFC','hrv',' ms',0,null,true)}
     ${tile('Frec. respiratoria','rr',' rpm',1,null,false)}

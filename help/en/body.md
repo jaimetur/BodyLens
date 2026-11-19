@@ -64,6 +64,7 @@ Latest Apple Watch data and how it compares with your previous 30 days. If there
 - **Blood oxygen saturation**: average for the night with a range bar (Low, Below average, Normal with cut-offs at 90 and 95 %) and the minimum for the night. Notice: if it is consistently below 95 % or you have symptoms, consult your doctor.
 - **VO2 max**: value in ml/kg/min with its category according to your sex and age, comparison with the average of your group, percentile, equivalent "cardiovascular age" and the value from a year ago if there is one.
 - **Watch alerts**: Apple Watch notifications as recorded by Health, with the number of low heart rate alerts in the last 12 months. They are not a diagnosis.
+- **Log heart data by hand**: date, resting heart rate, HRV, oxygen saturation and VO2 max (fill in what you have), for example if you use a pulse oximeter without a watch. The card lists the days you logged, with **Remove**. If data for that day arrives later from your sources, the sources' data takes precedence; a day that already has data from your sources cannot be logged by hand.
 - **ECG**: list of electrocardiograms with the watch's own classification and the heart rate. Tapping one opens the trace.
 - **Progress**: one chart per day for resting heart rate, overnight HRV, overnight SpO2, respiratory rate, VO2 max, wrist temperature, breathing disturbances and walking heart rate.
 
