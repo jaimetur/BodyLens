@@ -410,6 +410,8 @@ table.t tr.cur td{background:var(--raised)}table.t .xs-s{display:none}
 .cal td.wk{background:none;text-align:left;font-family:var(--body);color:var(--muted);letter-spacing:0;line-height:1.05}
 .cal td.wk b{display:block;font-family:var(--mono);font-size:.74rem;font-weight:600;color:var(--ink)}
 .cal td.wk small{display:block;font-size:.64rem}
+/* phones: the condensed display font and slimmer side columns, so a whole weight (110,9) fits in each day */
+@media (max-width:520px){.cal table{border-spacing:1.5px}.cal th.wk,.cal td.wk{width:28px}.cal th.tot,.cal td.tot{width:34px}.cal td{font-family:var(--display);font-size:.8rem;letter-spacing:.01em;font-weight:700}.cal td.wk b{font-size:.68rem}.cal td.wk small{font-size:.58rem}}
 .cal td.fut{background:transparent;border:1px dashed var(--line2)}
 .cal td.none{color:var(--faint)}
 .cal th.fri{color:var(--weight)}.cal th.fri::after{content:'';display:block;width:4px;height:4px;border-radius:50%;background:currentColor;margin:2px auto 0}

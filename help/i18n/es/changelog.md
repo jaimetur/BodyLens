@@ -1,4 +1,4 @@
-<!-- en: cc1b1bcb1d9d7a2b -->
+<!-- en: 7ccae01112f46923 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -98,6 +98,7 @@
   - Las páginas y sus estilos se revalidan en cada despliegue, así que no quedan copias obsoletas en la caché.
   - Tu cuenta y Administración se pueden mostrar dentro de la app.
   - Las tarjetas ampliadas caben en la pantalla y su botón de cerrar sigue visible al desplazarte, también con el texto más grande en el móvil.
+- **Calendarios de pesadas y de sueño en el móvil:** cada día muestra su cifra completa (por ejemplo 110,9) en vez de cortarla.
 
 #### 📚 Documentación:
 - **El inglés es el idioma oficial del proyecto:** código, documentación y mensajes de commit. `README.md` completo; el README, la ayuda y el registro de cambios se escriben solo en inglés y se muestran traducidos en la app.
