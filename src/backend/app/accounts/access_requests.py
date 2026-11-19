@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 from app.accounts import users
 from app.accounts.users import User, UserError, clean_email
-from app.core import db
+from app.core import db, i18n
 from app.core.deps import admin_user, bad, base_url, client_ip
 from app.core.security import Throttle
 from app.mail import mailer
@@ -42,6 +42,7 @@ def access_request(body: AccessRequestIn, request: Request):
                 raise UserError("Ya hay una cuenta o una petición con ese correo.")
             u = users.create_user(con, body.username, body.name, body.password, email=email, active=False,
                                   request_note=body.note)
+            u.lang = users.set_lang(con, u.id, i18n.request_lang(request))   # el idioma con el que pidió la cuenta
             admins = users.admin_emails(con)
     except UserError as e:
         bad(e)

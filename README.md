@@ -23,6 +23,8 @@ con el mismo diseño.
 - **Historial**: años de pesadas, intentos de pérdida de peso y rebotes.
 - **PDF**: informe del periodo elegido; **copias** completas en JSON y CSV.
 - **Interfaz**: claro y oscuro, pensada para el iPhone (se instala como app desde Safari), gestos y periodo sincronizado.
+- **Idiomas**: inglés (predeterminado), español, catalán, francés, italiano, alemán, portugués, neerlandés, chino y
+  japonés. Cada cuenta elige el suyo en «Tu cuenta»; los correos le llegan en ese idioma.
 
 ### Cuentas
 - **Varias cuentas**, cada una con sus datos. Se entra con usuario y contraseña (cookie de sesión segura).
@@ -50,6 +52,10 @@ navegador / iPhone (PWA) ── HTTPS (proxy inverso del NAS) ──► contened
   le añade una capa (`src/frontend/compat/claude-shim.js`) que imita lo que la página pedía a claude.ai (`db`, `user`,
   `mcp`, `downloads`) contra la API propia, y aplica unas pocas sustituciones exactas (librerías sin CDN, botón de
   sincronizar, textos).
+- **Idiomas**: la página está escrita en español y `src/frontend/i18n/i18n.js` la traduce en el navegador con el
+  diccionario del idioma de la cuenta (`src/frontend/i18n/locales/<idioma>.json`, de texto español a traducción, con
+  patrones «{0} pasos»); también ajusta el formato de números y fechas. El servidor usa los mismos diccionarios para
+  los correos. Ver «Textos e idiomas» en `AGENTS.md`.
 - **Backend**: Python 3.12, FastAPI, SQLite (WAL) en `/data`, un solo proceso con el planificador dentro.
 - **Seguridad**: contraseñas argon2, sesiones en servidor (cookie HttpOnly/Secure/SameSite), cabecera anti-CSRF en
   toda escritura, límites de intentos, cada cuenta aislada; secretos solo en variables de entorno.
@@ -69,6 +75,9 @@ src/frontend/
   app/                  la app (app_a: estilos y vistas, app_b: núcleo, app_c: interfaz)
   compat/               capa window.claude
   accounts/ common/     páginas de entrar, pedir cuenta, registro y «Tu cuenta»
+  admin/                panel de Administración
+  i18n/                 traductor (i18n.js), textos a traducir (source.json) y diccionarios (locales/)
+android/                app de Android (Health Connect → servidor)
 assets/branding/        iconos y logo
 tests/<módulo>/         tests (pytest) y tests/frontend/smoke.mjs (arranque de la página)
 help/                   ayuda de uso, un fichero por módulo

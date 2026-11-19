@@ -103,6 +103,28 @@ def send(to: list[str], subject: str, html_body: str, reply_to: str | None = Non
         raise RuntimeError("El correo no está configurado (SMTP_HOST y SMTP_FROM en el .env).")
     if not to:
         raise RuntimeError("El correo no tiene destinatarios.")
+    for lang, group in _by_lang(to).items():
+        from app.core import i18n
+        _deliver(s, group, i18n.tr(lang, subject), i18n.tr_html(lang, html_body), reply_to)
+
+
+def _by_lang(to: list[str]) -> dict[str, list[str]]:
+    """Agrupa los destinatarios por el idioma de su cuenta (por el correo); sin cuenta, el predeterminado."""
+    from app.core import db, i18n
+    out: dict[str, list[str]] = {}
+    try:
+        with db.ro() as con:
+            rows = {r["e"]: r["lang"] for r in con.execute(
+                f"SELECT lower(email) AS e, lang FROM users WHERE lower(email) IN ({','.join('?' * len(to))})",
+                [t.lower() for t in to])}
+    except Exception:
+        rows = {}
+    for t in to:
+        out.setdefault(rows.get(t.lower()) or i18n.DEFAULT, []).append(t)
+    return out
+
+
+def _deliver(s: dict, to: list[str], subject: str, html_body: str, reply_to: str | None) -> None:
     msg = build(s, to, subject, html_body, reply_to)
     ctx = ssl.create_default_context()
     try:

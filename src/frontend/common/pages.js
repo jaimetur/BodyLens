@@ -23,3 +23,14 @@ function safeNext() {
   const n = new URLSearchParams(location.search).get('next') || '/';
   return n.startsWith('/') && !n.startsWith('//') ? n : '/';
 }
+// idioma: selector con los idiomas disponibles (los nombres no se traducen)
+function setLangCookie(l) { document.cookie = 'bl_lang=' + l + ';path=/;max-age=157680000;samesite=lax'; }
+function langPicker(sel, onPick) {
+  if (!sel) return;
+  const L = window.BL_LANGS || { es: 'Español' };
+  sel.setAttribute('data-noi18n', '');
+  sel.innerHTML = Object.entries(L).map(([k, v]) => `<option value="${k}"${k === (window.BL_LANG || 'es') ? ' selected' : ''}>${esc(v)}</option>`).join('');
+  sel.addEventListener('change', () => onPick(sel.value));
+}
+// en las páginas sin sesión (entrar, pedir cuenta, registro): se guarda en una cookie
+langPicker(document.getElementById('langPick'), l => { setLangCookie(l); location.reload(); });

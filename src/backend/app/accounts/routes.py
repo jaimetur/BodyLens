@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 from app.accounts import users
 from app.accounts.users import User, UserError
-from app.core import config, db
+from app.core import config, db, i18n
 from app.core.deps import (COOKIE, admin_user, bad, base_url, client_ip, current_user, session_token,
                            set_session_cookie)
 from app.core.security import login_throttle
@@ -80,6 +80,7 @@ def register(body: RegisterIn, request: Request, response: Response):
     try:
         with db.tx() as con:
             u = users.redeem_invite(con, body.code, body.username, body.name, body.password, body.email)
+            u.lang = users.set_lang(con, u.id, i18n.request_lang(request))
             token = users.create_session(con, u.id)
     except UserError as e:
         login_throttle.fail(f"reg:{ip}")
@@ -182,6 +183,21 @@ def change_name(body: NameIn, u: User = Depends(current_user)):
     with db.tx() as con:
         con.execute("UPDATE users SET name=? WHERE id=?", (name, u.id))
     return {"ok": True}
+
+
+class LangIn(BaseModel):
+    lang: str
+
+
+@router.post("/api/me/lang")
+def change_lang(body: LangIn, response: Response, u: User = Depends(current_user)):
+    try:
+        with db.tx() as con:
+            lang = users.set_lang(con, u.id, body.lang)
+    except UserError as e:
+        bad(e)
+    response.set_cookie(i18n.COOKIE, lang, max_age=5 * 365 * 86400, samesite="lax")
+    return {"ok": True, "lang": lang}
 
 
 # ---------- administración de cuentas ----------

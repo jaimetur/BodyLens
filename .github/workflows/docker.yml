@@ -32,6 +32,7 @@ jobs:
         run: |
           (cd src/frontend && npm ci --no-audit --no-fund --ignore-scripts)
           node tests/frontend/smoke.mjs
+          node tests/frontend/i18n.mjs
 
   docker:
     needs: tests

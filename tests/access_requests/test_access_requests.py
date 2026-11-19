@@ -88,7 +88,7 @@ def test_mailer_smtp_ssl(monkeypatch):
     assert calls["conn"] == ("jaimetur.cloud", 465) and calls["login"] == ("bodylens@jaimetur.cloud", "secreto")
     m = calls["msg"]
     assert m["Subject"] == "BodyLens - Hola" and "bodylens@jaimetur.cloud" in m["From"]
-    assert "Entrar: https://x/login" in m.get_body(("plain",)).get_content()
+    assert "https://x/login" in m.get_body(("plain",)).get_content()   # el texto va en el idioma del destinatario
     assert "secreto" not in str(mailer.public_settings())
 
 

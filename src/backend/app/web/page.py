@@ -88,11 +88,11 @@ def fragment() -> str:
         return _cache["fragment"]
 
 
-def page(user_public: dict) -> str:
+def page(user_public: dict, lang_tags: str = "") -> str:
     boot = json.dumps(user_public, ensure_ascii=False).replace("</", "<\\/")
     admin_css = "" if user_public.get("isAdmin") else ".bl-admin{display:none!important}"
     head = (
-        '<!doctype html><html lang="es"><head><meta charset="utf-8">'
+        f'<!doctype html><html lang="{user_public.get("lang", "es")}"><head><meta charset="utf-8">{lang_tags}'
         '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
         '<meta name="theme-color" content="#3B7BF2">'
         '<meta name="apple-mobile-web-app-capable" content="yes">'

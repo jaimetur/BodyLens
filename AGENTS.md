@@ -50,7 +50,8 @@ Lo que hay que crear está descrito en `docs/MIGRACION.md` (backend FastAPI, cap
 2. **Paridad de datos antes que mejoras.** Cada pieza portada del Apps Script debe producir los mismos
    resultados que el original (mismas filas, mismas reglas). Las reglas de sueño (mezcla AutoSleep + Apple Watch,
    desvelos, siestas, ventana de 17:00 a 17:00, etc.) están en `Codigo.gs` y se portan tal cual.
-3. **Textos de la app en español de España.** Mensajes de error y de interfaz también.
+3. **Textos de la app en español de España** (es el idioma de origen; se traducen a los demás). Mensajes de error y de
+   interfaz también. Ver «Textos e idiomas».
 4. **Secretos fuera del código.** Withings (client id/secret, tokens), token de Health Auto Export, contraseña,
    credenciales de Google: solo por variables de entorno o en la base de datos del servidor. Nunca en el frontend,
    nunca en el repositorio, nunca en logs.
@@ -58,6 +59,18 @@ Lo que hay que crear está descrito en `docs/MIGRACION.md` (backend FastAPI, cap
    están en `.gitignore`. Los fixtures de tests deben ser sintéticos o mínimos.
 6. **Zona horaria `Europe/Madrid`** para todo cálculo de días y noches (igual que la hoja).
 7. Trabaja por fases (las de `docs/MIGRACION.md`), con commits pequeños y tests en cada una.
+
+## Textos e idiomas
+
+La interfaz se escribe en español y se traduce en el navegador (`src/frontend/i18n/i18n.js`) con un diccionario por
+idioma (`src/frontend/i18n/locales/<idioma>.json`: texto español → traducción; las partes variables son `{0}`, `{1}`…).
+El servidor usa los mismos diccionarios para los correos. Idioma predeterminado: inglés; cada cuenta elige el suyo.
+
+Al añadir o cambiar textos visibles (página, páginas del servidor, mensajes de error, correos):
+1. `python3 tools/i18n_extract.py` actualiza `src/frontend/i18n/source.json`.
+2. Traduce los textos nuevos a todos los idiomas de `locales/` (mismo tono y términos que el resto del diccionario).
+3. `python3 tools/i18n_check.py` tiene que dar OK (lo comprueba también `pytest`).
+Mientras falte una traducción, ese texto se ve en español: no rompe nada.
 
 ## Comandos (cuando existan)
 

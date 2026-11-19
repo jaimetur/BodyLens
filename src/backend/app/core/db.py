@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS users (
   requested_at TEXT,
   request_note TEXT,
   data_source TEXT NOT NULL DEFAULT 'sheet',
+  lang TEXT NOT NULL DEFAULT 'en',
   created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS sessions (
@@ -161,6 +162,10 @@ def _migrate(con: sqlite3.Connection) -> None:
                      ("data_source", "TEXT NOT NULL DEFAULT 'sheet'")):
         if col not in cols:
             con.execute(f"ALTER TABLE users ADD COLUMN {col} {ddl}")
+    if "lang" not in cols:
+        # las cuentas de antes del multi-idioma usaban la app en español: lo conservan; las nuevas, inglés
+        con.execute("ALTER TABLE users ADD COLUMN lang TEXT NOT NULL DEFAULT 'en'")
+        con.execute("UPDATE users SET lang='es'")
 
 
 def init_db() -> None:

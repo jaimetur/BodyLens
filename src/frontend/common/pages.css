@@ -59,3 +59,5 @@ button.danger-t{color:var(--bad)}
 .pill{font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--raised);border:1px solid var(--line);color:var(--muted)}
 .pill[data-on="1"]{background:color-mix(in srgb,var(--ok) 14%,transparent);border-color:color-mix(in srgb,var(--ok) 40%,transparent);color:var(--ok)}
 .code{display:inline-block;max-width:100%;overflow-wrap:anywhere}
+
+.langp{text-align:center;margin-top:18px}.langp select{width:auto;display:inline-block;padding:4px 8px;font-size:13px}

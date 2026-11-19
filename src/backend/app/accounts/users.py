@@ -43,16 +43,17 @@ class User:
     active: bool = True
     requested_at: str | None = None
     request_note: str | None = None
+    lang: str = "en"
 
     @classmethod
     def from_row(cls, r: sqlite3.Row) -> "User":
         return cls(r["id"], r["username"], r["name"], bool(r["is_admin"]), r["partner_id"], r["partner_since"],
                    r["sheet_id"], r["apps_script_url"], bool(r["must_change"]), r["email"], bool(r["active"]),
-                   r["requested_at"], r["request_note"])
+                   r["requested_at"], r["request_note"], r["lang"] if "lang" in r.keys() else "en")
 
     def public(self) -> dict:
         return {"id": self.id, "username": self.username, "name": self.name, "isAdmin": self.is_admin,
-                "mustChange": self.must_change, "email": self.email or ""}
+                "mustChange": self.must_change, "email": self.email or "", "lang": self.lang}
 
 
 def _utcnow() -> datetime:
@@ -119,6 +120,15 @@ def rename(con: sqlite3.Connection, user_id: int, username: str, name: str) -> N
     if other and other.id != user_id:
         raise UserError("Ese nombre de usuario ya existe.")
     con.execute("UPDATE users SET username=?, name=? WHERE id=?", (username, name, user_id))
+
+
+def set_lang(con: sqlite3.Connection, user_id: int, lang: str | None) -> str:
+    from app.core import i18n
+    lang = i18n.clean(lang)
+    if not lang:
+        raise UserError("Ese idioma no está disponible.")
+    con.execute("UPDATE users SET lang=? WHERE id=?", (lang, user_id))
+    return lang
 
 
 def set_email(con: sqlite3.Connection, user_id: int, email: str | None) -> None:

@@ -11,6 +11,7 @@ services:
       - ./code/src/frontend/common:/app/frontend/common:ro
       - ./code/src/frontend/compat:/app/frontend/compat:ro
       - ./code/src/frontend/admin:/app/frontend/admin:ro
+      - ./code/src/frontend/i18n:/app/frontend/i18n:ro
       - ./code/assets/branding:/app/branding:ro
       - ./code:/app/code:ro
     environment:

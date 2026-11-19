@@ -2,9 +2,9 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException, Request
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse, Response
 
-from app.core import config
+from app.core import config, i18n
 from app.core.deps import optional_user
 from app.web import page
 
@@ -14,13 +14,42 @@ VENDOR = {"xlsx.full.min.js", "html2canvas-pro.min.js", "jspdf.umd.min.js"}
 BRANDING = {"icon.svg", "wordmark.svg", "favicon-32.png", "apple-touch-icon.png", "icon-192.png", "icon-512.png"}
 
 
-def _page(*parts: str) -> HTMLResponse:
-    """Página del servidor con sus estilos y scripts marcados con la versión (el navegador no usa copias viejas)."""
+def i18n_tags(lang: str) -> str:
+    """Los scripts del idioma (diccionario y traductor), en la cabecera para que nada se vea antes en español."""
+    from app.core import version
+    v = version.current()["build"]
+    try:   # la fecha del diccionario en la URL: si cambia, el navegador lo vuelve a pedir
+        d = int(i18n.locale_file(lang).stat().st_mtime)
+    except OSError:
+        d = 0
+    return f'<script src="/i18n/{lang}.js?v={v}-{d}"></script><script src="/i18n.js?v={v}"></script>'
+
+
+def _page(*parts: str, request: Request | None = None) -> HTMLResponse:
+    """Página del servidor con sus estilos y scripts marcados con la versión (el navegador no usa copias viejas)
+    y con el idioma de quien la ve."""
     from app.core import version
     v = version.current()["build"]
     html = config.settings.frontend_dir.joinpath(*parts).read_text(encoding="utf-8")
     html = html.replace('href="/pages.css"', f'href="/pages.css?v={v}"').replace('src="/pages.js"', f'src="/pages.js?v={v}"')
+    lang = i18n.request_lang(request, optional_user(request)) if request is not None else i18n.DEFAULT
+    html = html.replace("<meta charset=\"utf-8\">", "<meta charset=\"utf-8\">" + i18n_tags(lang), 1)
     return HTMLResponse(html, headers={"Cache-Control": "no-cache"})
+
+
+@router.get("/i18n.js")
+def i18n_runtime():
+    return _front("i18n", "i18n.js", media_type="text/javascript")
+
+
+@router.get("/i18n/{name}.js")
+def i18n_dictionary(name: str):
+    lang = i18n.clean(name)
+    if not lang:
+        raise HTTPException(404)
+    # la URL lleva la versión (?v=): puede guardarse en caché
+    return Response(i18n.script(lang), media_type="text/javascript",
+                    headers={"Cache-Control": "public, max-age=31536000, immutable"})
 
 
 def _front(*parts: str, **kw) -> FileResponse:
@@ -36,7 +65,7 @@ def index(request: Request):
         return RedirectResponse("/login", status_code=303)
     if u.must_change:
         return RedirectResponse("/cuenta?cambiar=1", status_code=303)
-    return HTMLResponse(page.page(u.public()), headers={"Cache-Control": "no-store"})
+    return HTMLResponse(page.page(u.public(), i18n_tags(u.lang)), headers={"Cache-Control": "no-store"})
 
 
 def android_apk_path():
@@ -56,25 +85,25 @@ def android_apk(request: Request):
 
 
 @router.get("/login", response_class=HTMLResponse)
-def login_page():
-    return _page("accounts", "login.html")
+def login_page(request: Request):
+    return _page("accounts", "login.html", request=request)
 
 
 @router.get("/solicitar", response_class=HTMLResponse)
-def request_page():
-    return _page("accounts", "solicitar.html")
+def request_page(request: Request):
+    return _page("accounts", "solicitar.html", request=request)
 
 
 @router.get("/registro", response_class=HTMLResponse)
-def register_page():
-    return _page("accounts", "registro.html")
+def register_page(request: Request):
+    return _page("accounts", "registro.html", request=request)
 
 
 @router.get("/cuenta", response_class=HTMLResponse)
 def account_page(request: Request):
     if not optional_user(request):
         return RedirectResponse("/login?next=/cuenta", status_code=303)
-    return _page("accounts", "cuenta.html")
+    return _page("accounts", "cuenta.html", request=request)
 
 
 @router.get("/admin", response_class=HTMLResponse)
@@ -84,7 +113,7 @@ def admin_page(request: Request):
         return RedirectResponse("/login?next=/admin", status_code=303)
     if not u.is_admin:
         return RedirectResponse("/cuenta", status_code=303)
-    return _page("admin", "admin.html")
+    return _page("admin", "admin.html", request=request)
 
 
 @router.get("/claude-shim.js")
