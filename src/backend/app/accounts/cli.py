@@ -1,6 +1,7 @@
 """Administración desde la línea de órdenes.
 
   python -m app.accounts.cli crear-admin USUARIO "Nombre"     # primera cuenta (pide la contraseña)
+  python -m app.accounts.cli crear-usuario USUARIO "Nombre" [--correo X]   # cuenta con contraseña provisional
   python -m app.accounts.cli invitacion [nota]                # enlace de registro de un solo uso
   python -m app.accounts.cli contrasena USUARIO               # cambia la contraseña de una cuenta
   python -m app.accounts.cli usuarios                         # lista las cuentas
@@ -34,6 +35,7 @@ def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(prog="python -m app.accounts.cli")
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("crear-admin"); p.add_argument("usuario"); p.add_argument("nombre")
+    p = sub.add_parser("crear-usuario"); p.add_argument("usuario"); p.add_argument("nombre"); p.add_argument("--correo")
     p = sub.add_parser("invitacion"); p.add_argument("nota", nargs="?", default="")
     p = sub.add_parser("contrasena"); p.add_argument("usuario")
     sub.add_parser("usuarios")
@@ -47,6 +49,11 @@ def main(argv: list[str] | None = None) -> None:
             if a.cmd == "crear-admin":
                 u = users.create_user(con, a.usuario, a.nombre, _password(), is_admin=True)
                 print(f"Cuenta de administración «{u.username}» creada.")
+            elif a.cmd == "crear-usuario":
+                import secrets
+                temp = os.environ.get("BODYLENS_NEW_PASSWORD") or secrets.token_urlsafe(6)
+                u = users.create_user(con, a.usuario, a.nombre, temp, email=a.correo, must_change=True)
+                print(f"Cuenta «{u.username}» creada. Contraseña provisional (se cambia al entrar): {temp}")
             elif a.cmd == "invitacion":
                 code = users.create_invite(con, None, a.nota)
                 base = config.settings.public_url or "https://<tu-dominio>"
