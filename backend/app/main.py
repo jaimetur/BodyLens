@@ -157,8 +157,7 @@ def register(body: RegisterIn, request: Request, response: Response):
         raise HTTPException(429, "Demasiados intentos. Espera unos minutos.")
     try:
         with db.tx() as con:
-            u = users.redeem_invite(con, body.code, body.username, body.name, body.password)
-            users.set_email(con, u.id, body.email)
+            u = users.redeem_invite(con, body.code, body.username, body.name, body.password, body.email)
             token = users.create_session(con, u.id)
     except UserError as e:
         login_throttle.fail(f"reg:{ip}")
@@ -197,7 +196,7 @@ def access_request(body: AccessRequestIn, request: Request):
     try:
         with db.tx() as con:
             email = clean_email(body.email, required=True)
-            if con.execute("SELECT 1 FROM users WHERE email=? COLLATE NOCASE", (email,)).fetchone():
+            if users.email_taken(con, email):
                 raise UserError("Ya hay una cuenta o una petición con ese correo.")
             u = users.create_user(con, body.username, body.name, body.password, email=email, active=False,
                                   request_note=body.note)

@@ -10,7 +10,7 @@
     <h1>Pon tu propia contraseña</h1>
     <p>Has entrado con la contraseña provisional. Cámbiala (y, si quieres, tu usuario y tu nombre) antes de empezar.</p>
     <label>Usuario para entrar<input id="mUser" autocapitalize="none" spellcheck="false"></label>
-    <label>Tu nombre<input id="mName" maxlength="80"></label>
+    <label>Nombre y apellidos<input id="mName" maxlength="80"></label>
     <label>Contraseña nueva (al menos 4 caracteres)<input id="mPw" type="password" autocomplete="new-password"></label>
     <div class="row"><button id="mGo" type="button">Guardar y entrar</button><span class="msg" id="mMsg"></span></div>
   </section>
@@ -22,8 +22,8 @@
 
   <section class="card" id="mainCard">
     <h1>Tu cuenta</h1>
-    <dl class="kv"><dt>Usuario</dt><dd id="kUser">—</dd><dt>Nombre</dt><dd id="kName">—</dd></dl>
-    <label>Cambiar nombre<input id="name" maxlength="80"></label>
+    <dl class="kv"><dt>Usuario</dt><dd id="kUser">—</dd><dt>Nombre</dt><dd id="kName">—</dd><dt>Correo</dt><dd id="kMail">—</dd></dl>
+    <label>Nombre y apellidos<input id="name" maxlength="80"></label>
     <div class="row"><button class="ghost" id="nameGo" type="button">Guardar nombre</button><span class="msg" id="nameMsg"></span></div>
     <label>Correo electrónico (para los avisos)<input id="email" type="email" autocomplete="email"></label>
     <div class="row"><button class="ghost" id="emailGo" type="button">Guardar correo</button><span class="msg" id="emailMsg"></span></div>
@@ -107,7 +107,7 @@ async function load() {
   for (const s of document.querySelectorAll('main > section.card:not(#mustBox), main > .row')) s.hidden = must;
   if (must) { $('mUser').value = ME.user.username; $('mName').value = ME.user.name; }
   else if (new URLSearchParams(location.search).has('cambiar')) history.replaceState(null, '', '/cuenta');
-  $('kUser').textContent = ME.user.username; $('kName').textContent = ME.user.name; $('name').value = ME.user.name; $('email').value = ME.user.email || '';
+  $('kUser').textContent = ME.user.username; $('kName').textContent = ME.user.name; $('name').value = ME.user.name; $('email').value = ME.user.email || ''; $('kMail').textContent = ME.user.email || 'sin correo: añádelo abajo';
   const p = ME.partner;
   $('pLinked').hidden = !p; $('pFree').hidden = !!p;
   if (p) { $('pName').textContent = `${p.name} (${p.username})`; $('pSince').textContent = p.since || '—'; }

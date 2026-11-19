@@ -42,6 +42,9 @@ def test_request_approve_flow(client, make_user, login, sent):
     assert a.post(f"/api/admin/access-requests/{rid}/approve").status_code == 409
     l = login("laura", "1234")
     assert l.get("/api/me").json()["user"]["email"] == "laura@example.test"
+    # el correo no se puede repetir ni quitar
+    assert l.post("/api/me/email", json={"email": "admin@example.test"}).status_code == 400
+    assert l.post("/api/me/email", json={"email": ""}).status_code == 400
 
 
 def test_reject_and_honeypot(client, make_user, login, sent):

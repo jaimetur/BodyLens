@@ -122,7 +122,10 @@ def rename(con: sqlite3.Connection, user_id: int, username: str, name: str) -> N
 
 
 def set_email(con: sqlite3.Connection, user_id: int, email: str | None) -> None:
-    con.execute("UPDATE users SET email=? WHERE id=?", (clean_email(email), user_id))
+    email = clean_email(email, required=True)
+    if email_taken(con, email, except_id=user_id):
+        raise UserError("Ya hay otra cuenta con ese correo.")
+    con.execute("UPDATE users SET email=? WHERE id=?", (email, user_id))
 
 
 def approve(con: sqlite3.Connection, user_id: int) -> User:
@@ -240,10 +243,18 @@ def invite_valid(con: sqlite3.Connection, code: str) -> bool:
     return bool(r and r["used_by"] is None and r["expires_at"] > _utcnow().isoformat(timespec="seconds"))
 
 
-def redeem_invite(con: sqlite3.Connection, code: str, username: str, name: str, password: str) -> User:
+def email_taken(con: sqlite3.Connection, email: str, except_id: int | None = None) -> bool:
+    r = con.execute("SELECT id FROM users WHERE email=? COLLATE NOCASE", (email,)).fetchone()
+    return bool(r and r["id"] != except_id)
+
+
+def redeem_invite(con: sqlite3.Connection, code: str, username: str, name: str, password: str, email: str) -> User:
     if not invite_valid(con, code):
         raise UserError("La invitación no es válida o ha caducado. Pide otra.")
-    user = create_user(con, username, name, password)
+    email = clean_email(email, required=True)
+    if email_taken(con, email):
+        raise UserError("Ya hay una cuenta con ese correo.")
+    user = create_user(con, username, name, password, email=email)
     con.execute("UPDATE invites SET used_by=?, used_at=? WHERE code_hash=?", (user.id, db.now_iso(), token_hash(code)))
     return user
 

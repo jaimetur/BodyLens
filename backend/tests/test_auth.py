@@ -39,15 +39,19 @@ def test_invite_registration(client, make_user, login):
     code = inv["code"]
     assert inv["url"].endswith(f"/registro?c={code}")
     assert client.get(f"/api/invite/{code}").json() == {"valid": True}
-    r = client.post("/api/register", json={"code": code, "username": "laura", "name": "Laura", "password": "abc"})
+    r = client.post("/api/register", json={"code": code, "username": "laura", "name": "Laura", "password": "abc", "email": "laura@example.test"})
     assert r.status_code == 400 and "4 caracteres" in r.json()["detail"]
     r = client.post("/api/register", json={"code": code, "username": "laura", "name": "Laura Romero",
                                            "password": "otra-contraseña-larga"})
+    assert r.status_code == 400 and "correo" in r.json()["detail"]
+    r = client.post("/api/register", json={"code": code, "username": "laura", "name": "Laura Romero",
+                                           "password": "otra-contraseña-larga", "email": "laura@example.test"})
     assert r.status_code == 200
     assert client.get("/api/me").json()["user"]["username"] == "laura"
+    assert client.get("/api/me").json()["user"]["email"] == "laura@example.test"
     # de un solo uso
     assert client.get(f"/api/invite/{code}").json() == {"valid": False}
-    r = client.post("/api/register", json={"code": code, "username": "otro", "name": "Otro", "password": "otra-contraseña-larga"})
+    r = client.post("/api/register", json={"code": code, "username": "otro", "name": "Otro", "password": "otra-contraseña-larga", "email": "o@example.test"})
     assert r.status_code == 400
 
 
