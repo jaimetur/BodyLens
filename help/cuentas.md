@@ -24,7 +24,7 @@ Cada persona tiene su propia cuenta en BodyLens, con sus datos separados de los 
 Se abre desde el menú del perfil (arriba a la izquierda) → **Tu cuenta**.
 - **Nombre y apellidos** y **correo**: el correo recibe todos los avisos.
 - **Contraseña**: pide la actual; al cambiarla se cierran las sesiones de los demás dispositivos.
-- **Pareja**, **Importar datos** y **Datos**: ver [pareja](pareja.md), [importar](importar.md) y [sincronización](sincronizacion.md).
+- **Pareja** y **Sincronización**: ver [pareja](pareja.md) y [sincronización](sincronizacion.md). Importar copias está en Ajustes → Datos y copias ([importar](importar.md)).
 - **Administración**: solo para cuentas administradoras; ver [administración](administracion.md).
 
 ## Privacidad

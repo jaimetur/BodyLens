@@ -79,16 +79,6 @@
         <div class="row"><button class="ghost" id="sGo" type="button">Sincronizar ahora</button><span class="msg" id="sMsg"></span></div>
       </section>
 
-      <section class="card">
-        <h2>Importar datos</h2>
-        <p>El fichero <code>snap.json</code> o la «Copia completa (JSON)» de Ajustes → Datos y copias. Sustituye lo que tengas por lo de la copia (los registros de Salud se suman).</p>
-        <div class="fgrid">
-          <label>Fichero<input id="impFile" type="file" accept=".json,application/json"></label>
-          <label id="impWhoL" hidden>¿Qué datos de la copia son tuyos?<select id="impWho"></select></label>
-        </div>
-        <label class="check" id="impAllL" hidden><input id="impAll" type="checkbox"> Traer también los demás perfiles como perfiles de mi cuenta</label>
-        <div class="row"><button id="impGo" type="button" disabled>Importar</button><span class="msg" id="impMsg"></span></div>
-      </section>
     </div>
   </div>
 </main>
@@ -137,29 +127,6 @@ $('mGo').addEventListener('click', async () => {
     await api('POST', '/api/me/first', { username: $('mUser').value, name: $('mName').value, password: $('mPw').value });
     TOP.location.replace('/');
   } catch (e) { say($('mMsg'), e.message, 'err'); $('mGo').disabled = false; }
-});
-// importar una copia del artefacto
-let IMP = null;
-$('impFile').addEventListener('change', async () => {
-  IMP = null; $('impGo').disabled = true; $('impWhoL').hidden = $('impAllL').hidden = true; say($('impMsg'), '');
-  const f = $('impFile').files[0]; if (!f) return;
-  try { IMP = JSON.parse(await f.text()); } catch (e) { say($('impMsg'), 'El fichero no es un JSON válido.', 'err'); return; }
-  if (!IMP || typeof IMP !== 'object' || !('doc' in IMP || 'hist' in IMP)) { IMP = null; say($('impMsg'), 'No parece una copia de BodyLens.', 'err'); return; }
-  const names = {}; for (const p of (IMP.profs || [])) if (p && typeof p === 'object') names[p.id] = p.name;
-  const others = Object.keys(IMP.prof || {});
-  $('impWho').innerHTML = `<option value="">${esc(names[''] || 'El perfil principal')}</option>` + others.map(id => `<option value="${esc(id)}">${esc(names[id] || id)}</option>`).join('');
-  $('impWhoL').hidden = $('impAllL').hidden = !others.length; $('impAll').checked = false;
-  $('impGo').disabled = false; say($('impMsg'), 'Listo para importar.');
-});
-$('impWho').addEventListener('change', () => { $('impAllL').hidden = !!$('impWho').value; });
-$('impGo').addEventListener('click', async () => {
-  if (!IMP) return;
-  $('impGo').disabled = true; say($('impMsg'), 'Importando…');
-  try {
-    const r = await api('POST', '/api/import', { copy: IMP, profile: $('impWho').value || null, withProfiles: !$('impWho').value && $('impAll').checked });
-    say($('impMsg'), `Importados ${r.documents} documentos. Ábrelos en la app.`, 'ok');
-    try { for (const k of Object.keys(localStorage)) if (k.startsWith('bascula:')) localStorage.removeItem(k); } catch (e) { }
-  } catch (e) { say($('impMsg'), e.message, 'err'); } finally { $('impGo').disabled = false; }
 });
 document.addEventListener('click', async e => {
   const a = e.target.closest('[data-acc]'), r = e.target.closest('[data-rej]');

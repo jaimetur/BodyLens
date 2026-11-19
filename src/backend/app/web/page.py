@@ -44,9 +44,6 @@ REPLACEMENTS: list[tuple] = [
      "<p class=\"lead\">Los datos de la báscula y de Apple Salud llegan solos al servidor cada pocos minutos; con el botón de la nube de arriba se piden al momento. Las fuentes se ven en <a href=\"#cuenta\">Tu cuenta</a>.</p>"),
     ("<p class=\"foot\">Tus datos se guardan en el espacio de datos de esta app en Claude y están disponibles en el iPhone y en el Mac. Quien abra el enlace con sesión iniciada en claude.ai los ve al momento; sin sesión, ve la copia que lleva la página. Solo tú puedes cambiarlos o sincronizarlos.</p>",
      "<p class=\"foot\">Tus datos se guardan en tu cuenta de este servidor y solo los ves tú (lo de Ciclo e intimidad, también tu pareja si habéis unido las cuentas).</p>"),
-    # el fichero snap.json (copia de la página del artefacto) se importa en «Tu cuenta»
-    ("""box.innerHTML='<p class="lead" style="margin:0">Ese archivo no es una copia de seguridad de esta app.</p>'""",
-     """box.innerHTML='<p class="lead" style="margin:0">Ese archivo no es una «Copia completa» de esta app. Si es el fichero snap.json, impórtalo en <a href="#cuenta">Tu cuenta → Importar datos</a>.</p>'"""),
     # mensajes de descarga (aparecen dos veces)
     ("'Esta vista no permite descargar archivos. Abre la app en claude.ai.'", "'No se pudo preparar la descarga.'", 2),
 ]

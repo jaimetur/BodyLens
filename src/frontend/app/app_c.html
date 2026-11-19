@@ -1657,12 +1657,25 @@ $('bkAll').addEventListener('click',()=>{const msg=$('bkMsg');if(!DOC){msg.textC
   const data={app:'bascula',v:1,at:new Date().toISOString(),doc:DOC,hist:HIST,med:MED,act:ACT,slp:SLP,wo:WO,food:FOOD,hk:HK,ecg:ECG,hkev:HKEV,hklog:HKLOG,nap:NAP};
   download(`Bascula-copia-${d2k(new Date())}.json`,JSON.stringify(data),msg)});
 let BK_IN=null;
-$('bkFile').addEventListener('change',async e=>{const f=e.target.files&&e.target.files[0];const box=$('bkImp');e.target.value='';if(!f)return;
-  try{const d=JSON.parse(await f.text());if(!d||d.app!=='bascula'||!d.doc)throw new Error('formato');BK_IN=d;
-    box.innerHTML=`<p class="lead" style="margin:0">Copia del <b>${esc(new Date(d.at).toLocaleString('es-ES'))}</b>: ${BK_KEYS.map(([k,l])=>`${l} <b>${countYears(d[k]).toLocaleString('es-ES')}</b>`).join(' · ')} · Medidas <b>${Object.keys((d.med&&d.med.e)||{}).length}</b>.</p>
+// un solo importador para todas las copias: la «Copia completa (JSON)» de aquí y el snap.json de la página anterior
+// (que puede traer varios perfiles: se elige de quién son los datos)
+function bkShow(d){const box=$('bkImp');BK_IN=d;
+  box.innerHTML=`<p class="lead" style="margin:0">Copia del <b>${esc(new Date(d.at||Date.now()).toLocaleString('es-ES'))}</b>: ${BK_KEYS.map(([k,l])=>`${l} <b>${countYears(d[k]).toLocaleString('es-ES')}</b>`).join(' · ')} · Medidas <b>${Object.keys((d.med&&d.med.e)||{}).length}</b>.</p>
       <div class="row"><button class="btn" type="button" id="bkMerge">Combinar con lo actual</button><button class="btn danger" type="button" id="bkReplace">Reemplazar todo</button><button class="btn ghost" type="button" id="bkCancel">Cancelar</button></div>
       <p class="hint">«Combinar» añade lo que falte y, si un día está en los dos sitios, se queda el de la copia. «Reemplazar todo» deja tus datos exactamente como en la copia.</p>`;box.hidden=false}
-  catch(err){box.hidden=false;box.innerHTML='<p class="lead" style="margin:0">Ese archivo no es una copia de seguridad de esta app.</p>';BK_IN=null}});
+let BK_RAW=null;
+const bkOf=(src,at)=>({app:'bascula',v:1,at:at||src.at||Date.now(),doc:src.doc||{cfg:{}},hist:src.hist||{},med:src.med||{v:1,e:{}},act:src.act||{},slp:src.slp||{},wo:src.wo||{},food:src.food||{},hk:src.hk||{},ecg:src.ecg||{},hkev:src.hkev||{v:1,e:[]},hklog:src.hklog||{v:1,e:[]},nap:src.nap||{}});
+$('bkFile').addEventListener('change',async e=>{const f=e.target.files&&e.target.files[0];const box=$('bkImp');e.target.value='';if(!f)return;
+  try{const d=JSON.parse(await f.text());if(!d||typeof d!=='object'||(!d.doc&&!d.hist))throw new Error('formato');
+    const others=Object.keys(d.prof||{}).filter(id=>d.prof[id]&&typeof d.prof[id]==='object');
+    if(!others.length){bkShow(d.app==='bascula'?d:bkOf(d,d.at));return}
+    // snap.json con varios perfiles: de quién son los datos
+    BK_RAW=d;BK_IN=null;const names={};for(const p of (d.profs||[]))if(p&&typeof p==='object')names[p.id]=p.name;
+    box.innerHTML=`<p class="lead" style="margin:0">Esta copia trae varios perfiles. ¿De quién son los datos que importas en tu cuenta?</p>
+      <div class="row">${['',...others].map(id=>`<button class="btn ghost" type="button" data-bkprof="${esc(id)}">${esc(names[id]||(id?id:'Perfil principal'))}</button>`).join('')}<button class="btn ghost" type="button" id="bkCancel">Cancelar</button></div>`;box.hidden=false}
+  catch(err){box.hidden=false;box.innerHTML='<p class="lead" style="margin:0">Ese archivo no es una copia de BodyLens: tiene que ser la «Copia completa (JSON)» de aquí o el fichero snap.json.</p>';BK_IN=null}});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-bkprof]');if(!b||!BK_RAW)return;const id=b.dataset.bkprof,d=BK_RAW;BK_RAW=null;
+  bkShow(bkOf(id?d.prof[id]:d,d.at))});
 function bkApply(mode){const d=BK_IN;if(!d)return;const cp=x=>JSON.parse(JSON.stringify(x||{}));
   const mergeY=(cur,inc)=>{const out=cp(cur);for(const [y,Y] of Object.entries(inc||{})){out[y]=out[y]||{y:+y,d:{}};out[y]={...out[y],...Y,d:{...(out[y].d||{}),...((Y&&Y.d)||{})}}}return out};
   if(mode==='replace'){HIST=cp(d.hist);ACT=cp(d.act);SLP=cp(d.slp);WO=cp(d.wo);FOOD=cp(d.food);HK=cp(d.hk);ECG=cp(d.ecg);NAP=cp(d.nap);HKEV=d.hkev?cp(d.hkev):{v:1,e:[]};HKLOG=d.hklog?cp(d.hklog):{v:1,e:[]};MED=cp(d.med&&d.med.e?d.med:{v:1,e:{}})}
@@ -1671,7 +1684,7 @@ function bkApply(mode){const d=BK_IN;if(!d)return;const cp=x=>JSON.parse(JSON.st
   // a tu cuenta: todos los documentos
   if(col){for(const [p,S] of [['hist',HIST],['act',ACT],['slp',SLP],['wo',WO],['com',FOOD],['hk',HK],['ecg',ECG],['nap',NAP]])for(const y of Object.keys(S))enqueue(p+'-'+y,S[y]);enqueue('medidas',MED);enqueue('hkev',HKEV);enqueue('hklog',HKLOG)}
   saveMain({...doc,lastSync:Date.now()});BK_IN=null;$('bkImp').innerHTML=`<p class="lead" style="margin:0">Copia importada (${mode==='replace'?'reemplazando':'combinando'}). Ya se está guardando en tu cuenta.</p>`}
-document.addEventListener('click',e=>{if(e.target.id==='bkMerge')bkApply('merge');else if(e.target.id==='bkReplace'){e.target.outerHTML='<button class="btn danger" type="button" id="bkReplaceOk">Sí, reemplazar todo</button>'}else if(e.target.id==='bkReplaceOk')bkApply('replace');else if(e.target.id==='bkCancel'){BK_IN=null;$('bkImp').hidden=true}});
+document.addEventListener('click',e=>{if(e.target.id==='bkMerge')bkApply('merge');else if(e.target.id==='bkReplace'){e.target.outerHTML='<button class="btn danger" type="button" id="bkReplaceOk">Sí, reemplazar todo</button>'}else if(e.target.id==='bkReplaceOk')bkApply('replace');else if(e.target.id==='bkCancel'){BK_IN=null;BK_RAW=null;$('bkImp').hidden=true}});
 $('bkBtn').addEventListener('click',()=>{const msg=$('bkMsg');if(!M||M.empty){msg.textContent='Todavía no hay datos.';return}
   const src={w:'withings',c:'hoja de control',h:'hoja 2013',m:'manual'};const f=(x,d)=>x==null?'':x.toFixed(d);
   const csv=['fecha,peso_kg,grasa_pct,masa_grasa_kg,musculo_kg,masa_magra_kg,agua_kg,hueso_kg,imc,origen'].concat(M.all.map(p=>[p.k,f(p.kg,2),f(p.fp,1),f(p.fm,2),f(p.mu,2),f(p.lean,2),f(p.wa,2),f(p.bo,2),f(p.bmi,1),src[p.src]||p.src].join(','))).join('\n');

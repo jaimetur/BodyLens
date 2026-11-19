@@ -20,7 +20,7 @@ Un fichero por módulo. Las secciones de la app son las de la barra de navegaci�
 |---|---|
 | [Cuentas y acceso](cuentas.md) | Entrar, pedir una cuenta, invitaciones, primera entrada y «Tu cuenta» |
 | [Pareja](pareja.md) | Unir dos cuentas para compartir ciclo e intimidad |
-| [Importar datos](importar.md) | Traer `snap.json` o una copia completa a tu cuenta |
+| [Importar datos](importar.md) | Traer `snap.json` o una copia completa (Ajustes → Datos y copias) |
 | [Sincronización](sincronizacion.md) | Cómo llegan solos los datos de Withings y Apple Salud |
 | [Administración](administracion.md) | Peticiones de acceso, invitaciones, fuentes de cada cuenta y correo |
 
