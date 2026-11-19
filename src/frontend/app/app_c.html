@@ -2932,7 +2932,7 @@ function cycleCalc(log){const cy=cycleInfo(log);if(!cy)return null;const per=cy.
 const fK=k=>`${+k.slice(8)} ${MS[+k.slice(5,7)-1]}`,dd=(a,b)=>{const n=diffK(a,b);return n===0?'hoy':n===1?'mañana':n>1?`en ${n} días`:n===-1?'ayer':`hace ${-n} días`};
 
 /* ---------- Íntimo → Estado de ánimo (State of Mind de Apple Salud vía Health Auto Export, o apuntado aquí) ---------- */
-let moodRange=UI.moodRange??91,MOOD_M=null;
+let moodRange=UI.moodRange??91,MOOD_M=null,MOOD_AT=null;
 RANGE_VIEWS.intimo={opts:RANGE_OPTS,get:()=>moodRange,set:v=>{moodRange=v;UI.moodRange=v;saveUI()},when:()=>curTab('intimo')==='animo'&&privOK()};
 const MOOD_LV=[[-1,'Muy desagradable'],[-.71,'Desagradable'],[-.43,'Algo desagradable'],[-.14,'Neutral'],[.14,'Algo agradable'],[.43,'Agradable'],[.71,'Muy agradable']];
 const moodLv=v=>{let i=0;for(let j=0;j<MOOD_LV.length;j++)if(v>=MOOD_LV[j][0]-1e-9)i=j;return i};// 0…6
@@ -2964,7 +2964,10 @@ function renderMood(){const host=$('intMood');if(!host)return;const today=d2k(ne
   const PL=R?({7:'la última semana',30:'el último mes',91:'los últimos 3 meses',182:'los últimos 6 meses',365:'el último año'})[R]||`los últimos ${R} días`:'todo tu historial';
   // 1. cómo estás + apuntar
   const last=all[all.length-1];
-  const quick=OWNER?`<div class="mdq"><h3 class="lgs-t">¿Cómo te sientes ahora?</h3><div class="mdq-r">${MOOD_LV.map(([v,l],i)=>{const val=[-1,-.67,-.33,0,.33,.67,1][i];return `<button type="button" data-moodadd="${val}" title="${l}" aria-label="${l}">${moodFace(val,38)}<small>${l.replace('Algo ','Algo ')}</small></button>`}).join('')}</div></div>`:'';
+  // se puede apuntar para otro momento (un día pasado): fecha y hora, o tocando un día del calendario
+  const nowAt=(n=>`${d2k(n)}T${pad(n.getHours())}:${pad(n.getMinutes())}`)(new Date());
+  const at=MOOD_AT&&MOOD_AT<nowAt?MOOD_AT:null;
+  const quick=OWNER?`<div class="mdq" id="moodQuick"><h3 class="lgs-t">${at?`¿Cómo te sentías el ${fK(at.slice(0,10))}?`:'¿Cómo te sientes ahora?'}</h3><div class="mdq-at"><label>Cuándo <input type="datetime-local" data-moodat value="${at||nowAt}" max="${nowAt}"></label>${at?'<button type="button" class="btn ghost" data-moodnow>Ahora</button>':''}</div><div class="mdq-r">${MOOD_LV.map(([v,l],i)=>{const val=[-1,-.67,-.33,0,.33,.67,1][i];return `<button type="button" data-moodadd="${val}" title="${l}" aria-label="${l}">${moodFace(val,38)}<small>${l.replace('Algo ','Algo ')}</small></button>`}).join('')}</div></div>`:'';
   let h=`<h2>Estado de ánimo</h2>`;
   if(last){h+=`<div class="fdh mdnow"><div class="mdface">${moodFace(last.v,84)}</div><div class="fdbig"><div class="nlbl">${last.day?'Tu día':'Último momento'} · ${fK(last.k)}${last.t.slice(11,16)!=='00:00'?', '+last.t.slice(11,16):''}</div><div class="nbig" style="font-size:1.6rem">${moodWord(last.v,last.c)}</div>
       ${last.l.length?`<div class="mdchips">${last.l.map(x=>`<span>${esc(moodEs(x))}</span>`).join('')}</div>`:''}${last.a.length?`<div class="nsub">Por: ${last.a.map(x=>esc(moodEs(x).toLowerCase())).join(', ')}</div>`:''}</div></div>`}
@@ -2986,7 +2989,7 @@ function renderMood(){const host=$('intMood');if(!host)return;const today=d2k(ne
     vFmt:v=>sgn(v,1)+' · '+moodWord(v/3),yStep:1,yFmt:v=>sgn(v,0),minPad:.2,tipTitle:k=>`${DS[dowIdx(k)]} ${fmtK(k,true)}`,empty:'Sin estados de ánimo en este periodo.'});
   // 4. calendario
   const m0=MOOD_M||today.slice(0,7),first=m0+'-01',dow=dowIdx(first),dim=new Date(+m0.slice(0,4),+m0.slice(5,7),0).getDate();let cells='';for(let i=0;i<dow;i++)cells+='<i></i>';
-  for(let d=1;d<=dim;d++){const k=m0+'-'+pad(d),v=days[k];cells+=`<i class="${k===today?'t':''}${v!=null?' md':''}"${v!=null?` style="background:${moodCol(v)}" title="${moodWord(v)}"`:''}>${d}</i>`}
+  for(let d=1;d<=dim;d++){const k=m0+'-'+pad(d),v=days[k];cells+=`<i class="${k===today?'t':''}${v!=null?' md':''}${OWNER&&k<=today?' mdpick':''}"${OWNER&&k<=today?` data-moodday="${k}" role="button" tabindex="0"`:''}${v!=null?` style="background:${moodCol(v)}" title="${moodWord(v)}"`:OWNER&&k<=today?' title="Apuntar el ánimo de este día"':''}>${d}</i>`}
   const mo=n=>{const d=new Date(+m0.slice(0,4),+m0.slice(5,7)-1+n,1);return d2k(d).slice(0,7)};
   $('intMoodCal').innerHTML=`<h2>Calendario</h2><div class="pbnav"><button type="button" class="fnav" data-moodm="${mo(-1)}" aria-label="Mes anterior">‹</button><b>${MSL[+m0.slice(5,7)-1]} ${m0.slice(0,4)}</b><button type="button" class="fnav" data-moodm="${mo(1)}" ${mo(1)>today.slice(0,7)?'disabled':''} aria-label="Mes siguiente">›</button></div>
     <div class="ccal mdcal">${DS.map(d=>`<b>${d}</b>`).join('')}${cells}</div><div class="legend ccl">${[-1,-.5,0,.5,1].map(v=>`<span><i class="sw" style="background:${moodCol(v)}"></i>${moodWord(v)}</span>`).join('')}</div>`;
@@ -3085,8 +3088,12 @@ function renderMood(){const host=$('intMood');if(!host)return;const today=d2k(ne
   $('intMoodBad').innerHTML+=wTxt?`<h3 class="lgs-t">Y después</h3>${wTxt}`:'';
   // 7. últimos registros
   $('intMoodList').innerHTML=`<h2>Últimos registros</h2><div class="alrt">${all.slice(-15).reverse().map(m=>`<div><i style="background:${moodCol(m.v)}"></i><span><b>${moodWord(m.v,m.c)}${m.day?' · día':''}</b><small>${fmtK(m.k,true)}${m.t.slice(11,16)!=='00:00'?', '+m.t.slice(11,16):''}${m.l.length?' · '+m.l.map(x=>esc(moodEs(x).toLowerCase())).join(', '):''}${m.a.length?' · por '+m.a.map(x=>esc(moodEs(x).toLowerCase())).join(', '):''}</small></span><em>${m.src==='app'&&OWNER?`<button type="button" class="lgdel" data-lgdel="${esc('mood|'+m.t)}" aria-label="Borrar">${ICB.x}</button>`:''}</em></div>`).join('')}</div>`}
+document.addEventListener('change',e=>{if(e.target.matches('[data-moodat]')){MOOD_AT=e.target.value||null;renderMood()}});
+document.addEventListener('keydown',e=>{const md=e.target.closest&&e.target.closest('[data-moodday]');if(md&&(e.key==='Enter'||e.key===' ')){e.preventDefault();md.click()}});
 document.addEventListener('click',e=>{const m=e.target.closest('[data-moodm]');if(m){MOOD_M=m.dataset.moodm;renderMood();return}
-  const a=e.target.closest('[data-moodadd]');if(a&&OWNER){const v=+a.dataset.moodadd,n=new Date(),s=`${d2k(n)} ${pad(n.getHours())}:${pad(n.getMinutes())}`;
+  const md=e.target.closest('[data-moodday]');if(md&&OWNER){MOOD_AT=md.dataset.moodday+'T12:00';renderMood();const q=$('moodQuick');if(q)q.scrollIntoView({behavior:'smooth',block:'center'});return}
+  if(e.target.closest('[data-moodnow]')){MOOD_AT=null;renderMood();return}
+  const a=e.target.closest('[data-moodadd]');if(a&&OWNER){const v=+a.dataset.moodadd,n=new Date(),s=MOOD_AT&&MOOD_AT<`${d2k(n)}T${pad(n.getHours())}:${pad(n.getMinutes())}`?MOOD_AT.replace('T',' '):`${d2k(n)} ${pad(n.getHours())}:${pad(n.getMinutes())}`;
     HKLOG=mergeEv(HKLOG,{e:[['mood',s,s,JSON.stringify({v,k:'momentaryEmotion'}),'app']]});saveLocal();if(col)enqueue('hklog',HKLOG);toast('Apuntado: '+moodWord(v));renderView()}});
 
 function renderIntimo(){const locked=!privOK();for(const id of ['intHist','intSex','intLog','intLock','intMood','intMoodKv','intMoodEvo','intMoodCal','intMoodWhat','intMoodRel','intMoodProf','intMoodBad','intMoodList'])$(id).hidden=locked;
