@@ -1,4 +1,4 @@
-<!-- en: 3b6e1f3520d2aa1a -->
+<!-- en: 0c4f02ac7aaee7b2 -->
 # Actividad
 
 Sirve para ver cuánto te mueves: pasos, calorías activas, minutos de ejercicio, frecuencia cardiaca y entrenamientos, y cómo se relacionan con tu peso.
@@ -8,6 +8,14 @@ Sirve para ver cuánto te mueves: pasos, calorías activas, minutos de ejercicio
 - La actividad diaria, los entrenamientos y la frecuencia cardiaca vienen sobre todo de **Apple Salud** (iPhone, a través de Health Auto Export) o de **Android** (Health Connect, a través de la app de BodyLens). Android envía pasos, distancia, pisos, calorías activas, entrenamientos, frecuencia cardiaca y frecuencia cardiaca en reposo.
 - **Withings** (reloj o báscula) rellena los huecos: días sin datos de Salud y campos que Salud no ofrece.
 - Si un entrenamiento está en las dos fuentes, se queda el de Apple Salud / Android.
+
+## Apuntar a mano
+
+Si no llevas reloj ni conectas el móvil, puedes llevar tu actividad a mano:
+
+- **Apuntar actividad a mano** (pestaña Hoy): fecha, pasos, minutos de ejercicio y calorías activas (rellena lo que sepas). Una entrada por día; si vuelves a apuntar el mismo día, se sustituye.
+- **Apuntar entrenamiento a mano** (pestaña Entrenamientos): fecha, hora de inicio, tipo (con sugerencias), duración y, si quieres, calorías y distancia.
+- Cada tarjeta lista lo que has apuntado, con **Quitar**. Si después llegan datos de tus fuentes para ese día, mandan los de las fuentes; un día que ya tiene datos de tus fuentes no se puede apuntar a mano.
 
 ## Pestañas
 

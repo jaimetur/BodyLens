@@ -1,4 +1,4 @@
-<!-- en: 97baf2cf1ab12e56 -->
+<!-- en: d692dd35b3517827 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -28,7 +28,7 @@
 - **Parejas:** dos cuentas se pueden unir para compartir y editar juntas los registros de ciclo e intimidad. Invitas a tu pareja con su usuario o su correo desde Tu cuenta → Cuenta → Pareja; le llega un correo con la invitación (si no hay ninguna cuenta con ese usuario o correo, te lo dice al momento) y a ti otro cuando la acepta. Un perfil de la app se puede mover a la cuenta propia de esa persona.
 - **Tu cuenta:**
   - **Cuenta:** perfil, correo, idioma y contraseña, pareja, fuentes de datos, sincronización e importación.
-  - **Perfiles:** niveles de acceso a los datos de tu cuenta (todos los perfiles ven los mismos datos), explicados en el propio panel. A cada perfil, también al principal, se le pueden dar solo los módulos que elijas, con fichas como en DriveTest Analyzer; en el menú solo ve esos. Los módulos incluyen Objetivos, plan y comidas, Tu cuenta y, en administradores, Administración; al menos un perfil tiene que tener esos, y los demás pueden tener los módulos que quieras. Los perfiles ya no tienen pareja ni ciclo propios.
+  - **Perfiles:** niveles de acceso a los datos de tu cuenta (todos los perfiles ven los mismos datos), explicados en el propio panel. A cada perfil, también al principal, se le pueden dar solo los módulos que elijas, con fichas como en DriveTest Analyzer; en el menú solo ve esos. Los módulos incluyen Objetivos, plan y comidas, Tu cuenta (que también abre Perfiles y Datos y copias) y, en administradores, Administración; al menos un perfil tiene que tener esos, y los demás pueden tener los módulos que quieras. Los perfiles ya no tienen pareja ni ciclo propios.
   - **El PIN decide el perfil:** el PIN que se escribe en la pantalla de bloqueo abre el perfil que lo tiene; si varios perfiles comparten PIN, al entrar con él se ven los módulos de todos (el panel avisa cuando pones un PIN que ya usa otro perfil). Desaparece el PIN privado aparte para Ciclo e intimidad: Íntimo es un módulo como los demás, y un perfil solo exporta a PDF los módulos que tiene.
   - **Orden y perfil principal:** los perfiles se ordenan arrastrando su asa ⋮⋮; el primero es el perfil principal. Al abrir la app se entra en el perfil principal si no tiene PIN; si lo tiene, se pide y el PIN que se escriba decide el perfil. Un perfil con PIN se bloquea solo tras 1 minuto sin actividad, y cada perfil se reabre en la sección y las pestañas que tenía abiertas. En el móvil, la barra de abajo muestra las secciones más grandes cuando el perfil tiene menos.
   - **Datos personales** (altura, sexo, fecha de nacimiento) es un panel de la pestaña **Cuenta**, debajo de Contraseña.
@@ -75,6 +75,7 @@
   - El registro del día muestra arriba las últimas 4 semanas (de lunes a domingo) en lugar de una sola; las flechas saltan 4 semanas.
 - **Correo:** el servidor saluda al servidor de correo con su nombre público en vez de con la dirección privada del contenedor, que los filtros de spam penalizan.
 - **Panel de perfiles:** cada fila se adapta al ancho del panel, así que los botones de PIN ya no quedan fuera de la vista.
+- **Entrada manual en todos los módulos:** la tarjeta de pesada manual está en Peso (también cuando aún no hay pesadas, en vez de una página vacía); Actividad tiene tarjetas para apuntar a mano la actividad del día (pasos, minutos de ejercicio, calorías activas) y los entrenamientos; Sueño, una para apuntar a mano cualquier noche. Los datos de tus fuentes para el mismo día mandan. Las medidas, las comidas, el ánimo y los registros personales ya se podían apuntar a mano.
 - **Android al mismo nivel que el iPhone:** todas las pantallas, avisos y mensajes de «sin datos» que solo hablaban de Apple Salud / Health Auto Export explican también el camino de Android (Health Connect con la app de BodyLens), con la misma dirección de envío para los dos.
 - **Ánimo:** se pueden registrar ánimos pasados, con fecha y hora o tocando el día en el calendario.
 - **Historial** pasa a llamarse **Historial de pesos**.

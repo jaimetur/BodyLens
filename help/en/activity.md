@@ -8,6 +8,14 @@ Use it to see how much you move: steps, active calories, exercise minutes, heart
 - **Withings** (watch or scale) fills the gaps: days without Health data and fields that Health does not provide.
 - If a workout is in both sources, the Apple Health / Android one is kept.
 
+## Logging by hand
+
+If you do not wear a watch or connect your phone, you can keep your activity by hand:
+
+- **Log activity by hand** (Today tab): date, steps, exercise minutes and active calories (fill in what you know). One entry per day; logging the same day again replaces it.
+- **Log a workout by hand** (Workouts tab): date, start time, type (with suggestions), duration and, optionally, calories and distance.
+- Each card lists what you logged, with **Remove**. If data for that day arrives later from your sources, the sources' data takes precedence; a day that already has data from your sources cannot be logged by hand.
+
 ## Tabs
 
 - **Today**, **Progress**, **Workouts** and **Analysis**. The app remembers the last one you opened.

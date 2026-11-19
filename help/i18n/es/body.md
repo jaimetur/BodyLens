@@ -1,4 +1,4 @@
-<!-- en: 54530c5dfcea6c1d -->
+<!-- en: 0159245ccc4fa179 -->
 # Cuerpo
 
 Reúne todo lo que describe tu cuerpo en cuatro secciones: la composición que mide la báscula, las medidas con cinta, el corazón y la forma física, y el bienestar (síntomas y hábitos).
@@ -31,7 +31,7 @@ Composición corporal medida por la báscula: grasa, músculo, hueso y agua.
 - **Calidad de la pérdida (gráfico)**: cambio acumulado de la masa grasa y de la masa magra desde el inicio del plan.
 - **Zonas**: IMC (clasificación de la OMS), % de grasa (rangos de Gallagher et al., 2000, por sexo y franja de edad) e índice de masa magra, cada uno en una barra con tu posición.
 - **Mes a mes**: tabla con la mediana mensual de peso, grasa, masa grasa, músculo, masa magra, agua y hueso (hasta 24 meses).
-- **Nueva pesada manual**: fecha, peso y, si quieres, grasa, músculo, agua y hueso. Si más tarde llega una pesada de la báscula para ese día, prevalece la de la báscula. Debajo se listan las pesadas manuales con **Editar** y **Quitar**.
+- **＋ Añadir pesada manual**: te lleva a la tarjeta «Nueva pesada manual», que está en Peso.
 
 ### Reglas
 - Necesitas indicar tu **altura**, **sexo** y **fecha de nacimiento** en Tu cuenta → Cuenta → Datos personales para ver el IMC, el índice de masa magra y los rangos ajustados a tu edad. Sin ellos, se usan valores genéricos o se te pide que los indiques.

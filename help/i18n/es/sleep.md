@@ -1,4 +1,4 @@
-<!-- en: 9deb6c2fd63c6ae7 -->
+<!-- en: cfb47a7a3c1a4757 -->
 # Sueño
 
 Sirve para ver cómo duermes: la última noche, tu saldo de sueño, la evolución, el horario y el análisis. Incluye siestas, fases del sueño y comparaciones con tu peso.
@@ -12,6 +12,11 @@ Sirve para ver cómo duermes: la última noche, tu saldo de sueño, la evolució
 - **Origen de la noche**: horario, tiempo dormido y desvelos de AutoSleep si lo hay; si no, del Apple Watch; si no, de la fuente con más sueño. Si el reloj registra claramente más sueño que AutoSleep, prevalece el reloj. Las fases (profundo y REM) vienen del reloj.
 - **Siestas**: episodios de al menos 10 minutos fuera de la noche. En la tarjeta de siestas, el día va de las 20:00 del día anterior a las 20:00.
 - Si Salud reenvía una noche (por ejemplo, AutoSleep la rehace al despertarte), la última versión sustituye a la anterior.
+
+## Apuntar a mano
+
+- **Apuntar una noche a mano** (pestaña Noche): el día en que te levantas, la hora a la que te acostaste y la de levantarte. La noche tiene que durar entre 30 min y 20 h. La tarjeta lista las noches que has apuntado, con **Quitar**.
+- Si después llega esa noche de tus fuentes, manda la de las fuentes; una noche que ya tiene datos no se puede apuntar a mano.
 
 ## Pestañas
 

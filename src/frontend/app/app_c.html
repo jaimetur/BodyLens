@@ -301,7 +301,8 @@ $('tabNav').innerHTML=VIEWS.filter(([id])=>id!=='ajustes'&&!SUBV[id]&&!SRV_V.som
 let VIEW='resumen';
 let BACK=null,BACK_Y=0,CUR_Y=0;addEventListener('scroll',()=>{if(VIEW!=='ajustes')CUR_Y=scrollY},{passive:true});
 function route(){const h=(location.hash||'').slice(1);const prevV=VIEW;VIEW=VIEWS.some(([id])=>id===h)&&(h!=='ajustes'||!document.body.classList.contains('viewer'))&&(h!=='intimo'||applyIntimoVis())?h:'resumen';
-  if(!modAllowed(VIEW)){const f=MODS.find(([id])=>modAllowed(id));VIEW=f?f[0]:(SRV_V.length?'help':'resumen')}applyModVis();
+  // the Profiles and Data and backups tabs of «Tu cuenta» live in the ajustes view: the «Tu cuenta» module opens them
+  if(!modAllowed(VIEW)&&!(VIEW==='ajustes'&&modAllowed('cuenta'))){const f=MODS.find(([id])=>modAllowed(id));VIEW=f?f[0]:(SRV_V.length?'help':'resumen')}applyModVis();
   if(VIEW==='intimo'&&prevV!=='intimo'&&!privOK())setTimeout(()=>{if(VIEW==='intimo'&&!privOK()&&!LOCK&&unlocked(PROF()))showLock(PROF(),null,'priv')},60);
   for(const [id] of VIEWS){$('v-'+id).hidden=id!==VIEW}
   // Medidas cuelga de Cuerpo en la barra del móvil
@@ -684,7 +685,7 @@ function renderWeekly(){const host=$('chWk');const g={};for(const p of M.all){co
 $('rngWk').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;wkRange=+b.dataset.r;UI.wkRange=wkRange;saveUI();if(M&&!M.empty)renderWeekly()});
 
 /* ---------- panel principal de Peso: dónde estás, cómo vas frente al plan y cuánto te queda ---------- */
-function renderPesoDash(){const host=$('pesoDash');if(!host)return;if(!M||M.empty){host.innerHTML=emptyBox('Aún no hay pesadas.');return}
+function renderPesoDash(){const host=$('pesoDash');if(!host)return;if(!M||M.empty){host.innerHTML=emptyBox('Aún no hay pesadas. Llegan solas de la báscula Withings, o apúntalas a mano en «Nueva pesada manual», aquí debajo.');return}
   const {cfg,last,prev,lastK,tNow,trendAt,plan,hasPlan,r28,milestones,stats,all}=M;const start=cfg.start,goal=cfg.goal,span=Math.max(0.1,start-goal);
   const lost=start-tNow,left=Math.max(0,tNow-goal),prog=Math.max(0,Math.min(1,lost/span));
   const planNow=hasPlan?planAt(plan,lastK):null,planProg=planNow!=null?Math.max(0,Math.min(1,(start-planNow)/span)):0,vp=planNow!=null?tNow-planNow:null;
@@ -725,7 +726,7 @@ function renderPesoDash(){const host=$('pesoDash');if(!host)return;if(!M||M.empt
       ${fat!=null?`<div class="nst"><small>Grasa corporal</small><b>${fmtN(fat,1)} %</b><em>${stats.grasaKg?fmtN(stats.grasaKg.v,1)+' kg de grasa':''}</em></div>`:''}
     </div>`}
 function renderPeso(){
-  renderPesoDash();renderMain();renderWeekly();
+  renderQuickManual();renderPesoDash();renderMain();renderWeekly();
   const {r28,r14,tNow,lastK,plan,cfg,noise,win30,streak,bestW,eta,milestones,minPlan}=M;
   const nd=needed();const next=milestones.find(m=>!m.hitK);const goalEta=eta(cfg.goal);
   const vp=M.hasPlan?tNow-planAt(plan,lastK):null;
@@ -1597,7 +1598,9 @@ g.fillStyle=getComputedStyle(document.body).backgroundColor;g.fillRect(0,0,W,H);
 // Ajustes por categorías: se recuerda la última abierta
 let AJT=UI.ajTab&&UI.ajTab!=='perfil'&&UI.ajTab!=='perfiles'?UI.ajTab:'plan';if(AJT==='perfil')AJT='plan';
 const AJ_PF=['perfiles','perfil'];
-function showAj(cat){if(!document.querySelector(`#ajTabs [data-ajt="${cat}"]`))cat='plan';AJT=cat;const pf=AJ_PF.includes(cat);if(pf)UI.ajTabPf=cat;else UI.ajTab=cat;saveUI();document.querySelectorAll('#ajTabs [data-ajt]').forEach(b=>{const on=b.dataset.ajt===cat;b.hidden=(b.dataset.ajm==='pf')!==pf;b.classList.toggle('on',on);b.setAttribute('aria-selected',on)});
+function showAj(cat){if(!document.querySelector(`#ajTabs [data-ajt="${cat}"]`))cat='plan';
+  if(!AJ_PF.includes(cat)&&!modAllowed('ajustes')&&modAllowed('cuenta'))cat=AJ_PF.includes(UI.ajTabPf)?UI.ajTabPf:AJ_PF[0];
+  else if(AJ_PF.includes(cat)&&!modAllowed('cuenta')&&modAllowed('ajustes'))cat='plan';AJT=cat;const pf=AJ_PF.includes(cat);if(pf)UI.ajTabPf=cat;else UI.ajTab=cat;saveUI();document.querySelectorAll('#ajTabs [data-ajt]').forEach(b=>{const on=b.dataset.ajt===cat;b.hidden=(b.dataset.ajm==='pf')!==pf;b.classList.toggle('on',on);b.setAttribute('aria-selected',on)});
   if(VIEW==='ajustes')$('viewTitle').textContent=pf?'Perfiles':$('v-ajustes').dataset.title;
   document.querySelectorAll('#v-ajustes [data-ajc]').forEach(s=>{s.hidden=s.dataset.ajc!==cat});ajNavMark()}
 $('ajTabs').addEventListener('click',e=>{const b=e.target.closest('[data-ajt]');if(b){showAj(b.dataset.ajt);scrollTo({top:0})}});
@@ -1925,6 +1928,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-schw]');if
 /* ---------- vista Actividad ---------- */
 const lifeEmpty=(ids,t)=>{for(const id of ids)$(id).innerHTML=emptyBox(t+'<br><a href="#cuenta" class="lnk" data-gosrc>Conectar fuentes de datos ›</a>')};
 function renderActividad(){
+  renderManualLife();
   const L=LIFE;const ids=['chSteps','chMin','chStepsDow','chActW','woTypes','chHr','woList','dayCard','actWeek','chWoWk','chWoDow','actRec','actGoals','chStepsHist','actMonths'];
   if(!L||!L.hasAct){$('actKv').innerHTML='';$('stepsLead').textContent='';lifeEmpty(ids,'Aún no hay datos de actividad. Llegan solos de Apple Salud, Android o Withings: conéctalos en Tu cuenta → Fuentes de datos.');return}
   renderDay(L);
@@ -2263,6 +2267,7 @@ function renderSleepHist(L){const all=L.slp.filter(s=>s.asleep);if(!all.length){
 document.addEventListener('click',e=>{const b=e.target.closest('#shTabs [data-shm]');if(!b)return;SHM=b.dataset.shm;UI.shm=SHM;saveUI();if(LIFE)renderSleepHist(LIFE)});
 
 function renderSueno(){
+  renderManualLife();
   const L=LIFE;const ids=['chSlp','chSched','chPh','chSlpDow','chSlpW','chSlpTr','chClockTr','slpCal','chSlpHist','slpWk','chPhPct','nightCard'];
   if(!L||!L.hasSlp){$('slpKv').innerHTML='';$('slpLead').textContent='';$('slpWTxt').textContent='';lifeEmpty(ids,'Aún no hay noches registradas. El sueño llega solo de Apple Salud (Apple Watch, AutoSleep), Android o Withings: conéctalos en Tu cuenta → Fuentes de datos.');return}
   const W=lifeWin(L.slp,slpRange),rows=W.rows,prev=W.prev;const av=(a,f)=>mean(a.map(f));
@@ -2816,6 +2821,41 @@ document.addEventListener('click',e=>{const a=e.target.closest('[data-slpadd]');
   const sv=e.target.closest('[data-slpsave]');if(sv){const b=(document.getElementById('slpEdBed')||{}).value,w=(document.getElementById('slpEdWake')||{}).value;
     if(!b||!w){toast('Pon la hora a la que te acostaste y la de levantarte');return}const k=sv.dataset.slpsave;SLP_ED=null;const r=slpManual(k,b,w);if(r==='dur'){SLP_ED=k;toast('Revisa las horas: la noche tiene que durar entre 30 min y 20 h');return}if(r!==true)renderView();toast('Noche apuntada');return}
   const dl=e.target.closest('[data-slpdel]');if(dl){SLP_ED=null;if(slpManual(dl.dataset.slpdel,null)!==true)renderView();toast('Noche borrada')}});
+/* ---------- manual entry: the day's activity, workouts and nights (for those without a watch or a connected phone) ---------- */
+const numOf=id=>{const v=String($(id).value).replace(',','.').trim();return v===''?null:parseFloat(v)};
+function putYearly(store,pre,y,d){store[y]={...(store[y]||{}),y:+y,d};saveLocal();if(col)enqueue(pre+y,store[y]);refresh()}
+function manRows(S,f){const out=[];for(const y of Object.keys(S||{}))for(const [k,v] of Object.entries((S[y]||{}).d||{}))if(Array.isArray(v)&&f(v))out.push([k,v]);return out}
+function renderManualLife(){if(!$('maList'))return;const today=d2k(new Date());for(const id of ['maDate','mwDate','msDate'])if(!$(id).value)$(id).value=today;
+  const act=manRows(ACT,v=>v[ACT_COLS.length]==='m').sort((a,b)=>a[0]<b[0]?1:-1).slice(0,30);
+  $('maList').innerHTML=act.map(([k,v])=>`<div class="it"><span>${fmtK(k,true)}${v[0]!=null?` · <b class="num">${fmtInt(v[0])}</b> pasos`:''}${v[4]!=null?` · ${fmtInt(v[4])} min`:''}${v[6]!=null?` · ${fmtInt(v[6])} kcal`:''}</span><span class="owner-only"><button type="button" data-madel="${k}">Quitar</button></span></div>`).join('');
+  const wo=manRows(WO,v=>v[WO_COLS.length]==='m').sort((a,b)=>a[1][0]<b[1][0]?1:a[1][0]>b[1][0]?-1:(b[1][1]||0)-(a[1][1]||0)).slice(0,30);
+  $('mwList').innerHTML=wo.map(([id,v])=>`<div class="it"><span>${fmtK(v[0],true)}${v[1]!=null?' · '+fmtClock(v[1]):''} · <b>${esc(v[3]||'Otro')}</b> · ${fmtDur(v[2])}${v[4]?` · ${fmtInt(v[4])} kcal`:''}</span><span class="owner-only"><button type="button" data-mwdel="${esc(id)}">Quitar</button></span></div>`).join('');
+  const sl=manRows(SLP,v=>v[12]==='m').sort((a,b)=>a[0]<b[0]?1:-1).slice(0,30);
+  $('msList').innerHTML=sl.map(([k,v])=>`<div class="it"><span>${fmtK(k,true)} · ${fmtClock((v[0]+1440)%1440)}–${fmtClock(v[1])} · <b>${fmtDur(v[3])}</b></span><span class="owner-only"><button type="button" data-slpdel="${k}">Quitar</button></span></div>`).join('');
+  const types=new Set(['Caminar','Correr','Bicicleta','Natación','Gimnasio','Yoga','Senderismo']);for(const v of Object.values(WO||{}).flatMap(Y=>Object.values(Y.d||{})))if(v&&v[3])types.add(v[3]);
+  $('mwTypes').innerHTML=[...types].map(x=>`<option value="${esc(x)}">`).join('')}
+$('maAdd').addEventListener('click',()=>{const k=$('maDate').value,st=numOf('maSteps'),mi=numOf('maMin'),kc=numOf('maKcal'),msg=$('maMsg');
+  if(!k){msg.textContent='Elige la fecha.';return}if(k>d2k(new Date())){msg.textContent='La fecha no puede ser futura.';return}
+  if(st==null&&mi==null&&kc==null){msg.textContent='Apunta los pasos, los minutos de ejercicio o las calorías activas.';return}
+  if((st!=null&&(isNaN(st)||st<0||st>100000))||(mi!=null&&(isNaN(mi)||mi<0||mi>1440))||(kc!=null&&(isNaN(kc)||kc<0||kc>10000))){msg.textContent='Revisa los números: pasos hasta 100.000, minutos hasta 1.440 y calorías hasta 10.000.';return}
+  const y=k.slice(0,4),d={...((ACT[y]||{}).d||{})},cur=d[k];if(cur&&cur[ACT_COLS.length]!=='m'){msg.textContent='Ese día ya tiene datos de tus fuentes.';return}
+  const row=Array(ACT_COLS.length).fill(null);row[0]=st!=null?Math.round(st):null;row[4]=mi!=null?Math.round(mi):null;row[6]=kc!=null?Math.round(kc):null;row.push('m');
+  putYearly(ACT,'act-',y,{...d,[k]:row});for(const id of ['maSteps','maMin','maKcal'])$(id).value='';msg.textContent=`Actividad del ${fmtK(k,true)} guardada.`;renderView()});
+$('mwAdd').addEventListener('click',()=>{const k=$('mwDate').value,du=numOf('mwDur'),kc=numOf('mwKcal'),di=numOf('mwDist'),msg=$('mwMsg');
+  const st=$('mwStart').value?(([a,b])=>a*60+b)($('mwStart').value.split(':').map(Number)):null,ty=$('mwType').value.trim()||'Otro';
+  if(!k){msg.textContent='Elige la fecha.';return}if(k>d2k(new Date())){msg.textContent='La fecha no puede ser futura.';return}
+  if(du==null||isNaN(du)||du<1||du>1440){msg.textContent='Indica la duración en minutos (de 1 a 1.440).';return}
+  if((kc!=null&&(isNaN(kc)||kc<0||kc>10000))||(di!=null&&(isNaN(di)||di<0||di>1000))){msg.textContent='Revisa las calorías y la distancia.';return}
+  const y=k.slice(0,4),id='m-'+Date.now().toString(36);
+  putYearly(WO,'wo-',y,{...((WO[y]||{}).d||{}),[id]:[k,st,Math.round(du),ty.slice(0,40),kc!=null?Math.round(kc):null,null,di!=null?Math.round(di*1000):null,null,null,null,null,'m']});
+  for(const x of ['mwDur','mwKcal','mwDist','mwStart'])$(x).value='';msg.textContent=`Entrenamiento del ${fmtK(k,true)} añadido.`;renderView()});
+$('msAdd').addEventListener('click',()=>{const k=$('msDate').value,b=$('msBed').value,w=$('msWake').value,msg=$('msMsg');
+  if(!k||!b||!w){msg.textContent='Pon el día, la hora a la que te acostaste y la de levantarte.';return}if(k>d2k(new Date())){msg.textContent='La fecha no puede ser futura.';return}
+  const cur=((SLP[k.slice(0,4)]||{}).d||{})[k];if(cur&&cur[12]!=='m'){msg.textContent='Esa noche ya tiene datos de tus fuentes.';return}
+  const r=slpManual(k,b,w);if(r==='dur'){msg.textContent='Revisa las horas: la noche tiene que durar entre 30 min y 20 h.';return}
+  msg.textContent=`Noche del ${fmtK(k,true)} guardada.`;renderView()});
+document.addEventListener('click',e=>{const a=e.target.closest('[data-madel]');if(a){const k=a.dataset.madel,y=k.slice(0,4),d={...((ACT[y]||{}).d||{})};if(d[k]&&d[k][ACT_COLS.length]==='m'){delete d[k];putYearly(ACT,'act-',y,d);renderView()}return}
+  const w=e.target.closest('[data-mwdel]');if(w){const id=w.dataset.mwdel;for(const y of Object.keys(WO||{})){const d={...((WO[y]||{}).d||{})};if(d[id]&&d[id][WO_COLS.length]==='m'){delete d[id];putYearly(WO,'wo-',y,d);renderView();break}}}});
 function renderBankTab(){const host=$('bankTab');if(!host)return;const C=bankCtx();if(!C){host.innerHTML=`<section class="card">${emptyBox('Hacen falta unas cuantas noches para calcular el saldo de sueño.')}</section>`;return}
   const {all,byK,last,G,bal}=C,today=d2k(new Date());
   // la ventana temporal (1 sem … Todo) manda en todos los paneles salvo el saldo actual, que siempre son las últimas 7 noches
@@ -3412,7 +3452,7 @@ function renderView(){applyVTabs();if(VIEW==='sueno')try{renderBankTab()}catch(e
     if(VIEW==='actividad'){renderActividad();return}
     if(VIEW==='sueno'){renderSueno();return}
     if(VIEW==='comidas'){renderComidas();return}
-    if(!M||M.empty){if(VIEW==='resumen')renderResumenLite();return}
+    if(!M||M.empty){if(VIEW==='resumen')renderResumenLite();else if(VIEW==='peso'){renderPesoDash();renderQuickManual()}return}
     if(VIEW==='resumen')renderResumen();else if(VIEW==='peso')renderPeso();else if(VIEW==='composicion')renderComposicion();else if(VIEW==='historial')renderHistorial();
   }catch(e){console.error(e);showNotice('err','Algo falló al dibujar esta sección: '+(e&&e.message||e))}
 }

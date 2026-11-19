@@ -840,7 +840,22 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
           <div class="legend" id="lgMain"></div>
           <div class="chart" id="chMain"><div class="empty">Aquí aparecerá tu curva de peso.</div></div>
         </section>
-        <a class="btn ghost owner-only addw" href="#composicion" data-tgt="qmCard" data-tg="evo">＋ Añadir pesada manual</a>
+        <section data-tg="evo" class="card owner-only qm" id="qmCard">
+          <h2>Nueva pesada manual</h2>
+          <p class="lead">Para los días en que no te pesas con la Withings o no sincroniza. Si después llega una pesada de la báscula ese día, manda la de la báscula.</p>
+          <div class="form">
+            <label for="qmDate">Fecha<input id="qmDate" type="date"></label>
+            <label for="qmKg">Peso (kg)<input id="qmKg" type="number" step="0.1" inputmode="decimal" placeholder="109.4"></label>
+            <details class="full"><summary>Composición (opcional)</summary><div class="form">
+              <label for="qmFp">Grasa (%)<input id="qmFp" type="number" step="0.1" inputmode="decimal"></label>
+              <label for="qmMu">Músculo (kg)<input id="qmMu" type="number" step="0.1" inputmode="decimal"></label>
+              <label for="qmWp">Agua (%)<input id="qmWp" type="number" step="0.1" inputmode="decimal"></label>
+              <label for="qmBo">Hueso (kg)<input id="qmBo" type="number" step="0.01" inputmode="decimal"></label>
+            </div></details>
+            <div class="row full"><button class="btn" id="qmAdd" type="button">Añadir pesada</button><span class="msg" id="qmMsg" aria-live="polite"></span></div>
+          </div>
+          <div class="list" id="qmList"></div>
+        </section>
         <div data-tg="evo" class="kv" id="pesoKv"></div>
         <section data-tg="sem" class="card">
           <div class="chead"><h2>Peso por semana</h2>
@@ -878,22 +893,7 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
           <div id="zones" hidden></div>
         </div>
         <section class="card"><h2>Mes a mes</h2><div class="tbl" id="months"></div></section>
-        <section class="card owner-only qm" id="qmCard">
-          <h2>Nueva pesada manual</h2>
-          <p class="lead">Para los días en que no te pesas con la Withings o no sincroniza. Si después llega una pesada de la báscula ese día, manda la de la báscula.</p>
-          <div class="form">
-            <label for="qmDate">Fecha<input id="qmDate" type="date"></label>
-            <label for="qmKg">Peso (kg)<input id="qmKg" type="number" step="0.1" inputmode="decimal" placeholder="109.4"></label>
-            <details class="full"><summary>Composición (opcional)</summary><div class="form">
-              <label for="qmFp">Grasa (%)<input id="qmFp" type="number" step="0.1" inputmode="decimal"></label>
-              <label for="qmMu">Músculo (kg)<input id="qmMu" type="number" step="0.1" inputmode="decimal"></label>
-              <label for="qmWp">Agua (%)<input id="qmWp" type="number" step="0.1" inputmode="decimal"></label>
-              <label for="qmBo">Hueso (kg)<input id="qmBo" type="number" step="0.01" inputmode="decimal"></label>
-            </div></details>
-            <div class="row full"><button class="btn" id="qmAdd" type="button">Añadir pesada</button><span class="msg" id="qmMsg" aria-live="polite"></span></div>
-          </div>
-          <div class="list" id="qmList"></div>
-        </section>
+        <a class="btn ghost owner-only addw" href="#peso" data-tgt="qmCard">＋ Añadir pesada manual</a>
       </section>
 
       <section class="view" id="v-corazon" data-title="Cuerpo" hidden>
@@ -953,6 +953,18 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
         <nav class="cuetabs vtabs" data-view="actividad" aria-label="Apartados"><a href="#actividad" data-tab="hoy"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Hoy</span></a><a href="#actividad" data-tab="evo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l5-5 4 3 8-8"/><path d="M15 7h5v5"/></svg><span>Evolución</span></a><a href="#actividad" data-tab="wo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg><span>Entrenos</span></a><a href="#actividad" data-tab="ana"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span>Análisis</span></a></nav>
         <section data-tg="hoy" class="card night"><h2 id="dayTitle">Tu día</h2><div id="dayCard"></div></section>
         <section data-tg="hoy" class="card"><h2>Esta semana</h2><p class="lead" id="actWeekLead"></p><div id="actWeek"></div></section>
+        <section data-tg="hoy" class="card owner-only qm" id="maCard">
+          <h2>Apuntar actividad a mano</h2>
+          <p class="lead">Si no llevas reloj ni conectas el móvil, apunta aquí tu actividad del día. Si después llegan datos de tus fuentes para ese día, mandan los de las fuentes.</p>
+          <div class="form">
+            <label for="maDate">Fecha<input id="maDate" type="date"></label>
+            <label for="maSteps">Pasos<input id="maSteps" type="number" step="1" inputmode="numeric" placeholder="8000"></label>
+            <label for="maMin">Minutos de ejercicio<input id="maMin" type="number" step="1" inputmode="numeric" placeholder="30"></label>
+            <label for="maKcal">Calorías activas (kcal)<input id="maKcal" type="number" step="1" inputmode="numeric" placeholder="300"></label>
+            <div class="row full"><button class="btn" id="maAdd" type="button">Guardar el día</button><span class="msg" id="maMsg" aria-live="polite"></span></div>
+          </div>
+          <div class="list" id="maList"></div>
+        </section>
         <div data-tg="evo" class="kv" id="actKv"></div>
         <section data-tg="evo" class="card"><h2>Pasos</h2><p class="lead" id="stepsLead"></p><div class="legend" id="lgSteps"></div><div class="chart" id="chSteps"></div></section>
         <div data-tg="evo" class="g2">
@@ -961,6 +973,21 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
         </div>
         <section data-tg="evo" class="card"><h2>Frecuencia cardiaca</h2><p class="lead">La mínima de cada día se acerca a tu pulso en reposo: si baja con el tiempo, tu forma mejora.</p><div class="legend" id="lgHr"></div><div class="chart" id="chHr"></div></section>
         <div data-tg="wo" class="kv" id="woKv"></div>
+        <section data-tg="wo" class="card owner-only qm" id="mwCard">
+          <h2>Apuntar entrenamiento a mano</h2>
+          <p class="lead">Para las sesiones que no registra ningún reloj ni app.</p>
+          <div class="form">
+            <label for="mwDate">Fecha<input id="mwDate" type="date"></label>
+            <label for="mwStart">Hora de inicio<input id="mwStart" type="time"></label>
+            <label for="mwType">Tipo<input id="mwType" list="mwTypes" placeholder="Caminar"></label>
+            <label for="mwDur">Duración (min)<input id="mwDur" type="number" step="1" inputmode="numeric" placeholder="45"></label>
+            <label for="mwKcal">Calorías (kcal, opcional)<input id="mwKcal" type="number" step="1" inputmode="numeric"></label>
+            <label for="mwDist">Distancia (km, opcional)<input id="mwDist" type="number" step="0.1" inputmode="decimal"></label>
+            <datalist id="mwTypes"></datalist>
+            <div class="row full"><button class="btn" id="mwAdd" type="button">Añadir entrenamiento</button><span class="msg" id="mwMsg" aria-live="polite"></span></div>
+          </div>
+          <div class="list" id="mwList"></div>
+        </section>
         <section data-tg="wo" class="card"><h2>Minutos de entrenamiento por semana</h2><p class="lead" id="woWkLead"></p><div class="chart" id="chWoWk"></div></section>
         <div data-tg="wo" class="g2">
           <section class="card"><h2>Entrenamientos por tipo</h2><p class="lead">Sesiones que registran tu reloj o la app de Withings en el periodo elegido.</p><div class="tbl" id="woTypes"></div></section>
@@ -981,6 +1008,17 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
         <div id="bankTab" data-tg="banco"></div>
         <section data-tg="hoy" class="card night"><h2 id="nightTitle">Última noche</h2><div id="nightCard"></div></section>
          <section data-tg="hoy" class="card" id="napCard"></section>
+        <section data-tg="hoy" class="card owner-only qm" id="msCard">
+          <h2>Apuntar una noche a mano</h2>
+          <p class="lead">Si no duermes con reloj, apunta a qué hora te acostaste y a qué hora te levantaste. Si después llega esa noche de tus fuentes, manda la de las fuentes.</p>
+          <div class="form">
+            <label for="msDate">Día en que te levantas<input id="msDate" type="date"></label>
+            <label for="msBed">Te acostaste<input id="msBed" type="time"></label>
+            <label for="msWake">Te levantaste<input id="msWake" type="time"></label>
+            <div class="row full"><button class="btn" id="msAdd" type="button">Guardar la noche</button><span class="msg" id="msMsg" aria-live="polite"></span></div>
+          </div>
+          <div class="list" id="msList"></div>
+        </section>
         <h2 data-tg="hoy" class="vsec" id="wellTitle">Bienestar de la última noche</h2>
         <div data-tg="hoy" class="wgrid" id="wellGrid"></div>
         <p class="lead wnote">Sacado de tus noches de las últimas semanas. La SpO₂, el índice respiratorio, la apnea, la variabilidad del pulso (VFC) y la temperatura de la muñeca llegan de Apple Salud o Android; de Withings solo vienen horarios, fases y pulso.</p>

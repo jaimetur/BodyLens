@@ -30,7 +30,7 @@ Body composition measured by the scale: fat, muscle, bone and water.
 - **Quality of the loss (chart)**: cumulative change in fat mass and lean mass since the start of the plan.
 - **Zones**: BMI (WHO classification), fat % (ranges from Gallagher et al., 2000, by sex and age band) and lean mass index, each on a bar with your position.
 - **Month by month**: table with the monthly median of weight, fat, fat mass, muscle, lean mass, water and bone (up to 24 months).
-- **New manual weigh-in**: date, weight and, if you want, fat, muscle, water and bone. If a scale weigh-in arrives for that day later, the scale's one takes precedence. Below, the manual weigh-ins are listed with **Edit** and **Remove**.
+- **＋ Add manual weigh-in**: takes you to the "New manual weigh-in" card, which is in Weight.
 
 ### Rules
 - You need to enter your **height**, **sex** and **date of birth** in Your account → Account → Personal data to see BMI, lean mass index and ranges adjusted to your age. Without them, generic values are used or you are asked to enter them.

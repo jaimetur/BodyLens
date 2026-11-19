@@ -12,6 +12,11 @@ Use it to see how you sleep: last night, your sleep balance, progress, schedule 
 - **Naps**: episodes of at least 10 minutes outside the night. On the naps card, the day runs from 20:00 the day before to 20:00.
 - If Health resends a night (for example, AutoSleep redoes it when you wake up), the latest version replaces the previous one.
 
+## Logging by hand
+
+- **Log a night by hand** (Night tab): the day you got up, the time you went to bed and the time you got up. The night must last between 30 min and 20 h. The card lists the nights you logged, with **Remove**.
+- If that night arrives later from your sources, the sources' night takes precedence; a night that already has data cannot be logged by hand.
+
 ## Tabs
 
 - **Night**, **Balance**, **Progress**, **Schedule** and **Analysis**. The app remembers the last one you opened.
