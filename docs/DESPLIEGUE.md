@@ -31,7 +31,7 @@ puede escribir en `/data`, revisa PUID/PGID.
    pide tu propia contraseña (mínimo 4 caracteres) y deja cambiar usuario y nombre.
 3. **Tus datos**: en `/cuenta` → **Importar datos**, elige `snap.json` (o la «Copia completa (JSON)» de Ajustes →
    Copia de seguridad del artefacto) y en «¿Qué datos de la copia son tuyos?» deja el perfil principal.
-   (También por consola: `docker exec bodylens python -m app.seed /data/import/snap.json --usuario jaimetur`.)
+   (También por consola: `docker exec bodylens python -m app.data.importer /data/import/snap.json --usuario jaimetur`.)
 4. **Peticiones de acceso**: en la pantalla de entrar, «¿No tienes cuenta? Pide una» crea la cuenta inactiva y avisa
    por correo a las cuentas administradoras con correo (el tuyo: `BODYLENS_ADMIN_EMAIL` o «Tu cuenta»). Se aprueban
    o rechazan en `/cuenta` → Administración → Peticiones de acceso, y la persona recibe un correo.

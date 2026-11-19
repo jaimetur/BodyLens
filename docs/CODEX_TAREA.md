@@ -6,7 +6,7 @@
 ---
 
 Eres el desarrollador de **BodyLens**, la app personal de salud de Jaime. Hoy es un artefacto de claude.ai
-(una sola página HTML en `frontend/src/app_a.html` + `app_b.html` + `app_c.html`) que lee una hoja de Google
+(una sola página HTML en `src/frontend/app/app_a.html` + `app_b.html` + `app_c.html`) que lee una hoja de Google
 alimentada por un Google Apps Script (`legacy/apps-script/Codigo.gs`).
 
 **Objetivo:** migrarla a un contenedor Docker que Jaime desplegará en su Synology DS920+, con los datos
@@ -24,7 +24,7 @@ Haz el trabajo por fases, cada una en su propio PR (o commits claramente separad
 2. **Fase 1** — Backend FastAPI + SQLite: cuentas con invitación y pareja (MIGRACION §0), login, almacén de documentos (`/api/docs`), `claude-shim.js` que
    implementa `window.claude.use('user'|'db'|'mcp'|'downloads'|'artifact'|'permissions')` como se describe en
    `docs/MIGRACION.md` §3.2, servir la página con los cambios mínimos (botón Actualizar → `POST /api/sync`,
-   librerías sin CDN, sin PACK), `python -m app.seed` para importar `snap.json` o la copia JSON de Ajustes, y el
+   librerías sin CDN, sin PACK), `python -m app.data.importer` para importar `snap.json` o la copia JSON de Ajustes, y el
    planificador cada `SYNC_INTERVAL_MIN` (15) que llama al Apps Script (`?accion=sincronizar`) y exporta la hoja a
    XLSX con la API de Drive (cuenta de servicio). La página abierta debe actualizarse sola cuando cambie el
    workbook (sondeo de `/api/workbook/meta` en el shim).
@@ -36,8 +36,8 @@ Haz el trabajo por fases, cada una en su propio PR (o commits claramente separad
    Tests de paridad y de las reglas de sueño con fixtures sintéticos (casos listados en `docs/MIGRACION.md` §7.5).
 4. **Fase 3** — Estado de las fuentes en la app, copia diaria de la base y documentación actualizada.
 
-Para comprobar el frontend sin navegador puedes adaptar `frontend/tests/snaptest.js` (jsdom) a una prueba
-`frontend/tests/smoke.mjs` que cargue la página servida con el shim y un backend de prueba.
+Para comprobar el frontend sin navegador puedes adaptar `tests/frontend/snaptest.js` (jsdom) a una prueba
+`tests/frontend/smoke.mjs` que cargue la página servida con el shim y un backend de prueba.
 
 Cuando algo no se pueda verificar sin las credenciales reales de Jaime (Withings, Google, Health Auto Export),
 déjalo detrás de variables de entorno, con tests que simulen las respuestas (`respx`/fixtures), y anótalo en el PR.

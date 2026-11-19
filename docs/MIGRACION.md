@@ -7,7 +7,7 @@ Estado de partida: noviembre de 2026. Documento de trabajo para el agente (Codex
 - **Multiusuario desde el principio.** Cada persona tiene su cuenta (usuario + contraseña argon2, sesión en cookie
   HttpOnly de 90 días) y sus datos separados (`docs.user_id`). **Sin registro abierto**: las cuentas se crean con un
   **enlace de invitación** de un solo uso que genera un administrador en «Tu cuenta» (`/cuenta`) o con
-  `python -m app.admin invitacion`. La primera cuenta: `python -m app.admin crear-admin <usuario> "<Nombre>"`.
+  `python -m app.accounts.cli invitacion`. La primera cuenta: `python -m app.accounts.cli crear-admin <usuario> "<Nombre>"`.
 - **Laura tiene su propia cuenta** (se siembra con `--perfil laura` desde `snap.json`). Los perfiles de la app siguen
   existiendo dentro de cada cuenta.
 - **Pareja**: dos cuentas pueden unirse (una lo pide en `/cuenta`, la otra lo acepta). Los registros de **ciclo**
@@ -21,8 +21,8 @@ Estado de partida: noviembre de 2026. Documento de trabajo para el agente (Codex
 - **Despliegue**: stack de Dockhand en el NAS (`/volume1/docker/stacks/bodylens`), datos en
   `/volume1/docker/data/bodylens`, puerto 7280, y **Caddy** del NAS como proxy HTTPS (no el proxy de DSM).
   Ver `docs/DESPLIEGUE.md`.
-- Cambios en la página servida: no se tocan `frontend/src/*.html`; el servidor aplica sustituciones exactas al
-  montarla (`backend/app/frontend.py`, cada una comprobada en los tests) y añade `frontend/server/claude-shim.js`.
+- Cambios en la página servida: no se tocan `src/frontend/app/*.html`; el servidor aplica sustituciones exactas al
+  montarla (`src/src/backend/app/web/page.py`, cada una comprobada en los tests) y añade `src/frontend/compat/claude-shim.js`.
 
 ---
 
@@ -42,7 +42,7 @@ iPhone: Health Auto Export ──(POST cada 5 min)───────┘      
 - **Hoja**: ID `1aUMgruI3VycOCjbqH4_UvL8nS8i-mt1QFNiz6xaQx2Q`. Pestañas que lee la app: `Withings`, `Actividad`,
   `Sueño`, `Entrenamientos`, `Siestas`, `SpO2 y VO2`, `ECG`, `Salud`, `Avisos de salud`, `Registros de salud`,
   `Sueño Salud (fases)`, `Notas históricas`, `Pesos históricos`, `Control Diario` (las cabeceras exactas están en
-  `legacy/apps-script/Codigo.gs` y el parseo en `frontend/src/app_b.html`).
+  `legacy/apps-script/Codigo.gs` y el parseo en `src/frontend/app/app_b.html`).
 - **Apps Script** (`legacy/apps-script/Codigo.gs`, ~84 KB): OAuth con Withings y descarga de pesadas, composición,
   actividad, entrenos, sueño, SpO2/VO2, ECG; `doPost` recibe Health Auto Export (métricas por horas, sueño en
   tramos sin resumir, entrenos, ECG, avisos de FC, ciclo, ánimo, síntomas, medicación…) y rehace las noches con
@@ -82,15 +82,15 @@ Requisitos de Jaime:
 - Zona horaria `Europe/Madrid` (`TZ` y `zoneinfo`).
 - Estructura sugerida:
   ```
-  backend/app/main.py          arranque, rutas estáticas, planificador
-  backend/app/auth.py          login (una contraseña, cookie de sesión firmada)
-  backend/app/docstore.py      almacén de documentos (sustituye al «db» del artefacto)
-  backend/app/workbook.py      genera el XLSX que lee la app a partir de las tablas
-  backend/app/sources/withings.py   OAuth + descargas (port del Apps Script)
-  backend/app/sources/hae.py        ingesta de Health Auto Export (port de doPost)
-  backend/app/sleep.py         reglas de sueño (port de guardarNochesSalud_, desvelos_, siestas…)
-  backend/app/sync.py          orquesta una sincronización (tarea de 15 min y botón)
-  backend/tests/
+  src/backend/app/main.py          arranque, rutas estáticas, planificador
+  src/backend/app/auth.py          login (una contraseña, cookie de sesión firmada)
+  src/backend/app/docstore.py      almacén de documentos (sustituye al «db» del artefacto)
+  src/backend/app/workbook.py      genera el XLSX que lee la app a partir de las tablas
+  src/backend/app/sources/withings.py   OAuth + descargas (port del Apps Script)
+  src/backend/app/sources/hae.py        ingesta de Health Auto Export (port de doPost)
+  src/backend/app/sleep.py         reglas de sueño (port de guardarNochesSalud_, desvelos_, siestas…)
+  src/backend/app/sync.py          orquesta una sincronización (tarea de 15 min y botón)
+  tests/
   ```
 
 ### 3.2 Frontend: misma página + capa de compatibilidad
@@ -113,7 +113,7 @@ Cambios mínimos en `app_*.html` (con un *flag* `window.BODYLENS_SERVER = true` 
 - La librería XLSX (`xlsx.full.min.js` 0.18.5) y las que se cargan para el PDF: servirlas desde el propio
   servidor (sin CDN) para que funcione sin internet externo.
 - Quitar del HTML servido el bloque de datos empaquetados (`"@@PACK@@"` → vacío): ya no hace falta.
-- PWA: `manifest.webmanifest`, iconos de `branding/` (ver `docs/TRASPASO-original.md` §3.5).
+- PWA: `manifest.webmanifest`, iconos de `assets/branding/` (ver `docs/TRASPASO-original.md` §3.5).
 
 ### 3.3 API del servidor
 Toda escritura bajo `/api/` (salvo `/api/ingest/`) exige la cabecera `X-BodyLens: 1` (protección CSRF).
@@ -176,7 +176,7 @@ ni en Withings.
    - `snap.json` (copia completa embebida en la página, incluye perfiles en `prof`/`profs`), y/o
    - la «Copia completa (JSON)» que se descarga en **Ajustes → Copia de seguridad** del artefacto
      (formato `{app:'bascula', v:1, doc, hist, med, act, slp, wo, food, hk, ecg, hkev, hklog, nap}`).
-   Script `python -m app.seed <fichero>` idempotente, que acepte ambos formatos.
+   Script `python -m app.data.importer <fichero>` idempotente, que acepte ambos formatos.
 3. Tarea cada 15 min:
    a. `GET` a la URL del Apps Script `?accion=sincronizar` (`APPS_SCRIPT_SYNC_URL`) para que traiga Withings y
       rehaga las últimas noches. (La aplicación web está publicada con acceso «Cualquier usuario».)
@@ -240,7 +240,7 @@ Ver `.env.example`. Resumen:
 ```
 TZ=Europe/Madrid
 PUBLIC_URL=https://bodylens.<dominio>
-BODYLENS_PASSWORD_HASH=          # argon2 de la contraseña de acceso (script: python -m app.hashpw)
+BODYLENS_PASSWORD_HASH=          # argon2 de la contraseña de acceso (script: python -m app.accounts.cli)
 SECRET_KEY=                      # firma de cookies y cifrado de tokens
 SYNC_INTERVAL_MIN=15
 APPS_SCRIPT_SYNC_URL=…?accion=sincronizar        # fase 1

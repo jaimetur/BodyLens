@@ -16,27 +16,36 @@ con los datos **actualizándose solos cada 15 minutos**, sin tener que pulsar «
 ## Estructura
 
 ```
-frontend/src/app_a.html   estilos + HTML de todas las vistas
-frontend/src/app_b.html   núcleo: parseo de la hoja (XLSX), modelo, métricas
-frontend/src/app_c.html   interfaz: vistas, gráficas SVG, sincronización, ajustes
-frontend/server/            claude-shim.js (window.claude contra la API) y páginas de acceso, registro y cuenta
-frontend/build_artifact.py  une a+b+c (versión artefacto; solo referencia)
-backend/app/                servidor FastAPI (cuentas, documentos, pareja, puente Google, planificador)
-backend/tests/              tests del backend
-docker/                     Dockerfile, compose.yml (NAS) y compose.dev.yml (desarrollo)
-frontend/tests/snaptest.js  arranque de la página en jsdom (referencia)
-legacy/apps-script/Codigo.gs  el Apps Script en producción hoy (REFERENCIA de toda la lógica de datos)
-legacy/salud-scripts/       scripts sueltos de importación de Apple Salud (referencia)
-branding/                   iconos y logo
+src/backend/app/            servidor FastAPI (paquete `app`), un subpaquete por módulo:
+  main.py                   arranque, seguridad común y registro de las rutas de cada módulo
+  core/                     configuración, SQLite, seguridad, dependencias de las rutas (sesión, admin)
+  accounts/                 cuentas, sesiones, invitaciones, peticiones de acceso, «Tu cuenta», CLI de admin
+  couples/                  unir y separar cuentas en pareja
+  data/                     documentos de cada cuenta (el «db» de la app, con lo compartido en pareja) e importación
+  sync/                     sincronización (fase 1: Apps Script + hoja de Google), libro XLSX y planificador
+  mail/                     correo saliente por SMTP
+  web/                      montaje de la página de la app y ficheros estáticos
+src/frontend/
+  app/app_a|b|c.html        la app (el mismo HTML que el artefacto: estilos+vistas, núcleo, interfaz) — no se edita
+  compat/claude-shim.js     capa window.claude contra la API del servidor
+  accounts/                 páginas de entrar, pedir cuenta, registro por invitación y «Tu cuenta»
+  common/                   estilos y utilidades de esas páginas
+  package.json              librerías servidas sin CDN (xlsx, jspdf, html2canvas-pro) y jsdom para la prueba
+assets/branding/            iconos y logo (no cambian)
+tests/<módulo>/             tests de cada módulo (pytest) y tests/frontend/smoke.mjs (arranque de la página en jsdom)
+help/                       ayuda de uso, un fichero por módulo
+docker/                     Dockerfile, compose.yml (NAS), compose.dev.yml (desarrollo), entrypoint
 docs/                       plan de migración, despliegue, tarea y traspaso original
+legacy/                     Apps Script en producción y scripts de Salud (REFERENCIA de la lógica de datos)
 ```
 
 Lo que hay que crear está descrito en `docs/MIGRACION.md` (backend FastAPI, capa `window.claude`, Docker, CI).
 
 ## Reglas
 
-1. **El diseño no se toca.** La interfaz de `frontend/src/` debe verse y comportarse igual. Los cambios en el
-   frontend se limitan a lo imprescindible para funcionar fuera de claude.ai (ver «capa de compatibilidad»).
+1. **El diseño no se toca.** La interfaz de `src/frontend/app/` debe verse y comportarse igual. Los cambios en el
+   frontend se limitan a lo imprescindible para funcionar fuera de claude.ai: sustituciones exactas en
+   `src/backend/app/web/page.py` y la capa `src/frontend/compat/claude-shim.js`.
    Nada de reescribir la app en React/Vue ni de «limpiar» el código.
 2. **Paridad de datos antes que mejoras.** Cada pieza portada del Apps Script debe producir los mismos
    resultados que el original (mismas filas, mismas reglas). Las reglas de sueño (mezcla AutoSleep + Apple Watch,
@@ -54,8 +63,9 @@ Lo que hay que crear está descrito en `docs/MIGRACION.md` (backend FastAPI, cap
 
 ```
 docker compose -f docker/compose.dev.yml up --build    # desarrollo con recarga automática
-cd backend && pip install -e '.[test]' && pytest -q    # tests del backend (Python 3.12)
-cd frontend && npm ci && cd .. && node frontend/tests/smoke.mjs   # la página arranca con la capa de compatibilidad
+python3.12 -m venv .venv && .venv/bin/pip install -e '.[test]'   # entorno local (PyCharm usa .venv)
+.venv/bin/python -m pytest -q                          # tests del backend
+(cd src/frontend && npm ci) && PYTHON=$PWD/.venv/bin/python node tests/frontend/smoke.mjs   # arranque de la página
 ```
 
 ## Definición de terminado (para cualquier PR)
