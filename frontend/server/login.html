@@ -12,10 +12,24 @@
     <label>Contraseña<input id="p" name="password" type="password" autocomplete="current-password" required></label>
     <div class="row"><button id="go" type="submit">Entrar</button><span class="msg" id="m" aria-live="polite"></span></div>
   </form>
-  <p class="small">¿No tienes cuenta? Pide una invitación a quien administra este servidor.</p>
+  <div class="card" id="hint" hidden>
+    <h2>Cuenta inicial de este despliegue</h2>
+    <p>Mientras no se cambie su contraseña, se puede entrar con:</p>
+    <ul class="list" id="hintList"></ul>
+    <p class="small">Entra con ella y cámbiale la contraseña en «Tu cuenta»: este aviso desaparecerá.</p>
+  </div>
+  <p class="small">¿No tienes cuenta? <a href="/solicitar">Pide una</a>.</p>
 </main>
 <script src="/pages.js"></script>
 <script>
+(async () => {
+  try {
+    const { accounts } = await api('GET', '/api/login-hint');
+    $('hintList').innerHTML = accounts.map(a => `<li><span>usuario <code>${esc(a.username)}</code> · contraseña <code>${esc(a.password)}</code></span><button class="ghost" type="button" data-u="${esc(a.username)}" data-p="${esc(a.password)}">Usar</button></li>`).join('');
+    $('hint').hidden = !accounts.length;
+  } catch (e) { }
+})();
+document.addEventListener('click', e => { const b = e.target.closest('[data-u]'); if (b) { $('u').value = b.dataset.u; $('p').value = b.dataset.p; $('p').focus(); } });
 $('f').addEventListener('submit', async e => {
   e.preventDefault(); $('go').disabled = true; say($('m'), 'Entrando…');
   try { const r = await api('POST', '/api/login', { username: $('u').value, password: $('p').value }); location.replace(r.mustChange ? '/cuenta?cambiar=1' : safeNext()); }

@@ -102,3 +102,33 @@ def test_migrates_old_database(env):
     db.init_db()
     with db.ro() as c2:
         assert "must_change" in {r[1] for r in c2.execute("PRAGMA table_info(users)")}
+
+
+def test_default_admin_and_login_hint(env):
+    from fastapi.testclient import TestClient
+    from app import db, users
+    from app.main import app
+    with TestClient(app) as c:
+        c.headers.update({"X-BodyLens": "1"})
+        assert c.get("/api/login-hint").json() == {"accounts": [{"username": "admin", "password": "admin123"}]}
+        assert c.post("/api/login", json={"username": "admin", "password": "admin123"}).status_code == 200
+        me = c.get("/api/me").json()
+        assert me["user"]["isAdmin"] and me["defaultPassword"] is True
+        assert c.post("/api/me/password", json={"current": "admin123", "new": "otra"}).status_code == 200
+        assert c.get("/api/login-hint").json() == {"accounts": []}
+        assert c.get("/api/me").json()["defaultPassword"] is False
+    # borrada, no vuelve a crearse al reiniciar
+    with db.tx() as con:
+        con.execute("DELETE FROM users WHERE username='admin'")
+    with TestClient(app) as c:
+        assert c.get("/api/login-hint").json() == {"accounts": []}
+        with db.ro() as con:
+            assert users.get_by_username(con, "admin") is None
+
+
+def test_default_admin_added_to_existing_deployment(env, make_user):
+    make_user("jaimetur", admin=True)
+    from fastapi.testclient import TestClient
+    from app.main import app
+    with TestClient(app) as c:
+        assert c.get("/api/login-hint").json()["accounts"][0]["username"] == "admin"

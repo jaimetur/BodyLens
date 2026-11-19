@@ -10,8 +10,9 @@ from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from pydantic import BaseModel
 
-from app import config, db, docstore, frontend, seed, sync, users, workbook
-from app.security import login_throttle
+from app import config, db, docstore, frontend, mailer, seed, sync, users, workbook
+from app.security import Throttle, login_throttle
+from app.users import clean_email
 from app.users import User, UserError
 
 log = logging.getLogger("bodylens")
@@ -27,6 +28,12 @@ async def lifespan(app: FastAPI):
         if users.bootstrap_admin(con, s.admin_username, s.admin_name, s.admin_password):
             log.warning("Creada la cuenta de administración «%s» con la contraseña provisional: cámbiala al entrar.",
                         s.admin_username)
+        if users.bootstrap_default_admin(con):
+            log.warning("Creada la cuenta «%s» con la contraseña por defecto «%s»: cámbiala cuanto antes.", *users.DEFAULT_ADMIN)
+        try:
+            users.bootstrap_email(con, s.admin_username, s.admin_email)
+        except UserError:
+            log.warning("BODYLENS_ADMIN_EMAIL no es un correo válido.")
     task = None
     if config.settings.scheduler_enabled:
         task = asyncio.create_task(sync.scheduler_loop())
@@ -106,6 +113,8 @@ def login(body: LoginIn, request: Request, response: Response):
             for k in keys:
                 login_throttle.fail(k)
             raise HTTPException(401, "Usuario o contraseña incorrectos.")
+        if not u.active:
+            raise HTTPException(403, "Tu petición de acceso todavía no está aprobada. Te llegará un correo cuando lo esté.")
         token = users.create_session(con, u.id)
     login_throttle.reset(keys[1])
     _set_cookie(response, token)
@@ -125,6 +134,14 @@ class RegisterIn(BaseModel):
     username: str
     name: str
     password: str
+    email: str = ""
+
+
+@app.get("/api/login-hint")
+def login_hint():
+    """Cuentas que aún tienen su contraseña por defecto (referencia para un despliegue nuevo)."""
+    with db.ro() as con:
+        return {"accounts": users.default_accounts(con)}
 
 
 @app.get("/api/invite/{code}")
@@ -141,12 +158,65 @@ def register(body: RegisterIn, request: Request, response: Response):
     try:
         with db.tx() as con:
             u = users.redeem_invite(con, body.code, body.username, body.name, body.password)
+            users.set_email(con, u.id, body.email)
             token = users.create_session(con, u.id)
     except UserError as e:
         login_throttle.fail(f"reg:{ip}")
         _bad(e)
     _set_cookie(response, token)
     return {"ok": True, "user": u.public()}
+
+
+# ---------- peticiones de acceso (página de entrar) ----------
+
+request_throttle = Throttle(limit=5, window=3600)
+
+
+class AccessRequestIn(BaseModel):
+    name: str
+    email: str
+    username: str
+    password: str
+    note: str = ""
+    website: str = ""  # campo trampa: las personas no lo ven ni lo rellenan
+
+
+def _base_url(request: Request) -> str:
+    return config.settings.public_url or str(request.base_url).rstrip("/")
+
+
+@app.post("/api/access-requests", status_code=201)
+def access_request(body: AccessRequestIn, request: Request):
+    """Crea la cuenta inactiva y avisa por correo a la administración, que la aprueba en «Tu cuenta»."""
+    ip = request.headers.get("x-forwarded-for", request.client.host if request.client else "?").split(",")[0].strip()
+    if request_throttle.blocked(f"ip:{ip}"):
+        raise HTTPException(429, "Has enviado demasiadas peticiones. Prueba más tarde.")
+    request_throttle.fail(f"ip:{ip}")
+    if body.website:
+        return {"ok": True}
+    try:
+        with db.tx() as con:
+            email = clean_email(body.email, required=True)
+            if con.execute("SELECT 1 FROM users WHERE email=? COLLATE NOCASE", (email,)).fetchone():
+                raise UserError("Ya hay una cuenta o una petición con ese correo.")
+            u = users.create_user(con, body.username, body.name, body.password, email=email, active=False,
+                                  request_note=body.note)
+            admins = users.admin_emails(con)
+    except UserError as e:
+        _bad(e)
+    base = _base_url(request)
+    esc = frontend.esc
+    note = f"<br>Mensaje: <i>{esc(u.request_note)}</i>" if u.request_note else ""
+    mailer.send_later(admins, f"Petición de acceso de {u.name}", mailer.page("Nueva petición de acceso", [
+        f"<b>{esc(u.name)}</b> ({esc(u.email)}) pide una cuenta de BodyLens con el usuario <b>{esc(u.username)}</b>.{note}",
+        "Apruébala o recházala en «Tu cuenta» → Administración → Peticiones de acceso.",
+    ], link=("Revisar la petición", f"{base}/cuenta#peticiones")), reply_to=u.email)
+    mailer.send_later([u.email], "Hemos recibido tu petición", mailer.page("Hemos recibido tu petición", [
+        f"Hola {esc(u.name.split()[0])},",
+        f"tu petición de una cuenta de BodyLens con el usuario <b>{esc(u.username)}</b> está pendiente de aprobación. "
+        "Te escribiremos cuando esté activa.",
+    ]))
+    return {"ok": True}
 
 
 # ---------- cuenta ----------
@@ -157,13 +227,16 @@ def _me(con, u: User) -> dict:
                       (u.id,)).fetchall()
     out = con.execute("SELECT u.username, u.name FROM partner_requests r JOIN users u ON u.id=r.to_id WHERE r.from_id=?",
                       (u.id,)).fetchall()
+    pw = con.execute("SELECT pw_hash FROM users WHERE id=?", (u.id,)).fetchone()[0]
     return {
         "user": u.public(),
+        "defaultPassword": users.has_default_password(u, pw),
         "partner": {"username": partner.username, "name": partner.name, "since": u.partner_since} if partner else None,
         "requests": {"incoming": [dict(r) for r in inc], "outgoing": [dict(r) for r in out]},
         "sources": {"sheet": bool(u.sheet_id), "appsScript": bool(u.apps_script_url)},
         "sync": workbook.meta(u.id),
         "syncIntervalMin": config.settings.sync_interval_min,
+        "pendingRequests": con.execute("SELECT COUNT(*) FROM users WHERE active=0").fetchone()[0] if u.is_admin else 0,
     }
 
 
@@ -211,6 +284,20 @@ def first_login(body: FirstIn, response: Response, u: User = Depends(current_use
     except UserError as e:
         _bad(e)
     _set_cookie(response, token)
+    return {"ok": True}
+
+
+class EmailIn(BaseModel):
+    email: str
+
+
+@app.post("/api/me/email")
+def change_email(body: EmailIn, u: User = Depends(current_user)):
+    try:
+        with db.tx() as con:
+            users.set_email(con, u.id, body.email)
+    except UserError as e:
+        _bad(e)
     return {"ok": True}
 
 
@@ -265,7 +352,7 @@ def _valid_since(s: str | None) -> str | None:
 def partner_request(body: PartnerIn, u: User = Depends(current_user)):
     with db.tx() as con:
         other = users.get_by_username(con, body.username)
-        if not other or other.id == u.id:
+        if not other or other.id == u.id or not other.active:
             raise HTTPException(404, "No hay ninguna otra cuenta con ese usuario.")
         if u.partner_id or other.partner_id:
             raise HTTPException(409, "Alguna de las dos cuentas ya está unida a otra.")
@@ -339,6 +426,68 @@ def admin_users(u: User = Depends(admin_user)):
     with db.ro() as con:
         return {"users": [{**x.public(), "sheetId": x.sheet_id or "", "appsScriptUrl": x.apps_script_url or "",
                            "partnerId": x.partner_id, "sync": workbook.meta(x.id)} for x in users.list_users(con)]}
+
+
+@app.get("/api/admin/access-requests")
+def admin_access_requests(u: User = Depends(admin_user)):
+    with db.ro() as con:
+        return {"requests": [{"id": x.id, "username": x.username, "name": x.name, "email": x.email or "",
+                              "note": x.request_note or "", "requestedAt": x.requested_at}
+                             for x in users.list_users(con, active=False)],
+                "mail": mailer.public_settings()}
+
+
+@app.post("/api/admin/access-requests/{user_id}/approve")
+def admin_approve(user_id: int, request: Request, u: User = Depends(admin_user)):
+    try:
+        with db.tx() as con:
+            x = users.approve(con, user_id)
+    except UserError as e:
+        _bad(e, 409)
+    if x.email:
+        esc = frontend.esc
+        mailer.send_later([x.email], "Tu cuenta está activa", mailer.page("Tu cuenta está activa", [
+            f"Hola {esc(x.name.split()[0])},",
+            f"{esc(u.name)} ha aprobado tu cuenta de BodyLens. Entra con el usuario <b>{esc(x.username)}</b> y la "
+            "contraseña que elegiste.",
+            "Dentro, en «Tu cuenta» puedes importar tus datos y, si quieres, unir tu cuenta con la de tu pareja.",
+        ], link=("Entrar en BodyLens", f"{_base_url(request)}/login")))
+    return {"ok": True}
+
+
+@app.post("/api/admin/access-requests/{user_id}/reject")
+def admin_reject(user_id: int, u: User = Depends(admin_user)):
+    try:
+        with db.tx() as con:
+            x = users.reject(con, user_id)
+    except UserError as e:
+        _bad(e, 409)
+    if x.email:
+        mailer.send_later([x.email], "Tu petición de acceso", mailer.page("Tu petición de acceso", [
+            f"Hola {frontend.esc(x.name.split()[0])},",
+            "tu petición de una cuenta de BodyLens no se ha aprobado. Si crees que es un error, responde a este correo.",
+        ]), reply_to=u.email)
+    return {"ok": True}
+
+
+class TestMailIn(BaseModel):
+    to: str = ""
+
+
+@app.post("/api/admin/test-email")
+async def admin_test_email(body: TestMailIn, u: User = Depends(admin_user)):
+    try:
+        to = clean_email(body.to) or u.email
+    except UserError as e:
+        _bad(e)
+    if not to:
+        raise HTTPException(400, "Pon tu correo en «Tu cuenta» o escribe a quién enviarlo.")
+    try:
+        await asyncio.to_thread(mailer.send, [to], "Correo de prueba", mailer.page("Correo de prueba", [
+            "Si lees esto, el correo de BodyLens funciona."]))
+    except RuntimeError as e:
+        raise HTTPException(502, str(e))
+    return {"ok": True, "to": to}
 
 
 class BridgeIn(BaseModel):
@@ -473,6 +622,11 @@ def index(request: Request):
 @app.get("/login", response_class=HTMLResponse)
 def login_page():
     return _server_file("login.html")
+
+
+@app.get("/solicitar", response_class=HTMLResponse)
+def request_page():
+    return _server_file("solicitar.html")
 
 
 @app.get("/registro", response_class=HTMLResponse)

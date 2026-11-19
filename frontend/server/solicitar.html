@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BodyLens · Pedir una cuenta</title><meta name="theme-color" content="#3B7BF2">
+<link rel="icon" type="image/svg+xml" href="/icon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/pages.css"></head>
+<body><main>
+  <div class="brand"><img src="/icon.svg" alt=""><b>BodyLens</b></div>
+  <form class="card" id="f">
+    <h1>Pedir una cuenta</h1>
+    <p>Rellena tus datos. Cuando se apruebe la petición te llegará un correo y podrás entrar con el usuario y la contraseña que elijas aquí.</p>
+    <label>Nombre y apellidos<input id="n" autocomplete="name" maxlength="80" required></label>
+    <label>Correo electrónico<input id="e" type="email" autocomplete="email" required></label>
+    <label>Usuario (para entrar)<input id="u" autocomplete="username" autocapitalize="none" spellcheck="false" pattern="[a-z0-9][a-z0-9._\-]{1,31}" required></label>
+    <label>Contraseña (al menos 4 caracteres)<input id="p" type="password" autocomplete="new-password" minlength="4" required></label>
+    <label>Repite la contraseña<input id="p2" type="password" autocomplete="new-password" minlength="4" required></label>
+    <label>Mensaje (opcional)<input id="note" maxlength="500" placeholder="Por ejemplo, quién eres"></label>
+    <label hidden aria-hidden="true">No rellenar<input id="w" tabindex="-1" autocomplete="off"></label>
+    <div class="row"><button id="go" type="submit">Enviar petición</button><span class="msg" id="m" aria-live="polite"></span></div>
+  </form>
+  <div class="card" id="ok" hidden>
+    <h1>Petición enviada</h1>
+    <p>Te escribiremos a tu correo cuando tu cuenta esté aprobada.</p>
+    <a class="btn ghost" href="/login">Volver a entrar</a>
+  </div>
+  <p class="small"><a href="/login">Ya tengo cuenta</a></p>
+</main>
+<script src="/pages.js"></script>
+<script>
+$('u').addEventListener('input', () => { $('u').value = $('u').value.toLowerCase() });
+$('f').addEventListener('submit', async e => {
+  e.preventDefault();
+  if ($('p').value !== $('p2').value) { say($('m'), 'Las contraseñas no coinciden.', 'err'); return }
+  $('go').disabled = true; say($('m'), 'Enviando…');
+  try {
+    await api('POST', '/api/access-requests', { name: $('n').value, email: $('e').value, username: $('u').value, password: $('p').value, note: $('note').value, website: $('w').value });
+    $('f').hidden = true; $('ok').hidden = false;
+  } catch (err) { say($('m'), err.message, 'err'); $('go').disabled = false; }
+});
+</script>
+</body></html>

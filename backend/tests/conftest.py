@@ -20,6 +20,8 @@ def env(tmp_path, monkeypatch):
     db.init_db()
     from app.security import login_throttle
     login_throttle._hits.clear()
+    from app.main import request_throttle
+    request_throttle._hits.clear()
     return tmp_path
 
 

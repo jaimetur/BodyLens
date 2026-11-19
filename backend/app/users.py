@@ -10,6 +10,18 @@ from app import config, db
 from app.security import hash_password, new_token, password_problem, token_hash, verify_password
 
 USERNAME_RE = re.compile(r"^[a-z0-9][a-z0-9._-]{1,31}$")
+EMAIL_RE = re.compile(r"^[^@\s,;<>]+@[^@\s,;<>]+\.[^@\s,;<>]+$")
+
+
+def clean_email(email: str | None, required: bool = False) -> str | None:
+    email = (email or "").strip()
+    if not email:
+        if required:
+            raise UserError("Escribe tu correo electrónico.")
+        return None
+    if len(email) > 254 or not EMAIL_RE.match(email):
+        raise UserError("El correo electrónico no es válido.")
+    return email
 
 
 class UserError(ValueError):
@@ -27,15 +39,20 @@ class User:
     sheet_id: str | None
     apps_script_url: str | None
     must_change: bool = False
+    email: str | None = None
+    active: bool = True
+    requested_at: str | None = None
+    request_note: str | None = None
 
     @classmethod
     def from_row(cls, r: sqlite3.Row) -> "User":
         return cls(r["id"], r["username"], r["name"], bool(r["is_admin"]), r["partner_id"], r["partner_since"],
-                   r["sheet_id"], r["apps_script_url"], bool(r["must_change"]))
+                   r["sheet_id"], r["apps_script_url"], bool(r["must_change"]), r["email"], bool(r["active"]),
+                   r["requested_at"], r["request_note"])
 
     def public(self) -> dict:
         return {"id": self.id, "username": self.username, "name": self.name, "isAdmin": self.is_admin,
-                "mustChange": self.must_change}
+                "mustChange": self.must_change, "email": self.email or ""}
 
 
 def _utcnow() -> datetime:
@@ -52,8 +69,15 @@ def get_by_username(con: sqlite3.Connection, username: str) -> User | None:
     return User.from_row(r) if r else None
 
 
-def list_users(con: sqlite3.Connection) -> list[User]:
-    return [User.from_row(r) for r in con.execute("SELECT * FROM users ORDER BY id")]
+def list_users(con: sqlite3.Connection, active: bool | None = True) -> list[User]:
+    """Cuentas activas (por defecto), pendientes de aprobar (False) o todas (None)."""
+    if active is None:
+        return [User.from_row(r) for r in con.execute("SELECT * FROM users ORDER BY id")]
+    return [User.from_row(r) for r in con.execute("SELECT * FROM users WHERE active=? ORDER BY id", (int(active),))]
+
+
+def admin_emails(con: sqlite3.Connection) -> list[str]:
+    return [u.email for u in list_users(con) if u.is_admin and u.email]
 
 
 def count_users(con: sqlite3.Connection) -> int:
@@ -61,7 +85,8 @@ def count_users(con: sqlite3.Connection) -> int:
 
 
 def create_user(con: sqlite3.Connection, username: str, name: str, password: str, is_admin: bool = False,
-                must_change: bool = False) -> User:
+                must_change: bool = False, email: str | None = None, active: bool = True,
+                request_note: str | None = None) -> User:
     username = (username or "").strip().lower()
     name = (name or "").strip()
     if not USERNAME_RE.match(username):
@@ -72,9 +97,13 @@ def create_user(con: sqlite3.Connection, username: str, name: str, password: str
         raise UserError(p)
     if get_by_username(con, username):
         raise UserError("Ese nombre de usuario ya existe.")
+    email = clean_email(email)
+    now = db.now_iso()
     cur = con.execute(
-        "INSERT INTO users(username, name, pw_hash, is_admin, must_change, created_at) VALUES(?,?,?,?,?,?)",
-        (username, name, hash_password(password), int(is_admin), int(must_change), db.now_iso()),
+        "INSERT INTO users(username, name, pw_hash, is_admin, must_change, email, active, requested_at, request_note, "
+        "created_at) VALUES(?,?,?,?,?,?,?,?,?,?)",
+        (username, name, hash_password(password), int(is_admin), int(must_change), email, int(active),
+         None if active else now, (request_note or "").strip()[:500] or None, now),
     )
     return get_user(con, cur.lastrowid)  # type: ignore[return-value]
 
@@ -92,6 +121,26 @@ def rename(con: sqlite3.Connection, user_id: int, username: str, name: str) -> N
     con.execute("UPDATE users SET username=?, name=? WHERE id=?", (username, name, user_id))
 
 
+def set_email(con: sqlite3.Connection, user_id: int, email: str | None) -> None:
+    con.execute("UPDATE users SET email=? WHERE id=?", (clean_email(email), user_id))
+
+
+def approve(con: sqlite3.Connection, user_id: int) -> User:
+    u = get_user(con, user_id)
+    if not u or u.active:
+        raise UserError("Esa petición ya no está pendiente.")
+    con.execute("UPDATE users SET active=1 WHERE id=?", (user_id,))
+    return get_user(con, user_id)  # type: ignore[return-value]
+
+
+def reject(con: sqlite3.Connection, user_id: int) -> User:
+    u = get_user(con, user_id)
+    if not u or u.active:
+        raise UserError("Esa petición ya no está pendiente.")
+    con.execute("DELETE FROM users WHERE id=?", (user_id,))
+    return u
+
+
 def set_password(con: sqlite3.Connection, user_id: int, password: str) -> None:
     if p := password_problem(password):
         raise UserError(p)
@@ -105,9 +154,41 @@ def authenticate(con: sqlite3.Connection, username: str, password: str) -> User 
     return User.from_row(r) if (r and ok) else None
 
 
+# cuenta inicial de todo despliegue, como en DriveTest Analyzer: se crea una sola vez (si luego se borra o se
+# renombra, no vuelve) y la pantalla de entrar la muestra mientras conserve su contraseña por defecto
+DEFAULT_ADMIN = ("admin", "admin123")
+_hint_cache: dict = {}
+
+
+def bootstrap_default_admin(con: sqlite3.Connection) -> User | None:
+    if con.execute("SELECT 1 FROM counters WHERE name='bootstrap_default_admin'").fetchone():
+        return None
+    con.execute("INSERT INTO counters(name, value) VALUES('bootstrap_default_admin', 1)")
+    if get_by_username(con, DEFAULT_ADMIN[0]):
+        return None
+    return create_user(con, DEFAULT_ADMIN[0], "Administración", DEFAULT_ADMIN[1], is_admin=True)
+
+
+def has_default_password(u: User | None, pw_hash: str | None) -> bool:
+    if not u or not pw_hash or u.username != DEFAULT_ADMIN[0]:
+        return False
+    if pw_hash not in _hint_cache:
+        _hint_cache.clear()
+        _hint_cache[pw_hash] = verify_password(pw_hash, DEFAULT_ADMIN[1])
+    return _hint_cache[pw_hash]
+
+
+def default_accounts(con: sqlite3.Connection) -> list[dict]:
+    """Cuentas por defecto que todavía se pueden usar (para la referencia de la pantalla de entrar)."""
+    r = con.execute("SELECT * FROM users WHERE username=? AND active=1", (DEFAULT_ADMIN[0],)).fetchone()
+    if r and has_default_password(User.from_row(r), r["pw_hash"]):
+        return [{"username": DEFAULT_ADMIN[0], "password": DEFAULT_ADMIN[1]}]
+    return []
+
+
 def bootstrap_admin(con: sqlite3.Connection, username: str, name: str, password: str) -> User | None:
     """Con la base vacía, crea la cuenta de administración inicial; hay que cambiar la contraseña al entrar."""
-    if count_users(con):
+    if not username or count_users(con) or username.strip().lower() == DEFAULT_ADMIN[0]:
         return None
     return create_user(con, username, name, password, is_admin=True, must_change=True)
 
@@ -130,7 +211,7 @@ def session_user(con: sqlite3.Connection, token: str | None) -> User | None:
     if not token:
         return None
     r = con.execute(
-        "SELECT u.* FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=? AND s.expires_at > ?",
+        "SELECT u.* FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=? AND s.expires_at > ? AND u.active=1",
         (token_hash(token), _utcnow().isoformat(timespec="seconds")),
     ).fetchone()
     return User.from_row(r) if r else None
@@ -173,6 +254,13 @@ def list_invites(con: sqlite3.Connection) -> list[dict]:
         "FROM invites i LEFT JOIN users u ON u.id=i.used_by ORDER BY i.created_at DESC LIMIT 50"
     )
     return [dict(r) for r in rows]
+
+
+def bootstrap_email(con: sqlite3.Connection, username: str, email: str | None) -> None:
+    """Correo de la cuenta inicial (BODYLENS_ADMIN_EMAIL) si todavía no tiene ninguno."""
+    if email:
+        con.execute("UPDATE users SET email=? WHERE username=? AND (email IS NULL OR email='')",
+                    (clean_email(email), username.strip().lower()))
 
 
 def update_bridge(con: sqlite3.Connection, user_id: int, sheet_id: str | None, apps_script_url: str | None) -> None:

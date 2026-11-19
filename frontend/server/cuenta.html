@@ -15,11 +15,18 @@
     <div class="row"><button id="mGo" type="button">Guardar y entrar</button><span class="msg" id="mMsg"></span></div>
   </section>
 
+  <section class="card" id="defBox" hidden style="border-color:var(--bad)">
+    <h2>Contraseña por defecto</h2>
+    <p>Esta cuenta todavía tiene la contraseña por defecto, que aparece en la pantalla de entrar: cualquiera puede usarla. Cámbiala abajo, en «Contraseña».</p>
+  </section>
+
   <section class="card" id="mainCard">
     <h1>Tu cuenta</h1>
     <dl class="kv"><dt>Usuario</dt><dd id="kUser">—</dd><dt>Nombre</dt><dd id="kName">—</dd></dl>
     <label>Cambiar nombre<input id="name" maxlength="80"></label>
     <div class="row"><button class="ghost" id="nameGo" type="button">Guardar nombre</button><span class="msg" id="nameMsg"></span></div>
+    <label>Correo electrónico (para los avisos)<input id="email" type="email" autocomplete="email"></label>
+    <div class="row"><button class="ghost" id="emailGo" type="button">Guardar correo</button><span class="msg" id="emailMsg"></span></div>
   </section>
 
   <section class="card">
@@ -72,7 +79,12 @@
 
   <section class="card" id="admin" hidden>
     <h2>Administración</h2>
-    <p>Las cuentas nuevas solo se crean con una invitación. El enlace vale para una cuenta y caduca en unos días.</p>
+    <h2 id="peticiones" style="margin-top:4px">Peticiones de acceso</h2>
+    <p class="small" id="rqMail"></p>
+    <ul class="list" id="rqList"></ul>
+    <div class="row"><button class="ghost" id="mTest" type="button">Enviarme un correo de prueba</button><span class="msg" id="mTestMsg"></span></div>
+    <h2 style="margin-top:18px">Invitaciones</h2>
+    <p>También puedes invitar a alguien directamente: el enlace vale para una cuenta, sin aprobación, y caduca en unos días.</p>
     <label>Para quién (nota opcional)<input id="iNote" maxlength="120"></label>
     <div class="row"><button id="iGo" type="button">Crear invitación</button><span class="msg" id="iMsg"></span></div>
     <p id="iLink" hidden><span class="code" id="iUrl"></span> <button class="ghost" id="iCopy" type="button">Copiar</button></p>
@@ -91,10 +103,11 @@ async function load() {
   ME = await api('GET', '/api/me').catch(e => { if (/Inicia sesión/.test(e.message)) location.href = '/login?next=/cuenta'; throw e });
   const must = ME.user.mustChange;
   $('mustBox').hidden = !must;
+  $('defBox').hidden = must || !ME.defaultPassword;
   for (const s of document.querySelectorAll('main > section.card:not(#mustBox), main > .row')) s.hidden = must;
   if (must) { $('mUser').value = ME.user.username; $('mName').value = ME.user.name; }
   else if (new URLSearchParams(location.search).has('cambiar')) history.replaceState(null, '', '/cuenta');
-  $('kUser').textContent = ME.user.username; $('kName').textContent = ME.user.name; $('name').value = ME.user.name;
+  $('kUser').textContent = ME.user.username; $('kName').textContent = ME.user.name; $('name').value = ME.user.name; $('email').value = ME.user.email || '';
   const p = ME.partner;
   $('pLinked').hidden = !p; $('pFree').hidden = !!p;
   if (p) { $('pName').textContent = `${p.name} (${p.username})`; $('pSince').textContent = p.since || '—'; }
@@ -109,7 +122,10 @@ async function load() {
   if (ME.user.isAdmin) loadAdmin();
 }
 async function loadAdmin() {
-  const [{ invites }, { users }] = await Promise.all([api('GET', '/api/admin/invites'), api('GET', '/api/admin/users')]);
+  const [{ invites }, { users }, rq] = await Promise.all([api('GET', '/api/admin/invites'), api('GET', '/api/admin/users'), api('GET', '/api/admin/access-requests')]);
+  $('rqMail').textContent = rq.mail.configured ? `Los avisos salen de ${rq.mail.from_address} (${rq.mail.host}:${rq.mail.port}).` + (ME.user.email ? ` Te llegan a ${ME.user.email}.` : ' Pon tu correo arriba para recibirlos.') : 'El correo no está configurado (SMTP_* en el .env): las peticiones se ven aquí pero no llegan avisos.';
+  $('rqList').innerHTML = rq.requests.length ? rq.requests.map(r => `<li><span><b>${esc(r.name)}</b> · ${esc(r.username)} · ${esc(r.email)} · ${when(r.requestedAt)}${r.note ? `<br><span class="small">${esc(r.note)}</span>` : ''}</span><span><button data-rqok="${r.id}" type="button">Aprobar</button> <button class="ghost" data-rqno="${r.id}" data-rqname="${esc(r.name)}" type="button">Rechazar</button></span></li>`).join('') : '<li><span class="small">No hay peticiones pendientes.</span></li>';
+  if (location.hash === '#peticiones') setTimeout(() => $('peticiones').scrollIntoView(), 50);
   $('iList').innerHTML = invites.map(i => `<li><span>${esc(i.note || 'Invitación')} · ${i.used_at ? 'usada por ' + esc(i.used_by_name) : (i.expires_at < new Date().toISOString() ? 'caducada' : 'pendiente, caduca ' + when(i.expires_at))}</span></li>`).join('');
   $('uList').innerHTML = users.map(u => `<li data-uid="${u.id}" style="display:block">
     <b>${esc(u.name)}</b> <span class="small">(${esc(u.username)}${u.isAdmin ? ', admin' : ''}) · última sincronización ${when(u.sync.lastSync)}</span>
@@ -122,6 +138,9 @@ const act = (btn, msg, fn, okText) => btn.addEventListener('click', async () => 
   try { await fn(); say(msg, okText || 'Hecho.', 'ok'); await load(); } catch (e) { say(msg, e.message, 'err'); } finally { btn.disabled = false; }
 });
 act($('nameGo'), $('nameMsg'), () => api('POST', '/api/me/name', { name: $('name').value }), 'Nombre guardado.');
+act($('emailGo'), $('emailMsg'), () => api('POST', '/api/me/email', { email: $('email').value }), 'Correo guardado.');
+$('mTest').addEventListener('click', async () => { $('mTest').disabled = true; say($('mTestMsg'), 'Enviando…');
+  try { const r = await api('POST', '/api/admin/test-email', {}); say($('mTestMsg'), 'Enviado a ' + r.to + '.', 'ok'); } catch (e) { say($('mTestMsg'), e.message, 'err'); } finally { $('mTest').disabled = false; } });
 act($('pAsk'), $('pMsg'), async () => { const r = await api('POST', '/api/partner/request', { username: $('pUser').value, since: $('pDate').value || null }); if (r.linked) alert('Cuentas unidas.'); }, 'Petición enviada.');
 act($('pUnlink'), $('pMsg2'), async () => { if (!confirm('¿Separar las cuentas? Cada uno se queda con una copia de lo compartido.')) throw new Error('Cancelado.'); await api('POST', '/api/partner/unlink'); }, 'Cuentas separadas.');
 act($('pwGo'), $('pwMsg'), async () => { await api('POST', '/api/me/password', { current: $('pw0').value, new: $('pw1').value }); $('pw0').value = $('pw1').value = ''; }, 'Contraseña cambiada.');
@@ -161,7 +180,10 @@ $('impGo').addEventListener('click', async () => {
 $('iCopy').addEventListener('click', () => navigator.clipboard && navigator.clipboard.writeText($('iUrl').textContent));
 document.addEventListener('click', async e => {
   const a = e.target.closest('[data-acc]'), r = e.target.closest('[data-rej]'), s = e.target.closest('[data-save]');
+  const ok = e.target.closest('[data-rqok]'), no = e.target.closest('[data-rqno]');
   try {
+    if (ok) { ok.disabled = true; await api('POST', `/api/admin/access-requests/${ok.dataset.rqok}/approve`); await load(); }
+    if (no && confirm(`¿Rechazar la petición de ${no.dataset.rqname}? Se borra y se le avisa por correo.`)) { await api('POST', `/api/admin/access-requests/${no.dataset.rqno}/reject`); await load(); }
     if (a) { await api('POST', '/api/partner/accept', { username: a.dataset.acc }); await load(); }
     if (r) { await api('POST', '/api/partner/reject', { username: r.dataset.rej }); await load(); }
     if (s) { const li = s.closest('li'), m = li.querySelector('.msg'), v = f => li.querySelector(`[data-f="${f}"]`).value;
