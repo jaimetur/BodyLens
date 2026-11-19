@@ -51,8 +51,6 @@ def test_couple_shares_cycle_and_intimacy(client, make_user, login):
     assert l.get("/api/me").json()["requests"]["incoming"][0]["username"] == "jaime"
     assert l.post("/api/partner/accept", json={"username": "jaime"}).status_code == 200
     assert j.get("/api/me").json()["partner"] == {"username": "laura", "name": "Laura", "since": "2026-03-01"}
-    # the app page knows the linked account (it is shown on the main profile, in Profiles)
-    assert '"partner": {"name": "Laura", "username": "laura", "since": "2026-03-01"}' in j.get("/").text
 
     since = l.get("/api/docs/bascula").json()["rev"]
     assert j.get("/api/docs/bascula/hklog").json()["data"]["e"] == [mood, sex_j, cyc_l]

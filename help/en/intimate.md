@@ -5,7 +5,6 @@ A private section for tracking the menstrual cycle, sexual activity and mood. It
 ## Source of the data
 
 - Cycle, sexual activity and mood records come from **Apple Health** (iPhone, through Health Auto Export) or **Android** (Health Connect, through the BodyLens app), or you log them here by hand. Android sends menstruation and sexual activity; **mood (State of Mind) is only sent by the iPhone, so on Android log it by hand in the app.** Imported records are labelled "Apple Health / Android".
-- Cycle data that arrives from Apple Health or Android for the main profile is automatically passed to the profile marked as "Cycle" (see Your account → Profiles).
 
 ## Private PIN
 

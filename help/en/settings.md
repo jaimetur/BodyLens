@@ -58,15 +58,13 @@ The following three sections are tabs of **Your account**, not of Goals, plan an
 
 ### Profiles (Your account → Profiles)
 
-- Profiles let you keep other people's data in your account, for example someone in your family who uses your scale. Each profile has its own data and, if you want, its own PIN and its own modules. You switch profile with the profile button (initials and name) next to the title in the top bar, which also offers **Goals, plan and meals**, **Your account** (where profiles are managed), **Administration** (if you are an administrator), **Lock profile** (if the profile has a PIN) and **Sign out**.
+- Profiles are ways of using your account with access to only some modules: for example, one with Weight and Meals to hand your phone to someone without them seeing the rest. **All profiles see the same data, your account's**, and each one can have its own PIN. You switch profile with the profile button (initials and name) next to the title in the top bar, which also offers **Goals, plan and meals**, **Your account** (where profiles are managed), **Administration** (if you are an administrator), **Lock profile** (if the profile has a PIN) and **Sign out**.
 - Each profile row lets you set:
   - **Name** and **colour** (the colour and initials identify the profile).
-  - **Receives the cycle** (only with several profiles): marks which profile receives the menstrual cycle data that arrives from Apple Health or Android (Health Connect). Only one can be marked.
-  - **Partner** (only with several profiles): links two profiles of this account to each other, for Intimate. If your account is linked with another person's account (Your account → Account → Partner), the main profile shows that person here instead: "Partner: name (linked account)"; that link is what shares the cycle and intimacy records between both accounts. When two profiles are linked, "since" appears to indicate the start date of the relationship; sexual activity of the partner before that date is not counted.
   - **Set PIN** / **Change PIN** / **Remove PIN**: 4-digit PIN for the profile.
   - **Private PIN**: 4-digit PIN for Cycle and intimacy (see below).
-  - **Modules** (every profile except the main one): tap each module to give the profile access to it or take it away: Summary, Weight, Body, Activity, Sleep, Meals, Intimate and Weight history. A profile only sees its modules in the menu, and opening another one takes it to the first module it has. At least one module stays on. For example, a profile for someone who only logs Meals and Weight. The main profile always sees every module; Goals, plan and meals, Your account and Help are always available.
-  - **Delete** (asks for confirmation with "Sure?"): removes the profile from the list. Its data stays saved in case you create it again with the same name. The main profile cannot be deleted.
+  - **Modules** (every profile, the main one included): tap each module to give the profile access to it or take it away: Summary, Weight, Body, Activity, Sleep, Meals, Intimate and Weight history. A profile only sees its modules in the menu, and opening another one takes it to the first module it has. Goals, plan and meals, Your account → Account and Help are always available. A profile with limited modules cannot manage profiles nor see Data and backups, so at least one profile always keeps every module.
+  - **Delete** (asks for confirmation with "Sure?"): removes the profile; the data stays, since it is your account's. The main profile cannot be deleted.
 - **Add profile**: type a name and press **Add profile**. Switch to it with the profile button.
 
 ### Profile PIN

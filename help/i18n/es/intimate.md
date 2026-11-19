@@ -1,4 +1,4 @@
-<!-- en: ef0e70ea2a7e9f70 -->
+<!-- en: c93d5f3709773af7 -->
 # Ciclo e intimidad
 
 Una sección privada para seguir el ciclo menstrual, la actividad sexual y el ánimo. Está protegida por su propio PIN de privacidad y se puede ocultar por completo.
@@ -6,7 +6,6 @@ Una sección privada para seguir el ciclo menstrual, la actividad sexual y el á
 ## Origen de los datos
 
 - Los registros de ciclo, actividad sexual y ánimo vienen de **Apple Salud** (iPhone, a través de Health Auto Export) o de **Android** (Health Connect, a través de la app de BodyLens), o los apuntas aquí a mano. Android envía la menstruación y la actividad sexual; **el ánimo (Estado de ánimo) solo lo envía el iPhone, así que en Android apúntalo a mano en la app.** Los registros importados se etiquetan «Apple Salud / Android».
-- Los datos del ciclo que llegan de Apple Salud o de Android para el perfil principal pasan automáticamente al perfil marcado como «Ciclo» (mira Tu cuenta → Perfiles).
 
 ## PIN privado
 

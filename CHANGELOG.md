@@ -24,12 +24,11 @@
   - Single-use invitation links.
   - Initial `admin`/`admin123` account, which the sign-in screen shows while it keeps the default password.
 - **Outgoing email (SMTP)** for requests, approvals, temporary passwords and notices, configurable from Administration.
-- **Couples:** two accounts can be linked to share and edit the cycle and intimacy records together. An app profile can be moved to that person's own account.
+- **Couples:** two accounts can be linked to share and edit the cycle and intimacy records together. You invite your partner with their username or email from Your account → Account → Partner; they get an email with the invitation (you are told at once if no account has that username or email), and you get one when they accept. An app profile can be moved to that person's own account.
 - **Your account:**
   - **Account:** profile, email, language and password, partner, data sources, synchronisation and import.
-  - **Profiles:** management of the app's profiles, explained on the panel itself. Each profile (except the main one) can be given access to only the modules you choose, with chips like in DriveTest Analyzer; it only sees those in the menu.
+  - **Profiles:** access levels over your account's data (all profiles see the same data), explained on the panel itself. Each profile, the main one included, can be given only the modules you choose, with chips like in DriveTest Analyzer; it only sees those in the menu. A profile with limited modules cannot manage profiles nor see Data and backups, and at least one profile always keeps every module. Profiles no longer have their own partner or cycle.
   - **Personal data** (height, sex, date of birth) is a panel of the **Account** tab, under Password.
-  - In each profile row, **Receives the cycle** and **Partner** only appear with several profiles and are explained on the panel; the main profile shows the linked account as its partner.
   - **Data and backups:** where your phone data comes from, data source, full backup and CSV export.
 - **Administration** (administrator accounts), with these tabs:
   - **Users:** edit username, name, email and password; activate or deactivate with a switch; grant or remove admin; reset the password; delete.

@@ -1,4 +1,4 @@
-<!-- en: 672d97c2e7140dac -->
+<!-- en: 88fce7bb7e5db500 -->
 # Objetivos, plan y comidas
 
 Sirve para fijar tus objetivos y el plan de pérdida y la fórmula de Comidas. La misma página de la app incluye también las pestañas de **Tu cuenta** que se describen al final de este documento: perfiles y PIN, datos personales, copias de seguridad y exportar a PDF.
@@ -59,15 +59,13 @@ Las tres secciones siguientes son pestañas de **Tu cuenta**, no de Objetivos, p
 
 ### Perfiles (Tu cuenta → Perfiles)
 
-- Los perfiles sirven para llevar en tu cuenta los datos de otras personas, por ejemplo alguien de tu familia que usa tu báscula. Cada perfil tiene sus propios datos y, si quieres, su PIN y sus módulos. Cambias de perfil con el botón del perfil (iniciales y nombre) junto al título de la barra superior, que también ofrece **Objetivos, plan y comidas**, **Tu cuenta** (donde se gestionan los perfiles), **Administración** (si eres administrador), **Bloquear perfil** (si el perfil tiene PIN) y **Cerrar sesión**.
+- Los perfiles son formas de usar tu cuenta con acceso solo a algunos módulos: por ejemplo, uno con Peso y Comidas para dejarle el móvil a alguien sin que vea lo demás. **Todos ven los mismos datos, los de tu cuenta**, y cada uno puede tener su PIN. Cambias de perfil con el botón del perfil (iniciales y nombre) junto al título de la barra superior, que también ofrece **Objetivos, plan y comidas**, **Tu cuenta** (donde se gestionan los perfiles), **Administración** (si eres administrador), **Bloquear perfil** (si el perfil tiene PIN) y **Cerrar sesión**.
 - Cada fila de perfil te permite definir:
   - **Nombre** y **color** (el color y las iniciales identifican el perfil).
-  - **Recibe el ciclo** (solo con varios perfiles): marca qué perfil recibe los datos del ciclo menstrual que llegan de Apple Salud o de Android (Health Connect). Solo se puede marcar uno.
-  - **Pareja** (solo con varios perfiles): une dos perfiles de esta cuenta entre sí, para Íntimo. Si tu cuenta está unida con la de otra persona (Tu cuenta → Cuenta → Pareja), el perfil principal muestra aquí a esa persona: «Pareja: nombre (cuenta unida)»; esa unión es la que comparte los registros del ciclo y de intimidad entre las dos cuentas. Al unir dos perfiles, aparece «desde» para indicar la fecha de inicio de la relación; la actividad sexual de la pareja anterior a esa fecha no cuenta.
   - **Poner PIN** / **Cambiar PIN** / **Quitar PIN**: PIN de 4 dígitos para el perfil.
   - **PIN privado**: PIN de 4 dígitos para Ciclo e intimidad (mira más abajo).
-  - **Módulos** (todos los perfiles menos el principal): toca cada módulo para darle acceso al perfil o quitárselo: Resumen, Peso, Cuerpo, Actividad, Sueño, Comidas, Íntimo e Historial de pesos. Un perfil solo ve sus módulos en el menú, y si abre otro va al primero que tiene. Siempre queda al menos uno. Por ejemplo, un perfil para alguien que solo apunta Comidas y Peso. El perfil principal ve siempre todos; Objetivos, plan y comidas, Tu cuenta y la Ayuda están siempre disponibles.
-  - **Borrar** (pide confirmación con «¿Seguro?»): quita el perfil de la lista. Sus datos quedan guardados por si lo vuelves a crear con el mismo nombre. El perfil principal no se puede borrar.
+  - **Módulos** (todos los perfiles, también el principal): toca cada módulo para darle acceso al perfil o quitárselo: Resumen, Peso, Cuerpo, Actividad, Sueño, Comidas, Íntimo e Historial de pesos. Un perfil solo ve sus módulos en el menú, y si abre otro va al primero que tiene. Objetivos, plan y comidas, Tu cuenta → Cuenta y la Ayuda están siempre disponibles. Un perfil con módulos limitados no puede gestionar los perfiles ni ver Datos y copias, así que siempre queda al menos un perfil con todos los módulos.
+  - **Borrar** (pide confirmación con «¿Seguro?»): quita el perfil; los datos se quedan, porque son de tu cuenta. El perfil principal no se puede borrar.
 - **Añadir perfil**: escribe un nombre y pulsa **Añadir perfil**. Cambia a él con el botón del perfil.
 
 ### PIN del perfil

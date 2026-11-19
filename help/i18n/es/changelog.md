@@ -1,4 +1,4 @@
-<!-- en: 1ea22960c481949c -->
+<!-- en: 4d59e707f3784bde -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -25,12 +25,11 @@
   - Enlaces de invitación de un solo uso.
   - Cuenta inicial `admin`/`admin123`, que la pantalla de acceso muestra mientras conserva la contraseña por defecto.
 - **Correo saliente (SMTP)** para peticiones, aprobaciones, contraseñas temporales y avisos, configurable desde Administración.
-- **Parejas:** dos cuentas se pueden unir para compartir y editar juntas los registros de ciclo e intimidad. Un perfil de la app se puede mover a la cuenta propia de esa persona.
+- **Parejas:** dos cuentas se pueden unir para compartir y editar juntas los registros de ciclo e intimidad. Invitas a tu pareja con su usuario o su correo desde Tu cuenta → Cuenta → Pareja; le llega un correo con la invitación (si no hay ninguna cuenta con ese usuario o correo, te lo dice al momento) y a ti otro cuando la acepta. Un perfil de la app se puede mover a la cuenta propia de esa persona.
 - **Tu cuenta:**
   - **Cuenta:** perfil, correo, idioma y contraseña, pareja, fuentes de datos, sincronización e importación.
-  - **Perfiles:** gestión de los perfiles de la app, explicada en el propio panel. A cada perfil (menos el principal) se le pueden dar solo los módulos que elijas, con fichas como en DriveTest Analyzer; en el menú solo ve esos.
+  - **Perfiles:** niveles de acceso a los datos de tu cuenta (todos los perfiles ven los mismos datos), explicados en el propio panel. A cada perfil, también al principal, se le pueden dar solo los módulos que elijas, con fichas como en DriveTest Analyzer; en el menú solo ve esos. Un perfil con módulos limitados no puede gestionar los perfiles ni ver Datos y copias, y siempre queda al menos un perfil con todos los módulos. Los perfiles ya no tienen pareja ni ciclo propios.
   - **Datos personales** (altura, sexo, fecha de nacimiento) es un panel de la pestaña **Cuenta**, debajo de Contraseña.
-  - En cada fila de perfil, **Recibe el ciclo** y **Pareja** solo aparecen con varios perfiles y se explican en el panel; el perfil principal muestra como pareja la cuenta unida.
   - **Datos y copias:** de dónde llegan los datos del móvil, origen de los datos, copia completa y exportación a CSV.
 - **Administración** (cuentas de administrador), con estas pestañas:
   - **Usuarios:** editar usuario, nombre, correo y contraseña; activar o desactivar con un interruptor; dar o quitar el rol de admin; restablecer la contraseña; borrar.

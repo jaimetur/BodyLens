@@ -73,11 +73,11 @@
           <ul class="list" id="pIn"></ul>
           <ul class="list" id="pOut"></ul>
           <div class="fgrid">
-            <label>Usuario de tu pareja<input id="pUser" autocapitalize="none" spellcheck="false"></label>
+            <label>Usuario o correo de tu pareja<input id="pUser" autocapitalize="none" spellcheck="false"></label>
             <label>Juntos desde (opcional)<input id="pDate" type="date"></label>
           </div>
-          <div class="row"><button id="pAsk" type="button">Pedir unir las cuentas</button><span class="msg" id="pMsg"></span></div>
-          <p class="small">Tu pareja tiene que aceptarlo desde su cuenta.</p>
+          <div class="row"><button id="pAsk" type="button">Enviar invitación</button><span class="msg" id="pMsg"></span></div>
+          <p class="small">Le llegará un correo con la invitación. Cuando la acepte desde su cuenta, quedarán unidas.</p>
         </div>
       </section>
 
@@ -157,7 +157,12 @@ act($('profGo'), $('profMsg'), async () => {
   if ($('name').value.trim() !== ME.user.name) await api('POST', '/api/me/name', { name: $('name').value });
   if ($('email').value.trim() !== (ME.user.email || '')) await api('POST', '/api/me/email', { email: $('email').value });
 }, 'Guardado.');
-act($('pAsk'), $('pMsg'), async () => { const r = await api('POST', '/api/partner/request', { username: $('pUser').value, since: $('pDate').value || null }); if (r.linked) alert('Cuentas unidas.'); }, 'Petición enviada.');
+act($('pAsk'), $('pMsg'), async () => {
+  if (!$('pUser').value.trim()) throw new Error('Escribe el usuario o el correo de tu pareja.');
+  const r = await api('POST', '/api/partner/request', { username: $('pUser').value, since: $('pDate').value || null });
+  if (r.linked) alert('Cuentas unidas.');
+  else if (!r.mailed) alert('Invitación guardada. No se ha podido avisar por correo: dile a tu pareja que la acepte en Tu cuenta → Cuenta → Pareja.');
+}, 'Invitación enviada.');
 act($('pUnlink'), $('pMsg2'), async () => { if (!confirm('¿Separar las cuentas? Cada uno se queda con una copia de lo compartido.')) throw new Error('Cancelado.'); await api('POST', '/api/partner/unlink'); }, 'Cuentas separadas.');
 act($('pwGo'), $('pwMsg'), async () => { if ($('pw1').value !== $('pw2').value) throw new Error('Las dos contraseñas nuevas no coinciden.'); await api('POST', '/api/me/password', { current: $('pw0').value, new: $('pw1').value }); $('pw0').value = $('pw1').value = $('pw2').value = ''; }, 'Contraseña cambiada.');
 act($('wOff'), $('wMsg'), async () => { if (!confirm('¿Desconectar Withings? Dejarán de llegar las pesadas hasta que lo vuelvas a conectar.')) throw new Error('Cancelado.'); await api('POST', '/api/sources/withings/disconnect'); }, 'Desconectado.');

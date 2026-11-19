@@ -3,8 +3,8 @@
 Two accounts can be linked as a couple to **share Cycle and intimacy records**. All other data (weight, sleep, activity, meals…) stays individual.
 
 ## Linking the accounts
-- In "Your account" → **Partner**, enter your partner's **username** and, optionally, the **Together since** date. Press **Request to link the accounts**.
-- Your partner sees the request in their "Your account" and **accepts** or **rejects** it. If both of you request it at the same time, the accounts are linked straight away.
+- In "Your account" → Account → **Partner**, enter your partner's **username or email** and, optionally, the **Together since** date. Press **Send invitation**. If no account has that username or email, you are told so straight away.
+- Your partner receives an **email with the invitation** and also sees it in their "Your account" → Account → Partner, where they **accept** or **reject** it. When they accept, the accounts are linked and you receive an email. If both of you invite each other, the accounts are linked straight away.
 - Each account can be linked to only one other account.
 
 ## What is shared

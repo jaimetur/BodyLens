@@ -73,6 +73,15 @@ def get_by_username(con: sqlite3.Connection, username: str) -> User | None:
     return User.from_row(r) if r else None
 
 
+def get_by_login(con: sqlite3.Connection, login: str) -> User | None:
+    """The account with that username or, when it contains «@», with that email."""
+    login = (login or "").strip().lower()
+    if "@" not in login:
+        return get_by_username(con, login)
+    r = con.execute("SELECT * FROM users WHERE lower(email)=?", (login,)).fetchone()
+    return User.from_row(r) if r else None
+
+
 def list_users(con: sqlite3.Connection, active: bool | None = True) -> list[User]:
     """Cuentas activas (por defecto), pendientes de aprobar (False) o todas (None)."""
     if active is None:
