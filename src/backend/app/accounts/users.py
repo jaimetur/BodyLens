@@ -183,7 +183,12 @@ def set_password(con: sqlite3.Connection, user_id: int, password: str) -> None:
 
 
 def authenticate(con: sqlite3.Connection, username: str, password: str) -> User | None:
-    r = con.execute("SELECT * FROM users WHERE username=?", ((username or "").strip().lower(),)).fetchone()
+    """Sign in with the username or with the account's email (usernames never contain «@»)."""
+    login = (username or "").strip().lower()
+    if "@" in login:
+        r = con.execute("SELECT * FROM users WHERE lower(email)=?", (login,)).fetchone()
+    else:
+        r = con.execute("SELECT * FROM users WHERE username=?", (login,)).fetchone()
     ok = verify_password(r["pw_hash"] if r else None, password or "")
     return User.from_row(r) if (r and ok) else None
 

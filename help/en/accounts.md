@@ -1,9 +1,9 @@
 # Accounts and access
 
-Each person has their own BodyLens account, with their data kept separate from everyone else's. You sign in only with a username and password.
+Each person has their own BodyLens account, with their data kept separate from everyone else's. You sign in with your username (or your email) and your password.
 
 ## Signing in
-- **Sign-in screen** (`/login`): username and password. If you fail several times in a row, you have to wait a few minutes.
+- **Sign-in screen** (`/login`): your username or the email of your account, and your password. If you fail several times in a row, you have to wait a few minutes.
 - **Session**: lasts 90 days in that browser. To sign out, go to "Your account" → **Sign out** (this also deletes the data stored in that browser).
 - **Pending account**: if your request is not approved yet, signing in tells you that you will get an email once it is.
 - **Initial account of a new deployment**: while the `admin` account keeps its default password (`admin123`), the sign-in screen shows it with a **Use** button. It disappears once you change the password.

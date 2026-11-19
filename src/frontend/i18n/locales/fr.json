@@ -1637,6 +1637,7 @@
  "User": "User",
  "Username": "Identifiant",
  "Username (to sign in)": "Identifiant (pour te connecter)",
+ "Username or email": "Nom d’utilisateur ou e-mail",
  "Username to sign in": "Identifiant de connexion",
  "Users": "Utilisateurs",
  "Using your whole history ({0} days with a mood logged). For each metric I compare your mood on days when it was above normal with days when it was below; the number is the difference on the −3 to +3 scale.": "Sur tout ton historique ({0} jours avec humeur notée). Pour chaque indicateur, je compare ton humeur les jours où il était au-dessus de la normale et ceux où il était en dessous ; le nombre est l'écart sur l'échelle de −3 à +3.",

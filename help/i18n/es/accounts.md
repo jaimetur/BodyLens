@@ -1,10 +1,10 @@
-<!-- en: 47fc870b3776acc4 -->
+<!-- en: 85c19f384a697f4f -->
 # Cuentas y acceso
 
-Cada persona tiene su propia cuenta de BodyLens, con sus datos separados de los de los demás. Solo entras con un nombre de usuario y una contraseña.
+Cada persona tiene su propia cuenta de BodyLens, con sus datos separados de los de los demás. Entras con tu nombre de usuario (o tu correo) y tu contraseña.
 
 ## Entrar
-- **Pantalla de acceso** (`/login`): usuario y contraseña. Si fallas varias veces seguidas, tendrás que esperar unos minutos.
+- **Pantalla de acceso** (`/login`): tu usuario o el correo de tu cuenta, y tu contraseña. Si fallas varias veces seguidas, tendrás que esperar unos minutos.
 - **Sesión**: dura 90 días en ese navegador. Para salir, ve a «Tu cuenta» → **Cerrar sesión** (esto también borra los datos guardados en ese navegador).
 - **Cuenta pendiente**: si tu petición aún no está aprobada, al entrar te avisa de que recibirás un correo cuando lo esté.
 - **Cuenta inicial de un despliegue nuevo**: mientras la cuenta `admin` conserve su contraseña por defecto (`admin123`), la pantalla de acceso la muestra con un botón **Usar**. Desaparece en cuanto cambias la contraseña.

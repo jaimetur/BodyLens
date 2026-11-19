@@ -148,3 +148,15 @@ def test_app_starts_with_scheduler(env, monkeypatch):
     from app.main import app
     with TestClient(app) as c:
         assert c.get("/healthz").json() == {"ok": True}
+
+
+def test_sign_in_with_email(client, make_user, login):
+    """The account's email works as well as the username (any case)."""
+    from app.accounts import users
+    from app.core import db
+    u = make_user("ana")
+    with db.tx() as con:
+        users.set_email(con, u.id, "Ana@Example.test")
+    c = login("ana@example.TEST")
+    assert c.get("/api/me").json()["user"]["username"] == "ana"
+    assert client.post("/api/login", json={"username": "nadie@example.test", "password": "contraseña-larga"}).status_code == 401

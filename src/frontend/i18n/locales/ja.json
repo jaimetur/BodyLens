@@ -1637,6 +1637,7 @@
  "User": "User",
  "Username": "ユーザー名",
  "Username (to sign in)": "ユーザー名 (ログイン用)",
+ "Username or email": "ユーザー名またはメール",
  "Username to sign in": "ログイン用のユーザー名",
  "Users": "ユーザー",
  "Using your whole history ({0} days with a mood logged). For each metric I compare your mood on days when it was above normal with days when it was below; the number is the difference on the −3 to +3 scale.": "全履歴 ({0} 日分の気分の記録) が対象です。各指標について、気分がいつもより高かった日と低かった日を比べています。数値は −3〜+3 の目盛りでの差です。",
