@@ -36,6 +36,14 @@ REPLACEMENTS: list[tuple] = [
     (f"fileId:'{LEGACY_SHEET}'}};", "fileId:null};"),
     ('<p class="src" id="railSrc">Datos de tu báscula Withings, guardados en tu cuenta de Claude.</p>',
      '<p class="src" id="railSrc">Datos de tu báscula Withings y de Apple Salud, guardados en tu cuenta de BodyLens.</p>'),
+    # profile button: full name instead of the first name
+    ("<span>${esc(p.name.split(' ')[0])}</span>`;b.setAttribute('aria-label'",
+     "<span>${esc(p.name)}</span>`;b.setAttribute('aria-label'"),
+    # profile menu: sign out at the end
+    ("<span>Bloquear perfil</span></button>':''}`;m.hidden=false",
+     "<span>Bloquear perfil</span></button>':''}<button type=\"button\" class=\"pfm-out\" data-blout>"
+     "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4\"/>"
+     "<path d=\"M10 16l-4-4 4-4M6 12h10\"/></svg><span>Cerrar sesión</span></button>`;m.hidden=false"),
     # menú de perfiles: acceso a la cuenta
     ('<a class="owner-only" href="#ajustes">Ajustes</a>',
      '<a class="owner-only" href="#ajustes">Ajustes</a><a href="#cuenta">Tu cuenta</a><a href="#admin" class="bl-admin">Administración</a>'),
@@ -51,6 +59,10 @@ REPLACEMENTS: list[tuple] = [
 # lo que no tiene sentido en el servidor (copia publicada en la página, ID de la hoja) se oculta
 SERVER_CSS = (
     "section.card:has(#pubBtn),label[for=cfFile],#fileSave,#fileMsg{display:none!important}"
+    "#pfMenu .pfm-out{color:#e5484d!important;border-top:1px solid var(--line)!important;margin-top:4px;font-weight:600}"
+    "#pfMenu .pfm-out svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;"
+    "stroke-linejoin:round;flex:none}"
+    "#pfBtn span{max-width:22ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}"
 )
 
 

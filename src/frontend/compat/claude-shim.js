@@ -186,3 +186,11 @@
     },
   };
 })();
+
+// Sign out from the profile menu (the item is added by app/web/page.py)
+document.addEventListener('click', async e => {
+  if (!e.target.closest || !e.target.closest('[data-blout]')) return;
+  e.preventDefault();
+  try { await fetch('/api/logout', { method: 'POST', headers: { 'X-BodyLens': '1' }, credentials: 'same-origin' }); } catch (_) { }
+  location.replace('/login');
+});
