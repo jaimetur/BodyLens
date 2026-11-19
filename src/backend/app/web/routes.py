@@ -18,10 +18,7 @@ def i18n_tags(lang: str) -> str:
     """Los scripts del idioma (diccionario y traductor), en la cabecera para que nada se vea antes en español."""
     from app.core import version
     v = version.current()["build"]
-    try:   # la fecha del diccionario en la URL: si cambia, el navegador lo vuelve a pedir
-        d = int(i18n.locale_file(lang).stat().st_mtime)
-    except OSError:
-        d = 0
+    d = i18n.stamp(lang)   # dictionary version in the URL: the browser fetches it again when it changes
     return f'<script src="/i18n/{lang}.js?v={v}-{d}"></script><script src="/i18n.js?v={v}"></script>'
 
 

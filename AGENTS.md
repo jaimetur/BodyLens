@@ -65,15 +65,21 @@ Lo que hay que crear está descrito en `docs/MIGRACION.md` (backend FastAPI, cap
 
 ## Textos e idiomas
 
-La interfaz se escribe en español y se traduce en el navegador (`src/frontend/i18n/i18n.js`) con un diccionario por
-idioma (`src/frontend/i18n/locales/<idioma>.json`: texto español → traducción; las partes variables son `{0}`, `{1}`…).
-El servidor usa los mismos diccionarios para los correos. Idioma predeterminado: inglés; cada cuenta elige el suyo.
+El **idioma base de las traducciones es el inglés**: `src/frontend/i18n/catalog.json` tiene todos los mensajes en
+inglés y cada idioma es `src/frontend/i18n/locales/<idioma>.json` = `{"mensaje en inglés": "traducción"}` (las
+partes variables son `{0}`, `{1}`…). Quien traduce solo necesita el inglés: ver `src/frontend/i18n/README.md`.
+
+El código de la página está escrito en español, así que `locales/es.json` hace de puente: a cada mensaje inglés le
+corresponde el texto español **tal cual está en el código** (o una lista, si varios textos españoles comparten el
+mismo mensaje). El servidor compone con eso el diccionario del navegador (texto español → idioma elegido; si falta
+una traducción, sale en inglés) y lo usa también para los correos. Idioma predeterminado de las cuentas: inglés.
 
 Al añadir o cambiar textos visibles (página, páginas del servidor, mensajes de error, correos):
-1. `python3 tools/i18n_extract.py` actualiza `src/frontend/i18n/source.json`.
-2. Traduce los textos nuevos a todos los idiomas de `locales/` (mismo tono y términos que el resto del diccionario).
-3. `python3 tools/i18n_check.py` tiene que dar OK (lo comprueba también `pytest`).
-Mientras falte una traducción, ese texto se ve en español: no rompe nada.
+1. `python3 tools/i18n_extract.py` lista los textos del código que aún no tienen mensaje inglés (`i18n/new.json`).
+2. Para cada uno, el mensaje inglés en `locales/es.json` (`{"English": "texto del código"}`) y
+   `python3 tools/i18n_catalog.py` para rehacer `catalog.json`.
+3. Las traducciones en todos los `locales/` (mismo tono y términos que el resto).
+4. `python3 tools/i18n_check.py` tiene que dar OK (lo comprueba también `pytest`).
 
 ## Comandos (cuando existan)
 

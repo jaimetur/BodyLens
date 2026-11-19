@@ -10,12 +10,14 @@ LOCALES = ROOT / "src" / "frontend" / "i18n" / "locales"
 
 @pytest.fixture()
 def fake_locale(tmp_path, monkeypatch):
-    """Un diccionario de prueba para «xx» = inglés."""
+    """A tiny catalog: English messages, es.json bridging to the Spanish texts of the page, and a French file."""
     from app.core import i18n
     d = tmp_path / "loc"
     d.mkdir()
-    (d / "en.json").write_text(json.dumps({"Hola {0}": "Hi {0}", "Tu contraseña provisional": "Your temporary password",
-                                           "{0} de {1} días": "{1} days, {0} logged", "Entrar": "Sign in"}))
+    (d / "es.json").write_text(json.dumps({"Hi {0}": "Hola {0}", "Your temporary password": "Tu contraseña provisional",
+                                           "{1} days, {0} logged": "{0} de {1} días", "Sign in": "Entrar",
+                                           "High": ["Alta", "Alto"]}))
+    (d / "fr.json").write_text(json.dumps({"Sign in": "Se connecter", "High": "Haut"}))
     monkeypatch.setattr(i18n, "locale_file", lambda lang: d / f"{lang}.json")
     return d
 
@@ -26,6 +28,8 @@ def test_tr_y_patrones(env, fake_locale):
     assert i18n.tr("en", "3 de 7 días") == "7 days, 3 logged"
     assert i18n.tr("en", "Sin traducción") == "Sin traducción"
     assert i18n.tr("es", "Entrar") == "Entrar"
+    assert i18n.tr("en", "Alto") == "High" and i18n.tr("fr", "Alta") == "Haut"
+    assert i18n.tr("fr", "Tu contraseña provisional") == "Your temporary password"   # sin traducir: en inglés
     assert i18n.tr_html("en", '<html lang="es"><p>Hola Ana,</p><a>Entrar</a>') == '<html lang="en"><p>Hi Ana,</p><a>Sign in</a>'
 
 
@@ -103,7 +107,7 @@ def test_las_cuentas_de_antes_siguen_en_espanol(tmp_path, monkeypatch):
 
 
 def test_diccionarios_completos():
-    """Cada idioma traduce todos los textos de source.json, con los mismos marcadores."""
+    """Every language translates the whole English catalog, with the same placeholders."""
     import subprocess
     import sys
     if not any(LOCALES.glob("*.json")):

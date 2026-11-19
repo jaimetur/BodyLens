@@ -34,12 +34,35 @@ def locale_file(lang: str):
     return config.settings.frontend_dir / "i18n" / "locales" / f"{lang}.json"
 
 
-@lru_cache(maxsize=16)
-def _load(lang: str, mtime: float) -> tuple[dict, list]:
+def stamp(lang: str) -> int:
+    """Changes whenever a file the dictionary of ``lang`` is built from changes (cache-busting in URLs)."""
+    t = 0
+    for name in ("es", lang):
+        try:
+            t = max(t, int(locale_file(name).stat().st_mtime))
+        except OSError:
+            pass
+    return t
+
+
+def _read(lang: str) -> dict:
     try:
-        d = json.loads(locale_file(lang).read_text(encoding="utf-8"))
+        return json.loads(locale_file(lang).read_text(encoding="utf-8"))
     except (OSError, ValueError):
-        d = {}
+        return {}
+
+
+@lru_cache(maxsize=16)
+def _compose(lang: str, version: int) -> tuple[dict, list]:
+    """The catalog is English (keys of every locale file). The page itself is written in Spanish, so es.json
+    ({English: Spanish text or list of texts}) bridges page text -> English key -> ``lang`` translation.
+    A missing translation falls back to English."""
+    es, tr = _read("es"), ({} if lang == "en" else _read(lang))
+    d: dict[str, str] = {}
+    for msgid, spanish in es.items():
+        target = msgid if lang == "en" else tr.get(msgid) or msgid
+        for text in (spanish if isinstance(spanish, list) else [spanish]):
+            d[text] = target
     pats = []
     for k, v in d.items():
         if "{0}" not in k:
@@ -53,13 +76,10 @@ def _load(lang: str, mtime: float) -> tuple[dict, list]:
 
 
 def dictionary(lang: str) -> tuple[dict, list]:
+    """Page text (Spanish) -> text in ``lang``, plus the patterns for texts with {0}, {1}…"""
     if lang == "es" or lang not in LANGS:
         return {}, []
-    try:
-        mtime = locale_file(lang).stat().st_mtime
-    except OSError:
-        return {}, []
-    return _load(lang, mtime)
+    return _compose(lang, stamp(lang))
 
 
 def tr(lang: str, text: str) -> str:

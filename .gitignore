@@ -33,3 +33,6 @@ android/.idea/
 *.jks
 *.keystore
 *.apk
+
+# traducciones: lista de trabajo de tools/i18n_extract.py
+src/frontend/i18n/new.json

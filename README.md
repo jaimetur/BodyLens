@@ -52,10 +52,10 @@ navegador / iPhone (PWA) ── HTTPS (proxy inverso del NAS) ──► contened
   le añade una capa (`src/frontend/compat/claude-shim.js`) que imita lo que la página pedía a claude.ai (`db`, `user`,
   `mcp`, `downloads`) contra la API propia, y aplica unas pocas sustituciones exactas (librerías sin CDN, botón de
   sincronizar, textos).
-- **Idiomas**: la página está escrita en español y `src/frontend/i18n/i18n.js` la traduce en el navegador con el
-  diccionario del idioma de la cuenta (`src/frontend/i18n/locales/<idioma>.json`, de texto español a traducción, con
-  patrones «{0} pasos»); también ajusta el formato de números y fechas. El servidor usa los mismos diccionarios para
-  los correos. Ver «Textos e idiomas» en `AGENTS.md`.
+- **Idiomas**: el catálogo base es inglés (`src/frontend/i18n/catalog.json`) y cada idioma es
+  `src/frontend/i18n/locales/<idioma>.json` (mensaje inglés → traducción). La página, escrita en español, se traduce
+  en el navegador con `src/frontend/i18n/i18n.js`, que también ajusta números y fechas; el servidor usa los mismos
+  ficheros para los correos. Para colaborar con traducciones: `src/frontend/i18n/README.md`.
 - **Backend**: Python 3.12, FastAPI, SQLite (WAL) en `/data`, un solo proceso con el planificador dentro.
 - **Seguridad**: contraseñas argon2, sesiones en servidor (cookie HttpOnly/Secure/SameSite), cabecera anti-CSRF en
   toda escritura, límites de intentos, cada cuenta aislada; secretos solo en variables de entorno.
@@ -76,7 +76,7 @@ src/frontend/
   compat/               capa window.claude
   accounts/ common/     páginas de entrar, pedir cuenta, registro y «Tu cuenta»
   admin/                panel de Administración
-  i18n/                 traductor (i18n.js), textos a traducir (source.json) y diccionarios (locales/)
+  i18n/                 traductor (i18n.js), catálogo en inglés (catalog.json) y un fichero por idioma (locales/)
 android/                app de Android (Health Connect → servidor)
 assets/branding/        iconos y logo
 tests/<módulo>/         tests (pytest) y tests/frontend/smoke.mjs (arranque de la página)

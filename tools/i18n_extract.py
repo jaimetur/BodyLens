@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
-"""Saca los textos visibles (en español) de la página y del servidor para traducirlos.
+"""Finds the user-visible texts of the app and the server and checks that each one is in the catalog.
 
-La interfaz se escribe en español y se traduce en el navegador (src/frontend/i18n/i18n.js) con un diccionario
-por idioma: src/frontend/i18n/locales/<lang>.json = {"texto en español": "traducción"}. Los textos con partes
-variables (`${n} pasos`) quedan como patrón con {0}, {1}… («{0} pasos»).
+The translation catalog is English: src/frontend/i18n/catalog.json lists every message, and each language has
+src/frontend/i18n/locales/<lang>.json = {"English message": "translation"}. The page code itself is written in
+Spanish, so locales/es.json maps each English message to the Spanish text exactly as it appears in the code
+(a string, or a list when several Spanish texts share one English message). Variable parts are {0}, {1}…
 
-Uso: python3 tools/i18n_extract.py            → escribe src/frontend/i18n/source.json (lista ordenada)
+Usage: python3 tools/i18n_extract.py
+  Prints the Spanish texts found in the code that es.json does not cover yet, and writes them to
+  src/frontend/i18n/new.json. For each one: choose the English message, add {"English": "Spanish"} to es.json,
+  then add the translations (tools/i18n_check.py lists what is missing).
 """
 from __future__ import annotations
 
@@ -17,7 +21,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 FRONT = ROOT / "src" / "frontend"
 BACK = ROOT / "src" / "backend" / "app"
-OUT = FRONT / "i18n" / "source.json"
+I18N = FRONT / "i18n"
+NEW = I18N / "new.json"
 
 PAGES = [*sorted((FRONT / "app").glob("app_*.html")), *sorted((FRONT / "accounts").glob("*.html")),
          FRONT / "admin" / "admin.html", FRONT / "common" / "pages.js", FRONT / "compat" / "claude-shim.js"]
@@ -249,19 +254,34 @@ def backend_strings() -> list[str]:
     return out
 
 
-def main() -> int:
+def found() -> list[str]:
+    """Every Spanish text the extractor finds in the code (sorted)."""
     seen: dict[str, None] = {}
     for p in PAGES:
         src = p.read_text(encoding="utf-8")
-        strs = js_strings(src) if p.suffix == ".js" else page_strings(src)
-        for s in strs:
+        for s in (js_strings(src) if p.suffix == ".js" else page_strings(src)):
             seen.setdefault(s, None)
     for s in backend_strings():
         seen.setdefault(s, None)
-    keys = sorted(seen)
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(keys, ensure_ascii=False, indent=0) + "\n", encoding="utf-8")
-    print(f"{len(keys)} textos → {OUT.relative_to(ROOT)}")
+    return sorted(seen)
+
+
+def covered() -> set[str]:
+    es = json.loads((I18N / "locales" / "es.json").read_text(encoding="utf-8"))
+    return {t for v in es.values() for t in (v if isinstance(v, list) else [v])}
+
+
+def main() -> int:
+    texts = found()
+    new = [t for t in texts if t not in covered()]
+    if new:
+        NEW.write_text(json.dumps(new, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        print(f"{len(texts)} texts in the code; {len(new)} without an English message -> {NEW.relative_to(ROOT)}")
+        for t in new[:30]:
+            print("   ", t)
+    else:
+        NEW.unlink(missing_ok=True)
+        print(f"{len(texts)} texts in the code, all in the catalog.")
     return 0
 
 
