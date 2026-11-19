@@ -87,13 +87,13 @@ function showLock(p,then,mode){LOCK={p,buf:'',then,tries:0,until:0,mode:mode||''
 function hideLock(){$('lock').hidden=true;LOCK=null;document.body.classList.toggle('locked',!unlocked(PROF()))}
 function drawLock(){const L=LOCK,p=L.p,cur=p.id===SEL&&!unlocked(PROF());const others=PROFS.filter(q=>q.id!==p.id);
   $('lock').innerHTML=`<div class="lk"><div class="lk-logo">${(document.querySelector('.bl-ic')||{}).outerHTML||''}<span>Body<em>Lens</em></span></div><i class="lk-av" style="background:${p.col}">${esc(initials(p.name))}</i><h2>${esc(p.name)}</h2><p class="lk-msg" aria-live="polite">${L.msg||(L.mode==='priv'?'Introduce tu PIN privado para abrir Íntimo':'Introduce tu PIN')}</p>
-    <div class="lk-dots">${[...Array(Math.max(4,L.buf.length)).keys()].map(i=>`<i class="${i<L.buf.length?'on':''}"></i>`).join('')}</div>
-    <div class="lk-pad">${['1','2','3','4','5','6','7','8','9','⌫','0','✓'].map(k=>`<button type="button" data-lk="${k}" aria-label="${k==='⌫'?'Borrar':k==='✓'?'Entrar':k}">${k}</button>`).join('')}</div>
+    <div class="lk-dots">${[0,1,2,3].map(i=>`<i class="${i<L.buf.length?'on':''}"></i>`).join('')}</div>
+    <div class="lk-pad">${['1','2','3','4','5','6','7','8','9','',  '0','⌫'].map(k=>k?`<button type="button" data-lk="${k}" aria-label="${k==='⌫'?'Borrar':k}">${k}</button>`:'<span></span>').join('')}</div>
     ${cur&&L.mode!=='priv'?(others.length?`<div class="lk-o"><small>Entrar con otro perfil</small>${others.map(q=>`<button type="button" data-lkp="${esc(q.id)}"><i style="background:${q.col}">${esc(initials(q.name))}</i>${esc(q.name)}</button>`).join('')}</div>`:''):'<button type="button" class="lk-x" data-lkx>Cancelar</button>'}</div>`}
 async function lockKey(k){const L=LOCK;if(!L)return;if(Date.now()<L.until)return;
   if(k==='⌫'){L.buf=L.buf.slice(0,-1);L.msg='';drawLock();return}
-  if(k!=='✓'){if(L.buf.length<8){L.buf+=k;L.msg='';drawLock()}return}
-  if(L.buf.length<4){L.msg='El PIN tiene entre 4 y 8 cifras';drawLock();return}
+  if(L.buf.length>=4)return;L.buf+=k;L.msg='';drawLock();
+  if(L.buf.length<4)return;
   if(L.mode==='priv'){if(await privCheck(L.p,L.buf)){privSet(L.p,true);privAccSet(L.p,true);const t=L.then;hideLock();if(t)t();else renderView();return}}
   else{// the PIN decides the profile: every profile with this PIN opens, and their modules add up
     const hit=[];for(const q of PROFS)if(q.pinH&&(await pinHash(q.id,L.buf))===q.pinH)hit.push(q);
@@ -106,7 +106,7 @@ async function lockKey(k){const L=LOCK;if(!L)return;if(Date.now()<L.until)return
 document.addEventListener('click',e=>{const k=e.target.closest('[data-lk]');if(k){lockKey(k.dataset.lk);return}
   const q=e.target.closest('[data-lkp]');if(q){const p=PROFS.find(x=>x.id===q.dataset.lkp);if(!p)return;if(unlocked(p))return switchProfile(p.id,true);LOCK={p,buf:'',then:()=>switchProfile(p.id,true),tries:0,until:0};drawLock();return}
   if(e.target.closest('[data-lkx]'))hideLock()});
-document.addEventListener('keydown',e=>{if(!LOCK)return;if(/^\d$/.test(e.key))lockKey(e.key);else if(e.key==='Backspace')lockKey('⌫');else if(e.key==='Enter')lockKey('✓');else if(e.key==='Escape'&&(LOCK.mode==='priv'||!(LOCK.p.id===SEL&&!unlocked(PROF()))))hideLock()});
+document.addEventListener('keydown',e=>{if(!LOCK)return;if(/^\d$/.test(e.key))lockKey(e.key);else if(e.key==='Backspace')lockKey('⌫');else if(e.key==='Escape'&&(LOCK.mode==='priv'||!(LOCK.p.id===SEL&&!unlocked(PROF()))))hideLock()});
 function checkLock(){const p=PROF();if(!unlocked(p)){if(!LOCK)showLock(p,null)}else if(LOCK&&LOCK.p.id===SEL&&!LOCK.then)hideLock();document.body.classList.toggle('locked',!unlocked(p))}
 function switchProfile(id,ok){if(id===SEL){closeProfMenu();return}const p=PROFS.find(x=>x.id===id);if(!ok&&p&&!unlocked(p)){closeProfMenu();showLock(p,()=>switchProfile(id,true));return}try{saveLocal()}catch(e){}try{sessionStorage.setItem('bascula:sel',id)}catch(e){}UI.profile=id;UI.pfRet=(location.hash||'#resumen').slice(1);UI.pfY=window.scrollY||0;saveUI();location.reload()}
 (()=>{try{for(const l of document.querySelectorAll('body link[rel="icon"],body link[rel="apple-touch-icon"]'))document.head.appendChild(l.cloneNode(true))}catch(e){}})();
@@ -1616,7 +1616,7 @@ if(SRV_V.length){
   showAj(AJT);
 }
 function renderProfCard(){const h=$('pfList');if(!h)return;
-  h.innerHTML=PROFS.map((p,i)=>`<div class="pfrow" data-pfi="${i}"><span class="pfdrag" data-pfdrag title="Arrastra para cambiar el orden" aria-label="Arrastra para cambiar el orden">⋮⋮</span><i style="background:${p.col}">${esc(initials(p.name))}</i><input type="text" value="${esc(p.name)}" data-pfname aria-label="Nombre del perfil"><input type="color" value="${p.col}" data-pfcol aria-label="Color"><button type="button" class="btn ghost" data-pfpin>${p.pinH?'Cambiar PIN':'Poner PIN'}</button>${i?`<button type="button" class="btn ghost danger" data-pfdel>${PF_DEL===i?'¿Seguro?':'Borrar'}</button>`:'<span class="pfmain">Principal</span>'}${PF_PIN===i?`<span class="pfpin"><small class="pfpn">Con este PIN se entra en este perfil. Si varios perfiles tienen el mismo PIN, al entrar con él se ven los módulos de todos ellos.</small><input type="password" inputmode="numeric" maxlength="8" pattern="[0-9]*" placeholder="4 a 8 cifras" data-pfpinv aria-label="Nuevo PIN"><button type="button" class="btn" data-pfpinok>Guardar</button>${p.pinH?'<button type="button" class="btn ghost danger" data-pfpinoff>Quitar PIN</button>':''}</span>`:''}${true?`<span class="pfpin pfmods" role="group" aria-label="Módulos de ${esc(p.name)}"><small class="pfpn">Módulos</small>${MODS.map(([id,l])=>`<label class="pfmod"><input type="checkbox" data-pfmod="${id}"${!modsOf(p)||p.mods.includes(id)?' checked':''}><span>${l}</span></label>`).join('')}</span>`:''}</div>`).join('')}
+  h.innerHTML=PROFS.map((p,i)=>`<div class="pfrow" data-pfi="${i}"><span class="pfdrag" data-pfdrag title="Arrastra para cambiar el orden" aria-label="Arrastra para cambiar el orden">⋮⋮</span><i style="background:${p.col}">${esc(initials(p.name))}</i><input type="text" value="${esc(p.name)}" data-pfname aria-label="Nombre del perfil"><input type="color" value="${p.col}" data-pfcol aria-label="Color"><button type="button" class="btn ghost" data-pfpin>${p.pinH?'Cambiar PIN':'Poner PIN'}</button>${i?`<button type="button" class="btn ghost danger" data-pfdel>${PF_DEL===i?'¿Seguro?':'Borrar'}</button>`:'<span class="pfmain">Principal</span>'}${PF_PIN===i?`<span class="pfpin"><small class="pfpn">Con este PIN se entra en este perfil. Si varios perfiles tienen el mismo PIN, al entrar con él se ven los módulos de todos ellos.</small><input type="password" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="4 cifras" data-pfpinv aria-label="Nuevo PIN"><button type="button" class="btn" data-pfpinok>Guardar</button>${p.pinH?'<button type="button" class="btn ghost danger" data-pfpinoff>Quitar PIN</button>':''}</span>`:''}${true?`<span class="pfpin pfmods" role="group" aria-label="Módulos de ${esc(p.name)}"><small class="pfpn">Módulos</small>${MODS.map(([id,l])=>`<label class="pfmod"><input type="checkbox" data-pfmod="${id}"${!modsOf(p)||p.mods.includes(id)?' checked':''}><span>${l}</span></label>`).join('')}</span>`:''}</div>`).join('')}
 let PF_DEL=null,PF_PIN=null,PF_PPIN=null;
 document.addEventListener('change',e=>{const r=e.target.closest('.pfrow');if(!r)return;const i=+r.dataset.pfi,L=PROFS.map(p=>({...p}));
   if(e.target.matches('[data-pfname]')){const v=e.target.value.trim();if(!v)return renderProfCard();L[i].name=v}
@@ -1632,7 +1632,7 @@ document.addEventListener('change',e=>{const r=e.target.closest('.pfrow');if(!r)
   saveProfs(L);renderProfCard();$('pfMsg2').textContent='Guardado.'});
 document.addEventListener('click',async e=>{const r=e.target.closest('.pfrow');if(r){const i=+r.dataset.pfi;
     if(e.target.closest('[data-pfpin]')){PF_PIN=PF_PIN===i?null:i;PF_PPIN=null;renderProfCard();const v=document.querySelector('[data-pfpinv]');if(v)v.focus();return}
-    if(e.target.closest('[data-pfpinok]')){const v=r.querySelector('[data-pfpinv]').value;if(!/^\d{4,8}$/.test(v)){$('pfMsg2').textContent='El PIN tiene que tener entre 4 y 8 cifras.';return}
+    if(e.target.closest('[data-pfpinok]')){const v=r.querySelector('[data-pfpinv]').value;if(!/^\d{4}$/.test(v)){$('pfMsg2').textContent='El PIN tiene que tener 4 cifras.';return}
       const L=PROFS.map(p=>({...p}));L[i].pinH=await pinHash(L[i].id,v);PF_PIN=null;setUnlocked(L[i]);saveProfs(L);renderProfCard();
       const same=[];for(const q of L)if(q.id!==L[i].id&&q.pinH&&(await pinHash(q.id,v))===q.pinH)same.push(q.name);
       $('pfMsg2').textContent=same.length?`PIN de ${L[i].name} guardado. Es el mismo PIN que el de ${same.join(', ')}: quien entre con él verá los módulos de todos esos perfiles.`:`PIN de ${L[i].name} guardado.`;return}

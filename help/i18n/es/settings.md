@@ -1,4 +1,4 @@
-<!-- en: c2f2e5c718022b63 -->
+<!-- en: f30e39f9f11425f0 -->
 # Objetivos, plan y comidas
 
 Sirve para fijar tus objetivos y el plan de pérdida y la fórmula de Comidas. La misma página de la app incluye también las pestañas de **Tu cuenta** que se describen al final de este documento: perfiles y PIN, datos personales, copias de seguridad y exportar a PDF.
@@ -62,14 +62,14 @@ Las tres secciones siguientes son pestañas de **Tu cuenta**, no de Objetivos, p
 - Los perfiles son formas de usar tu cuenta con acceso solo a algunos módulos: por ejemplo, uno con Peso y Comidas para dejarle el móvil a alguien sin que vea lo demás. **Todos ven los mismos datos, los de tu cuenta**, y cada uno puede tener su PIN. Cambias de perfil con el botón del perfil (iniciales y nombre) junto al título de la barra superior, que también ofrece **Objetivos, plan y comidas**, **Tu cuenta** (donde se gestionan los perfiles), **Administración** (si eres administrador), **Bloquear perfil** (si el perfil tiene PIN) y **Cerrar sesión**.
 - Cada fila de perfil te permite definir:
   - **Nombre** y **color** (el color y las iniciales identifican el perfil).
-  - **Poner PIN** / **Cambiar PIN** / **Quitar PIN**: PIN de 4 a 8 cifras para el perfil.
+  - **Poner PIN** / **Cambiar PIN** / **Quitar PIN**: PIN de 4 cifras para el perfil.
   - **Módulos** (todos los perfiles, también el principal): toca cada módulo para darle acceso al perfil o quitárselo: Resumen, Peso, Cuerpo, Actividad, Sueño, Comidas, Íntimo, Historial de pesos, **Objetivos, plan y comidas**, **Tu cuenta** (donde se gestionan los perfiles, los datos y las copias) y, en las cuentas de administrador, **Administración**. Un perfil solo ve sus módulos en el menú, y si abre otro va al primero que tiene; la Ayuda está siempre disponible. **Al menos un perfil tiene que tener Objetivos, plan y comidas, Tu cuenta y (en administradores) Administración**, para que la cuenta siempre se pueda gestionar; los demás perfiles pueden tener los módulos que quieras.
   - **Borrar** (pide confirmación con «¿Seguro?»): quita el perfil; los datos se quedan, porque son de tu cuenta. El perfil principal (el primero) no se puede borrar; antes, sube otro al primer puesto.
 - **Añadir perfil**: escribe un nombre y pulsa **Añadir perfil**. Cambia a él con el botón del perfil.
 - **Orden y perfil principal:** arrastra un perfil por su asa **⋮⋮** para cambiar el orden. El primero de la lista es el **perfil principal**, y el orden decide qué perfil se abre al abrir la app (mira PIN del perfil).
 
 ### PIN del perfil
-- Es un bloqueo de pantalla de **4 a 8 cifras**: escríbelo en el teclado numérico y pulsa **✓** (o Intro). **No cifra los datos.**
+- Es un bloqueo de pantalla de 4 cifras con teclado numérico; se abre en cuanto escribes la cuarta. **No cifra los datos.**
 - **El PIN decide el perfil:** en la pantalla de bloqueo, el PIN que escribes abre el perfil que lo tiene. Así cada persona entra con su PIN y solo ve los módulos de su perfil.
 - **PIN compartido:** si varios perfiles tienen el mismo PIN, al entrar con él se abren juntos y se ven los módulos de todos ellos. Cuando pones un PIN que ya tiene otro perfil, el panel te lo avisa.
 - **Qué perfil se abre:** lo decide el orden de la lista. Al abrir la app, si el **primer perfil** (el principal) no tiene PIN, se entra directamente en él; si tiene PIN, la pantalla de bloqueo lo pide y el PIN que se escriba decide en qué perfil se entra. Tras 5 intentos fallidos tienes que esperar 30 segundos.
