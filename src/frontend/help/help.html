@@ -104,7 +104,7 @@ $('pick').addEventListener('change', () => { location.hash = $('pick').value; })
   try {
     IDX = await api('GET', '/api/help');
     $('nav').innerHTML = navHtml();
-    $('pick').innerHTML = [...$('nav').querySelectorAll('a')].map(a => `<option value="${a.dataset.id}">${esc(a.querySelector('i').textContent + '  ' + a.querySelector('span').textContent)}</option>`).join('');
+    $('pick').innerHTML = [...$('nav').querySelectorAll('a')].map(a => `<option value="${a.dataset.id}">${esc(a.querySelector('i').textContent + '  ' + (a.querySelector('span[data-noi18n]') ? a.querySelector('span').textContent : (window.blT || String)(a.querySelector('span').textContent)))}</option>`).join('');
   } catch (e) { $('nav').innerHTML = `<p class="msg err">${esc(e.message)}</p>`; }
   load(docOf());
 })();

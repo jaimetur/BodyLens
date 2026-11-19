@@ -237,7 +237,12 @@ def _translate_claude(lang: str, source: str) -> str:
     return docs.render(md)
 
 
-PROTECT = re.compile(r"<pre>.*?</pre>|<code>.*?</code>", re.S)
+# never sent to LibreTranslate: code, and names it would translate ("Withings" came back as "Riants")
+KEEP_TERMS = ["Health Auto Export", "Health Connect", "Apple Watch", "AutoSleep", "BodyLens", "Withings", "Google",
+              "Claude", "Docker", "Dockhand", "Synology", "GitHub", "Android", "iPhone", "HRV", "SpO2", "VO2 max", "ECG",
+              "BMI", "FFMI", "PIN", "PDF", "CSV", "JSON", "XLSX", "SMTP", "OAuth", "README"]
+PROTECT = re.compile(r"<pre>.*?</pre>|<code>.*?</code>|<a [^>]*>|</a>|\b(?:"
+                     + "|".join(re.escape(t) for t in KEEP_TERMS) + r")\b", re.S)
 
 
 def _translate_libre(lang: str, source: str) -> str:
