@@ -39,3 +39,17 @@ code,.code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;bac
 .small{font-size:13px;color:var(--muted)}
 .top{display:flex;justify-content:space-between;align-items:center;gap:10px}
 [hidden]{display:none!important}
+
+/* «Tu cuenta»: dos columnas (lo tuyo · tus datos), tarjetas con el estilo de la app */
+main.acct .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,480px),1fr));gap:16px;align-items:start}
+main.acct .col{display:flex;flex-direction:column;gap:16px}
+main.acct .card{margin:0 0 16px;padding:20px 22px 22px;border-radius:18px}
+main.acct .col>.card{margin:0}
+main.acct .card h2{font-family:"Big Shoulders Display","Instrument Sans",sans-serif;font-weight:800;font-size:21px;letter-spacing:.02em;text-transform:uppercase;margin:0 0 10px}
+main.acct .card.alert{border-color:var(--bad)}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:0 12px}
+.who{display:flex;align-items:center;gap:12px;margin:0 0 16px;padding:0 0 16px;border-bottom:1px solid var(--line)}
+.who i{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;font-style:normal;font-weight:700}
+.who div{flex:1;min-width:0;display:flex;flex-direction:column}.who b{font-size:17px}.who span{color:var(--muted);font-size:13px}
+.check{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--ink)}.check input{width:auto;margin:0}
+button.danger-t{color:var(--bad)}
