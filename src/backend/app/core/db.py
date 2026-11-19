@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS users (
   active INTEGER NOT NULL DEFAULT 1,
   requested_at TEXT,
   request_note TEXT,
+  data_source TEXT NOT NULL DEFAULT 'sheet',
   created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS sessions (
@@ -144,7 +145,8 @@ def _migrate(con: sqlite3.Connection) -> None:
     """Columnas añadidas después de crear la base (las bases ya desplegadas no las tienen)."""
     cols = {r[1] for r in con.execute("PRAGMA table_info(users)")}
     for col, ddl in (("must_change", "INTEGER NOT NULL DEFAULT 0"), ("email", "TEXT"),
-                     ("active", "INTEGER NOT NULL DEFAULT 1"), ("requested_at", "TEXT"), ("request_note", "TEXT")):
+                     ("active", "INTEGER NOT NULL DEFAULT 1"), ("requested_at", "TEXT"), ("request_note", "TEXT"),
+                     ("data_source", "TEXT NOT NULL DEFAULT 'sheet'")):
         if col not in cols:
             con.execute(f"ALTER TABLE users ADD COLUMN {col} {ddl}")
 
@@ -155,6 +157,8 @@ def init_db() -> None:
         con.execute("PRAGMA journal_mode=WAL")
         con.executescript(SCHEMA)
         _migrate(con)
+        from app.sheets import store
+        store.ensure_schema(con)
     finally:
         con.close()
 
