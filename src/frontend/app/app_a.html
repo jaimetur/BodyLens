@@ -514,6 +514,8 @@ table.yrs td b{display:block;font-weight:600}table.yrs td small{display:block;fo
 .frow.full{grid-template-columns:minmax(0,1fr)}
 .frow>.fsc{min-height:45px;align-items:center}
 .frow>.fsc>.chips{margin:0}
+.frow>.fsc{justify-content:flex-end}.frow>.fsc>span{font-size:0;flex:0 0 auto}.frow>.fsc>span small.auto{font-size:.66rem}
+.frow.nofld{align-items:center}
 @media (max-width:760px){.frow{grid-template-columns:minmax(0,1fr)}.frow>.fsc{min-height:0}}
 @media (max-width:760px){.fgrid{grid-template-columns:minmax(0,1fr)}}
 .ffields{display:flex;flex-direction:column;gap:10px}.ffld{display:flex;flex-direction:column;gap:4px}.ffld>span{font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
