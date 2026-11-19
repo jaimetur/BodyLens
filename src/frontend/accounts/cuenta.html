@@ -79,19 +79,8 @@
 
   <section class="card" id="admin" hidden>
     <h2>Administración</h2>
-    <h2 id="peticiones" style="margin-top:4px">Peticiones de acceso</h2>
-    <p class="small" id="rqMail"></p>
-    <ul class="list" id="rqList"></ul>
-    <div class="row"><button class="ghost" id="mTest" type="button">Enviarme un correo de prueba</button><span class="msg" id="mTestMsg"></span></div>
-    <h2 style="margin-top:18px">Invitaciones</h2>
-    <p>También puedes invitar a alguien directamente: el enlace vale para una cuenta, sin aprobación, y caduca en unos días.</p>
-    <label>Para quién (nota opcional)<input id="iNote" maxlength="120"></label>
-    <div class="row"><button id="iGo" type="button">Crear invitación</button><span class="msg" id="iMsg"></span></div>
-    <p id="iLink" hidden><span class="code" id="iUrl"></span> <button class="ghost" id="iCopy" type="button">Copiar</button></p>
-    <ul class="list" id="iList"></ul>
-    <h2 style="margin-top:18px">Cuentas y fuentes (fase 1: hoja de Google)</h2>
-    <p class="small">ID de la hoja (compartida como lector con la cuenta de servicio) y URL de la aplicación web del Apps Script de cada cuenta.</p>
-    <ul class="list" id="uList"></ul>
+    <p>Usuarios, peticiones de acceso, invitaciones, correo y fuentes de datos.<span id="admReq"></span></p>
+    <a class="btn" href="/admin">Abrir el panel de Administración</a>
   </section>
 
   <div class="row"><button class="ghost" id="out" type="button">Cerrar sesión</button></div>
@@ -121,17 +110,8 @@ async function load() {
   $('admin').hidden = !ME.user.isAdmin || must;
   if (ME.user.isAdmin) loadAdmin();
 }
-async function loadAdmin() {
-  const [{ invites }, { users }, rq] = await Promise.all([api('GET', '/api/admin/invites'), api('GET', '/api/admin/users'), api('GET', '/api/admin/access-requests')]);
-  $('rqMail').textContent = rq.mail.configured ? `Los avisos salen de ${rq.mail.from_address} (${rq.mail.host}:${rq.mail.port}).` + (ME.user.email ? ` Te llegan a ${ME.user.email}.` : ' Pon tu correo arriba para recibirlos.') : 'El correo no está configurado (SMTP_* en el .env): las peticiones se ven aquí pero no llegan avisos.';
-  $('rqList').innerHTML = rq.requests.length ? rq.requests.map(r => `<li><span><b>${esc(r.name)}</b> · ${esc(r.username)} · ${esc(r.email)} · ${when(r.requestedAt)}${r.note ? `<br><span class="small">${esc(r.note)}</span>` : ''}</span><span><button data-rqok="${r.id}" type="button">Aprobar</button> <button class="ghost" data-rqno="${r.id}" data-rqname="${esc(r.name)}" type="button">Rechazar</button></span></li>`).join('') : '<li><span class="small">No hay peticiones pendientes.</span></li>';
-  if (location.hash === '#peticiones') setTimeout(() => $('peticiones').scrollIntoView(), 50);
-  $('iList').innerHTML = invites.map(i => `<li><span>${esc(i.note || 'Invitación')} · ${i.used_at ? 'usada por ' + esc(i.used_by_name) : (i.expires_at < new Date().toISOString() ? 'caducada' : 'pendiente, caduca ' + when(i.expires_at))}</span></li>`).join('');
-  $('uList').innerHTML = users.map(u => `<li data-uid="${u.id}" style="display:block">
-    <b>${esc(u.name)}</b> <span class="small">(${esc(u.username)}${u.isAdmin ? ', admin' : ''}) · última sincronización ${when(u.sync.lastSync)}</span>
-    <label>ID de la hoja<input data-f="sheetId" value="${esc(u.sheetId)}" spellcheck="false"></label>
-    <label>URL del Apps Script<input data-f="appsScriptUrl" value="${esc(u.appsScriptUrl)}" spellcheck="false"></label>
-    <div class="row"><button class="ghost" data-save="${u.id}" type="button">Guardar fuentes</button><span class="msg"></span></div></li>`).join('');
+function loadAdmin() {
+  $('admReq').textContent = ME.pendingRequests ? ` Hay ${ME.pendingRequests} ${ME.pendingRequests === 1 ? 'petición pendiente' : 'peticiones pendientes'}.` : '';
 }
 const act = (btn, msg, fn, okText) => btn.addEventListener('click', async () => {
   btn.disabled = true; say(msg, '…');
@@ -139,13 +119,10 @@ const act = (btn, msg, fn, okText) => btn.addEventListener('click', async () => 
 });
 act($('nameGo'), $('nameMsg'), () => api('POST', '/api/me/name', { name: $('name').value }), 'Nombre guardado.');
 act($('emailGo'), $('emailMsg'), () => api('POST', '/api/me/email', { email: $('email').value }), 'Correo guardado.');
-$('mTest').addEventListener('click', async () => { $('mTest').disabled = true; say($('mTestMsg'), 'Enviando…');
-  try { const r = await api('POST', '/api/admin/test-email', {}); say($('mTestMsg'), 'Enviado a ' + r.to + '.', 'ok'); } catch (e) { say($('mTestMsg'), e.message, 'err'); } finally { $('mTest').disabled = false; } });
 act($('pAsk'), $('pMsg'), async () => { const r = await api('POST', '/api/partner/request', { username: $('pUser').value, since: $('pDate').value || null }); if (r.linked) alert('Cuentas unidas.'); }, 'Petición enviada.');
 act($('pUnlink'), $('pMsg2'), async () => { if (!confirm('¿Separar las cuentas? Cada uno se queda con una copia de lo compartido.')) throw new Error('Cancelado.'); await api('POST', '/api/partner/unlink'); }, 'Cuentas separadas.');
 act($('pwGo'), $('pwMsg'), async () => { await api('POST', '/api/me/password', { current: $('pw0').value, new: $('pw1').value }); $('pw0').value = $('pw1').value = ''; }, 'Contraseña cambiada.');
 act($('sGo'), $('sMsg'), async () => { const r = await api('POST', '/api/sync'); if (!r.ok) throw new Error(r.message); }, 'Sincronizado.');
-act($('iGo'), $('iMsg'), async () => { const r = await api('POST', '/api/admin/invites', { note: $('iNote').value }); $('iUrl').textContent = r.url; $('iLink').hidden = false; $('iNote').value = ''; }, 'Invitación creada: cópiala ahora, no se vuelve a mostrar.');
 // primera entrada con la contraseña provisional
 $('mGo').addEventListener('click', async () => {
   $('mGo').disabled = true; say($('mMsg'), 'Guardando…');
@@ -177,17 +154,11 @@ $('impGo').addEventListener('click', async () => {
     try { for (const k of Object.keys(localStorage)) if (k.startsWith('bascula:')) localStorage.removeItem(k); } catch (e) { }
   } catch (e) { say($('impMsg'), e.message, 'err'); } finally { $('impGo').disabled = false; }
 });
-$('iCopy').addEventListener('click', () => navigator.clipboard && navigator.clipboard.writeText($('iUrl').textContent));
 document.addEventListener('click', async e => {
-  const a = e.target.closest('[data-acc]'), r = e.target.closest('[data-rej]'), s = e.target.closest('[data-save]');
-  const ok = e.target.closest('[data-rqok]'), no = e.target.closest('[data-rqno]');
+  const a = e.target.closest('[data-acc]'), r = e.target.closest('[data-rej]');
   try {
-    if (ok) { ok.disabled = true; await api('POST', `/api/admin/access-requests/${ok.dataset.rqok}/approve`); await load(); }
-    if (no && confirm(`¿Rechazar la petición de ${no.dataset.rqname}? Se borra y se le avisa por correo.`)) { await api('POST', `/api/admin/access-requests/${no.dataset.rqno}/reject`); await load(); }
     if (a) { await api('POST', '/api/partner/accept', { username: a.dataset.acc }); await load(); }
     if (r) { await api('POST', '/api/partner/reject', { username: r.dataset.rej }); await load(); }
-    if (s) { const li = s.closest('li'), m = li.querySelector('.msg'), v = f => li.querySelector(`[data-f="${f}"]`).value;
-      try { await api('PUT', `/api/admin/users/${s.dataset.save}/bridge`, { sheetId: v('sheetId'), appsScriptUrl: v('appsScriptUrl') }); say(m, 'Guardado.', 'ok'); } catch (err) { say(m, err.message, 'err'); } }
   } catch (err) { alert(err.message); }
 });
 $('out').addEventListener('click', async () => {

@@ -50,6 +50,16 @@ def account_page(request: Request):
     return _front("accounts", "cuenta.html")
 
 
+@router.get("/admin", response_class=HTMLResponse)
+def admin_page(request: Request):
+    u = optional_user(request)
+    if not u:
+        return RedirectResponse("/login?next=/admin", status_code=303)
+    if not u.is_admin:
+        return RedirectResponse("/cuenta", status_code=303)
+    return _front("admin", "admin.html")
+
+
 @router.get("/claude-shim.js")
 def shim():
     return _front("compat", "claude-shim.js", media_type="text/javascript", headers={"Cache-Control": "no-cache"})

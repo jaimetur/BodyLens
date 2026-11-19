@@ -9,6 +9,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from app.accounts import access_requests, users
+from app.admin import routes as admin_routes
 from app.accounts import routes as accounts_routes
 from app.accounts.users import UserError
 from app.core import config, db, version
@@ -76,6 +77,6 @@ def healthz():
 
 
 # el orden importa: las páginas y ficheros estáticos (con la ruta comodín /{name}) van al final
-for r in (accounts_routes.router, access_requests.router, couples_routes.router, data_routes.router,
+for r in (accounts_routes.router, access_requests.router, admin_routes.router, couples_routes.router, data_routes.router,
           sync_routes.router, mail_routes.router, web_routes.router):
     app.include_router(r)

@@ -38,7 +38,7 @@ REPLACEMENTS: list[tuple] = [
      '<p class="src" id="railSrc">Datos de tu báscula Withings y de Apple Salud, guardados en tu cuenta de BodyLens.</p>'),
     # menú de perfiles: acceso a la cuenta
     ('<a class="owner-only" href="#ajustes">Ajustes</a>',
-     '<a class="owner-only" href="#ajustes">Ajustes</a><a href="/cuenta">Tu cuenta</a>'),
+     '<a class="owner-only" href="#ajustes">Ajustes</a><a href="/cuenta">Tu cuenta</a><a href="/admin" class="bl-admin">Administración</a>'),
     # textos que hablaban de claude.ai y de la hoja
     ("<p class=\"lead\">La app lee la pestaña «Withings» de tu hoja «Peso Jaime 2026», que el script de la hoja actualiza desde Withings cada 6 horas, o al momento con el botón de la nube de arriba.</p>",
      "<p class=\"lead\">Los datos de la báscula y de Apple Salud llegan solos al servidor cada pocos minutos; con el botón de la nube de arriba se piden al momento. Las fuentes se configuran en <a href=\"/cuenta\">Tu cuenta</a>.</p>"),
@@ -93,6 +93,7 @@ def fragment() -> str:
 
 def page(user_public: dict) -> str:
     boot = json.dumps(user_public, ensure_ascii=False).replace("</", "<\\/")
+    admin_css = "" if user_public.get("isAdmin") else ".bl-admin{display:none!important}"
     head = (
         '<!doctype html><html lang="es"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
@@ -103,7 +104,7 @@ def page(user_public: dict) -> str:
         '<link rel="icon" type="image/svg+xml" href="/icon.svg">'
         '<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">'
         '<link rel="apple-touch-icon" href="/apple-touch-icon.png">'
-        f"<style>{SERVER_CSS}</style>"
+        f"<style>{SERVER_CSS}{admin_css}</style>"
         f"<script>window.BODYLENS_SERVER=true;window.BODYLENS_USER={boot};"
         f"window.BODYLENS_BUILD={json.dumps(version.current()['build'])};</script>"
         '<script src="/claude-shim.js"></script>'

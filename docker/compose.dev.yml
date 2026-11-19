@@ -19,5 +19,6 @@ services:
       - ../src/frontend/accounts:/app/frontend/accounts
       - ../src/frontend/common:/app/frontend/common
       - ../src/frontend/compat:/app/frontend/compat
+      - ../src/frontend/admin:/app/frontend/admin
       - ../data-dev:/data
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--reload-dir", "/app/backend/app"]

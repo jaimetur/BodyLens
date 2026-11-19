@@ -10,6 +10,7 @@ services:
       - ./code/src/frontend/accounts:/app/frontend/accounts:ro
       - ./code/src/frontend/common:/app/frontend/common:ro
       - ./code/src/frontend/compat:/app/frontend/compat:ro
+      - ./code/src/frontend/admin:/app/frontend/admin:ro
       - ./code/assets/branding:/app/branding:ro
       - ./code:/app/code:ro
     environment:

@@ -97,3 +97,44 @@ def test_mailer_not_configured(monkeypatch):
     monkeypatch.delenv("SMTP_HOST", raising=False)
     with pytest.raises(RuntimeError, match="no está configurado"):
         mailer.send(["a@example.test"], "x", "<p>x</p>")
+
+
+def test_admin_panel_accounts(client, make_user, login, sent):
+    make_user("jaimetur", "Jaime Tur", admin=True)
+    lau = make_user("laura", "Laura")
+    a = login("jaimetur")
+    assert a.get("/admin").status_code == 200
+    assert login("laura").get("/admin", follow_redirects=False).headers["location"] == "/cuenta"
+    users = {u["username"]: u for u in a.get("/api/admin/accounts").json()["users"]}
+    assert {"jaimetur", "laura", "admin"} <= set(users)
+    me = users["jaimetur"]["id"]
+    assert a.patch(f"/api/admin/accounts/{me}", json={"isAdmin": False}).status_code == 400
+    assert a.patch(f"/api/admin/accounts/{lau.id}", json={"name": "Laura Romero", "email": "l@example.test", "isAdmin": True}).status_code == 200
+    # desactivar cierra sus sesiones y le impide entrar
+    l = login("laura")
+    assert a.patch(f"/api/admin/accounts/{lau.id}", json={"active": False}).status_code == 200
+    assert l.get("/api/me").status_code == 401
+    a.patch(f"/api/admin/accounts/{lau.id}", json={"active": True})
+    r = a.post(f"/api/admin/accounts/{lau.id}/password", json={"email": True}).json()
+    assert r["emailed"] is True and sent[-1]["to"] == ["l@example.test"] and r["password"] in sent[-1]["html"]
+    l2 = login("laura", r["password"])
+    assert l2.get("/api/me").json()["user"]["mustChange"] is True
+    assert a.delete(f"/api/admin/accounts/{me}").status_code == 400
+    assert a.delete(f"/api/admin/accounts/{lau.id}").status_code == 200
+    assert "laura" not in {u["username"] for u in a.get("/api/admin/accounts").json()["users"]}
+
+
+def test_admin_mail_settings(client, make_user, login, monkeypatch):
+    from app.mail import mailer
+    monkeypatch.delenv("SMTP_HOST", raising=False)
+    make_user("jaimetur", admin=True)
+    a = login("jaimetur")
+    assert a.get("/api/admin/mail").json()["configured"] is False
+    r = a.put("/api/admin/mail", json={"host": "smtp.example.test", "port": 465, "security": "ssl", "username": "u@example.test",
+                                       "password": "secreto", "from_address": "u@example.test", "from_name": "BodyLens"}).json()
+    assert r["configured"] and r["hasPassword"] and "secreto" not in str(r)
+    # sin contraseña nueva se conserva la guardada
+    a.put("/api/admin/mail", json={"host": "smtp2.example.test", "security": "ssl", "from_address": "u@example.test"})
+    s = mailer.settings()
+    assert s["host"] == "smtp2.example.test" and s["password"] == "secreto"
+    assert a.put("/api/admin/mail", json={"security": "raro"}).status_code == 400

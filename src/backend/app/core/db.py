@@ -75,11 +75,31 @@ CREATE TABLE IF NOT EXISTS user_state (
   last_sync TEXT,
   last_sync_result TEXT
 );
+CREATE TABLE IF NOT EXISTS settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS counters (
   name TEXT PRIMARY KEY,
   value INTEGER NOT NULL
 );
 """
+
+
+def get_setting(key: str, default=None):
+    import json
+    try:
+        with ro() as con:
+            r = con.execute("SELECT value FROM settings WHERE key=?", (key,)).fetchone()
+    except sqlite3.OperationalError:
+        return default
+    return json.loads(r["value"]) if r else default
+
+
+def set_setting(con: sqlite3.Connection, key: str, value) -> None:
+    import json
+    con.execute("INSERT INTO settings(key, value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+                (key, json.dumps(value, ensure_ascii=False)))
 
 
 def now_iso() -> str:

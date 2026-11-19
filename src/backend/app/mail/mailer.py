@@ -17,23 +17,36 @@ TIMEOUT = 60
 SUBJECT_PREFIX = "BodyLens - "
 
 
+# campos del correo: variable del .env (valor por defecto) → lo guardado en Administración manda
+FIELDS = {"host": "SMTP_HOST", "port": "SMTP_PORT", "security": "SMTP_SECURITY", "username": "SMTP_USERNAME",
+          "password": "SMTP_PASSWORD", "from_address": "SMTP_FROM", "from_name": "SMTP_FROM_NAME"}
+
+
+def _env() -> dict:
+    """Lo guardado en Administración (si no está vacío) y, si no, la variable del .env."""
+    from app.core import db
+    stored = db.get_setting("mail", {}) or {}
+    return {k: stored[k] if stored.get(k) not in (None, "") else os.environ.get(var, "") for k, var in FIELDS.items()}
+
+
 def settings() -> dict:
-    security = (os.environ.get("SMTP_SECURITY") or "ssl").strip().lower()
+    E = _env()
+    security = (E.get("security") or "ssl").strip().lower()
     if security not in ("ssl", "starttls", "none"):
         security = "ssl"
     default_port = {"ssl": 465, "starttls": 587, "none": 25}[security]
     try:
-        port = int(os.environ.get("SMTP_PORT") or default_port)
-    except ValueError:
+        port = int(E.get("port") or default_port)
+    except (TypeError, ValueError):
         port = default_port
     s = {
-        "host": (os.environ.get("SMTP_HOST") or "").strip(),
+        "host": str(E.get("host") or "").strip(),
         "port": port,
         "security": security,
-        "username": (os.environ.get("SMTP_USERNAME") or "").strip(),
-        "password": os.environ.get("SMTP_PASSWORD") or "",
-        "from_address": (os.environ.get("SMTP_FROM") or os.environ.get("SMTP_USERNAME") or "").strip(),
-        "from_name": (os.environ.get("SMTP_FROM_NAME") or "BodyLens").strip(),
+        "username": str(E.get("username") or "").strip(),
+        "password": str(E.get("password") or ""),
+        "from_address": str(E.get("from_address") or E.get("username") or "").strip(),
+        "from_name": str(E.get("from_name") or "BodyLens").strip(),
     }
     s["configured"] = bool(s["host"] and s["from_address"])
     return s
@@ -41,7 +54,9 @@ def settings() -> dict:
 
 def public_settings() -> dict:
     s = settings()
-    return {k: s[k] for k in ("configured", "host", "port", "security", "from_address")}
+    out = {k: s[k] for k in ("configured", "host", "port", "security", "username", "from_address", "from_name")}
+    out["hasPassword"] = bool(s["password"])
+    return out
 
 
 def page(title: str, paragraphs: list[str], link: tuple[str, str] | None = None) -> str:

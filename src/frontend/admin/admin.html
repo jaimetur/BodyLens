@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BodyLens · Administración</title><meta name="theme-color" content="#3B7BF2">
+<link rel="icon" type="image/svg+xml" href="/icon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/pages.css">
+<style>
+main{max-width:980px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
+.tabs button{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+.tabs button.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.tabs b{display:inline-block;min-width:18px;padding:0 5px;margin-left:6px;border-radius:9px;background:var(--bad);color:#fff;font-size:12px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em;padding:8px 6px;border-bottom:1px solid var(--line)}
+td{padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+td.act{white-space:nowrap;text-align:right}
+td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
+.tag{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:8px;background:var(--raised);border:1px solid var(--line);margin-left:4px}
+.tag.adm{background:#3B7BF2;color:#fff;border-color:#3B7BF2}.tag.off{background:var(--bad);color:#fff;border-color:var(--bad)}
+.edit{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+@media (max-width:640px){.edit{grid-template-columns:1fr}table thead{display:none}table,tbody,tr,td{display:block}tr{border-bottom:1px solid var(--line);padding:6px 0}td{border:0;padding:3px 0}td.act{text-align:left}}
+.secret{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:15px;background:var(--raised);padding:6px 10px;border-radius:8px;display:inline-block}
+</style></head>
+<body><main>
+  <div class="top"><a class="brand" href="/"><img src="/icon.svg" alt=""><b>BodyLens · Administración</b></a><span><a class="btn ghost" href="/cuenta">Tu cuenta</a> <a class="btn ghost" href="/">Volver a la app</a></span></div>
+
+  <div class="tabs" role="tablist">
+    <button type="button" data-tab="usuarios" class="on">Usuarios</button>
+    <button type="button" data-tab="peticiones">Peticiones de acceso<b id="nReq" hidden></b></button>
+    <button type="button" data-tab="invitaciones">Invitaciones</button>
+    <button type="button" data-tab="correo">Correo</button>
+    <button type="button" data-tab="fuentes">Fuentes de datos</button>
+  </div>
+
+  <section class="card" data-panel="usuarios">
+    <h2>Usuarios</h2>
+    <p>Todas las cuentas del servidor. Las desactivadas no pueden entrar (sus datos se conservan).</p>
+    <table><thead><tr><th>Cuenta</th><th>Correo</th><th>Estado</th><th></th></tr></thead><tbody id="uBody"></tbody></table>
+    <div id="uEdit" hidden style="margin-top:16px">
+      <h2 id="uEditT"></h2>
+      <div class="edit">
+        <label>Nombre y apellidos<input id="eName" maxlength="80"></label>
+        <label>Correo<input id="eMail" type="email"></label>
+      </div>
+      <div class="row"><button id="eSave" type="button">Guardar</button><button class="ghost" id="eCancel" type="button">Cerrar</button><span class="msg" id="eMsg"></span></div>
+    </div>
+    <p id="uPw" hidden style="margin-top:14px"></p>
+    <span class="msg" id="uMsg"></span>
+  </section>
+
+  <section class="card" data-panel="peticiones" hidden>
+    <h2>Peticiones de acceso</h2>
+    <p>Cuentas pedidas desde la pantalla de entrar. Al aprobar o rechazar, la persona recibe un correo.</p>
+    <ul class="list" id="rqList"></ul>
+  </section>
+
+  <section class="card" data-panel="invitaciones" hidden>
+    <h2>Invitaciones</h2>
+    <p>Un enlace de registro de un solo uso, sin aprobación, que caduca en unos días. Solo se muestra una vez: cópialo.</p>
+    <label>Para quién (nota opcional)<input id="iNote" maxlength="120"></label>
+    <div class="row"><button id="iGo" type="button">Crear invitación</button><span class="msg" id="iMsg"></span></div>
+    <p id="iLink" hidden><span class="code" id="iUrl"></span> <button class="ghost" id="iCopy" type="button">Copiar</button></p>
+    <ul class="list" id="iList"></ul>
+  </section>
+
+  <section class="card" data-panel="correo" hidden>
+    <h2>Correo saliente (SMTP)</h2>
+    <p>Desde aquí salen los avisos (peticiones de acceso, activaciones, contraseñas). Lo guardado aquí manda sobre el <code>.env</code> del servidor.</p>
+    <div class="edit">
+      <label>Servidor<input id="mHost" placeholder="jaimetur.cloud"></label>
+      <label>Puerto<input id="mPort" type="number" min="1" max="65535" placeholder="465"></label>
+      <label>Seguridad<select id="mSec"><option value="ssl">SSL (465)</option><option value="starttls">STARTTLS (587)</option><option value="none">Ninguna</option></select></label>
+      <label>Usuario<input id="mUser" autocomplete="off" placeholder="bodylens@jaimetur.cloud"></label>
+      <label>Contraseña<input id="mPass" type="password" autocomplete="new-password" placeholder="(sin cambios)"></label>
+      <label>Remitente<input id="mFrom" type="email" placeholder="bodylens@jaimetur.cloud"></label>
+      <label>Nombre del remitente<input id="mName" placeholder="BodyLens"></label>
+    </div>
+    <div class="row"><button id="mSave" type="button">Guardar</button><button class="ghost" id="mTest" type="button">Enviarme un correo de prueba</button><span class="msg" id="mMsg"></span></div>
+    <p class="small" id="mState"></p>
+  </section>
+
+  <section class="card" data-panel="fuentes" hidden>
+    <h2>Fuentes de datos (puente con Google)</h2>
+    <p>Mientras la báscula y el iPhone sigan pasando por la hoja de Google: ID de la hoja de cada cuenta (compartida como lector con la cuenta de servicio del servidor) y URL de la aplicación web de su Apps Script.</p>
+    <ul class="list" id="sList"></ul>
+  </section>
+</main>
+<script src="/pages.js"></script>
+<script>
+let D = null, EDIT = null;
+const show = t => { document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t)); document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== t); history.replaceState(null, '', '#' + t); };
+document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => show(b.dataset.tab)));
+show((location.hash || '#usuarios').slice(1).replace(/[^a-z]/g, '') || 'usuarios');
+
+async function load() {
+  const [acc, rq, inv, mail] = await Promise.all([api('GET', '/api/admin/accounts'), api('GET', '/api/admin/access-requests'), api('GET', '/api/admin/invites'), api('GET', '/api/admin/mail')]);
+  D = acc;
+  // usuarios
+  $('uBody').innerHTML = acc.users.map(u => `<tr><td><b>${esc(u.name)}</b> <span class="small">${esc(u.username)}</span>${u.isAdmin ? '<span class="tag adm">admin</span>' : ''}${u.partner ? `<span class="tag">pareja: ${esc(u.partner)}</span>` : ''}<br><span class="small">desde ${when(u.createdAt)}${u.sync && u.sync.lastSync ? ' · sincronizado ' + when(u.sync.lastSync) : ''}</span></td>
+    <td>${esc(u.email) || '<span class="small">—</span>'}</td>
+    <td>${u.active ? 'Activa' : (u.requestedAt ? '<span class="tag off">pendiente</span>' : '<span class="tag off">desactivada</span>')}${u.mustChange ? '<br><span class="small">contraseña provisional</span>' : ''}</td>
+    <td class="act"><button class="ghost" data-ed="${u.id}" type="button">Editar</button>${u.id === acc.me ? '' : `<button class="ghost" data-adm="${u.id}" type="button">${u.isAdmin ? 'Quitar admin' : 'Hacer admin'}</button><button class="ghost" data-act="${u.id}" type="button">${u.active ? 'Desactivar' : 'Activar'}</button>`}<button class="ghost" data-pw="${u.id}" type="button">Restablecer contraseña</button>${u.id === acc.me ? '' : `<button class="danger" data-del="${u.id}" type="button">Borrar</button>`}</td></tr>`).join('');
+  // peticiones
+  $('nReq').hidden = !rq.requests.length; $('nReq').textContent = rq.requests.length;
+  $('rqList').innerHTML = rq.requests.length ? rq.requests.map(r => `<li><span><b>${esc(r.name)}</b> · ${esc(r.username)} · ${esc(r.email)} · ${when(r.requestedAt)}${r.note ? `<br><span class="small">${esc(r.note)}</span>` : ''}</span><span><button data-rqok="${r.id}" type="button">Aprobar</button> <button class="ghost" data-rqno="${r.id}" data-rqname="${esc(r.name)}" type="button">Rechazar</button></span></li>`).join('') : '<li><span class="small">No hay peticiones pendientes.</span></li>';
+  // invitaciones
+  $('iList').innerHTML = inv.invites.map(i => `<li><span>${esc(i.note || 'Invitación')} · ${i.used_at ? 'usada por ' + esc(i.used_by_name) : (i.expires_at < new Date().toISOString() ? 'caducada' : 'pendiente, caduca ' + when(i.expires_at))}</span></li>`).join('') || '<li><span class="small">Todavía no hay invitaciones.</span></li>';
+  // correo
+  $('mHost').value = mail.host || ''; $('mPort').value = mail.port || ''; $('mSec').value = mail.security || 'ssl'; $('mUser').value = mail.username || ''; $('mFrom').value = mail.from_address || ''; $('mName').value = mail.from_name || 'BodyLens'; $('mPass').value = '';
+  $('mPass').placeholder = mail.hasPassword ? '(guardada; escribe otra para cambiarla)' : '(sin contraseña)';
+  $('mState').textContent = mail.configured ? `Configurado: sale de ${mail.from_address} por ${mail.host}:${mail.port}.` : 'Sin configurar: faltan el servidor o el remitente.';
+  // fuentes
+  $('sList').innerHTML = acc.users.filter(u => u.active).map(u => `<li data-uid="${u.id}" style="display:block"><b>${esc(u.name)}</b> <span class="small">(${esc(u.username)}) · última sincronización ${when(u.sync.lastSync)}${u.sync.lastSyncResult ? ' · ' + esc(u.sync.lastSyncResult.message || '') : ''}</span>
+    <label>ID de la hoja<input data-f="sheetId" value="${esc(u.sheetId)}" spellcheck="false"></label>
+    <label>URL del Apps Script<input data-f="appsScriptUrl" value="${esc(u.appsScriptUrl)}" spellcheck="false"></label>
+    <div class="row"><button class="ghost" data-save="${u.id}" type="button">Guardar fuentes</button><span class="msg"></span></div></li>`).join('');
+}
+const byId = id => D.users.find(u => u.id === +id);
+document.addEventListener('click', async e => {
+  const t = e.target.closest('button'); if (!t) return;
+  try {
+    if (t.dataset.ed) { EDIT = byId(t.dataset.ed); $('uEditT').textContent = 'Editar ' + EDIT.username; $('eName').value = EDIT.name; $('eMail').value = EDIT.email || ''; say($('eMsg'), ''); $('uEdit').hidden = false; $('eName').focus(); }
+    if (t.dataset.adm) { const u = byId(t.dataset.adm); await api('PATCH', `/api/admin/accounts/${u.id}`, { isAdmin: !u.isAdmin }); await load(); }
+    if (t.dataset.act) { const u = byId(t.dataset.act); await api('PATCH', `/api/admin/accounts/${u.id}`, { active: !u.active }); await load(); }
+    if (t.dataset.pw) {
+      const u = byId(t.dataset.pw);
+      if (!confirm(`¿Restablecer la contraseña de ${u.name}? Se le pone una provisional y tendrá que cambiarla al entrar.`)) return;
+      const r = await api('POST', `/api/admin/accounts/${u.id}/password`, { email: true });
+      $('uPw').hidden = false; $('uPw').innerHTML = `Contraseña provisional de <b>${esc(u.username)}</b>: <span class="secret">${esc(r.password)}</span> ${r.emailed ? '(también se la hemos enviado por correo)' : '(dásela tú: no se volverá a mostrar)'}`;
+      await load();
+    }
+    if (t.dataset.del) {
+      const u = byId(t.dataset.del);
+      if (prompt(`Esto borra la cuenta ${u.username} y TODOS sus datos, sin vuelta atrás. Escribe su usuario para confirmarlo:`) !== u.username) return;
+      await api('DELETE', `/api/admin/accounts/${u.id}`); say($('uMsg'), `Cuenta ${u.username} borrada.`, 'ok'); await load();
+    }
+    if (t.dataset.rqok) { t.disabled = true; await api('POST', `/api/admin/access-requests/${t.dataset.rqok}/approve`); await load(); }
+    if (t.dataset.rqno && confirm(`¿Rechazar la petición de ${t.dataset.rqname}? Se borra y se le avisa por correo.`)) { await api('POST', `/api/admin/access-requests/${t.dataset.rqno}/reject`); await load(); }
+    if (t.dataset.save) { const li = t.closest('li'), m = li.querySelector('.msg'), v = f => li.querySelector(`[data-f="${f}"]`).value;
+      try { await api('PUT', `/api/admin/users/${t.dataset.save}/bridge`, { sheetId: v('sheetId'), appsScriptUrl: v('appsScriptUrl') }); say(m, 'Guardado.', 'ok'); } catch (err) { say(m, err.message, 'err'); } }
+  } catch (err) { alert(err.message); }
+});
+$('eSave').addEventListener('click', async () => {
+  try { await api('PATCH', `/api/admin/accounts/${EDIT.id}`, { name: $('eName').value, email: $('eMail').value }); say($('eMsg'), 'Guardado.', 'ok'); await load(); } catch (e) { say($('eMsg'), e.message, 'err'); }
+});
+$('eCancel').addEventListener('click', () => { $('uEdit').hidden = true; });
+$('iGo').addEventListener('click', async () => {
+  try { const r = await api('POST', '/api/admin/invites', { note: $('iNote').value }); $('iUrl').textContent = r.url; $('iLink').hidden = false; $('iNote').value = ''; say($('iMsg'), 'Invitación creada: cópiala ahora.', 'ok'); await load(); } catch (e) { say($('iMsg'), e.message, 'err'); }
+});
+$('iCopy').addEventListener('click', () => navigator.clipboard && navigator.clipboard.writeText($('iUrl').textContent));
+$('mSave').addEventListener('click', async () => {
+  try {
+    await api('PUT', '/api/admin/mail', { host: $('mHost').value, port: +$('mPort').value || null, security: $('mSec').value, username: $('mUser').value, password: $('mPass').value, from_address: $('mFrom').value, from_name: $('mName').value });
+    say($('mMsg'), 'Guardado.', 'ok'); await load();
+  } catch (e) { say($('mMsg'), e.message, 'err'); }
+});
+$('mTest').addEventListener('click', async () => {
+  $('mTest').disabled = true; say($('mMsg'), 'Enviando…');
+  try { const r = await api('POST', '/api/admin/test-email', {}); say($('mMsg'), 'Enviado a ' + r.to + '.', 'ok'); } catch (e) { say($('mMsg'), e.message, 'err'); } finally { $('mTest').disabled = false; }
+});
+load().catch(e => alert(e.message));
+</script>
+</body></html>
