@@ -1516,7 +1516,7 @@
  "The muscle curve uses your lean mass index (lean mass divided by height squared){0}; the fat curve, your body fat percentage ({1} %). Indicative ranges for {2} {3}.": "肌肉曲线使用你的瘦体重指数（瘦体重除以身高的平方）{0}；脂肪曲线使用你的体脂率（{1} %）。适用于 {2} {3} 的参考范围。",
  "The new PIN must have 4 digits.": "新 PIN 必须是 4 位数字。",
  "The night that leaves the most debt is that of": "欠账最多的是",
- "The order of the list decides how you enter: opening the app enters the first profile without a PIN and, if they all have a PIN, the one whose PIN is typed. The first one in the list is the main profile. Drag ⋮⋮ to change the order.": "列表的顺序决定如何进入：打开应用时会进入第一个没有 PIN 的档案；如果所有档案都有 PIN，则进入所输入 PIN 对应的档案。列表中的第一个是主档案。拖动 ⋮⋮ 可更改顺序。",
+ "The order of the list decides how you enter: the first one is the main profile. When you open the app, if the main profile has no PIN you go straight into it; if it has a PIN, it is asked for and the PIN typed decides which profile opens. Drag ⋮⋮ to change the order.": "列表的顺序决定如何进入：第一个是主档案。打开应用时，如果主档案没有 PIN，会直接进入；如果有 PIN，则会要求输入，所输入的 PIN 决定进入哪个档案。拖动 ⋮⋮ 可更改顺序。",
  "The page doesn't have permission to update itself. Press “Update the copy now” to grant it.": "页面没有自我更新的权限。点击「立即更新副本」授予权限。",
  "The page doesn't include a copy of your data yet for people who open it without signing in.": "该页面还没有为未登录的访客附带你的数据副本。",
  "The page with all your data exceeds the maximum size that can be published.": "包含你全部数据的页面超过了可发布的最大大小。",

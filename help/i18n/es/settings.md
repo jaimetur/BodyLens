@@ -1,4 +1,4 @@
-<!-- en: ec97295f816d8e1f -->
+<!-- en: c2f2e5c718022b63 -->
 # Objetivos, plan y comidas
 
 Sirve para fijar tus objetivos y el plan de pérdida y la fórmula de Comidas. La misma página de la app incluye también las pestañas de **Tu cuenta** que se describen al final de este documento: perfiles y PIN, datos personales, copias de seguridad y exportar a PDF.
@@ -72,7 +72,7 @@ Las tres secciones siguientes son pestañas de **Tu cuenta**, no de Objetivos, p
 - Es un bloqueo de pantalla de **4 a 8 cifras**: escríbelo en el teclado numérico y pulsa **✓** (o Intro). **No cifra los datos.**
 - **El PIN decide el perfil:** en la pantalla de bloqueo, el PIN que escribes abre el perfil que lo tiene. Así cada persona entra con su PIN y solo ve los módulos de su perfil.
 - **PIN compartido:** si varios perfiles tienen el mismo PIN, al entrar con él se abren juntos y se ven los módulos de todos ellos. Cuando pones un PIN que ya tiene otro perfil, el panel te lo avisa.
-- **Qué perfil se abre:** al abrir la app se entra en el **primer perfil de la lista sin PIN**. Si todos los perfiles tienen PIN, aparece la pantalla de bloqueo y el PIN que se escriba decide el perfil. Tras 5 intentos fallidos tienes que esperar 30 segundos.
+- **Qué perfil se abre:** lo decide el orden de la lista. Al abrir la app, si el **primer perfil** (el principal) no tiene PIN, se entra directamente en él; si tiene PIN, la pantalla de bloqueo lo pide y el PIN que se escriba decide en qué perfil se entra. Tras 5 intentos fallidos tienes que esperar 30 segundos.
 - La pantalla de bloqueo también te permite **Entrar con otro perfil**.
 - **Bloquear perfil** (en el menú del perfil) vuelve a pedir el PIN.
 - Ciclo e intimidad ya no tienen un PIN propio: quién los ve depende de si el perfil tiene el módulo **Íntimo**.

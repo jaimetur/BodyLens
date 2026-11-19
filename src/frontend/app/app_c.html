@@ -36,10 +36,10 @@ const saveUI=()=>{try{localStorage.setItem('bascula:ui',JSON.stringify(UI))}catc
 const PROF_DEF=[{"id":"","name":"Jaime Tur","col":"#3f51e0","partner":"laura","pinH":"b306e613261e589c95f54353e7647436ad522b508d1a7ea41bccfd24741623bb","partnerSince":"2026-03-01"},{"id":"laura","name":"Laura Romero","col":"#d6457a","cycle":1,"partner":"","pinH":"4e68ba88e45912c2d4a386c50521c22abda50a12b692992e00851267670516a9","partnerSince":"2026-03-01"}];
 let PROFS=(()=>{try{const p=JSON.parse(localStorage.getItem('bascula:profs')||'null');return Array.isArray(p)&&p.length?p:PROF_DEF}catch(e){return PROF_DEF}})();
 // profiles are access levels over the same data: SEL is the profile in use (modules, PIN); PID, the data owner, is always the main one
-// the profile in use in this tab: the one entered in this session; otherwise the first one in the list without a PIN;
-// if they all have a PIN, the first one, and the PIN typed on the lock screen decides which profile opens
+// the profile in use in this tab: the one entered in this session; otherwise the first one in the list. If it has a PIN,
+// the lock screen asks for it, and the PIN typed decides which profile opens
 const SEL=(()=>{let s=null;try{s=sessionStorage.getItem('bascula:sel')}catch(e){}if(s!=null&&PROFS.some(p=>p.id===s))return s;
-  const f=PROFS.find(p=>!p.pinH)||PROFS[0];return f?f.id:''})();const PID='';
+  return PROFS[0]?PROFS[0].id:''})();const PID='';
 if(PID)LS='bascula:v3:'+PID;
 // al cambiar de perfil se vuelve a la misma sección (las pestañas de cada sección ya se recuerdan)
 if(UI.pfRet){const r=UI.pfRet;delete UI.pfRet;saveUI();if(location.hash.slice(1)!==r){try{history.replaceState(null,'','#'+r)}catch(e){location.hash='#'+r}}}
