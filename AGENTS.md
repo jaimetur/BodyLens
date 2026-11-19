@@ -5,7 +5,8 @@ Lee también `docs/MIGRACION.md` (el plan completo) antes de tocar nada.
 
 ## Qué es
 
-BodyLens es la app personal de salud de Jaime: peso y composición (báscula Withings), actividad, sueño,
+BodyLens es la app de salud de Jaime (multiusuario: cada cuenta con sus datos, alta por invitación, cuentas unidas en
+pareja que comparten ciclo e intimidad; ver `docs/MIGRACION.md` §0): peso y composición (báscula Withings), actividad, sueño,
 corazón, comidas, ciclo, ánimo… Hoy vive como **artefacto de claude.ai** (una sola página HTML) alimentado por
 una **hoja de Google** que rellena un **Google Apps Script** (Withings + Health Auto Export desde el iPhone).
 
@@ -18,7 +19,11 @@ con los datos **actualizándose solos cada 15 minutos**, sin tener que pulsar «
 frontend/src/app_a.html   estilos + HTML de todas las vistas
 frontend/src/app_b.html   núcleo: parseo de la hoja (XLSX), modelo, métricas
 frontend/src/app_c.html   interfaz: vistas, gráficas SVG, sincronización, ajustes
+frontend/server/            claude-shim.js (window.claude contra la API) y páginas de acceso, registro y cuenta
 frontend/build_artifact.py  une a+b+c (versión artefacto; solo referencia)
+backend/app/                servidor FastAPI (cuentas, documentos, pareja, puente Google, planificador)
+backend/tests/              tests del backend
+docker/                     Dockerfile, compose.yml (NAS) y compose.dev.yml (desarrollo)
 frontend/tests/snaptest.js  arranque de la página en jsdom (referencia)
 legacy/apps-script/Codigo.gs  el Apps Script en producción hoy (REFERENCIA de toda la lógica de datos)
 legacy/salud-scripts/       scripts sueltos de importación de Apple Salud (referencia)
@@ -49,13 +54,15 @@ Lo que hay que crear está descrito en `docs/MIGRACION.md` (backend FastAPI, cap
 
 ```
 docker compose -f docker/compose.dev.yml up --build    # desarrollo con recarga automática
-pytest -q                                              # tests del backend
-node frontend/tests/smoke.mjs                          # la página arranca con la capa de compatibilidad
+cd backend && pip install -e '.[test]' && pytest -q    # tests del backend (Python 3.12)
+cd frontend && npm ci && cd .. && node frontend/tests/smoke.mjs   # la página arranca con la capa de compatibilidad
 ```
 
 ## Definición de terminado (para cualquier PR)
 
 - `pytest` en verde y la prueba de arranque del frontend sin errores.
 - La imagen se construye (`docker build -f docker/Dockerfile .`).
+- Tras el push a `main` y el build verde, desplegar en el NAS (ver `docs/DESPLIEGUE.md`, «Despliegues siguientes»)
+  y comprobar que el contenedor `bodylens` queda `healthy`.
 - Ningún secreto ni dato personal añadido al repo.
 - Si cambia el comportamiento, actualizado `docs/MIGRACION.md` o `docs/DESPLIEGUE.md`.

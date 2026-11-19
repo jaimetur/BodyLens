@@ -1,6 +1,28 @@
 # BodyLens — plan de migración a Docker con actualización cada 15 minutos
 
-Estado de partida: noviembre de 2026. Documento de trabajo para el agente (Codex) y para Jaime.
+Estado de partida: noviembre de 2026. Documento de trabajo para el agente (Codex / Claude Code) y para Jaime.
+
+## 0. Decisiones posteriores (19 nov 2026) — mandan sobre el resto del documento
+
+- **Multiusuario desde el principio.** Cada persona tiene su cuenta (usuario + contraseña argon2, sesión en cookie
+  HttpOnly de 90 días) y sus datos separados (`docs.user_id`). **Sin registro abierto**: las cuentas se crean con un
+  **enlace de invitación** de un solo uso que genera un administrador en «Tu cuenta» (`/cuenta`) o con
+  `python -m app.admin invitacion`. La primera cuenta: `python -m app.admin crear-admin <usuario> "<Nombre>"`.
+- **Laura tiene su propia cuenta** (se siembra con `--perfil laura` desde `snap.json`). Los perfiles de la app siguen
+  existiendo dentro de cada cuenta.
+- **Pareja**: dos cuentas pueden unirse (una lo pide en `/cuenta`, la otra lo acepta). Los registros de **ciclo**
+  (`menstrual`, `intermenstrual`, `ovulation`, `bbt`, `cervical`, `contraceptive`, `pregnancy`) y de **intimidad**
+  (`sexual`) del documento `hklog` pasan a un documento común de la pareja (`shared_docs`): los dos los ven y los
+  editan. Al separarse, cada uno se queda con una copia. Lo resuelve el servidor; la página no cambia.
+- **Fase 1 (puente Google) por cuenta**: el ID de la hoja y la URL del Apps Script de cada cuenta los configura **solo
+  un administrador** (así nadie puede leer la hoja de otro con la cuenta de servicio). El `fileId` de la página se ignora.
+- **Imagen en Docker Hub** (`jaimetur/bodylens`), no en GHCR, como DriveTestAnalyzer. Secretos del repo:
+  `DOCKERHUB_USERNAME` (opcional, si no el dueño del repo) y `DOCKERHUB_TOKEN`.
+- **Despliegue**: stack de Dockhand en el NAS (`/volume1/docker/stacks/bodylens`), datos en
+  `/volume1/docker/data/bodylens`, puerto 7280, y **Caddy** del NAS como proxy HTTPS (no el proxy de DSM).
+  Ver `docs/DESPLIEGUE.md`.
+- Cambios en la página servida: no se tocan `frontend/src/*.html`; el servidor aplica sustituciones exactas al
+  montarla (`backend/app/frontend.py`, cada una comprobada en los tests) y añade `frontend/server/claude-shim.js`.
 
 ---
 
@@ -48,8 +70,8 @@ Requisitos de Jaime:
    por el **proxy inverso del Synology con HTTPS**, como ya hace con PhotoMigrator.
 2. **Datos actualizados cada 15 minutos sin pulsar nada.** El botón de actualizar se mantiene para forzarlo.
 3. **Mismo diseño y mismas funciones** que el artefacto actual.
-4. Repositorio privado en GitHub con **GitHub Actions** que construya la imagen y la publique en GHCR.
-5. Login propio (son datos de salud expuestos a internet).
+4. Repositorio privado en GitHub con **GitHub Actions** que construya la imagen y la publique en Docker Hub.
+5. Login propio y **varias cuentas** con invitación (son datos de salud expuestos a internet).
 
 ## 3. Arquitectura
 
@@ -94,9 +116,17 @@ Cambios mínimos en `app_*.html` (con un *flag* `window.BODYLENS_SERVER = true` 
 - PWA: `manifest.webmanifest`, iconos de `branding/` (ver `docs/TRASPASO-original.md` §3.5).
 
 ### 3.3 API del servidor
+Toda escritura bajo `/api/` (salvo `/api/ingest/`) exige la cabecera `X-BodyLens: 1` (protección CSRF).
 ```
-POST /api/login            {password}  → cookie de sesión (HttpOnly, Secure, SameSite=Lax, 90 días)
+POST /api/login            {username, password} → cookie de sesión (HttpOnly, Secure, SameSite=Lax, 90 días)
 POST /api/logout
+GET  /api/invite/{code}    ¿invitación válida?
+POST /api/register         {code, username, name, password}
+GET  /api/me               cuenta, pareja, peticiones, fuentes y última sincronización
+POST /api/me/password | /api/me/name
+POST /api/partner/request | accept | reject | unlink
+POST /api/admin/invites    (admin) → enlace de registro
+GET  /api/admin/users      (admin)  ·  PUT /api/admin/users/{id}/bridge {sheetId, appsScriptUrl}
 GET  /api/docs/{col}[?since=rev]      lista de {id, data, rev}; rev global incremental
 GET  /api/docs/{col}/{id}
 PUT  /api/docs/{col}/{id}             cuerpo = data (JSON)
@@ -114,7 +144,9 @@ GET  /healthz                         para Docker
 Todo bajo login salvo `/api/login`, `/api/ingest/hae` (token), `/api/withings/notify` y `/healthz`.
 
 ### 3.4 Datos en SQLite
-- `docs(collection TEXT, id TEXT, data JSON, rev INTEGER, updated_at, PRIMARY KEY(collection,id))`: espejo
+- `users`, `sessions`, `invites`, `partner_requests`, `shared_docs` (registros comunes de la pareja), `user_state`
+  (ETag del workbook y última sincronización de cada cuenta).
+- `docs(user_id, collection TEXT, id TEXT, data JSON, rev INTEGER, updated_at, PRIMARY KEY(user_id,collection,id))`: espejo
   exacto de la colección `bascula` del artefacto (ajustes `peso`, `hist-AAAA`, `com-AAAA`, `medidas`,
   `perfiles`, `pf-<perfil>-…`, etc.).
 - Una tabla por pestaña de la hoja (mismas columnas, misma clave que usa `guardarFilas_`): `withings`,
@@ -133,7 +165,7 @@ Todo bajo login salvo `/api/login`, `/api/ingest/hae` (token), `/api/withings/no
   puerto interno 8000) y `docker/compose.dev.yml` (código montado, `uvicorn --reload`, frontend servido desde
   `frontend/src` sin compilar).
 - `.github/workflows/docker.yml`: tests + build multi-arch (`linux/amd64,linux/arm64`) con Buildx y push a
-  `ghcr.io/<usuario>/bodylens` con etiquetas `latest`, `sha` y versión en tags `v*`.
+  Docker Hub `jaimetur/bodylens` con etiquetas `latest`, `sha-<7>` y versión en tags `v*`.
 - `.env.example` con todas las variables (sección 6).
 
 ### Fase 1 — La app funcionando en Docker con la hoja de Google como fuente (puente)
@@ -179,7 +211,7 @@ ni en Withings.
 - Exportación opcional a la hoja de Google (escritura) si Jaime quiere mantenerla como copia.
 
 ### Fuera de alcance de esta tarea (documentado para después)
-Multiusuario, módulo Android (Health Connect → `/api/ingest`), informe PDF nuevo, más datos de Withings
+Módulo Android (Health Connect → `/api/ingest`), informe PDF nuevo, más datos de Withings
 (ver `docs/TRASPASO-original.md` §3.1, §3.6 y §3.7).
 
 ## 5. Reglas de negocio que hay que conservar (resumen; la referencia es `Codigo.gs`)

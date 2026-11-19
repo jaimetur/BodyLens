@@ -1,4 +1,7 @@
-# Tarea para Codex — pégala tal cual al crear la tarea
+# Tarea para el agente (Codex / Claude Code)
+
+> Actualizada el 19 nov 2026: multiusuario con invitaciones, cuentas unidas en pareja e imagen en Docker Hub
+> (ver `docs/MIGRACION.md` §0). Fases 0 y 1 hechas.
 
 ---
 
@@ -16,9 +19,9 @@ ningún secreto ni dato personal en el repo, zona horaria Europe/Madrid.
 Haz el trabajo por fases, cada una en su propio PR (o commits claramente separados), con tests:
 
 1. **Fase 0** — `docker/Dockerfile`, `docker/compose.yml`, `docker/compose.dev.yml`, `.env.example` completo y
-   `.github/workflows/docker.yml` (tests + build multi-arch amd64/arm64 + push a GHCR con etiquetas `latest`,
-   `sha` y `v*`).
-2. **Fase 1** — Backend FastAPI + SQLite: login, almacén de documentos (`/api/docs`), `claude-shim.js` que
+   `.github/workflows/docker.yml` (tests + build multi-arch amd64/arm64 + push a Docker Hub con etiquetas
+   `latest`, `sha-<7>` y `v*`).
+2. **Fase 1** — Backend FastAPI + SQLite: cuentas con invitación y pareja (MIGRACION §0), login, almacén de documentos (`/api/docs`), `claude-shim.js` que
    implementa `window.claude.use('user'|'db'|'mcp'|'downloads'|'artifact'|'permissions')` como se describe en
    `docs/MIGRACION.md` §3.2, servir la página con los cambios mínimos (botón Actualizar → `POST /api/sync`,
    librerías sin CDN, sin PACK), `python -m app.seed` para importar `snap.json` o la copia JSON de Ajustes, y el
@@ -27,7 +30,7 @@ Haz el trabajo por fases, cada una en su propio PR (o commits claramente separad
    workbook (sondeo de `/api/workbook/meta` en el shim).
 3. **Fase 2** — Port del Apps Script a Python: Withings (OAuth con refresh token rotatorio, pesadas, composición,
    actividad, entrenos, sueño, SpO2/VO2, ECG; siempre repedir las 3 últimas noches) y Health Auto Export
-   (`POST /api/ingest/hae?token=`, port completo de `doPost` y de las reglas de sueño: mezcla AutoSleep + Apple
+   (`POST /api/ingest/hae?token=`, un token y un OAuth de Withings **por cuenta**, port completo de `doPost` y de las reglas de sueño: mezcla AutoSleep + Apple
    Watch, desvelos, siestas, reenvíos que corrigen tramos). Tablas SQLite con las mismas columnas que las pestañas
    de la hoja; el workbook se genera desde ellas con las mismas cabeceras. Importador único de la hoja actual.
    Tests de paridad y de las reglas de sueño con fixtures sintéticos (casos listados en `docs/MIGRACION.md` §7.5).
