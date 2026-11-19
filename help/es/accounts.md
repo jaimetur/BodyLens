@@ -26,8 +26,8 @@ Se abre desde el menú del perfil (arriba a la izquierda) → **Tu cuenta**.
 - **Idioma**: el de toda la app y el de los correos que te llegan. Antes de entrar, se elige con el selector 🌐 de
   la pantalla de entrar. Las cuentas nuevas empiezan en inglés (o en el idioma elegido al pedir la cuenta).
 - **Contraseña**: pide la actual; al cambiarla se cierran las sesiones de los demás dispositivos.
-- **Pareja** y **Sincronización**: ver [pareja](pareja.md) y [sincronización](sincronizacion.md). Importar copias está en Ajustes → Datos y copias ([importar](importar.md)).
-- **Administración**: solo para cuentas administradoras; ver [administración](administracion.md).
+- **Pareja** y **Sincronización**: ver [pareja](couples.md) y [sincronización](sync.md). Importar copias está en Ajustes → Datos y copias ([importar](import.md)).
+- **Administración**: solo para cuentas administradoras; ver [administración](administration.md).
 
 ## Privacidad
 - Tus datos solo los ves tú. Lo de **Ciclo** e **intimidad** lo ve también tu pareja si habéis unido las cuentas.

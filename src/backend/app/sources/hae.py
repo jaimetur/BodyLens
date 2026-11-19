@@ -1,5 +1,5 @@
 """Apple Salud vía Health Auto Export (automatización «API REST», JSON versión 2): port de doPost y de las reglas de
-sueño, actividad y entrenos de legacy/apps-script/Codigo.gs. También sirve para Android (Health Connect) si la app
+sueño, actividad y entrenos del Apps Script original (Codigo.gs). También sirve para Android (Health Connect) si la app
 manda el mismo JSON.
 
 Salud es la fuente principal: sueño, siestas, actividad diaria y entrenos; Withings solo rellena huecos."""

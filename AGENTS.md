@@ -1,55 +1,75 @@
 # AGENTS.md — BodyLens
 
 Instrucciones para agentes de código (Codex, Claude Code…) que trabajen en este repositorio.
-Lee también `docs/MIGRACION.md` (el plan completo) antes de tocar nada.
 
 ## Qué es
 
-BodyLens es la app de salud de Jaime (multiusuario: cada cuenta con sus datos, alta por invitación, cuentas unidas en
-pareja que comparten ciclo e intimidad; ver `docs/MIGRACION.md` §0): peso y composición (báscula Withings), actividad, sueño,
-corazón, comidas, ciclo, ánimo… Hoy vive como **artefacto de claude.ai** (una sola página HTML) alimentado por
-una **hoja de Google** que rellena un **Google Apps Script** (Withings + Health Auto Export desde el iPhone).
+BodyLens es una app de salud multiusuario: peso y composición (báscula Withings), actividad, sueño, corazón,
+comidas, ciclo, ánimo… Cada cuenta tiene sus datos; las cuentas se crean por invitación o por petición aprobada por
+la administración, y dos cuentas pueden unirse en pareja para compartir y editar juntas el ciclo y la intimidad.
 
-El objetivo de este repo es **pasarla a un contenedor Docker en el servidor de Jaime** (Synology DS920+, x86_64),
-con los datos **actualizándose solos cada 15 minutos**, sin tener que pulsar «Actualizar».
+Corre en un contenedor Docker en el NAS de Jaime (Synology DS920+). Withings, Apple Salud (Health Auto Export) y
+Android (Health Connect, app en `android/`) mandan los datos directamente al servidor. La página es la del antiguo
+artefacto de claude.ai, servida con una capa de compatibilidad (`window.claude`) contra la API propia. El puente con
+la hoja de Google (Apps Script) queda solo para cuentas que aún no se han pasado y se retirará.
 
 ## Estructura
 
 ```
 src/backend/app/            servidor FastAPI (paquete `app`), un subpaquete por módulo:
   main.py                   arranque, seguridad común y registro de las rutas de cada módulo
-  core/                     configuración, SQLite, seguridad, dependencias de las rutas (sesión, admin)
+  core/                     configuración, SQLite, seguridad, idiomas, copias de seguridad, dependencias
   accounts/                 cuentas, sesiones, invitaciones, peticiones de acceso, «Tu cuenta», CLI de admin
+  admin/                    panel de Administración
   couples/                  unir y separar cuentas en pareja
   data/                     documentos de cada cuenta (el «db» de la app, con lo compartido en pareja) e importación
-  sync/                     sincronización (fase 1: Apps Script + hoja de Google), libro XLSX y planificador
+  sheets/                   las pestañas de datos en tablas del servidor y el libro XLSX que lee la página
+  sources/                  Withings (OAuth) y Apple Salud / Android (envíos en formato Health Auto Export)
+  sync/                     sincronización, puente con Google y planificador
   mail/                     correo saliente por SMTP
   web/                      montaje de la página de la app y ficheros estáticos
 src/frontend/
-  app/app_a|b|c.html        la app (el mismo HTML que el artefacto: estilos+vistas, núcleo, interfaz) — no se edita
+  app/app_a|b|c.html        la app (el HTML del artefacto: estilos+vistas, núcleo, interfaz)
   compat/claude-shim.js     capa window.claude contra la API del servidor
-  accounts/                 páginas de entrar, pedir cuenta, registro por invitación y «Tu cuenta»
-  common/                   estilos y utilidades de esas páginas
+  accounts/ admin/ common/  páginas de entrar, pedir cuenta, registro, «Tu cuenta» y Administración
+  i18n/                     traductor, catálogo en inglés y un fichero por idioma
   package.json              librerías servidas sin CDN (xlsx, jspdf, html2canvas-pro) y jsdom para la prueba
+android/                    app de Android (Health Connect → servidor)
 assets/branding/            iconos y logo (no cambian)
-tests/<módulo>/             tests de cada módulo (pytest) y tests/frontend/smoke.mjs (arranque de la página en jsdom)
+tests/<módulo>/             tests de cada módulo (pytest) y tests/frontend/*.mjs (página y traductor en jsdom)
 help/                       ayuda de uso, un fichero por módulo
-docker/                     Dockerfile, compose.yml (NAS), compose.dev.yml (desarrollo), entrypoint
-docs/                       plan de migración, despliegue, tarea y traspaso original
-legacy/                     Apps Script en producción y scripts de Salud (REFERENCIA de la lógica de datos)
+docker/                     Dockerfile, compose.yml (NAS), compose.hot.yml, compose.dev.yml, entrypoint
+docs/DESPLIEGUE.md          despliegue en el NAS
+tools/                      despliegue, servidor de desarrollo y herramientas de traducción
 ```
 
-Lo que hay que crear está descrito en `docs/MIGRACION.md` (backend FastAPI, capa `window.claude`, Docker, CI).
+## Trabajo pendiente
+
+- Estado de las fuentes en «Tu cuenta»: último dato de cada tipo (pesada, noche, envío de Salud por tipo), última
+  sincronización y errores.
+- Retirar el puente con Google (Apps Script, cuenta de servicio, hoja) cuando Jaime lo confirme.
 
 ## Reglas
 
 1. **El diseño no se toca.** La interfaz de `src/frontend/app/` debe verse y comportarse igual. Los cambios en el
    frontend se limitan a lo imprescindible para funcionar fuera de claude.ai: sustituciones exactas en
    `src/backend/app/web/page.py` y la capa `src/frontend/compat/claude-shim.js`.
-   Nada de reescribir la app en React/Vue ni de «limpiar» el código.
-2. **Paridad de datos antes que mejoras.** Cada pieza portada del Apps Script debe producir los mismos
-   resultados que el original (mismas filas, mismas reglas). Las reglas de sueño (mezcla AutoSleep + Apple Watch,
-   desvelos, siestas, ventana de 17:00 a 17:00, etc.) están en `Codigo.gs` y se portan tal cual.
+   Nada de reescribir la app en React/Vue ni de «limpiar» el código. Los cambios de diseño que pida Jaime sí se
+   hacen, con el mínimo cambio en `src/frontend/app/`.
+2. **Paridad de datos antes que mejoras.** La lógica de datos viene del Apps Script original (`Codigo.gs`, ya fuera del
+   repositorio) y está portada en `src/backend/app/sources/` y `src/backend/app/sheets/rules.py`, con sus tests. No se
+   cambia sin motivo. Reglas que hay que conservar:
+   - **Noche del día k**: la que acaba entre las 17:00 del día k-1 y las 17:00 del día k, y después de las 03:00 del
+     día k; lo que acabe antes es siesta.
+   - **Episodios**: ratos de sueño separados por más de 90 min son episodios distintos; dos episodios nocturnos
+     (19:00–12:00) separados por ≤ 4 h se unen y el hueco cuenta como desvelo.
+   - **Mezcla de la noche**: horario, tiempo dormido y desvelos de AutoSleep si lo hay; si no, del Apple Watch; si
+     no, de la fuente con más sueño. Si el Watch registra claramente más (> 1,2 × AutoSleep + 15 min), manda el
+     Watch. Profundo y REM salen del Watch.
+   - **Reenvíos**: cada envío manda en el tramo de tiempo que cubre por fuente (lo que esa fuente ya no envía en ese
+     intervalo se borra).
+   - **Siestas**: episodios ≥ 10 min fuera de la noche. **Desvelos**: huecos ≥ 10 min dentro de la noche.
+   - **Fuentes**: Apple Salud manda; Withings solo para peso y composición y para rellenar huecos.
 3. **Textos de la app en español de España** (es el idioma de origen; se traducen a los demás). Mensajes de error y de
    interfaz también. Ver «Textos e idiomas».
 4. **Secretos fuera del código.** Withings (client id/secret, tokens), token de Health Auto Export, contraseña,
@@ -58,7 +78,7 @@ Lo que hay que crear está descrito en `docs/MIGRACION.md` (backend FastAPI, cap
 5. **Datos personales fuera del repositorio.** `data/`, `*.db`, `snap.json`, copias JSON y exportaciones de Salud
    están en `.gitignore`. Los fixtures de tests deben ser sintéticos o mínimos.
 6. **Zona horaria `Europe/Madrid`** para todo cálculo de días y noches (igual que la hoja).
-7. Trabaja por fases (las de `docs/MIGRACION.md`), con commits pequeños y tests en cada una.
+7. Commits pequeños y con tests.
 8. **Idioma del trabajo.** Con Jaime se habla **siempre en español** (mensajes, resúmenes, preguntas, informes).
    Los **comentarios del código** y los docstrings nuevos van **en inglés**; los que ya existen en español se dejan
    como están salvo que se reescriba ese código. Los textos que ve quien usa la app siguen la regla 3.
@@ -99,7 +119,7 @@ python3.12 -m venv .venv && .venv/bin/pip install -e '.[test]'   # entorno local
   (en caliente; solo espera a la imagen si cambian dependencias o el Dockerfile) (ver `docs/DESPLIEGUE.md`, «Despliegues siguientes»)
   y comprobar que el contenedor `bodylens` queda `healthy`.
 - Ningún secreto ni dato personal añadido al repo.
-- Si cambia el comportamiento, actualizado `docs/MIGRACION.md` o `docs/DESPLIEGUE.md`.
+- Si cambia el despliegue, actualizado `docs/DESPLIEGUE.md`; si cambia el uso, la ayuda de `help/`.
 - `CHANGELOG.md` al día: cada cambio que se note en la app, el servidor o el despliegue va en la versión actual
   (la de la rama), en su apartado (Breaking Changes, New Features, Enhancements, Bug fixes, Documentation), con el
   formato de las entradas que ya hay.

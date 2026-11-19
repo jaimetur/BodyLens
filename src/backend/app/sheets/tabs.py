@@ -1,5 +1,5 @@
 """Pestañas del libro de datos: las mismas columnas, clave y orden que la hoja de Google del Apps Script
-(legacy/apps-script/Codigo.gs). La página identifica cada pestaña por su cabecera."""
+(el Apps Script original, Codigo.gs). La página identifica cada pestaña por su cabecera."""
 from __future__ import annotations
 
 from dataclasses import dataclass

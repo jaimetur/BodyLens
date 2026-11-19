@@ -1,4 +1,4 @@
-"""Withings directo desde el servidor (port de la parte de Withings de legacy/apps-script/Codigo.gs).
+"""Withings directo desde el servidor (port de la parte de Withings del Apps Script original, Codigo.gs).
 
 - OAuth por cuenta; el refresh token rota: se guarda siempre el nuevo (cifrado).
 - Cada sincronización: pesadas y composición (desde la última menos 7 días), actividad (10 días), entrenos (14 días),

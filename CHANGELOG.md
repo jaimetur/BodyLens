@@ -80,7 +80,8 @@
 
 #### 📚 Documentation:
 - `README.md` completo y ayuda de uso por módulo en `help/`.
-- `docs/MIGRACION.md` (plan por fases) y `docs/DESPLIEGUE.md` (NAS, Dockhand, despliegue en caliente, Withings, Apple Salud, Android).
+- `docs/DESPLIEGUE.md` (NAS, Dockhand, despliegue en caliente, Withings, Apple Salud, Android).
+- Fuera del repositorio lo que ya no se usa: el plan de migración, el encargo y el traspaso originales (`docs/`) y el Apps Script y los scripts de Salud (`legacy/`); las reglas de datos que hay que conservar pasan a `AGENTS.md`.
 - `AGENTS.md` con las reglas del repositorio (diseño intacto, paridad de datos, secretos y datos personales fuera, idioma del trabajo, textos e idiomas).
 - `src/frontend/i18n/README.md`: cómo añadir o mejorar una traducción.
 
@@ -122,4 +123,4 @@ Versión de partida: la app tal como estaba publicada como artefacto de claude.a
 #### 🐛 Bug fixes:
 
 #### 📚 Documentation:
-- Documento de traspaso (`docs/TRASPASO-original.md`) con qué había hecho, cómo estaba montado y qué faltaba por construir.
+- Documento de traspaso de Claude Work con qué había hecho, cómo estaba montado y qué faltaba por construir.

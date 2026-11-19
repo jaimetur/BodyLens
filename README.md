@@ -1,92 +1,103 @@
 # BodyLens
 
-**BodyLens** es una app web de salud personal y multiusuario. Reúne en un solo sitio el peso y la composición
-corporal de la báscula **Withings** y lo que registra el iPhone y el Apple Watch en **Apple Salud** (sueño,
-actividad, pulso, VFC, SpO2, VO2 máx, ECG, ciclo, ánimo…). Se instala con Docker en un servidor propio, los datos se
-actualizan solos cada 15 minutos y cada persona ve solo los suyos.
+**English** · [Español](README_ES.md) · [Català](README_CA.md) · [Français](README_FR.md) · [Italiano](README_IT.md) ·
+[Deutsch](README_DE.md) · [Português](README_PT.md) · [Nederlands](README_NL.md) · [中文](README_ZH.md) ·
+[日本語](README_JA.md)
 
-Nació como un artefacto de claude.ai alimentado por una hoja de Google; este repositorio es su versión autoalojada,
-con el mismo diseño.
+**BodyLens** is a self-hosted, multi-user personal health web app. It brings together the weight and body
+composition from a **Withings** scale and what your phone and watch record (sleep, activity, heart rate, HRV, SpO2,
+VO2 max, ECG, cycle, mood…) from **Apple Health** or **Android Health Connect**. It runs in Docker on your own
+server, the data arrives on its own, and every person sees only their own data.
 
-## Qué hace
+## Features
 
-- **Resumen**: peso de tendencia, progreso del plan, «hoy de un vistazo» (preparación, sueño, saldo de sueño, VFC,
-  pasos) y avisos y conclusiones automáticas.
-- **Peso**: tendencia suavizada, plan con ritmos objetivo, proyección, semanas, calendario e hitos.
-- **Cuerpo**: composición (grasa, músculo, agua, hueso), IMC/FFMI con rangos por edad y sexo, medidas con cinta,
-  corazón (pulso en reposo, VFC, SpO2, VO2 máx, ECG, avisos de frecuencia) y bienestar.
-- **Actividad**: pasos, calorías, minutos de ejercicio con anillos y objetivos, entrenamientos y su relación con el peso.
-- **Sueño**: última noche con fases, saldo de sueño de 7 noches, siestas, horario objetivo y análisis. Mezcla AutoSleep
-  y Apple Watch con reglas propias (ventana 17:00→17:00, desvelos, siestas).
-- **Comidas**: nota diaria de lo que comes y su efecto estimado en el peso.
-- **Íntimo**: ciclo (con previsión), sexualidad y ánimo, protegidos con un PIN privado.
-- **Historial**: años de pesadas, intentos de pérdida de peso y rebotes.
-- **PDF**: informe del periodo elegido; **copias** completas en JSON y CSV.
-- **Interfaz**: claro y oscuro, pensada para el iPhone (se instala como app desde Safari), gestos y periodo sincronizado.
-- **Idiomas**: inglés (predeterminado), español, catalán, francés, italiano, alemán, portugués, neerlandés, chino y
-  japonés. Cada cuenta elige el suyo en «Tu cuenta»; los correos le llegan en ese idioma.
+- **Summary:** trend weight, plan progress, “today at a glance” (readiness, sleep, sleep balance, HRV, steps) and
+  automatic insights and alerts.
+- **Weight:** smoothed trend, plan with target rates, projection, weeks, calendar and milestones; weight history
+  over the years, weight-loss attempts and rebounds.
+- **Body:** composition (fat, muscle, water, bone), BMI/FFMI with ranges by age and sex, tape measurements, heart
+  (resting heart rate, HRV, SpO2, VO2 max, ECG, heart-rate alerts) and wellbeing.
+- **Activity:** steps, calories and exercise minutes with rings and goals, workouts and how they relate to weight.
+- **Sleep:** last night with stages, 7-night sleep balance, naps, target schedule and analysis. AutoSleep and
+  Apple Watch data are merged with their own rules (5 pm → 5 pm window, wake-ups, naps).
+- **Meals:** a daily score of what you eat, drink and exercise, and its estimated effect on your weight.
+- **Intimate:** cycle (with forecast), sexual activity and mood, protected by a private PIN.
+- **Help** inside the app: the help of every module, this README and the changelog, in your language.
+- **PDF report** of the chosen period and **full backups** in JSON and CSV.
+- **Interface:** light and dark themes, designed for the phone (installs as an app from the browser), swipe
+  gestures, wide-screen layout up to 1600 px.
+- **Languages:** English (default), Spanish, Catalan, French, Italian, German, Portuguese, Dutch, Chinese and
+  Japanese. Each account picks its own; emails arrive in the recipient’s language.
 
-### Cuentas
-- **Varias cuentas**, cada una con sus datos. Se entra con usuario y contraseña (cookie de sesión segura).
-- **Alta**: petición desde la pantalla de entrar que aprueba la administración (con avisos por correo) o enlace de
-  invitación de un solo uso.
-- **Pareja**: dos cuentas pueden unirse para compartir y editar juntas los registros de ciclo e intimidad.
-- **Importar**: el `snap.json` o la copia completa de la versión anterior, desde «Tu cuenta».
-- **Perfiles**: dentro de una cuenta se mantienen los perfiles de la app (con PIN).
+### Accounts
 
-### Datos que llegan solos
-- **Ahora (fase 1)**: cada 15 minutos el servidor dispara el Apps Script de la hoja de Google de cada cuenta (que trae
-  Withings y Health Auto Export) y descarga la hoja; la página abierta se refresca sola.
-- **Siguiente (fase 2)**: Withings (OAuth por cuenta) y Health Auto Export directos al servidor, sin Google.
+- **Several accounts**, each with its own data, signed in with username and password.
+- **Sign-up:** access requests from the sign-in page, approved by an administrator (with email notices), or
+  single-use invitation links.
+- **Couples:** two accounts can be linked to share and edit the cycle and intimacy records together.
+- **Profiles:** each account can keep several profiles (with an optional PIN), managed in *Your account*.
+- **Administration:** users (username, name, email, password, active switch, admin role), access requests,
+  invitations, email (SMTP), Withings app credentials, backups and data sources.
 
-## Cómo está hecho
+### Data that arrives on its own
 
-```
-navegador / iPhone (PWA) ── HTTPS (proxy inverso del NAS) ──► contenedor BodyLens
-                                                              FastAPI + SQLite + planificador cada 15 min
-                                                              │
-                                     fase 1: Apps Script + Google Drive (cuenta de servicio)
-```
+- **Withings:** each account connects with OAuth; weigh-ins, composition, activity, workouts, sleep, SpO2, VO2 max
+  and ECG are fetched every few minutes, and at once when Withings notifies a new measurement.
+- **Apple Health:** the iPhone app *Health Auto Export* posts to a personal address of each account.
+- **Android:** the BodyLens Android app (in `android/`) reads Health Connect and posts every hour in the same format.
+- **Daily backup** of the database at 03:30 (the last 30 are kept).
 
-- **Frontend**: la misma página del artefacto (`src/frontend/app/`), servida sin cambios en sus ficheros. El servidor
-  le añade una capa (`src/frontend/compat/claude-shim.js`) que imita lo que la página pedía a claude.ai (`db`, `user`,
-  `mcp`, `downloads`) contra la API propia, y aplica unas pocas sustituciones exactas (librerías sin CDN, botón de
-  sincronizar, textos).
-- **Idiomas**: el catálogo base es inglés (`src/frontend/i18n/catalog.json`) y cada idioma es
-  `src/frontend/i18n/locales/<idioma>.json` (mensaje inglés → traducción). La página, escrita en español, se traduce
-  en el navegador con `src/frontend/i18n/i18n.js`, que también ajusta números y fechas; el servidor usa los mismos
-  ficheros para los correos. Para colaborar con traducciones: `src/frontend/i18n/README.md`.
-- **Backend**: Python 3.12, FastAPI, SQLite (WAL) en `/data`, un solo proceso con el planificador dentro.
-- **Seguridad**: contraseñas argon2, sesiones en servidor (cookie HttpOnly/Secure/SameSite), cabecera anti-CSRF en
-  toda escritura, límites de intentos, cada cuenta aislada; secretos solo en variables de entorno.
-
-## Estructura del repositorio
+## How it is built
 
 ```
-src/backend/app/        servidor (paquete «app»), un subpaquete por módulo:
-  core/                 configuración, SQLite, seguridad, dependencias de las rutas
-  accounts/             cuentas, sesiones, invitaciones, peticiones de acceso, CLI de administración
-  couples/              pareja
-  data/                 documentos de cada cuenta e importación de copias
-  sync/                 sincronización, libro XLSX y planificador
-  mail/                 correo SMTP
-  web/                  montaje de la página y ficheros estáticos
+browser / phone (PWA) ── HTTPS (reverse proxy) ──► BodyLens container
+                                                   FastAPI + SQLite + scheduler
+Withings (OAuth + webhook) ───────────────────────►│
+Health Auto Export (iPhone) / Android app ────────►│  POST /api/ingest/hae/<token>
+```
+
+- **Frontend:** a single page (`src/frontend/app/`), born as a claude.ai artifact, served with a small layer
+  (`src/frontend/compat/claude-shim.js`) that implements what the page used to ask claude.ai for (`db`, `user`,
+  `downloads`…) against the server API.
+- **Backend:** Python 3.12, FastAPI, SQLite (WAL) in `/data`, one process with the scheduler inside.
+- **Translations:** the catalog is English (`src/frontend/i18n/catalog.json`) and each language is
+  `src/frontend/i18n/locales/<lang>.json`. The page is translated in the browser by `src/frontend/i18n/i18n.js`,
+  which also formats numbers and dates; the server uses the same files for emails. The help and the changelog are
+  in `help/<lang>/`.
+- **Security:** argon2 passwords, server-side sessions (HttpOnly/Secure/SameSite cookie), anti-CSRF header on every
+  write, rate limits, every account isolated, OAuth tokens encrypted; secrets only in environment variables or in
+  the server database.
+
+## Repository layout
+
+```
+src/backend/app/        server (package "app"), one subpackage per module:
+  core/                 settings, SQLite, security, languages, backups, route dependencies
+  accounts/             accounts, sessions, invitations, access requests, admin CLI
+  admin/                Administration panel
+  couples/              couples
+  data/                 documents of each account and backup import
+  help/                 the Help module (help, README and changelog in each language)
+  sheets/               the data tables and the XLSX workbook the page reads
+  sources/              Withings and Apple Health / Android ingestion
+  sync/                 synchronisation and scheduler
+  mail/                 SMTP email
+  web/                  page assembly and static files
 src/frontend/
-  app/                  la app (app_a: estilos y vistas, app_b: núcleo, app_c: interfaz)
-  compat/               capa window.claude
-  accounts/ common/     páginas de entrar, pedir cuenta, registro y «Tu cuenta»
-  admin/                panel de Administración
-  i18n/                 traductor (i18n.js), catálogo en inglés (catalog.json) y un fichero por idioma (locales/)
-android/                app de Android (Health Connect → servidor)
-assets/branding/        iconos y logo
-tests/<módulo>/         tests (pytest) y tests/frontend/smoke.mjs (arranque de la página)
-help/                   ayuda de uso, un fichero por módulo
-docker/                 Dockerfile, compose del NAS y de desarrollo
-docs/                   plan de migración, despliegue y traspaso
-legacy/                 Apps Script y scripts de Salud (referencia de la lógica de datos)
+  app/                  the app (app_a: styles and views, app_b: core, app_c: interface)
+  compat/               window.claude layer
+  accounts/ admin/ common/   sign-in, request, registration, Your account and Administration pages
+  i18n/                 translator, English catalog and one file per language
+android/                Android app (Health Connect → server)
+assets/branding/        icons and logo
+tests/<module>/         tests (pytest) and tests/frontend/*.mjs (page and translator in jsdom)
+help/<lang>/            user help (one file per module) and changelog, in each language (English is the base)
+docker/                 Dockerfile and compose files (NAS, hot reload, development)
+docs/DESPLIEGUE.md      deployment on a Synology NAS (Spanish)
+tools/                  deployment, development server and translation tools
 ```
 
-## Desarrollo
+## Development
 
 ```bash
 python3.12 -m venv .venv && .venv/bin/pip install -e '.[test]'
@@ -95,25 +106,32 @@ python3.12 -m venv .venv && .venv/bin/pip install -e '.[test]'
 .venv/bin/python -m pytest -q
 ```
 ```bash
-(cd src/frontend && npm ci) && PYTHON=$PWD/.venv/bin/python node tests/frontend/smoke.mjs
+(cd src/frontend && npm ci) && PYTHON=$PWD/.venv/bin/python node tests/frontend/smoke.mjs && node tests/frontend/i18n.mjs
 ```
 ```bash
 tools/dev-data.sh && tools/dev.sh
 ```
-La última orden levanta http://localhost:8000 en caliente: la página se sirve tal cual desde `src/` (basta recargar) y el
-backend se reinicia solo al guardar. `tools/dev-data.sh` copia a `data-dev/` los datos del NAS (lo que se cambie en
-desarrollo no vuelve al NAS). También hay `docker compose -f docker/compose.dev.yml up --build`.
+The last command starts http://localhost:8000 with hot reload: the page is served as-is from `src/` (just reload)
+and the backend restarts on save. `tools/dev-data.sh` copies the server data into `data-dev/` (changes made in
+development never go back). There is also `docker compose -f docker/compose.dev.yml up --build`.
 
-## Despliegue
+## Deployment
 
-Cada push a `main` pasa los tests y publica la imagen `jaimetur/bodylens` (amd64 y arm64) en Docker Hub. En el
-servidor: `docker/compose.yml` + `.env` (a partir de `.env.example`). Pasos completos en
+Every push to the current version branch (e.g. `0.1.0`) runs the tests and publishes the image
+`jaimetur/bodylens:latest` (amd64 and arm64) to Docker Hub; `main` publishes `jaimetur/bodylens:main`. On the
+server: `docker/compose.yml` plus a `.env` file. The NAS mounts the code from the stack folder, so
+`tools/deploy.sh` deploys a commit in seconds without waiting for a new image. Full steps (Spanish):
 [`docs/DESPLIEGUE.md`](docs/DESPLIEGUE.md).
 
-## Documentación
+## Contributing translations
 
-- Ayuda de uso: [`help/`](help/README.md)
-- Plan de migración y arquitectura: [`docs/MIGRACION.md`](docs/MIGRACION.md)
-- Instrucciones para agentes de código: [`AGENTS.md`](AGENTS.md)
+You only need English: see [`src/frontend/i18n/README.md`](src/frontend/i18n/README.md) to add a language or improve
+one. The help and the changelog are translated from `help/en/`.
 
-Los datos personales nunca van al repositorio: bases de datos, copias JSON y `.env` están en `.gitignore`.
+## Documentation
+
+- User help: [`help/`](help/en/README.md) (also inside the app, in *Help*)
+- Changes in each version: [`CHANGELOG.md`](CHANGELOG.md)
+- Instructions for coding agents: [`AGENTS.md`](AGENTS.md)
+
+Personal data never goes into the repository: databases, JSON backups and `.env` are in `.gitignore`.
