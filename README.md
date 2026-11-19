@@ -1,9 +1,5 @@
 # BodyLens
 
-**English** · [Español](README_ES.md) · [Català](README_CA.md) · [Français](README_FR.md) · [Italiano](README_IT.md) ·
-[Deutsch](README_DE.md) · [Português](README_PT.md) · [Nederlands](README_NL.md) · [中文](README_ZH.md) ·
-[日本語](README_JA.md)
-
 **BodyLens** is a self-hosted, multi-user personal health web app. It brings together the weight and body
 composition from a **Withings** scale and what your phone and watch record (sleep, activity, heart rate, HRV, SpO2,
 VO2 max, ECG, cycle, mood…) from **Apple Health** or **Android Health Connect**. It runs in Docker on your own

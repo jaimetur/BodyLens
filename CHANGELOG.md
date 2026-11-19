@@ -82,7 +82,7 @@
   - Your account and Administration can be shown inside the app.
 
 #### 📚 Documentation:
-- **English is the official language of the project:** code, documentation and commit messages. Complete `README.md` with a translated copy for GitHub in every supported language (`README_ES.md`, `README_FR.md`…).
+- **English is the official language of the project:** code, documentation and commit messages. Complete `README.md`; the README, the help and the changelog are written only in English and shown translated in the app.
 - Usage help per module in `help/en/` (shown in the app's Help in each language).
 - `docs/DEPLOYMENT.md` (NAS, Dockhand, hot deployment, Withings, Apple Health, Android).
 - No longer used material moved out of the repository: the original migration plan, brief and handover (`docs/`) and the Apps Script and Health scripts (`legacy/`); the data rules that must be kept move to `AGENTS.md`.
