@@ -1,8 +1,10 @@
 name: 🐳 Tests y build Docker
 
+# Se trabaja en la rama de la versión actual (p. ej. 0.1.0): cada push construye la imagen «latest» y la etiqueta
+# de la versión, que es lo que se despliega en el NAS. main se pone al día de vez en cuando (imagen «main»).
 on:
   push:
-    branches: [main]
+    branches: [main, "[0-9]+.[0-9]+.[0-9]+"]
     tags: ["v*"]
   pull_request:
   workflow_dispatch:
@@ -51,7 +53,9 @@ jobs:
             echo "tags<<EOF"
             echo "${IMAGE}:sha-${GITHUB_SHA::7}"
             if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then echo "${IMAGE}:${GITHUB_REF_NAME#v}"; fi
-            if [[ "${GITHUB_REF}" == refs/heads/main || "${GITHUB_REF}" == refs/tags/v* ]]; then echo "${IMAGE}:latest"; fi
+            if [[ "${GITHUB_REF}" == refs/heads/main ]]; then echo "${IMAGE}:main"; fi
+            # rama de versión (0.1.0…): su etiqueta y «latest», que es la que usa el NAS
+            if [[ "${GITHUB_REF_NAME}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then echo "${IMAGE}:${GITHUB_REF_NAME}"; echo "${IMAGE}:latest"; fi
             echo "EOF"
           } >> "${GITHUB_OUTPUT}"
 

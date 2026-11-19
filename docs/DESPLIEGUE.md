@@ -53,7 +53,8 @@ puede escribir en `/data`, revisa PUID/PGID.
 
 ## Despliegues siguientes (los hace el agente)
 
-Cada push a `main` → GitHub Actions (tests + imagen `latest`) → el agente despliega por `ssh nas`:
+Cada push a la rama de la versión actual (p. ej. `0.1.0`) → GitHub Actions (tests + imagen `latest` y `<versión>`) →
+el agente despliega por `ssh nas`. Un push a `main` solo publica la imagen `main`.
 ```
 ssh nas 'cd /volume1/docker/stacks/bodylens && sudo -n /usr/local/bin/docker compose -p bodylens pull && sudo -n /usr/local/bin/docker compose -p bodylens up -d'
 ```
