@@ -87,6 +87,30 @@ night again corrects it, it never duplicates it.
 Health Auto Export sends in the background, but iOS only lets it when the phone is unlocked from time to time. If
 your data stops arriving, open Health Auto Export for a moment.
 
+### Optional: AutoSleep, for better sleep data
+
+[AutoSleep](https://apps.apple.com/app/id1164801111) (App Store, one-off purchase) is an iPhone app that works out
+your sleep from the Apple Watch, even if you do not start any sleep mode: when you fall asleep, the wake-ups in the
+night and when you get up. Many people find its times more accurate than the watch's own sleep tracking. You do
+not need it: without AutoSleep, BodyLens uses the sleep recorded by the Apple Watch.
+
+BodyLens does not connect to AutoSleep directly: AutoSleep writes each night into Apple Health, and Health Auto
+Export sends it to BodyLens with the rest of your sleep. To set it up:
+
+1. Install AutoSleep and open it once. Its first-time setup asks how you use the watch at night; follow it.
+2. When it asks for access to Health, allow it to **write sleep** (Sleep Analysis). You can check it later in the
+   iPhone's **Settings → Health → Data Access & Devices → AutoSleep**.
+3. Wear the watch at night and charge it at some other time of the day (AutoSleep needs it on your wrist all night).
+4. In the morning, open AutoSleep once, so it closes the night and writes it into Health (it usually does it on its
+   own a little after you get up).
+5. Nothing else: the **Sleep** automation of Health Auto Export already sends it (that is why it looks back 2–7 days:
+   AutoSleep sometimes closes a night late).
+
+How BodyLens uses it: when a night has data from AutoSleep, its bedtime, wake-up time, time asleep and wake-ups come
+from AutoSleep, and the sleep stages (deep, REM) from the Apple Watch. If the watch clearly records more sleep than
+AutoSleep (for example, if AutoSleep missed part of the night), the watch wins. The source of each night is shown in
+**Sleep**.
+
 ## Android (Health Connect), step by step
 
 On Android, health apps (Samsung Health, Google Fit, Fitbit, a Wear OS watch…) can share their data through

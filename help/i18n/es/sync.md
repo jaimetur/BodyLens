@@ -1,4 +1,4 @@
-<!-- en: c27ce72cdf780f84 -->
+<!-- en: c6be81300b8e210b -->
 # Sincronización
 
 BodyLens no te pide que escribas tus datos: los recibe de tu báscula, tu móvil y tu reloj. Solo tienes que conectar
@@ -87,6 +87,30 @@ mandar una noche otra vez la corrige, nunca la duplica.
 
 Health Auto Export envía en segundo plano, pero iOS solo se lo permite si desbloqueas el teléfono de vez en cuando.
 Si dejan de llegar tus datos, abre Health Auto Export un momento.
+
+### Opcional: AutoSleep, para un sueño más preciso
+
+[AutoSleep](https://apps.apple.com/app/id1164801111) (App Store, de pago, una sola vez) es una app de iPhone que
+calcula tu sueño a partir del Apple Watch, aunque no actives ningún modo de sueño: cuándo te duermes, los desvelos de
+la noche y cuándo te levantas. Mucha gente encuentra sus horas más precisas que las del propio reloj. No la
+necesitas: sin AutoSleep, BodyLens usa el sueño que registra el Apple Watch.
+
+BodyLens no se conecta a AutoSleep directamente: AutoSleep escribe cada noche en Apple Salud, y Health Auto Export la
+manda a BodyLens con el resto de tu sueño. Para configurarlo:
+
+1. Instala AutoSleep y ábrela una vez. Su configuración inicial te pregunta cómo usas el reloj por la noche; síguela.
+2. Cuando pida acceso a Salud, permítele **escribir el sueño** (Análisis del sueño). Puedes comprobarlo después en
+   **Ajustes → Salud → Acceso a datos y dispositivos → AutoSleep** del iPhone.
+3. Duerme con el reloj puesto y cárgalo en otro momento del día (AutoSleep lo necesita en la muñeca toda la noche).
+4. Por la mañana, abre AutoSleep una vez, para que cierre la noche y la escriba en Salud (suele hacerlo sola un rato
+   después de que te levantes).
+5. Nada más: la automatización de **Sueño** de Health Auto Export ya la manda (por eso mira 2–7 días atrás:
+   AutoSleep a veces cierra una noche tarde).
+
+Cómo la usa BodyLens: cuando una noche tiene datos de AutoSleep, la hora de acostarte, la de levantarte, el tiempo
+dormido y los desvelos salen de AutoSleep, y las fases (profundo, REM) del Apple Watch. Si el reloj registra
+claramente más sueño que AutoSleep (por ejemplo, si AutoSleep se perdió parte de la noche), manda el reloj. El origen
+de cada noche se ve en **Sueño**.
 
 ## Android (Health Connect), paso a paso
 
