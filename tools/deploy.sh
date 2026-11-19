@@ -33,9 +33,9 @@ fi
 # código: export limpio del commit (solo lo que está en git). En el NAS se borran los ficheros (no las carpetas, que el
 # contenedor tiene montadas) y se extrae encima; el NAS no permite rsync por SSH.
 TMP=$(mktemp -d); trap 'rm -rf "$TMP"' EXIT
-git archive HEAD src assets | tar -x -C "$TMP"
+git archive HEAD src assets help README.md README_*.md CHANGELOG.md | tar -x -C "$TMP"
 echo "$SHA $(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$TMP/REVISION"
-COPYFILE_DISABLE=1 tar --no-xattrs -c -C "$TMP" src assets REVISION | ssh -o BatchMode=yes "$HOST" \
+COPYFILE_DISABLE=1 tar --no-xattrs -c -C "$TMP" . | ssh -o BatchMode=yes "$HOST" \
   "mkdir -p $STACK/code && find $STACK/code -type f -delete && tar -x -C $STACK/code && find $STACK/code -depth -type d -empty -delete; mkdir -p $STACK/code"
 
 if [ "$IMAGE" = 1 ]; then

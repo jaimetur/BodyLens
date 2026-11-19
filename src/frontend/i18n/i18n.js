@@ -12,7 +12,7 @@
   window.BL_LOCALE = LOC;
   try { document.documentElement.lang = LANG; } catch (e) {}
   var D = window.BL_I18N || {};
-  if (LANG === 'es' || !Object.keys(D).length) { window.blT = function (s) { return s; }; return; }
+  if (!Object.keys(D).length) { window.blT = function (s) { return s; }; return; }
 
   // ---- números y fechas ----
   function swap(loc) { return (loc === 'es-ES' || loc === 'es') ? LOC : loc; }

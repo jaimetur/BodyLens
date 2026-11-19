@@ -114,3 +114,15 @@ def test_diccionarios_completos():
         pytest.skip("todavía no hay diccionarios")
     r = subprocess.run([sys.executable, str(ROOT / "tools" / "i18n_check.py")], capture_output=True, text=True)
     assert r.returncode == 0, r.stdout
+
+
+def test_access_request_with_chosen_language(client):
+    """The language picked in the form wins over the one of the page."""
+    from app.accounts import users
+    from app.core import db
+    client.cookies.set("bl_lang", "it")
+    r = client.post("/api/access-requests", json={"username": "pia", "name": "Pia Rossi", "email": "p@example.test",
+                                                  "password": "1234", "lang": "ja"})
+    assert r.status_code == 201, r.text
+    with db.ro() as con:
+        assert users.get_by_username(con, "pia").lang == "ja"

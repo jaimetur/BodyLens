@@ -36,6 +36,7 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
     <button type="button" data-tab="invitaciones">Invitaciones</button>
     <button type="button" data-tab="correo">Correo</button>
     <button type="button" data-tab="withings">Withings</button>
+    <button type="button" data-tab="translator">Translator</button>
     <button type="button" data-tab="copias">Copias</button>
     <button type="button" data-tab="fuentes">Fuentes de datos</button>
   </div>
@@ -101,6 +102,16 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
     <p class="small" id="wState"></p>
   </section>
 
+  <section class="card" data-panel="translator" hidden>
+    <h2>Translator</h2>
+    <p>The help, the README and the changelog are written in English and translated automatically into the language of each account with the Claude API (Anthropic). Each translation is made once and kept; it is made again only when the English text changes. Without a key, the help is shown in English.</p>
+    <div class="edit">
+      <label>Anthropic API key<input id="tKey" type="password" autocomplete="new-password" spellcheck="false" placeholder="sk-ant-…"></label>
+    </div>
+    <div class="row"><button id="tSave" type="button">Save</button><button class="ghost" id="tNow" type="button">Translate now</button><button class="ghost danger-t" id="tDel" type="button">Remove the key</button><span class="msg" id="tMsg"></span></div>
+    <p class="small" id="tState"></p>
+  </section>
+
   <section class="card" data-panel="copias" hidden>
     <h2>Copias de seguridad</h2>
     <p>Cada noche (03:30) el servidor guarda una copia de toda la base de datos (cuentas y datos de todos) en <code>/data/backups</code>. Se conservan las últimas <span id="bKeep">30</span>. Para restaurar una, se para el contenedor y se pone en lugar de <code>bodylens.db</code>.</p>
@@ -124,6 +135,7 @@ show((location.hash || '#usuarios').slice(1).replace(/[^a-z]/g, '') || 'usuarios
 async function load() {
   const [acc, rq, inv, mail, wapp, bk] = await Promise.all([api('GET', '/api/admin/accounts'), api('GET', '/api/admin/access-requests'), api('GET', '/api/admin/invites'), api('GET', '/api/admin/mail'), api('GET', '/api/admin/withings'), api('GET', '/api/admin/backups')]);
   $('bKeep').textContent = bk.keep;
+  loadTranslator();
   $('bList').innerHTML = bk.backups.map(b => `<li><span>${esc(b.name)} <span class="small">· ${(b.size / 1048576).toFixed(1)} MB</span></span><a class="btn ghost" href="/api/admin/backups/${encodeURIComponent(b.name)}" download>Descargar</a></li>`).join('') || '<li><span class="small">Todavía no hay copias.</span></li>';
   $('wCb').textContent = wapp.callback; $('wId').value = wapp.clientId || ''; $('wSecret').value = '';
   $('wSecret').placeholder = wapp.hasSecret ? '(guardado; escribe otro para cambiarlo)' : '';
@@ -202,6 +214,27 @@ $('mSave').addEventListener('click', async () => {
 $('bNow').addEventListener('click', async () => {
   $('bNow').disabled = true; say($('bMsg'), 'Copiando…');
   try { const r = await api('POST', '/api/admin/backups'); say($('bMsg'), 'Copia hecha: ' + r.name, 'ok'); await load(); } catch (e) { say($('bMsg'), e.message, 'err'); } finally { $('bNow').disabled = false; }
+});
+async function loadTranslator() {
+  try {
+    const t = await api('GET', '/api/admin/translator');
+    $('tKey').value = '';
+    $('tKey').placeholder = t.configured ? (t.fromEnv ? '(set in the server environment)' : '(saved; type another to change it)') : 'sk-ant-…';
+    $('tDel').hidden = !t.configured || t.fromEnv; $('tNow').disabled = !t.configured;
+    $('tState').textContent = (t.configured ? `Configured · model ${t.model}` : 'Not configured') +
+      (t.lastOk ? ` · last translation ${when(t.lastOk)}` : '') +
+      (t.lastError ? ` · last error ${when(t.lastError.at)} (${t.lastError.doc}, ${t.lastError.lang}): ${t.lastError.error}` : '');
+  } catch (e) { say($('tMsg'), e.message, 'err'); }
+}
+$('tSave').addEventListener('click', async () => {
+  try { await api('PUT', '/api/admin/translator', { apiKey: $('tKey').value }); say($('tMsg'), 'Saved.', 'ok'); await loadTranslator(); } catch (e) { say($('tMsg'), e.message, 'err'); }
+});
+$('tDel').addEventListener('click', async () => {
+  if (!confirm('Remove the API key? The help will be shown in English until another key is set.')) return;
+  try { await api('PUT', '/api/admin/translator', { remove: true }); say($('tMsg'), 'Removed.', 'ok'); await loadTranslator(); } catch (e) { say($('tMsg'), e.message, 'err'); }
+});
+$('tNow').addEventListener('click', async () => {
+  try { const r = await api('POST', '/api/admin/translator/prewarm'); say($('tMsg'), r.started ? `Translating ${r.started} documents in the background.` : 'Everything is already translated.', 'ok'); } catch (e) { say($('tMsg'), e.message, 'err'); }
 });
 $('wSave').addEventListener('click', async () => {
   try { await api('PUT', '/api/admin/withings', { clientId: $('wId').value, clientSecret: $('wSecret').value }); say($('wMsg'), 'Guardado.', 'ok'); await load(); } catch (e) { say($('wMsg'), e.message, 'err'); }

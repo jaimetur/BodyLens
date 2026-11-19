@@ -20,6 +20,9 @@ class Settings:
     data_dir: Path = field(default_factory=lambda: Path(os.environ.get("DATA_DIR", "/data")))
     frontend_dir: Path = field(default_factory=lambda: Path(os.environ.get("FRONTEND_DIR", str(ROOT / "src" / "frontend"))))
     branding_dir: Path = field(default_factory=lambda: Path(os.environ.get("BRANDING_DIR", str(ROOT / "assets" / "branding"))))
+    # README*.md, CHANGELOG.md and help/<lang>/ (the Help module): the repository root, /app/docs in the image and
+    # /app/code (the deployed commit) on the NAS
+    docs_dir: Path = field(default_factory=lambda: Path(os.environ.get("DOCS_DIR", str(ROOT))))
     vendor_dir: Path = field(default_factory=lambda: Path(os.environ.get("VENDOR_DIR", str(ROOT / "src" / "frontend" / "vendor"))))
     public_url: str = field(default_factory=lambda: os.environ.get("PUBLIC_URL", "").rstrip("/"))
     # cookies «Secure» salvo que se desactive a propósito (desarrollo en http://localhost)

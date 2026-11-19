@@ -13,6 +13,7 @@
     <label>Usuario (para entrar)<input id="u" autocomplete="username" autocapitalize="none" spellcheck="false" pattern="[a-z0-9][a-z0-9._\-]{1,31}" required></label>
     <label>Contraseña (al menos 4 caracteres)<input id="p" type="password" autocomplete="new-password" minlength="4" required></label>
     <label>Repite la contraseña<input id="p2" type="password" autocomplete="new-password" minlength="4" required></label>
+    <label>Idioma<select id="fLang"></select></label>
     <label>Mensaje (opcional)<input id="note" maxlength="500" placeholder="Por ejemplo, quién eres"></label>
     <label hidden aria-hidden="true">No rellenar<input id="w" tabindex="-1" autocomplete="off"></label>
     <div class="row"><button id="go" type="submit">Enviar petición</button><span class="msg" id="m" aria-live="polite"></span></div>
@@ -23,17 +24,17 @@
     <a class="btn ghost" href="/login">Volver a entrar</a>
   </div>
   <p class="small"><a href="/login">Ya tengo cuenta</a></p>
-  <p class="small langp"><label>🌐 <select id="langPick" aria-label="Language"></select></label></p>
 </main>
 <script src="/pages.js"></script>
 <script>
 $('u').addEventListener('input', () => { $('u').value = $('u').value.toLowerCase() });
+langField($('fLang'), ['n', 'e', 'u', 'note']);
 $('f').addEventListener('submit', async e => {
   e.preventDefault();
   if ($('p').value !== $('p2').value) { say($('m'), 'Las contraseñas no coinciden.', 'err'); return }
   $('go').disabled = true; say($('m'), 'Enviando…');
   try {
-    await api('POST', '/api/access-requests', { name: $('n').value, email: $('e').value, username: $('u').value, password: $('p').value, note: $('note').value, website: $('w').value });
+    await api('POST', '/api/access-requests', { name: $('n').value, email: $('e').value, username: $('u').value, password: $('p').value, note: $('note').value, website: $('w').value, lang: $('fLang').value });
     $('f').hidden = true; $('ok').hidden = false;
   } catch (err) { say($('m'), err.message, 'err'); $('go').disabled = false; }
 });

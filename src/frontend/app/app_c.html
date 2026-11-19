@@ -242,9 +242,9 @@ const ICON={
   intimo:'<path d="M20 12a8 8 0 1 1-3-6.2"/><path d="M17 3v3h-3"/><path d="M12 8.5c1.8 2.2 2.8 3.6 2.8 4.9a2.8 2.8 0 0 1-5.6 0c0-1.3 1-2.7 2.8-4.9z"/>'};
 const VIEWS=[['resumen','Resumen'],['peso','Peso'],['composicion','Composición'],['medidas','Medidas'],['corazon','Corazón'],['bienestar','Bienestar'],['actividad','Actividad'],['sueno','Sueño'],['comidas','Comidas'],['intimo','Íntimo'],['historial','Historial de pesos'],['ajustes','Ajustes']];
 // en el servidor: «Tu cuenta» y, para administradores, «Administración» son secciones de la app con su página dentro
-const SRV_V=window.BODYLENS_SERVER?[['cuenta','Tu cuenta'],...(window.BODYLENS_USER&&BODYLENS_USER.isAdmin?[['admin','Administración']]:[])]:[];
+const SRV_V=window.BODYLENS_SERVER?[['cuenta','Tu cuenta'],...(window.BODYLENS_USER&&BODYLENS_USER.isAdmin?[['admin','Administración']]:[]),['help','Help']]:[];
 if(SRV_V.length){VIEWS.push(...SRV_V);
-  Object.assign(ICON,{cuenta:'<circle cx="12" cy="8" r="3.6"/><path d="M5 20a7 7 0 0 1 14 0"/>',admin:'<path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6z"/><path d="M9 12l2 2 4-4"/>'});
+  Object.assign(ICON,{cuenta:'<circle cx="12" cy="8" r="3.6"/><path d="M5 20a7 7 0 0 1 14 0"/>',admin:'<path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6z"/><path d="M9 12l2 2 4-4"/>',help:'<circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.7"/><circle cx="12" cy="17" r=".6"/>'});
   $('v-ajustes').insertAdjacentHTML('afterend',SRV_V.map(([id,l])=>`<section class="view srvview" id="v-${id}" data-title="${l}" hidden><iframe class="srvframe" id="emb-${id}" title="${l}"></iframe></section>`).join(''))}
 function srvShow(v){const f=$('emb-'+v);if(!f)return;
   if(!f.dataset.on){f.dataset.on='1';f.addEventListener('load',()=>{try{const d=f.contentDocument;const fit=()=>{f.style.height=Math.max(480,d.documentElement.scrollHeight)+'px'};fit();new ResizeObserver(fit).observe(d.body)}catch(e){}});
@@ -3348,7 +3348,7 @@ document.addEventListener('click',e=>{const m=e.target.closest('[data-vt]');if(m
   if(curTab(v)===a.dataset.tab){goY(0);return}SCR[posKey()]=scrollY;UI.vt={...(UI.vt||{}),[v]:a.dataset.tab};saveUI();applyVTabs();renderView();goY(SCR[posKey()]||0)});
 function renderView(){applyVTabs();if(VIEW==='sueno')try{renderBankTab()}catch(e){console.warn(e)}
   try{
-    if(VIEW==='cuenta'||VIEW==='admin'){srvShow(VIEW);return}
+    if(VIEW==='cuenta'||VIEW==='admin'||VIEW==='help'){srvShow(VIEW);return}
     syncGoals();
     if(VIEW==='ajustes'){renderAjustes();return}
     if(VIEW==='medidas'){renderMedidas();return}

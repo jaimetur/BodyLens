@@ -23,7 +23,8 @@ class AccessRequestIn(BaseModel):
     username: str
     password: str
     note: str = ""
-    website: str = ""  # campo trampa: las personas no lo ven ni lo rellenan
+    website: str = ""
+    lang: str = ""  # language of the interface chosen in the form (else the one of the page)  # campo trampa: las personas no lo ven ni lo rellenan
 
 
 @router.post("/api/access-requests", status_code=201)
@@ -42,7 +43,7 @@ def access_request(body: AccessRequestIn, request: Request):
                 raise UserError("Ya hay una cuenta o una petición con ese correo.")
             u = users.create_user(con, body.username, body.name, body.password, email=email, active=False,
                                   request_note=body.note)
-            u.lang = users.set_lang(con, u.id, i18n.request_lang(request))   # el idioma con el que pidió la cuenta
+            u.lang = users.set_lang(con, u.id, i18n.clean(body.lang) or i18n.request_lang(request))
             admins = users.admin_emails(con)
     except UserError as e:
         bad(e)

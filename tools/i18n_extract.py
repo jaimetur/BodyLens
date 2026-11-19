@@ -25,7 +25,7 @@ I18N = FRONT / "i18n"
 NEW = I18N / "new.json"
 
 PAGES = [*sorted((FRONT / "app").glob("app_*.html")), *sorted((FRONT / "accounts").glob("*.html")),
-         FRONT / "admin" / "admin.html", FRONT / "common" / "pages.js", FRONT / "compat" / "claude-shim.js"]
+         FRONT / "admin" / "admin.html", FRONT / "help" / "help.html", FRONT / "common" / "pages.js", FRONT / "compat" / "claude-shim.js"]
 
 LETTER = re.compile(r"[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]")
 SPANISH = re.compile(r"[áéíóúüñÁÉÍÓÚÜÑ¿¡]")
@@ -214,6 +214,8 @@ def page_strings(src: str) -> list[str]:
     return out
 
 
+# files whose strings are internal (prompts for the translator), not texts the users see
+SKIP_PY = {"translate.py"}
 SQL = re.compile(r"^\s*(SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|PRAGMA|WITH)\b", re.I)
 LOGGERS = {"debug", "info", "warning", "error", "exception", "critical"}
 
@@ -223,6 +225,8 @@ def backend_strings() -> list[str]:
     import ast
     out = []
     for p in sorted(BACK.rglob("*.py")):
+        if p.name in SKIP_PY:
+            continue
         tree = ast.parse(p.read_text(encoding="utf-8"))
         skip = set()
         for node in ast.walk(tree):
@@ -271,9 +275,16 @@ def covered() -> set[str]:
     return {t for v in es.values() for t in (v if isinstance(v, list) else [v])}
 
 
+ENGLISH = I18N / "english.json"
+
+
 def main() -> int:
     texts = found()
-    new = [t for t in texts if t not in covered()]
+    es = json.loads((I18N / "locales" / "es.json").read_text(encoding="utf-8"))
+    # texts written in English in the code (newer code): they are catalog messages themselves
+    english = sorted(t for t in texts if t in es and t not in covered())
+    ENGLISH.write_text(json.dumps(english, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    new = [t for t in texts if t not in covered() and t not in es]
     if new:
         NEW.write_text(json.dumps(new, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
         print(f"{len(texts)} texts in the code; {len(new)} without an English message -> {NEW.relative_to(ROOT)}")

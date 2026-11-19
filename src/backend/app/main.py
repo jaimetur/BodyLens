@@ -18,6 +18,7 @@ from app.core.deps import CSRF_HEADER
 from app.couples import routes as couples_routes
 from app.data import routes as data_routes
 from app.mail import routes as mail_routes
+from app.help import routes as help_routes
 from app.sources import routes as sources_routes
 from app.sync import routes as sync_routes
 from app.sync import service as sync_service
@@ -48,6 +49,20 @@ logging.getLogger("uvicorn.access").addFilter(_HideSecrets())
 
 
 @contextlib.asynccontextmanager
+async def _prewarm_translations() -> None:
+    """Some time after start-up, translate the help into the languages the accounts use (only what changed)."""
+    from app.help import translate
+    await asyncio.sleep(90)
+    try:
+        with db.ro() as con:
+            langs = [r[0] for r in con.execute("SELECT DISTINCT lang FROM users WHERE active=1")]
+        n = await asyncio.to_thread(translate.prewarm, langs)
+        if n:
+            log.info("translating %d help documents", n)
+    except Exception:
+        log.exception("could not start translating the help")
+
+
 async def lifespan(app: FastAPI):
     db.init_db()
     s = config.settings
@@ -62,6 +77,8 @@ async def lifespan(app: FastAPI):
         except UserError:
             log.warning("BODYLENS_ADMIN_EMAIL no es un correo válido.")
     tasks = [asyncio.create_task(sync_service.scheduler_loop()), asyncio.create_task(backup.loop())] if s.scheduler_enabled else []
+    if s.scheduler_enabled:
+        tasks.append(asyncio.create_task(_prewarm_translations()))
     yield
     for t in tasks:
         t.cancel()
@@ -101,5 +118,5 @@ def healthz():
 
 # el orden importa: las páginas y ficheros estáticos (con la ruta comodín /{name}) van al final
 for r in (accounts_routes.router, access_requests.router, admin_routes.router, couples_routes.router, data_routes.router,
-          sync_routes.router, sources_routes.router, mail_routes.router, web_routes.router):
+          sync_routes.router, sources_routes.router, mail_routes.router, help_routes.router, web_routes.router):
     app.include_router(r)

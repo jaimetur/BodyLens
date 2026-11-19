@@ -64,6 +64,7 @@ class RegisterIn(BaseModel):
     name: str
     password: str
     email: str = ""
+    lang: str = ""   # language of the interface chosen in the form (else the one of the page)
 
 
 @router.get("/api/invite/{code}")
@@ -80,7 +81,7 @@ def register(body: RegisterIn, request: Request, response: Response):
     try:
         with db.tx() as con:
             u = users.redeem_invite(con, body.code, body.username, body.name, body.password, body.email)
-            u.lang = users.set_lang(con, u.id, i18n.request_lang(request))
+            u.lang = users.set_lang(con, u.id, i18n.clean(body.lang) or i18n.request_lang(request))
             token = users.create_session(con, u.id)
     except UserError as e:
         login_throttle.fail(f"reg:{ip}")
@@ -197,6 +198,8 @@ def change_lang(body: LangIn, response: Response, u: User = Depends(current_user
     except UserError as e:
         bad(e)
     response.set_cookie(i18n.COOKIE, lang, max_age=5 * 365 * 86400, samesite="lax")
+    from app.help import translate
+    translate.prewarm([lang])   # the help in the new language, ready when it is opened
     return {"ok": True, "lang": lang}
 
 

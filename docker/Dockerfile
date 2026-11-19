@@ -14,17 +14,19 @@ FROM python:3.12-slim
 ARG SOURCE_REVISION=dev
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 \
     TZ=Europe/Madrid DATA_DIR=/data \
-    FRONTEND_DIR=/app/frontend BRANDING_DIR=/app/branding VENDOR_DIR=/app/frontend/vendor \
+    FRONTEND_DIR=/app/frontend BRANDING_DIR=/app/branding VENDOR_DIR=/app/frontend/vendor DOCS_DIR=/app/docs \
     PUID=1000 PGID=1000 BODYLENS_REVISION=${SOURCE_REVISION}
 RUN apt-get update && apt-get install -y --no-install-recommends tzdata && rm -rf /var/lib/apt/lists/* \
  && groupadd -g 1000 bodylens && useradd -u 1000 -g 1000 -M -d /app -s /usr/sbin/nologin bodylens
 WORKDIR /app/backend
 RUN pip install --no-cache-dir "fastapi==0.115.6" "uvicorn[standard]==0.34.0" "httpx==0.28.1" \
       "argon2-cffi==23.1.0" "google-auth==2.37.0" "requests==2.32.3" \
-      "openpyxl==3.1.5" "cryptography==44.0.0"
+      "openpyxl==3.1.5" "cryptography==44.0.0" "anthropic==2.10.0"
 COPY src/backend/app ./app
 COPY src/frontend /app/frontend
 COPY assets/branding /app/branding
+COPY help /app/docs/help
+COPY README*.md CHANGELOG.md /app/docs/
 COPY --from=vendor /vendor /app/frontend/vendor
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod 0755 /entrypoint.sh && python -c "import app.main"

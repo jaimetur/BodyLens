@@ -37,9 +37,9 @@ def locale_file(lang: str):
 def stamp(lang: str) -> int:
     """Changes whenever a file the dictionary of ``lang`` is built from changes (cache-busting in URLs)."""
     t = 0
-    for name in ("es", lang):
+    for p in (locale_file("es"), locale_file(lang), config.settings.frontend_dir / "i18n" / "english.json"):
         try:
-            t = max(t, int(locale_file(name).stat().st_mtime))
+            t = max(t, int(p.stat().st_mtime))
         except OSError:
             pass
     return t
@@ -58,11 +58,21 @@ def _compose(lang: str, version: int) -> tuple[dict, list]:
     ({English: Spanish text or list of texts}) bridges page text -> English key -> ``lang`` translation.
     A missing translation falls back to English."""
     es, tr = _read("es"), ({} if lang == "en" else _read(lang))
+    first = lambda v: v[0] if isinstance(v, list) else v   # noqa: E731
     d: dict[str, str] = {}
-    for msgid, spanish in es.items():
-        target = msgid if lang == "en" else tr.get(msgid) or msgid
-        for text in (spanish if isinstance(spanish, list) else [spanish]):
-            d[text] = target
+    if lang != "es":
+        for msgid, spanish in es.items():
+            target = msgid if lang == "en" else tr.get(msgid) or msgid
+            for text in (spanish if isinstance(spanish, list) else [spanish]):
+                d[text] = target
+    # messages written in English in the code (i18n/english.json): translated into every language but English
+    if lang != "en":
+        for msgid in _english_in_code():
+            if msgid not in es:
+                continue
+            target = first(es[msgid]) if lang == "es" else tr.get(msgid)
+            if target and target != msgid:
+                d[msgid] = target
     pats = []
     for k, v in d.items():
         if "{0}" not in k:
@@ -75,16 +85,23 @@ def _compose(lang: str, version: int) -> tuple[dict, list]:
     return d, pats
 
 
+def _english_in_code() -> list[str]:
+    try:
+        return json.loads((config.settings.frontend_dir / "i18n" / "english.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return []
+
+
 def dictionary(lang: str) -> tuple[dict, list]:
-    """Page text (Spanish) -> text in ``lang``, plus the patterns for texts with {0}, {1}…"""
-    if lang == "es" or lang not in LANGS:
+    """Page text (Spanish, or English in newer code) -> text in ``lang``, plus the patterns for texts with {0}…"""
+    if lang not in LANGS:
         return {}, []
     return _compose(lang, stamp(lang))
 
 
 def tr(lang: str, text: str) -> str:
     """Traduce un texto (con la misma normalización que i18n.js)."""
-    if not text or lang == "es" or not LETTER.search(text):
+    if not text or not LETTER.search(text):
         return text
     d, pats = dictionary(lang)
     if not d:
@@ -101,8 +118,6 @@ def tr(lang: str, text: str) -> str:
 
 def tr_html(lang: str, html_text: str) -> str:
     """Traduce los textos que hay entre etiquetas de un HTML (los correos)."""
-    if lang == "es":
-        return html_text
     out = re.sub(r">([^<>]+)<", lambda m: ">" + tr(lang, m.group(1)) + "<", html_text)
     return out.replace('<html lang="es">', f'<html lang="{lang}">')
 

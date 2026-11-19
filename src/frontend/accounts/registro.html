@@ -14,9 +14,9 @@
     <label>Usuario (para entrar)<input id="u" autocomplete="username" autocapitalize="none" spellcheck="false" pattern="[a-z0-9][a-z0-9._\-]{1,31}" required></label>
     <label>Contraseña (al menos 4 caracteres)<input id="p" type="password" autocomplete="new-password" minlength="4" required></label>
     <label>Repite la contraseña<input id="p2" type="password" autocomplete="new-password" minlength="4" required></label>
+    <label>Idioma<select id="fLang"></select></label>
     <div class="row"><button id="go" type="submit">Crear cuenta</button><span class="msg" id="m" aria-live="polite"></span></div>
   </form>
-  <p class="small langp"><label>🌐 <select id="langPick" aria-label="Language"></select></label></p>
 </main>
 <script src="/pages.js"></script>
 <script>
@@ -26,11 +26,12 @@ const code = new URLSearchParams(location.search).get('c') || '';
   $(ok ? 'f' : 'bad').hidden = false;
 })();
 $('u').addEventListener('input', () => { $('u').value = $('u').value.toLowerCase() });
+langField($('fLang'), ['n', 'e', 'u', 'note']);
 $('f').addEventListener('submit', async e => {
   e.preventDefault();
   if ($('p').value !== $('p2').value) { say($('m'), 'Las contraseñas no coinciden.', 'err'); return }
   $('go').disabled = true; say($('m'), 'Creando…');
-  try { await api('POST', '/api/register', { code, username: $('u').value, name: $('n').value, password: $('p').value, email: $('e').value }); location.replace('/'); }
+  try { await api('POST', '/api/register', { code, username: $('u').value, name: $('n').value, password: $('p').value, email: $('e').value, lang: $('fLang').value }); location.replace('/'); }
   catch (err) { say($('m'), err.message, 'err'); $('go').disabled = false; }
 });
 </script>

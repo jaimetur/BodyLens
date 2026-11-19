@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BodyLens · Help</title><meta name="theme-color" content="#3B7BF2">
+<link rel="icon" type="image/svg+xml" href="/icon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/pages.css">
+<style>
+.hlp{display:grid;grid-template-columns:minmax(200px,260px) minmax(0,1fr);gap:16px;align-items:start}
+.hnav{position:sticky;top:12px;padding:12px!important}
+.hnav h3{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:12px 8px 6px}
+.hnav h3:first-child{margin-top:4px}
+.hnav a{display:block;padding:7px 10px;border-radius:10px;color:var(--ink);text-decoration:none;font-weight:500;font-size:14px}
+.hnav a:hover{background:var(--raised)}
+.hnav a.on{background:var(--ink);color:var(--surface)}
+.hpick{display:none;width:100%;margin-bottom:12px}
+.hdoc{min-width:0}
+.hnote{font-size:13px;border-radius:12px;padding:9px 12px;margin:0 0 14px;background:var(--raised);border:1px solid var(--line);color:var(--muted)}
+.md{line-height:1.6;font-size:15px;overflow-wrap:anywhere}
+.md h1{font-family:"Big Shoulders Display","Instrument Sans",sans-serif;font-weight:800;font-size:30px;text-transform:uppercase;letter-spacing:.02em;margin:0 0 14px}
+.md h2{font-size:20px;margin:26px 0 8px;padding-top:12px;border-top:1px solid var(--line)}
+.md h3{font-size:16px;margin:20px 0 6px}
+.md h4{font-size:14px;margin:16px 0 6px;color:var(--muted)}
+.md p{margin:0 0 10px}
+.md ul,.md ol{margin:0 0 12px;padding-left:22px}
+.md li{margin:3px 0}
+.md code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.88em;background:var(--raised);border:1px solid var(--line);border-radius:6px;padding:1px 5px}
+.md pre{background:var(--raised);border:1px solid var(--line);border-radius:12px;padding:12px 14px;overflow:auto;font-size:13px;line-height:1.45}
+.md pre code{background:none;border:0;padding:0}
+.md .tbl{overflow-x:auto;margin:0 0 14px}
+.md table{border-collapse:collapse;font-size:14px;min-width:60%}
+.md th,.md td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+.md th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.md blockquote{margin:0 0 12px;padding:4px 14px;border-left:3px solid var(--accent);color:var(--muted)}
+.md hr{border:0;border-top:1px solid var(--line);margin:22px 0}
+.md a{color:var(--accent)}
+@media (max-width:760px){.hlp{grid-template-columns:1fr}.hnav{display:none}.hpick{display:block}}
+</style></head>
+<body><main class="acct">
+  <div class="top"><a class="brand" href="/"><img src="/icon.svg" alt=""><b>BodyLens · Help</b></a><a class="btn ghost" href="/">Back to the app</a></div>
+  <select class="hpick" id="pick" aria-label="Help"></select>
+  <div class="hlp">
+    <nav class="card hnav" id="nav" aria-label="Help"></nav>
+    <section class="card hdoc">
+      <p class="hnote" id="note" hidden></p>
+      <article class="md" id="doc"><p class="small">…</p></article>
+    </section>
+  </div>
+</main>
+<script src="/pages.js"></script>
+<script>
+let IDX = null, CUR = null, POLL = null;
+const docOf = () => decodeURIComponent((location.hash || '#home').slice(1)) || 'home';
+function navHtml() {
+  const item = (id, t) => `<a href="#${id}" data-id="${id}">${esc(t)}</a>`;
+  return `<h3>Help</h3>${item('home', 'Home')}${IDX.modules.map(m => item(m.id, m.title)).join('')}
+    <h3>BodyLens</h3>${item('readme', 'About BodyLens')}${item('changelog', "What's new")}`;
+}
+function mark() {
+  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.id === CUR));
+  $('pick').value = CUR;
+}
+async function load(doc, quiet) {
+  CUR = doc; mark();
+  clearTimeout(POLL);
+  try {
+    const r = await api('GET', '/api/help/' + encodeURIComponent(doc));
+    if (CUR !== doc) return;
+    $('doc').setAttribute('lang', r.shown);
+    $('doc').innerHTML = r.html;
+    const n = $('note');
+    if (r.lang !== 'en' && r.shown === 'en') {
+      n.hidden = false;
+      n.textContent = r.pending ? 'The translation into your language is being prepared; meanwhile this page is shown in English.'
+        : 'Automatic translation is not set up on this server, so the help is shown in English.';
+      if (r.pending) POLL = setTimeout(() => load(doc, true), 6000);
+    } else n.hidden = true;
+    if (!quiet) { scrollTo(0, 0); try { TOP.scrollTo(0, 0) } catch (e) { } }
+  } catch (e) { $('doc').innerHTML = `<p class="msg err">${esc(e.message)}</p>`; }
+}
+document.addEventListener('click', e => {
+  const a = e.target.closest('[data-doc]');
+  if (a) { e.preventDefault(); location.hash = a.dataset.doc; }
+});
+addEventListener('hashchange', () => load(docOf()));
+$('pick').addEventListener('change', () => { location.hash = $('pick').value; });
+(async () => {
+  try {
+    IDX = await api('GET', '/api/help');
+    $('nav').innerHTML = navHtml();
+    $('pick').innerHTML = [...$('nav').querySelectorAll('a')].map(a => `<option value="${a.dataset.id}">${esc(a.textContent)}</option>`).join('');
+  } catch (e) { $('nav').innerHTML = `<p class="msg err">${esc(e.message)}</p>`; }
+  load(docOf());
+})();
+</script>
+</body></html>

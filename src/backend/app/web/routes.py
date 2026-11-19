@@ -103,6 +103,13 @@ def account_page(request: Request):
     return _page("accounts", "cuenta.html", request=request)
 
 
+@router.get("/help", response_class=HTMLResponse)
+def help_page(request: Request):
+    if not optional_user(request):
+        return RedirectResponse("/login?next=/help", status_code=303)
+    return _page("help", "help.html", request=request)
+
+
 @router.get("/admin", response_class=HTMLResponse)
 def admin_page(request: Request):
     u = optional_user(request)

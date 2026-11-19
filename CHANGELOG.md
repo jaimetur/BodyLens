@@ -1,126 +1,130 @@
 # 🗓️ CHANGELOG
-[Changelog](/CHANGELOG.md) de las versiones publicadas
+[Changelog](/CHANGELOG.md) for the past releases
 
 ---
 
 ## Release: v0.1.0
 ### Release Date: 2026-11-19
 #### ⚠️ Breaking Changes:
-- **De artefacto de claude.ai a servidor propio:** BodyLens deja de vivir en claude.ai y pasa a un contenedor Docker en el NAS (`https://bodylens.jaimetur.cloud`). Los datos están en una base SQLite del servidor, no en el espacio de datos del artefacto. Se entra con usuario y contraseña de BodyLens, no con la cuenta de Claude.
-- **Ya no hace falta la hoja de Google:** Withings y Apple Salud mandan los datos directamente al servidor. La hoja y su Apps Script quedan solo como puente provisional, para las cuentas que todavía no se han pasado.
-- **Idioma predeterminado: inglés.** Las cuentas nuevas empiezan en inglés; las que ya existían conservan el español.
+- **From a claude.ai artifact to a server of its own:** BodyLens no longer lives in claude.ai and moves to a Docker container on the NAS (`https://bodylens.jaimetur.cloud`). The data is in a SQLite database on the server, not in the artifact's data space. You sign in with a BodyLens username and password, not with your Claude account.
+- **The Google sheet is no longer needed:** Withings and Apple Health send the data straight to the server. The sheet and its Apps Script remain only as a temporary bridge, for the accounts that have not been moved yet.
+- **Default language: English.** New accounts start in English; existing ones keep Spanish.
 
 #### 🌟 New Features:
-- **Despliegue en Docker (NAS Synology):**
-  - Imagen `jaimetur/bodylens` en Docker Hub, construida por GitHub Actions en cada push a la rama de la versión.
-  - El stack de Dockhand corre como `docker_limited:docker_users`, con proxy inverso HTTPS.
-  - Comprobación de salud (`/healthz`) y aviso si no se puede escribir en `/data`.
-- **Despliegue en caliente:** `tools/deploy.sh` copia el código al NAS y el contenedor lo usa sin esperar a una imagen nueva. Las páginas abiertas avisan de «BodyLens se ha actualizado» con un botón para recargar.
-- **Varias cuentas, cada una con sus datos:**
-  - Se entra con usuario y contraseña; las contraseñas se guardan con argon2 y las sesiones en el servidor.
-  - Cada cuenta tiene usuario, nombre y apellidos, un correo válido y único y una contraseña de al menos 4 caracteres, escrita dos veces.
-- **Alta de cuentas:**
-  - Petición de cuenta desde la pantalla de entrar, que aprueba la administración; los avisos van por correo.
-  - Enlaces de invitación de un solo uso.
-  - Cuenta inicial `admin`/`admin123`, que la pantalla de entrar muestra mientras conserve la contraseña por defecto.
-- **Correo saliente (SMTP)** para peticiones, aprobaciones, contraseñas provisionales y avisos, configurable desde Administración.
-- **Pareja:** dos cuentas pueden unirse para compartir y editar juntas el ciclo y la intimidad. Un perfil de la app puede pasarse a la cuenta propia de esa persona.
-- **Tu cuenta:**
-  - **Cuenta:** perfil, correo, idioma y contraseña, pareja, fuentes de datos, sincronización e importación.
-  - **Perfiles y Datos personales:** la gestión de perfiles de la app.
-- **Administración** (cuentas administradoras), con estas pestañas:
-  - **Usuarios:** editar usuario, nombre, correo y contraseña; activar o desactivar con un interruptor; hacer o quitar admin; restablecer la contraseña; borrar.
-  - **Peticiones de acceso** e **Invitaciones**.
-  - **Correo:** configuración SMTP y correo de prueba.
-  - **Withings:** datos de la aplicación de desarrollador.
-  - **Copias** de seguridad y **Fuentes de datos**.
-  - El servidor nunca se queda sin una cuenta de administración activa.
-- **Withings directo:**
-  - Conexión OAuth por cuenta, con el token guardado cifrado.
-  - Sincronización cada pocos minutos y al momento cuando Withings avisa (webhook).
-  - Trae pesadas y composición, actividad, entrenamientos, sueño, SpO2, VO2 máx y ECG.
-- **Apple Salud directo:** Health Auto Export envía a una dirección personal de cada cuenta. Es un port completo de la lógica del Apps Script:
-  - Sueño por tramos (AutoSleep más Apple Watch, desvelos y siestas, noche de 17:00 a 17:00).
-  - Actividad del día, entrenamientos, ECG, avisos y registros (ciclo, ánimo, síntomas…).
-  - Salud manda sobre Withings, que solo rellena huecos.
-- **App de Android (Health Connect):**
-  - Envía cada hora pasos, distancia, pisos, energía, pulso, VFC, SpO2, respiración, VO2 máx, sueño con fases, entrenamientos, ciclo y actividad sexual.
-  - Usa el mismo formato que Health Auto Export.
-  - El APK lo compila GitHub Actions y se descarga desde Tu cuenta (`/android.apk`).
-- **Datos en el servidor:**
-  - Las pestañas de la hoja pasan a ser tablas del servidor, y el libro que lee la página se genera desde ellas.
-  - Paridad comprobada con la hoja original en las 16 pestañas.
-  - La primera conexión de Withings o el primer envío de Salud importan antes la hoja, para no perder historial.
-- **Copia de seguridad diaria** de la base a las 03:30, en `/data/backups`. Se conservan 30 y se pueden bajar desde Administración.
-- **Multi-idioma:** inglés, español, catalán, francés, italiano, alemán, portugués, neerlandés, chino y japonés.
-  - Cada cuenta elige el suyo, y los correos llegan en el idioma de quien los recibe.
-  - El catálogo base está en inglés (`src/frontend/i18n/`), con una guía para colaborar con traducciones.
+- **Docker deployment (Synology NAS):**
+  - `jaimetur/bodylens` image on Docker Hub, built by GitHub Actions on every push to the version branch.
+  - The Dockhand stack runs as `docker_limited:docker_users`, behind an HTTPS reverse proxy.
+  - Health check (`/healthz`) and a warning if `/data` cannot be written to.
+- **Hot deployment:** `tools/deploy.sh` copies the code to the NAS and the container uses it without waiting for a new image. Open pages show a "BodyLens has been updated" notice with a button to reload.
+- **Several accounts, each with its own data:**
+  - You sign in with username and password; passwords are stored with argon2 and sessions on the server.
+  - Each account has a username, first and last name, a valid and unique email and a password of at least 4 characters, typed twice.
+- **Account sign-up:**
+  - Account request from the sign-in screen, approved by the administration; notices go by email.
+  - Single-use invitation links.
+  - Initial `admin`/`admin123` account, which the sign-in screen shows while it keeps the default password.
+- **Outgoing email (SMTP)** for requests, approvals, temporary passwords and notices, configurable from Administration.
+- **Couples:** two accounts can be linked to share and edit the cycle and intimacy records together. An app profile can be moved to that person's own account.
+- **Your account:**
+  - **Account:** profile, email, language and password, partner, data sources, synchronisation and import.
+  - **Profiles and Personal data:** management of the app's profiles.
+- **Administration** (administrator accounts), with these tabs:
+  - **Users:** edit username, name, email and password; activate or deactivate with a switch; grant or remove admin; reset the password; delete.
+  - **Access requests** and **Invitations**.
+  - **Mail:** SMTP settings and test email.
+  - **Withings:** developer application data.
+  - **Backups** and **Data sources**.
+  - The server never ends up without an active administration account.
+- **Direct Withings:**
+  - OAuth connection per account, with the token stored encrypted.
+  - Synchronisation every few minutes and at once when Withings notifies (webhook).
+  - Fetches weigh-ins and composition, activity, workouts, sleep, SpO2, VO2 max and ECG.
+- **Direct Apple Health:** Health Auto Export posts to a personal address of each account. It is a full port of the Apps Script logic:
+  - Sleep by segments (AutoSleep plus Apple Watch, wake-ups and naps, night from 5 pm to 5 pm).
+  - Daily activity, workouts, ECG, alerts and records (cycle, mood, symptoms…).
+  - Health takes precedence over Withings, which only fills gaps.
+- **Android app (Health Connect):**
+  - Sends hourly steps, distance, floors, energy, heart rate, HRV, SpO2, respiration, VO2 max, sleep with stages, workouts, cycle and sexual activity.
+  - Uses the same format as Health Auto Export.
+  - The APK is built by GitHub Actions and downloaded from Your account (`/android.apk`).
+- **Data on the server:**
+  - The sheet's tabs become tables on the server, and the workbook the page reads is generated from them.
+  - Parity with the original sheet checked on all 16 tabs.
+  - The first Withings connection or the first Health upload imports the sheet beforehand, so no history is lost.
+- **Daily database backup** at 03:30, in `/data/backups`. The last 30 are kept and can be downloaded from Administration.
+- **Multi-language:** English, Spanish, Catalan, French, Italian, German, Portuguese, Dutch, Chinese and Japanese.
+  - Each account picks its own, and emails arrive in the language of whoever receives them.
+  - The base catalog is in English (`src/frontend/i18n/`), with a guide for contributing translations.
+  - The language is chosen in the access request and invitation forms too.
+- **Help:** a Help section in the app with the help of every module, the README and the changelog, without leaving the tool.
+  - The documents are written only in English and translated automatically into each account's language with the Claude API (Administration → **Translator**, with the Anthropic API key stored encrypted); each translation is kept until the English text changes, and the languages the accounts use are prepared in advance.
 
 #### 🚀 Enhancements:
-- **Un solo importador** (Ajustes → Datos y copias) para la copia completa y para el `snap.json` de la versión anterior. Si la copia trae varios perfiles, se elige cuál importar.
-- **Comidas:**
-  - Cada puntuación va en la fila de su comida, con botones grandes, y Agua tiene su propia fila.
-  - El registro del día va antes que la pérdida estimada.
-  - El registro del día muestra arriba las últimas 4 semanas (de lunes a domingo) en lugar de una sola; las flechas saltan 4 semanas.
-- **Estado de ánimo:** se pueden apuntar estados de días pasados, con fecha y hora o tocando el día en el calendario.
-- **Historial** pasa a llamarse **Historial de pesos**.
-- **Pantallas anchas:** la app llega a 1600 px, y Tu cuenta y Administración aprovechan el ancho con columnas.
-- **Barra lateral:**
-  - Tu cuenta y Administración (solo para administradores) son secciones de la app, con la barra lateral.
-  - «Gestionar perfiles» pasa a Tu cuenta.
-- **Menú del avatar:** muestra el nombre completo e incluye Tu cuenta, Administración y **Cerrar sesión**, en rojo.
-- **Línea de órdenes de administración** (`python -m app.accounts.cli`): crear cuentas con contraseña provisional, invitaciones, contraseñas, usuarios, fuentes y pasar perfiles.
+- **A single importer** (Settings → Data and backups) for the full backup and for the previous version's `snap.json`. If the backup has several profiles, you choose which one to import.
+- **Meals:**
+  - Each score sits on its meal's row, with large buttons, and Water has its own row.
+  - The day's log comes before the estimated loss.
+  - The day's log shows the last 4 weeks (Monday to Sunday) at the top instead of just one; the arrows jump 4 weeks.
+- **Mood:** past moods can be recorded, with date and time or by tapping the day in the calendar.
+- **History** is now called **Weight history**.
+- **Wide screens:** the app reaches 1600 px, and Your account and Administration use the width with columns.
+- **Sidebar:**
+  - Your account and Administration (administrators only) are sections of the app, with the sidebar.
+  - "Manage profiles" moves to Your account.
+- **Avatar menu:** shows the full name and includes Your account, Administration and **Sign out**, in red.
+- **Administration command line** (`python -m app.accounts.cli`): create accounts with a temporary password, invitations, passwords, users, sources and move profiles.
 
 #### 🐛 Bug fixes:
-- **Seguridad:** el registro de accesos ya no guarda la dirección de envío de Apple Salud, los códigos OAuth ni las invitaciones.
-- **Withings:** la dirección de retorno acepta las pruebas y los avisos de Withings (POST y HEAD).
-- **Navegador:**
-  - Las páginas y sus estilos se revalidan en cada despliegue, así que no se quedan copias viejas en caché.
-  - Tu cuenta y Administración se pueden mostrar dentro de la app.
+- **Security:** the access log no longer stores the Apple Health upload address, OAuth codes or invitations.
+- **Withings:** the callback address accepts Withings' tests and notices (POST and HEAD).
+- **Browser:**
+  - Pages and their styles are revalidated on every deployment, so no stale copies stay in the cache.
+  - Your account and Administration can be shown inside the app.
 
 #### 📚 Documentation:
-- `README.md` completo y ayuda de uso por módulo en `help/`.
-- `docs/DESPLIEGUE.md` (NAS, Dockhand, despliegue en caliente, Withings, Apple Salud, Android).
-- Fuera del repositorio lo que ya no se usa: el plan de migración, el encargo y el traspaso originales (`docs/`) y el Apps Script y los scripts de Salud (`legacy/`); las reglas de datos que hay que conservar pasan a `AGENTS.md`.
-- `AGENTS.md` con las reglas del repositorio (diseño intacto, paridad de datos, secretos y datos personales fuera, idioma del trabajo, textos e idiomas).
-- `src/frontend/i18n/README.md`: cómo añadir o mejorar una traducción.
+- **English is the official language of the project:** code, documentation and commit messages. Complete `README.md` with a translated copy for GitHub in every supported language (`README_ES.md`, `README_FR.md`…).
+- Usage help per module in `help/en/` (shown in the app's Help in each language).
+- `docs/DEPLOYMENT.md` (NAS, Dockhand, hot deployment, Withings, Apple Health, Android).
+- No longer used material moved out of the repository: the original migration plan, brief and handover (`docs/`) and the Apps Script and Health scripts (`legacy/`); the data rules that must be kept move to `AGENTS.md`.
+- `AGENTS.md` with the repository rules (design untouched, data parity, secrets and personal data kept out, working language, texts and languages).
+- `src/frontend/i18n/README.md`: how to add or improve a translation.
 
 ---
 
 ## Release: v0.0.1
-### Release Date: 2026-11-19
-Versión de partida: la app tal como estaba publicada como artefacto de claude.ai (versión 144 de la página) cuando Claude Work la pasó a Claude Code.
+### Release Date: 2026-11-01
+Starting version: the app as it was published as a claude.ai artifact (page version 144) when Claude Work handed it over to Claude Code.
 
 #### ⚠️ Breaking Changes:
 
 #### 🌟 New Features:
-- **App web de una sola página**, publicada como artefacto de claude.ai. Los datos estaban en el espacio de datos del artefacto (colección `bascula`), y la página llevaba dentro una copia para quien la abría sin sesión.
-- **Resumen:** peso de tendencia, progreso del plan, «hoy de un vistazo» (preparación, sueño, saldo de sueño, VFC, pasos) y avisos y conclusiones automáticas.
-- **Peso:** tendencia suavizada, plan con ritmos objetivo, proyección, semanas, calendario e hitos.
-- **Cuerpo:**
-  - **Báscula:** grasa, músculo, agua y hueso; IMC y FFMI con rangos por edad y sexo.
-  - **Medidas** con cinta.
-  - **Corazón:** pulso en reposo, VFC, SpO2, VO2 máx, ECG y avisos de frecuencia.
-  - **Bienestar.**
-- **Actividad:** pasos, calorías y minutos de ejercicio con anillos y objetivos; entrenamientos y su relación con el peso.
-- **Sueño:** última noche con fases, saldo de sueño de 7 noches, siestas, horario objetivo y análisis.
-- **Comidas:** nota diaria de lo que comes (comidas, agua, deporte y «pecados») y su efecto estimado en el peso.
-- **Íntimo:** ciclo con previsión, sexualidad y estado de ánimo, protegidos con un PIN privado.
-- **Historial:** años de pesadas (desde 2009), intentos de pérdida de peso y rebotes.
-- **Perfiles** dentro de la app, cada uno con sus datos y, si se quiere, un PIN. El ciclo de Apple Salud pasa solo al perfil marcado como «ciclo».
-- **Informe PDF** del periodo elegido y **copias** completas en JSON y CSV.
-- **Fuentes de datos a través de una hoja de Google** («Peso Jaime 2026») con su Apps Script:
-  - Withings: pesadas, composición, actividad, sueño, entrenos, SpO2, VO2 y ECG.
-  - Health Auto Export desde el iPhone: Apple Salud, que manda sobre Withings.
-  - Reglas de sueño propias: mezcla de AutoSleep y Apple Watch, ventana de 17:00 a 17:00, desvelos y siestas.
-- **Interfaz:**
-  - Tema claro y oscuro y marca **BodyLens**, con icono y logo.
-  - Pensada para el iPhone: se instala como app desde Safari, gestos para pasar de sección, barra inferior y selector de periodo flotante.
-  - Todo en español.
+- **Single-page web app**, published as a claude.ai artifact. The data was in the artifact's data space (`bascula` collection), and the page carried a copy inside for whoever opened it without a session.
+- **Summary:** trend weight, plan progress, "today at a glance" (readiness, sleep, sleep balance, HRV, steps) and automatic alerts and insights.
+- **Weight:** smoothed trend, plan with target rates, projection, weeks, calendar and milestones.
+- **Body:**
+  - **Scale:** fat, muscle, water and bone; BMI and FFMI with ranges by age and sex.
+  - **Measurements** with a tape.
+  - **Heart:** resting heart rate, HRV, SpO2, VO2 max, ECG and heart-rate alerts.
+  - **Wellbeing.**
+- **Activity:** steps, calories and exercise minutes with rings and goals; workouts and their relation to weight.
+- **Sleep:** last night with stages, 7-night sleep balance, naps, target schedule and analysis.
+- **Meals:** a daily note of what you eat (meals, water, exercise and "sins") and its estimated effect on weight.
+- **Intimate:** cycle with forecast, sexuality and mood, protected by a private PIN.
+- **History:** years of weigh-ins (since 2009), weight-loss attempts and rebounds.
+- **Profiles** inside the app, each with its own data and, if wanted, a PIN. The Apple Health cycle goes automatically to the profile marked as "cycle".
+- **PDF report** of the chosen period and full **backups** in JSON and CSV.
+- **Data sources through a Google sheet** ("Peso Jaime 2026") with its Apps Script:
+  - Withings: weigh-ins, composition, activity, sleep, workouts, SpO2, VO2 and ECG.
+  - Health Auto Export from the iPhone: Apple Health, which takes precedence over Withings.
+  - Own sleep rules: mix of AutoSleep and Apple Watch, 5 pm to 5 pm window, wake-ups and naps.
+- **Interface:**
+  - Light and dark theme and **BodyLens** brand, with icon and logo.
+  - Designed for the iPhone: installs as an app from Safari, swipe gestures between sections, bottom bar and floating period selector.
+  - All in Spanish.
 
 #### 🚀 Enhancements:
 
 #### 🐛 Bug fixes:
 
 #### 📚 Documentation:
-- Documento de traspaso de Claude Work con qué había hecho, cómo estaba montado y qué faltaba por construir.
+- Handover document from Claude Work with what had been done, how it was set up and what was left to build.

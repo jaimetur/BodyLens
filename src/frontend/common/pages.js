@@ -34,3 +34,15 @@ function langPicker(sel, onPick) {
 }
 // en las páginas sin sesión (entrar, pedir cuenta, registro): se guarda en una cookie
 langPicker(document.getElementById('langPick'), l => { setLangCookie(l); location.reload(); });
+// language of a new account (access request, invitation): changing it also shows the page in that language,
+// keeping what was typed (except passwords)
+function langField(sel, keep) {
+  if (!sel) return;
+  const K = 'bl-form';
+  try { const saved = JSON.parse(sessionStorage.getItem(K) || 'null'); sessionStorage.removeItem(K);
+    if (saved) for (const id of keep) { const el = document.getElementById(id); if (el && saved[id] != null) el.value = saved[id]; } } catch (e) { }
+  langPicker(sel, l => {
+    try { const v = {}; for (const id of keep) { const el = document.getElementById(id); if (el) v[id] = el.value; } sessionStorage.setItem(K, JSON.stringify(v)); } catch (e) { }
+    setLangCookie(l); location.reload();
+  });
+}

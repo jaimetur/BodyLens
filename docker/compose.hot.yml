@@ -12,7 +12,9 @@ services:
       - ./code/src/frontend/compat:/app/frontend/compat:ro
       - ./code/src/frontend/admin:/app/frontend/admin:ro
       - ./code/src/frontend/i18n:/app/frontend/i18n:ro
+      - ./code/src/frontend/help:/app/frontend/help:ro
       - ./code/assets/branding:/app/branding:ro
       - ./code:/app/code:ro
     environment:
       BODYLENS_REVISION_FILE: /app/code/REVISION
+      DOCS_DIR: /app/code

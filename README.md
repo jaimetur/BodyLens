@@ -62,8 +62,9 @@ Health Auto Export (iPhone) / Android app ────────►│  POST /
 - **Backend:** Python 3.12, FastAPI, SQLite (WAL) in `/data`, one process with the scheduler inside.
 - **Translations:** the catalog is English (`src/frontend/i18n/catalog.json`) and each language is
   `src/frontend/i18n/locales/<lang>.json`. The page is translated in the browser by `src/frontend/i18n/i18n.js`,
-  which also formats numbers and dates; the server uses the same files for emails. The help and the changelog are
-  in `help/<lang>/`.
+  which also formats numbers and dates; the server uses the same files for emails. The help (`help/en/`), this README and
+  the changelog are written in English and translated automatically into each account's language with the Claude
+  API (set the key in Administration → Translator); each translation is kept until the English text changes.
 - **Security:** argon2 passwords, server-side sessions (HttpOnly/Secure/SameSite cookie), anti-CSRF header on every
   write, rate limits, every account isolated, OAuth tokens encrypted; secrets only in environment variables or in
   the server database.
@@ -77,7 +78,7 @@ src/backend/app/        server (package "app"), one subpackage per module:
   admin/                Administration panel
   couples/              couples
   data/                 documents of each account and backup import
-  help/                 the Help module (help, README and changelog in each language)
+  help/                 the Help module (help, README and changelog, translated automatically)
   sheets/               the data tables and the XLSX workbook the page reads
   sources/              Withings and Apple Health / Android ingestion
   sync/                 synchronisation and scheduler
@@ -91,9 +92,9 @@ src/frontend/
 android/                Android app (Health Connect → server)
 assets/branding/        icons and logo
 tests/<module>/         tests (pytest) and tests/frontend/*.mjs (page and translator in jsdom)
-help/<lang>/            user help (one file per module) and changelog, in each language (English is the base)
+help/en/                user help, one file per module (English; translated automatically in the app)
 docker/                 Dockerfile and compose files (NAS, hot reload, development)
-docs/DESPLIEGUE.md      deployment on a Synology NAS (Spanish)
+docs/DEPLOYMENT.md      deployment on a Synology NAS
 tools/                  deployment, development server and translation tools
 ```
 
@@ -120,13 +121,13 @@ development never go back). There is also `docker compose -f docker/compose.dev.
 Every push to the current version branch (e.g. `0.1.0`) runs the tests and publishes the image
 `jaimetur/bodylens:latest` (amd64 and arm64) to Docker Hub; `main` publishes `jaimetur/bodylens:main`. On the
 server: `docker/compose.yml` plus a `.env` file. The NAS mounts the code from the stack folder, so
-`tools/deploy.sh` deploys a commit in seconds without waiting for a new image. Full steps (Spanish):
-[`docs/DESPLIEGUE.md`](docs/DESPLIEGUE.md).
+`tools/deploy.sh` deploys a commit in seconds without waiting for a new image. Full steps:
+[`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
 ## Contributing translations
 
 You only need English: see [`src/frontend/i18n/README.md`](src/frontend/i18n/README.md) to add a language or improve
-one. The help and the changelog are translated from `help/en/`.
+one. The help, the README and the changelog are translated automatically: you only edit the English files.
 
 ## Documentation
 
