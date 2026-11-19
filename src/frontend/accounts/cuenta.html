@@ -48,6 +48,17 @@
         <div class="row"><button class="ghost" id="pwGo" type="button">Cambiar contraseña</button><span class="msg" id="pwMsg"></span></div>
         <p class="small">Al cambiarla se cierra la sesión en tus otros dispositivos.</p>
       </section>
+
+      <section class="card" id="pdCard" hidden>
+        <h2>Datos personales</h2>
+        <p class="small">Se usan para el IMC, el índice de masa magra, las zonas de referencia y las fórmulas de las medidas con cinta.</p>
+        <div class="fgrid">
+          <label>Altura (cm)<input id="pdHeight" type="number" step="1" inputmode="numeric" placeholder="178"></label>
+          <label>Sexo para las fórmulas<select id="pdSex"><option value="">Sin indicar</option><option value="h">Hombre</option><option value="m">Mujer</option></select></label>
+          <label>Fecha de nacimiento<input id="pdBirth" type="date"></label>
+        </div>
+        <div class="row"><button id="pdGo" type="button">Guardar perfil</button><span class="msg" id="pdMsg"></span></div>
+      </section>
     </div>
 
     <div class="col">
@@ -181,6 +192,18 @@ $('fsize').addEventListener('change', async () => {
 langPicker($('lang'), async l => {
   try { await api('POST', '/api/me/lang', { lang: l }); TOP.location.reload(); } catch (e) { say($('profMsg'), e.message, 'err'); }
 });
+// personal data of the app profile in use: the app (parent page) keeps it, this panel only shows and edits it
+(() => {
+  let P = null;
+  try { P = window.parent !== window && window.parent.blPersonal; } catch (e) { P = null; }
+  if (!P) return;
+  const fill = () => { if ($('pdCard').contains(document.activeElement)) return; const v = P.get(); $('pdHeight').value = v.height ?? ''; $('pdSex').value = v.sex || ''; $('pdBirth').value = v.birth || ''; };
+  fill(); $('pdCard').hidden = false; window.blPdFill = fill;
+  $('pdGo').addEventListener('click', () => {
+    const r = P.save({ height: $('pdHeight').value, sex: $('pdSex').value, birth: $('pdBirth').value });
+    say($('pdMsg'), r.msg, r.ok ? 'ok' : 'err'); if (r.ok) fill();
+  });
+})();
 load();
 </script>
 </body></html>

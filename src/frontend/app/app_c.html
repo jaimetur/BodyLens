@@ -1578,10 +1578,12 @@ if(SRV_V.length){
   const accIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>';
   // «Datos y copias» belongs to «Tu cuenta»; the rest of Ajustes is «Objetivos, plan y comidas»
   {const d=document.querySelector('#ajTabs [data-ajt="datos"]');if(d){d.dataset.ajm='pf';AJ_PF.push('datos')}}
-  // «Datos personales» is a panel of the «Cuenta» tab, under the account page
+  // «Datos personales» is a panel of the account page (the «Cuenta» tab); this hidden card keeps doing the saving
   {const s=document.querySelector('#v-ajustes [data-ajc="perfil"]'),tb=document.querySelector('#ajTabs [data-ajt="perfil"]');
-    if(s&&tb){tb.remove();AJ_PF.splice(AJ_PF.indexOf('perfil'),1);s.removeAttribute('data-ajc');s.hidden=false;s.classList.add('owner-only','acpd');
-      s.querySelector('h2').textContent='Datos personales';$('v-cuenta').appendChild(s)}}
+    if(s&&tb){tb.remove();AJ_PF.splice(AJ_PF.indexOf('perfil'),1);s.removeAttribute('data-ajc');s.hidden=true;
+      window.blPersonal={get(){const c={...DEFAULT_CFG,...((DOC&&DOC.cfg)||{})};return {height:c.height,sex:c.sex||'',birth:c.birth||''}},
+        save(v){$('cfHeight').value=v.height??'';$('cfSex').value=v.sex||'';$('cfBirth').value=v.birth||'';$('pfMsg').textContent='';$('pfSave').click();
+          const m=$('pfMsg').textContent;return {ok:m==='Perfil guardado.',msg:m}}}}}
   if(UI.ajTabPf==='perfil')UI.ajTabPf='perfiles';
   const pfBtns=[...document.querySelectorAll('#ajTabs [data-ajm="pf"]')];
   // the «Cuenta» tab in the profiles part of Ajustes
@@ -3366,7 +3368,7 @@ document.addEventListener('click',e=>{const m=e.target.closest('[data-vt]');if(m
   if(curTab(v)===a.dataset.tab){goY(0);return}SCR[posKey()]=scrollY;UI.vt={...(UI.vt||{}),[v]:a.dataset.tab};saveUI();applyVTabs();renderView();goY(SCR[posKey()]||0)});
 function renderView(){applyVTabs();if(VIEW==='sueno')try{renderBankTab()}catch(e){console.warn(e)}
   try{
-    if(VIEW==='cuenta'||VIEW==='admin'||VIEW==='help'){srvShow(VIEW);if(VIEW==='cuenta'&&$('cfHeight'))renderAjustes();return}
+    if(VIEW==='cuenta'||VIEW==='admin'||VIEW==='help'){srvShow(VIEW);if(VIEW==='cuenta')try{$('emb-cuenta').contentWindow.blPdFill()}catch(e){}return}
     syncGoals();
     if(VIEW==='ajustes'){renderAjustes();return}
     if(VIEW==='medidas'){renderMedidas();return}
