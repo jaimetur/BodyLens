@@ -1113,6 +1113,8 @@ document.addEventListener('click',e=>{if(!OWNER)return;const m=e.target.closest(
   if(!to.some(x=>x.toLowerCase()===d.toLowerCase()))to.push(d);if(mode==='move')from.splice(fk,1);
   t[fi]=from.length?from.join(' + '):null;t[tj]=to.join(' + ');foodPut(FDAY,{t,s:e0.s.slice(),man:{...(e0.man||{})}});DMOVE=null;$('foodDay').dataset.k='';renderComidas();
   const msg=$('fSaved');if(msg)msg.textContent=`«${d}» ${mode==='move'?'movido':'copiado'} a ${FOOD_T[tj].toLowerCase()}.`});
+// registro del día: una fila por concepto, con lo escrito (FOOD_T) y su puntuación (FOOD_S) en la misma línea
+const FOOD_ROWS=[[0,0,'Café con tostada…'],[1,1,'Lentejas, ensalada…'],[2,2,'Pescado a la plancha…'],[null,3],[4,4,'Gimnasio, caminar…'],[3,5,'Bollería, patatas fritas…'],[6,6,'Cerveza, copas…'],[5,null,'Cómo fue el día']];
 function foodDayHtml(k){const e=foodGet(k)||{t:[null,null,null,null,null,null],s:[null,null,null,null,null,null,null]};const ro=!OWNER;
   const today=d2k(new Date()),d=k2d(k);const w=M&&!M.empty?M.all.find(p=>p.k===k):null;const prevW=M&&!M.empty?[...M.all].reverse().find(p=>p.k<k):null;
   const act=LIFE&&LIFE.act.find(a=>a.k===k),slp=LIFE&&LIFE.slp.find(s=>s.k===k);const wos=LIFE?LIFE.wo.filter(x=>x.k===k):[];
@@ -1138,8 +1140,8 @@ function foodDayHtml(k){const e=foodGet(k)||{t:[null,null,null,null,null,null],s
       <div class="fdate"><b>${DSN[dowIdx(k)].replace(/^./,ch=>ch.toUpperCase())} ${d.getDate()} de ${MSL[d.getMonth()]}</b><small>${d.getFullYear()}${k===today?' · hoy':k===addK(today,-1)?' · ayer':''}</small><input type="date" id="fPick" value="${k}" max="${today}" aria-label="Elegir día"></div>
 </div>
     ${ctx?`<div class="fctxs">${ctx}</div>`:''}
-    <div class="fgrid"><div class="fscore"><div class="fscs">${[0,1,2,3,4,5,6].map(chips).join('')}</div>
-        <p class="hint">${(()=>{const C=foodCfg(),S=foodShares(C);return `Comidas, agua y deporte suman ${fmtInt(S.meals)}/${fmtInt(S.water)}/${fmtInt(S.sport)}; cada punto de pecado resta ${fmtN(S.pc/5,0)} % (comida) y ${fmtN(S.pb/5,0)} % (bebida). Una comida sin nota cuenta como un ${fmtN(C.blank,0)}.`})()}${OWNER?' <a href="#ajustes" class="lnk" data-tgt="cfFood">Cambiar</a> · <a href="#ajustes" class="lnk" data-tgt="platosCard">Gestionar platos</a>':''}</p></div><div class="ffields">${fld(0,'Café con tostada…')}${fld(1,'Lentejas, ensalada…')}${fld(2,'Pescado a la plancha…')}${fld(3,'Bollería, patatas fritas…')}${fld(6,'Cerveza, copas…')}${fld(4,'Gimnasio, caminar…')}${fld(5,'Cómo fue el día')}</div></div>
+    <div class="frows">${FOOD_ROWS.map(([ti,si,ph])=>`<div class="frow${si==null?' full':''}">${ti!=null?fld(ti,ph):`<div class="ffld"><span>${FOOD_S[si][0]}</span></div>`}${si!=null?chips(si):''}</div>`).join('')}
+        <p class="hint">${(()=>{const C=foodCfg(),S=foodShares(C);return `Comidas, agua y deporte suman ${fmtInt(S.meals)}/${fmtInt(S.water)}/${fmtInt(S.sport)}; cada punto de pecado resta ${fmtN(S.pc/5,0)} % (comida) y ${fmtN(S.pb/5,0)} % (bebida). Una comida sin nota cuenta como un ${fmtN(C.blank,0)}.`})()}${OWNER?' <a href="#ajustes" class="lnk" data-tgt="cfFood">Cambiar</a> · <a href="#ajustes" class="lnk" data-tgt="platosCard">Gestionar platos</a>':''}</p></div>
     ${ro?'':`<p class="hint fsaved" id="fSaved">${foodGet(k)&&foodGet(k).app?'Guardado en tu cuenta.':foodGet(k)?'Viene de tu hoja. Si lo cambias aquí, manda lo de aquí.':'Se guarda solo mientras escribes.'}</p>`}`}
 /* ---------- panel de comidas: pérdida estimada del día elegido, de la semana y desde el inicio ---------- */
 // la nota del día por partes: lo que suman comidas, agua y deporte (hasta 100 %) y lo que restan los pecados
