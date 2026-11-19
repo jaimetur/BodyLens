@@ -26,14 +26,16 @@ class User:
     partner_since: str | None
     sheet_id: str | None
     apps_script_url: str | None
+    must_change: bool = False
 
     @classmethod
     def from_row(cls, r: sqlite3.Row) -> "User":
         return cls(r["id"], r["username"], r["name"], bool(r["is_admin"]), r["partner_id"], r["partner_since"],
-                   r["sheet_id"], r["apps_script_url"])
+                   r["sheet_id"], r["apps_script_url"], bool(r["must_change"]))
 
     def public(self) -> dict:
-        return {"id": self.id, "username": self.username, "name": self.name, "isAdmin": self.is_admin}
+        return {"id": self.id, "username": self.username, "name": self.name, "isAdmin": self.is_admin,
+                "mustChange": self.must_change}
 
 
 def _utcnow() -> datetime:
@@ -58,7 +60,8 @@ def count_users(con: sqlite3.Connection) -> int:
     return con.execute("SELECT COUNT(*) FROM users").fetchone()[0]
 
 
-def create_user(con: sqlite3.Connection, username: str, name: str, password: str, is_admin: bool = False) -> User:
+def create_user(con: sqlite3.Connection, username: str, name: str, password: str, is_admin: bool = False,
+                must_change: bool = False) -> User:
     username = (username or "").strip().lower()
     name = (name or "").strip()
     if not USERNAME_RE.match(username):
@@ -70,16 +73,29 @@ def create_user(con: sqlite3.Connection, username: str, name: str, password: str
     if get_by_username(con, username):
         raise UserError("Ese nombre de usuario ya existe.")
     cur = con.execute(
-        "INSERT INTO users(username, name, pw_hash, is_admin, created_at) VALUES(?,?,?,?,?)",
-        (username, name, hash_password(password), int(is_admin), db.now_iso()),
+        "INSERT INTO users(username, name, pw_hash, is_admin, must_change, created_at) VALUES(?,?,?,?,?,?)",
+        (username, name, hash_password(password), int(is_admin), int(must_change), db.now_iso()),
     )
     return get_user(con, cur.lastrowid)  # type: ignore[return-value]
+
+
+def rename(con: sqlite3.Connection, user_id: int, username: str, name: str) -> None:
+    username = (username or "").strip().lower()
+    name = (name or "").strip()
+    if not USERNAME_RE.match(username):
+        raise UserError("El usuario tiene que tener de 2 a 32 caracteres: letras minúsculas, números, punto, guion o guion bajo.")
+    if not name or len(name) > 80:
+        raise UserError("Escribe tu nombre (hasta 80 caracteres).")
+    other = get_by_username(con, username)
+    if other and other.id != user_id:
+        raise UserError("Ese nombre de usuario ya existe.")
+    con.execute("UPDATE users SET username=?, name=? WHERE id=?", (username, name, user_id))
 
 
 def set_password(con: sqlite3.Connection, user_id: int, password: str) -> None:
     if p := password_problem(password):
         raise UserError(p)
-    con.execute("UPDATE users SET pw_hash=? WHERE id=?", (hash_password(password), user_id))
+    con.execute("UPDATE users SET pw_hash=?, must_change=0 WHERE id=?", (hash_password(password), user_id))
     con.execute("DELETE FROM sessions WHERE user_id=?", (user_id,))
 
 
@@ -87,6 +103,13 @@ def authenticate(con: sqlite3.Connection, username: str, password: str) -> User 
     r = con.execute("SELECT * FROM users WHERE username=?", ((username or "").strip().lower(),)).fetchone()
     ok = verify_password(r["pw_hash"] if r else None, password or "")
     return User.from_row(r) if (r and ok) else None
+
+
+def bootstrap_admin(con: sqlite3.Connection, username: str, name: str, password: str) -> User | None:
+    """Con la base vacía, crea la cuenta de administración inicial; hay que cambiar la contraseña al entrar."""
+    if count_users(con):
+        return None
+    return create_user(con, username, name, password, is_admin=True, must_change=True)
 
 
 # ---------- sesiones ----------

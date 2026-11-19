@@ -6,7 +6,16 @@
 <body><main>
   <div class="top"><a class="brand" href="/"><img src="/icon.svg" alt=""><b>BodyLens</b></a><a class="btn ghost" href="/">Volver a la app</a></div>
 
-  <section class="card">
+  <section class="card" id="mustBox" hidden>
+    <h1>Pon tu propia contraseña</h1>
+    <p>Has entrado con la contraseña provisional. Cámbiala (y, si quieres, tu usuario y tu nombre) antes de empezar.</p>
+    <label>Usuario para entrar<input id="mUser" autocapitalize="none" spellcheck="false"></label>
+    <label>Tu nombre<input id="mName" maxlength="80"></label>
+    <label>Contraseña nueva (al menos 4 caracteres)<input id="mPw" type="password" autocomplete="new-password"></label>
+    <div class="row"><button id="mGo" type="button">Guardar y entrar</button><span class="msg" id="mMsg"></span></div>
+  </section>
+
+  <section class="card" id="mainCard">
     <h1>Tu cuenta</h1>
     <dl class="kv"><dt>Usuario</dt><dd id="kUser">—</dd><dt>Nombre</dt><dd id="kName">—</dd></dl>
     <label>Cambiar nombre<input id="name" maxlength="80"></label>
@@ -43,6 +52,17 @@
   </section>
 
   <section class="card">
+    <h2>Importar datos</h2>
+    <p>Trae a tu cuenta los datos de BodyLens en claude.ai: el fichero <code>snap.json</code> o la «Copia completa (JSON)» que se descarga en Ajustes → Copia de seguridad. Lo que ya tengas se sustituye por lo de la copia (los registros de Salud se suman).</p>
+    <label>Fichero<input id="impFile" type="file" accept=".json,application/json"></label>
+    <div id="impOpts" hidden>
+      <label>¿Qué datos de la copia son tuyos?<select id="impWho"></select></label>
+      <label style="display:flex;gap:8px;align-items:center" id="impAllL"><input id="impAll" type="checkbox" style="width:auto;margin:0"> Traer también los demás perfiles como perfiles de mi cuenta</label>
+    </div>
+    <div class="row"><button id="impGo" type="button" disabled>Importar</button><span class="msg" id="impMsg"></span></div>
+  </section>
+
+  <section class="card">
     <h2>Contraseña</h2>
     <label>Contraseña actual<input id="pw0" type="password" autocomplete="current-password"></label>
     <label>Nueva (al menos 4 caracteres)<input id="pw1" type="password" autocomplete="new-password"></label>
@@ -69,6 +89,11 @@
 let ME = null;
 async function load() {
   ME = await api('GET', '/api/me').catch(e => { if (/Inicia sesión/.test(e.message)) location.href = '/login?next=/cuenta'; throw e });
+  const must = ME.user.mustChange;
+  $('mustBox').hidden = !must;
+  for (const s of document.querySelectorAll('main > section.card:not(#mustBox), main > .row')) s.hidden = must;
+  if (must) { $('mUser').value = ME.user.username; $('mName').value = ME.user.name; }
+  else if (new URLSearchParams(location.search).has('cambiar')) history.replaceState(null, '', '/cuenta');
   $('kUser').textContent = ME.user.username; $('kName').textContent = ME.user.name; $('name').value = ME.user.name;
   const p = ME.partner;
   $('pLinked').hidden = !p; $('pFree').hidden = !!p;
@@ -80,7 +105,7 @@ async function load() {
   $('sLast').textContent = when(ME.sync.lastSync) + ` · cada ${ME.syncIntervalMin} min`;
   $('sRes').textContent = ME.sync.lastSyncResult ? ME.sync.lastSyncResult.message || '—' : '—';
   $('sWb').textContent = when(ME.sync.updatedAt);
-  $('admin').hidden = !ME.user.isAdmin;
+  $('admin').hidden = !ME.user.isAdmin || must;
   if (ME.user.isAdmin) loadAdmin();
 }
 async function loadAdmin() {
@@ -102,6 +127,37 @@ act($('pUnlink'), $('pMsg2'), async () => { if (!confirm('¿Separar las cuentas?
 act($('pwGo'), $('pwMsg'), async () => { await api('POST', '/api/me/password', { current: $('pw0').value, new: $('pw1').value }); $('pw0').value = $('pw1').value = ''; }, 'Contraseña cambiada.');
 act($('sGo'), $('sMsg'), async () => { const r = await api('POST', '/api/sync'); if (!r.ok) throw new Error(r.message); }, 'Sincronizado.');
 act($('iGo'), $('iMsg'), async () => { const r = await api('POST', '/api/admin/invites', { note: $('iNote').value }); $('iUrl').textContent = r.url; $('iLink').hidden = false; $('iNote').value = ''; }, 'Invitación creada: cópiala ahora, no se vuelve a mostrar.');
+// primera entrada con la contraseña provisional
+$('mGo').addEventListener('click', async () => {
+  $('mGo').disabled = true; say($('mMsg'), 'Guardando…');
+  try {
+    await api('POST', '/api/me/first', { username: $('mUser').value, name: $('mName').value, password: $('mPw').value });
+    location.replace('/');
+  } catch (e) { say($('mMsg'), e.message, 'err'); $('mGo').disabled = false; }
+});
+// importar una copia del artefacto
+let IMP = null;
+$('impFile').addEventListener('change', async () => {
+  IMP = null; $('impGo').disabled = true; $('impOpts').hidden = true; say($('impMsg'), '');
+  const f = $('impFile').files[0]; if (!f) return;
+  try { IMP = JSON.parse(await f.text()); } catch (e) { say($('impMsg'), 'El fichero no es un JSON válido.', 'err'); return; }
+  if (!IMP || typeof IMP !== 'object' || !('doc' in IMP || 'hist' in IMP)) { IMP = null; say($('impMsg'), 'No parece una copia de BodyLens.', 'err'); return; }
+  const names = {}; for (const p of (IMP.profs || [])) if (p && typeof p === 'object') names[p.id] = p.name;
+  const others = Object.keys(IMP.prof || {});
+  $('impWho').innerHTML = `<option value="">${esc(names[''] || 'El perfil principal')}</option>` + others.map(id => `<option value="${esc(id)}">${esc(names[id] || id)}</option>`).join('');
+  $('impOpts').hidden = !others.length; $('impAll').checked = false;
+  $('impGo').disabled = false; say($('impMsg'), 'Listo para importar.');
+});
+$('impWho').addEventListener('change', () => { $('impAllL').hidden = !!$('impWho').value; });
+$('impGo').addEventListener('click', async () => {
+  if (!IMP) return;
+  $('impGo').disabled = true; say($('impMsg'), 'Importando…');
+  try {
+    const r = await api('POST', '/api/import', { copy: IMP, profile: $('impWho').value || null, withProfiles: !$('impWho').value && $('impAll').checked });
+    say($('impMsg'), `Importados ${r.documents} documentos. Ábrelos en la app.`, 'ok');
+    try { for (const k of Object.keys(localStorage)) if (k.startsWith('bascula:')) localStorage.removeItem(k); } catch (e) { }
+  } catch (e) { say($('impMsg'), e.message, 'err'); } finally { $('impGo').disabled = false; }
+});
 $('iCopy').addEventListener('click', () => navigator.clipboard && navigator.clipboard.writeText($('iUrl').textContent));
 document.addEventListener('click', async e => {
   const a = e.target.closest('[data-acc]'), r = e.target.closest('[data-rej]'), s = e.target.closest('[data-save]');

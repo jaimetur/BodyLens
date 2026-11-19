@@ -27,6 +27,10 @@ class Settings:
     sync_interval_min: int = field(default_factory=lambda: int(os.environ.get("SYNC_INTERVAL_MIN", "15")))
     scheduler_enabled: bool = field(default_factory=lambda: _bool(os.environ.get("SCHEDULER_ENABLED"), True))
     google_sa_json: str = field(default_factory=lambda: os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", ""))
+    # cuenta de administración que se crea sola si la base está vacía (contraseña provisional: se cambia al entrar)
+    admin_username: str = field(default_factory=lambda: os.environ.get("BODYLENS_ADMIN_USER", "admin"))
+    admin_name: str = field(default_factory=lambda: os.environ.get("BODYLENS_ADMIN_NAME", "Administración"))
+    admin_password: str = field(default_factory=lambda: os.environ.get("BODYLENS_ADMIN_PASSWORD", "bodylens"))
     invite_days: int = field(default_factory=lambda: int(os.environ.get("INVITE_DAYS", "7")))
 
     @property

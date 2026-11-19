@@ -24,16 +24,15 @@ puede escribir en `/data`, revisa PUID/PGID.
 ## Primer despliegue (manual, con Dockhand)
 
 1. En Dockhand, stack `bodylens` desde `/volume1/docker/stacks/bodylens` → **Deploy** (descarga la imagen de Docker Hub).
-2. Crea tu cuenta de administración (desde una consola del contenedor en Dockhand, o por SSH con permisos de Docker):
-   `docker exec -it bodylens python -m app.admin crear-admin jaime "Jaime Tur"` (pide la contraseña, mínimo 4 caracteres).
-3. Siembra tus datos (los ficheros van en `/volume1/docker/data/bodylens/import/`, que dentro es `/data/import/`):
-   - `docker exec bodylens python -m app.seed /data/import/snap.json --usuario jaime`
-   - Copia fresca de Ajustes → Copia de seguridad del artefacto: `docker exec bodylens python -m app.seed /data/import/Bascula-copia-AAAA-MM-DD.json --usuario jaime`
-4. Fuentes de tu cuenta (fase 1): en `https://<bodylens>/cuenta` → Administración → tu cuenta → ID de la hoja y URL del
-   Apps Script (`…/exec`). O: `docker exec bodylens python -m app.admin fuentes jaime --hoja <ID> --apps-script <URL>`.
+2. **Tu cuenta** se crea sola al arrancar con la base vacía: usuario `BODYLENS_ADMIN_USER` (`jaime`) y contraseña
+   provisional `BODYLENS_ADMIN_PASSWORD` (`bodylens` si no se cambia en el `.env`). Al entrar la primera vez la app
+   pide tu propia contraseña (mínimo 4 caracteres) y deja cambiar usuario y nombre.
+3. **Tus datos**: en `/cuenta` → **Importar datos**, elige `snap.json` (o la «Copia completa (JSON)» de Ajustes →
+   Copia de seguridad del artefacto) y en «¿Qué datos de la copia son tuyos?» deja el perfil principal.
+   (También por consola: `docker exec bodylens python -m app.seed /data/import/snap.json --usuario jaime`.)
+4. Fuentes de tu cuenta (fase 1): en `/cuenta` → Administración → tu cuenta → ID de la hoja y URL del Apps Script.
 5. **Laura**: crea una invitación en `/cuenta` (Administración → Crear invitación) y mándale el enlace. Cuando tenga su
-   cuenta (`laura`), siembra sus datos del perfil de la copia:
-   `docker exec bodylens python -m app.seed /data/import/snap.json --usuario laura --perfil laura`.
+   cuenta, ella entra en `/cuenta` → Importar datos con el mismo `snap.json` y elige **Laura Romero**.
    Después, uno de los dos pide **unir las cuentas** en `/cuenta` → Pareja y el otro lo acepta.
 6. **Caddy**: añade al `Caddyfile` del stack `caddy` un bloque como los de las otras apps y define el puerto en su `.env`:
    ```

@@ -42,20 +42,35 @@ def docs_from_copy(c: dict) -> dict[str, dict]:
     return out
 
 
-def load_copy(path: str) -> dict:
-    with open(path, encoding="utf-8") as f:
-        c = json.load(f)
+class ImportError_(ValueError):
+    """Error de importación con mensaje para el usuario."""
+
+
+def check_copy(c) -> dict:
     if not isinstance(c, dict) or not ("doc" in c or "hist" in c):
-        raise SystemExit("El fichero no parece una copia de BodyLens (snap.json o copia completa JSON).")
+        raise ImportError_("El fichero no parece una copia de BodyLens (snap.json o copia completa JSON).")
     return c
 
 
-def seed(path: str, username: str, profile: str | None = None, with_profiles: bool = False) -> dict:
-    c = load_copy(path)
+def load_copy(path: str) -> dict:
+    with open(path, encoding="utf-8") as f:
+        return check_copy(json.load(f))
+
+
+def profiles_in(c: dict) -> list[dict]:
+    """Perfiles que trae la copia además del principal: [{id, name}]."""
+    names = {p.get("id"): p.get("name") for p in (c.get("profs") or []) if isinstance(p, dict)}
+    return [{"id": pid, "name": names.get(pid) or pid} for pid, v in (c.get("prof") or {}).items() if isinstance(v, dict)]
+
+
+def import_copy(con, user, c: dict, profile: str | None = None, with_profiles: bool = False) -> int:
+    """Escribe en la cuenta los documentos de la copia (dentro de una transacción abierta). Devuelve cuántos."""
+    check_copy(c)
     if profile:
         src = (c.get("prof") or {}).get(profile)
         if not isinstance(src, dict):
-            raise SystemExit(f"La copia no tiene el perfil «{profile}». Perfiles: {', '.join((c.get('prof') or {}).keys()) or 'ninguno'}")
+            have = ", ".join(p["id"] for p in profiles_in(c)) or "ninguno"
+            raise ImportError_(f"La copia no tiene el perfil «{profile}». Perfiles: {have}.")
     else:
         src = c
     docs = docs_from_copy(src)
@@ -66,19 +81,31 @@ def seed(path: str, username: str, profile: str | None = None, with_profiles: bo
                     docs[f"pf-{pid}-{k}"] = v
         if isinstance(c.get("profs"), list):
             docs["perfiles"] = {"v": 1, "list": c["profs"]}
+    if not docs:
+        raise ImportError_("La copia no trae datos.")
+    for doc_id, data in docs.items():
+        if doc_id in ("hklog", "hkev"):
+            cur = docstore.get_doc(con, user, COL, doc_id)
+            if cur:
+                data = {**cur["data"], **data, "e": docstore.merge_events(cur["data"], data)["e"]}
+        docstore.put_doc(con, user, COL, doc_id, data)
+    return len(docs)
+
+
+def seed(path: str, username: str, profile: str | None = None, with_profiles: bool = False) -> dict:
+    try:
+        c = load_copy(path)
+    except ImportError_ as e:
+        raise SystemExit(str(e))
     db.init_db()
-    n = 0
     with db.tx() as con:
         user = get_by_username(con, username)
         if not user:
             raise SystemExit(f"No existe la cuenta «{username}». Créala antes (invitación o python -m app.admin).")
-        for doc_id, data in docs.items():
-            if doc_id in ("hklog", "hkev"):
-                cur = docstore.get_doc(con, user, COL, doc_id)
-                if cur:
-                    data = {**cur["data"], **data, "e": docstore.merge_events(cur["data"], data)["e"]}
-            docstore.put_doc(con, user, COL, doc_id, data)
-            n += 1
+        try:
+            n = import_copy(con, user, c, profile, with_profiles)
+        except ImportError_ as e:
+            raise SystemExit(str(e))
     return {"usuario": username, "documentos": n}
 
 

@@ -125,3 +125,18 @@ def test_seed(env, make_user, tmp_path):
     assert set(ld) == {"peso", "hklog"} and ld["hklog"]["e"][0][0] == "menstrual"
     with pytest.raises(SystemExit):
         seed.seed(str(p), "nadie")
+
+
+def test_import_from_web(client, make_user, login):
+    make_user("laura")
+    c = login("laura")
+    snap = {"doc": {"cfg": {}}, "hklog": {"v": 1, "e": [["mood", "a", "a", "{}", "x"]]},
+            "prof": {"laura": {"doc": {"cfg": {"goal": 60}}, "hist": {"2026": {"y": 2026, "d": {}}}}},
+            "profs": [{"id": "", "name": "Jaime"}, {"id": "laura", "name": "Laura"}]}
+    assert c.post("/api/import", json={"copy": {"nada": 1}}).status_code == 400
+    assert c.post("/api/import", json={"copy": snap, "profile": "otro"}).status_code == 400
+    r = c.post("/api/import", json={"copy": snap, "profile": "laura"})
+    assert r.status_code == 200 and r.json()["documents"] == 2
+    ids = {d["id"] for d in c.get("/api/docs/bascula").json()["docs"]}
+    assert ids == {"peso", "hist-2026"}
+    assert c.get("/api/docs/bascula/peso").json()["data"]["cfg"]["goal"] == 60

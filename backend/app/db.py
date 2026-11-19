@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS users (
   partner_since TEXT,
   sheet_id TEXT,
   apps_script_url TEXT,
+  must_change INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS sessions (
@@ -115,11 +116,19 @@ def ro() -> Iterator[sqlite3.Connection]:
         con.close()
 
 
+def _migrate(con: sqlite3.Connection) -> None:
+    """Columnas añadidas después de crear la base (las bases ya desplegadas no las tienen)."""
+    cols = {r[1] for r in con.execute("PRAGMA table_info(users)")}
+    if "must_change" not in cols:
+        con.execute("ALTER TABLE users ADD COLUMN must_change INTEGER NOT NULL DEFAULT 0")
+
+
 def init_db() -> None:
     con = connect()
     try:
         con.execute("PRAGMA journal_mode=WAL")
         con.executescript(SCHEMA)
+        _migrate(con)
     finally:
         con.close()
 

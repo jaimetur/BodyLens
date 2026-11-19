@@ -18,7 +18,7 @@
 <script>
 $('f').addEventListener('submit', async e => {
   e.preventDefault(); $('go').disabled = true; say($('m'), 'Entrando…');
-  try { await api('POST', '/api/login', { username: $('u').value, password: $('p').value }); location.replace(safeNext()); }
+  try { const r = await api('POST', '/api/login', { username: $('u').value, password: $('p').value }); location.replace(r.mustChange ? '/cuenta?cambiar=1' : safeNext()); }
   catch (err) { say($('m'), err.message, 'err'); $('go').disabled = false; }
 });
 </script>

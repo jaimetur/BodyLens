@@ -10,7 +10,7 @@ from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from pydantic import BaseModel
 
-from app import config, db, docstore, frontend, sync, users, workbook
+from app import config, db, docstore, frontend, seed, sync, users, workbook
 from app.security import login_throttle
 from app.users import User, UserError
 
@@ -22,6 +22,11 @@ CSRF_HEADER = "x-bodylens"
 @contextlib.asynccontextmanager
 async def lifespan(app: FastAPI):
     db.init_db()
+    s = config.settings
+    with db.tx() as con:
+        if users.bootstrap_admin(con, s.admin_username, s.admin_name, s.admin_password):
+            log.warning("Creada la cuenta de administración «%s» con la contraseña provisional: cámbiala al entrar.",
+                        s.admin_username)
     task = None
     if config.settings.scheduler_enabled:
         task = asyncio.create_task(sync.scheduler_loop())
@@ -104,7 +109,7 @@ def login(body: LoginIn, request: Request, response: Response):
         token = users.create_session(con, u.id)
     login_throttle.reset(keys[1])
     _set_cookie(response, token)
-    return {"ok": True, "user": u.public()}
+    return {"ok": True, "user": u.public(), "mustChange": u.must_change}
 
 
 @app.post("/api/logout")
@@ -187,6 +192,28 @@ def change_password(body: PasswordIn, request: Request, response: Response, u: U
     return {"ok": True}
 
 
+class FirstIn(BaseModel):
+    username: str
+    name: str
+    password: str
+
+
+@app.post("/api/me/first")
+def first_login(body: FirstIn, response: Response, u: User = Depends(current_user)):
+    """Primera entrada con la contraseña provisional: usuario, nombre y contraseña propios."""
+    if not u.must_change:
+        raise HTTPException(409, "Tu contraseña ya es la tuya; cámbiala en «Contraseña».")
+    try:
+        with db.tx() as con:
+            users.rename(con, u.id, body.username, body.name)
+            users.set_password(con, u.id, body.password)
+            token = users.create_session(con, u.id)
+    except UserError as e:
+        _bad(e)
+    _set_cookie(response, token)
+    return {"ok": True}
+
+
 class NameIn(BaseModel):
     name: str
 
@@ -199,6 +226,23 @@ def change_name(body: NameIn, u: User = Depends(current_user)):
     with db.tx() as con:
         con.execute("UPDATE users SET name=? WHERE id=?", (name, u.id))
     return {"ok": True}
+
+
+# ---------- importar una copia del artefacto ----------
+
+@app.post("/api/import")
+async def import_copy(request: Request, u: User = Depends(current_user)):
+    """Importa en la cuenta una copia de BodyLens: snap.json o la «Copia completa (JSON)» de Ajustes.
+    Cuerpo: {copy: <contenido del fichero>, profile: null | "<id del perfil de la copia>", withProfiles: bool}"""
+    body = await _json_body(request)
+    if not isinstance(body, dict):
+        raise HTTPException(400, "Petición no válida.")
+    try:
+        with db.tx() as con:
+            n = seed.import_copy(con, u, body.get("copy"), body.get("profile") or None, bool(body.get("withProfiles")))
+    except (seed.ImportError_, docstore.DocError) as e:
+        _bad(e)
+    return {"ok": True, "documents": n}
 
 
 # ---------- pareja ----------
@@ -421,6 +465,8 @@ def index(request: Request):
     u = optional_user(request)
     if not u:
         return RedirectResponse("/login", status_code=303)
+    if u.must_change:
+        return RedirectResponse("/cuenta?cambiar=1", status_code=303)
     return HTMLResponse(frontend.page(u.public()), headers={"Cache-Control": "no-store"})
 
 

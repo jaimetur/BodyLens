@@ -65,3 +65,40 @@ def test_change_password(client, make_user, login):
     assert c.post("/api/me/password", json={"current": "contraseña-larga", "new": "nueva-contraseña-1"}).status_code == 200
     assert c.get("/api/me").status_code == 200  # la sesión actual sigue
     login("jaime", "nueva-contraseña-1")
+
+
+def test_bootstrap_admin_must_change(env, monkeypatch):
+    monkeypatch.setenv("BODYLENS_ADMIN_USER", "jaime")
+    monkeypatch.setenv("BODYLENS_ADMIN_NAME", "Jaime Tur")
+    monkeypatch.setenv("BODYLENS_ADMIN_PASSWORD", "inicio")
+    from app import config
+    config.reload_settings()
+    from fastapi.testclient import TestClient
+    from app.main import app
+    with TestClient(app) as c:
+        c.headers.update({"X-BodyLens": "1"})
+        r = c.post("/api/login", json={"username": "jaime", "password": "inicio"}).json()
+        assert r["mustChange"] is True and r["user"]["isAdmin"] is True
+        assert c.get("/", follow_redirects=False).headers["location"] == "/cuenta?cambiar=1"
+        assert c.post("/api/me/first", json={"username": "x", "name": "J", "password": "abcd"}).status_code == 400
+        assert c.post("/api/me/first", json={"username": "jaimetur", "name": "Jaime", "password": "1234"}).status_code == 200
+        assert c.get("/", follow_redirects=False).status_code == 200
+        me = c.get("/api/me").json()["user"]
+        assert me["username"] == "jaimetur" and me["mustChange"] is False
+        assert c.post("/api/me/first", json={"username": "jaimetur", "name": "J", "password": "1234"}).status_code == 409
+    # al volver a arrancar con usuarios ya creados no se crea otra
+    with TestClient(app) as c:
+        assert c.post("/api/login", json={"username": "jaime", "password": "inicio"}, headers={"X-BodyLens": "1"}).status_code == 401
+
+
+def test_migrates_old_database(env):
+    from app import db
+    con = db.connect()
+    con.execute("DROP TABLE users")
+    con.execute("CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE COLLATE NOCASE, "
+                "name TEXT NOT NULL, pw_hash TEXT NOT NULL, is_admin INTEGER NOT NULL DEFAULT 0, partner_id INTEGER, "
+                "partner_since TEXT, sheet_id TEXT, apps_script_url TEXT, created_at TEXT NOT NULL)")
+    con.close()
+    db.init_db()
+    with db.ro() as c2:
+        assert "must_change" in {r[1] for r in c2.execute("PRAGMA table_info(users)")}
