@@ -20,6 +20,7 @@ def test_sync_bridge(client, make_user, login, monkeypatch):
     u = make_user("jaime", admin=True)
     with db.tx() as con:
         users.update_bridge(con, u.id, "A" * 44, "https://script.google.com/macros/s/xyz/exec")
+        con.execute("UPDATE users SET data_source='sheet' WHERE id=?", (u.id,))   # a bridge account
 
     async def fake_token():
         return "tok"
@@ -55,6 +56,7 @@ def test_sync_reports_errors(client, make_user, login, monkeypatch):
     u = make_user("jaime")
     with db.tx() as con:
         users.update_bridge(con, u.id, "B" * 44, None)
+        con.execute("UPDATE users SET data_source='sheet' WHERE id=?", (u.id,))
 
     async def fake_token():
         return "tok"
@@ -67,7 +69,7 @@ def test_sync_reports_errors(client, make_user, login, monkeypatch):
 def test_sync_without_sources(client, make_user, login):
     make_user("laura")
     r = login("laura").post("/api/sync").json()
-    assert r["ok"] is False and "fuentes" in r["message"]
+    assert r["ok"] is False and "data source" in r["message"]
 
 
 def test_bridge_only_by_admin(client, make_user, login):

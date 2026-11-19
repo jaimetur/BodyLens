@@ -801,7 +801,7 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
       <span class="pill" id="syncPill">Conectando…</span>
       <a class="iconbtn owner-only" id="pullBtn" href="https://script.google.com/macros/s/AKfycbyq4X7M4IRxqFM7ez4BYQ9SelLUPo1Wauc9zm4YgCfD8wubBL-rVKe5rytquF4D-7Ac/exec?accion=sincronizar" target="_blank" rel="noopener" aria-label="Sincronizar: trae lo último de la báscula y de Apple Salud" title="Sincronizar"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5L4 8"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.6 4.5L20 16"/><path d="M20 20v-4h-4"/></svg></a>
       <button class="iconbtn" id="pdfBtn" type="button" aria-label="Exportar a PDF" title="Exportar a PDF"><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><text x="12" y="17.2" text-anchor="middle" style="font:700 5.6px system-ui,sans-serif;fill:currentColor;stroke:none">PDF</text></svg></button>
-      <button class="iconbtn owner-only" id="syncBtn" hidden type="button" aria-label="Sincronizar con la hoja"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5L4 8"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.6 4.5L20 16"/><path d="M20 20v-4h-4"/></svg></button>
+      <button class="iconbtn owner-only" id="syncBtn" hidden type="button" aria-label="Sincronizar ahora"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5L4 8"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.6 4.5L20 16"/><path d="M20 20v-4h-4"/></svg></button>
       <button class="iconbtn" id="ajClose" type="button" aria-label="Cerrar ajustes y volver" title="Cerrar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
       <a class="iconbtn only-m owner-only ajopen" hidden href="#ajustes" aria-label="Ajustes"><svg viewBox="0 0 24 24"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></svg></a>
     </header>
@@ -854,7 +854,7 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
         </div>
         <div data-tg="cal" class="g2 wide-l">
           <section class="card"><h2>Calendario de pesadas</h2><p class="lead">Últimas 16 semanas. El color indica el cambio respecto a la pesada anterior; el viernes, día de control, lleva un punto en la cabecera. A la derecha, lo que cambió cada semana; abajo, la media de cada día de la semana.</p><div class="scale" id="calScale"></div><div class="cal" id="cal"></div><p class="lead" id="calNote"></p></section>
-          <section class="card"><h2>Hitos del plan</h2><p class="lead">Objetivos de tu hoja, con la fecha del plan y la que marca tu ritmo real.</p><div class="miles" id="miles"></div></section>
+          <section class="card"><h2>Hitos del plan</h2><p class="lead">Tus objetivos, con la fecha del plan y la que marca tu ritmo real.</p><div class="miles" id="miles"></div></section>
         </div>
         <section data-tg="sem" class="card"><h2>Control semanal</h2><div class="tbl" id="weeks"></div></section>
       </section>
@@ -983,7 +983,7 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
          <section data-tg="hoy" class="card" id="napCard"></section>
         <h2 data-tg="hoy" class="vsec" id="wellTitle">Bienestar de la última noche</h2>
         <div data-tg="hoy" class="wgrid" id="wellGrid"></div>
-        <p class="lead wnote">Sacado de tus noches de las últimas semanas. La SpO₂, el índice respiratorio, la apnea, la variabilidad del pulso (VFC) y la temperatura de la muñeca no llegan a tu hoja: de Withings solo vienen horarios, fases y pulso.</p>
+        <p class="lead wnote">Sacado de tus noches de las últimas semanas. La SpO₂, el índice respiratorio, la apnea, la variabilidad del pulso (VFC) y la temperatura de la muñeca llegan de Apple Salud o Android; de Withings solo vienen horarios, fases y pulso.</p>
         <h2 data-tg="evo" class="vsec">Histórico</h2>
         <section data-tg="evo" class="card"><div class="shtabs" id="shTabs" role="group" aria-label="Qué ver"></div><p class="lead" id="shDesc"></p><div id="shBars"></div><div class="hmons" id="shCal"></div></section>
         <h2 data-tg="evo" class="vsec">Tendencias y detalles</h2>
@@ -1015,7 +1015,7 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
         <section data-tg="hoy" class="card fday"><h2>Registro del día</h2><div id="foodDay"></div></section>
         <section data-tg="hoy" class="card night"><h2>Pérdida estimada</h2><div id="foodDash"></div></section>
         <section data-tg="reg" class="card"><h2>Tu registro</h2><p class="lead">Lo que has anotado en el periodo elegido. Toca un día para verlo o cambiarlo.</p><div class="nstats" id="foodSum"></div><div id="foodBars"></div><div class="tbl" id="foodTbl"></div></section>
-        <section data-tg="ana" class="card"><h2>Pérdida estimada y real</h2><p class="lead">Lo que llevas perdido desde el inicio del plan frente a lo que estima la fórmula de tu hoja con la nota de cada día.</p><div class="legend" id="lgFoodEst"></div><div class="chart" id="chFoodEst"></div><div id="foodEstTxt"></div></section>
+        <section data-tg="ana" class="card"><h2>Pérdida estimada y real</h2><p class="lead">Lo que llevas perdido desde el inicio del plan frente a lo que estima la fórmula con la nota de cada día.</p><div class="legend" id="lgFoodEst"></div><div class="chart" id="chFoodEst"></div><div id="foodEstTxt"></div></section>
         <section data-tg="ana" class="card"><h2>Lo que comes y tu peso</h2><p class="lead">¿Se nota en la báscula al día siguiente cómo has comido?</p><div id="foodW"></div></section>
         <section data-tg="reg" class="card"><h2>Lo que más repites</h2><p class="lead">Lo que más veces has anotado en el periodo elegido.</p><div id="foodTop" class="ftops"></div></section>
       </section>
@@ -1072,7 +1072,7 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
         </section>
         <section data-ajc="plan" class="card">
           <h2>Plan de pérdida</h2>
-          <p class="lead">Por defecto se toman de tu hoja. Si los cambias aquí, se mantienen los tuyos.</p>
+          <p class="lead">Puedes cambiarlos aquí cuando quieras; se mantienen los tuyos.</p>
           <div class="form">
             <label for="cfStart">Peso inicial (kg)<input id="cfStart" type="number" step="0.1" inputmode="decimal"></label>
             <label for="cfGoal">Objetivo final (kg)<input id="cfGoal" type="number" step="0.1" inputmode="decimal"></label>
@@ -1086,7 +1086,7 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
         <section data-ajc="comidas" class="card" id="platosCard"><h2>Comidas · tus platos</h2><p class="lead">Todos los platos que has anotado en Comidas, de más a menos usados. Cámbiales el nombre, bórralos, júntalos o añade platos nuevos para que te salgan en las sugerencias.</p><div id="platos" class="platos"></div></section>
         <section data-ajc="comidas" class="card" id="cfFood">
           <h2>Nota de comidas y pérdida estimada</h2>
-          <p class="lead">Los pesos de la nota del día y de la pérdida estimada. Pérdida estimada del día = factor × (objetivo − peso) ÷ objetivo × nota del día. «Valores por defecto» vuelve a los pesos de la báscula (modelo neutro) y «Modelo de la hoja» pone los de tu hoja de cálculo.</p>
+          <p class="lead">Los pesos de la nota del día y de la pérdida estimada. Pérdida estimada del día = factor × (objetivo − peso) ÷ objetivo × nota del día. «Valores por defecto» vuelve a los pesos de la báscula (modelo neutro) y «Modelo clásico» pone los de la fórmula original.</p>
           <div class="form">
             <label for="fwD">Peso del desayuno<input id="fwD" type="number" step="0.1" min="0" inputmode="decimal"></label>
             <label for="fwA">Peso del almuerzo<input id="fwA" type="number" step="0.1" min="0" inputmode="decimal"></label>
@@ -1097,11 +1097,11 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
             <label for="fwPb">Penalización pecados bebida<input id="fwPb" type="number" step="0.1" min="0" inputmode="decimal" placeholder=""></label>
             <label for="fwBlank">Nota por defecto de una comida sin puntuar (0–5)<input id="fwBlank" type="number" step="1" min="0" max="5" inputmode="numeric"></label>
             <label for="fwK">Factor de la pérdida estimada<input id="fwK" type="number" step="0.1" min="0" inputmode="decimal"></label>
-            <label class="chk full" for="fwNeu"><input id="fwNeu" type="checkbox"> Un día normal (desayuno, almuerzo y cena a 3, sin agua, deporte ni pecados) mantiene el peso: solo estima pérdida si lo haces mejor y aumento si lo haces peor. Si lo quitas, se usa la fórmula de la hoja</label>
-            <label class="chk full" for="fwAll"><input id="fwAll" type="checkbox"> Contar todos los días aunque no te peses (con tu última pesada). Si lo quitas, solo cuentan los días con pesada, como en la hoja</label>
+            <label class="chk full" for="fwNeu"><input id="fwNeu" type="checkbox"> Un día normal (desayuno, almuerzo y cena a 3, sin agua, deporte ni pecados) mantiene el peso: solo estima pérdida si lo haces mejor y aumento si lo haces peor. Si lo quitas, se usa la fórmula clásica</label>
+            <label class="chk full" for="fwAll"><input id="fwAll" type="checkbox"> Contar todos los días aunque no te peses (con tu última pesada). Si lo quitas, solo cuentan los días con pesada</label>
             <label class="chk full" for="fwUn"><input id="fwUn" type="checkbox"> Los días sin comidas anotadas también cuentan para la pérdida estimada, con la nota por defecto</label>
             <p class="hint full" id="fwPrev"></p>
-            <div class="row full"><button class="btn" id="fwSave" type="button">Guardar fórmula</button><button class="btn ghost" id="fwReset" type="button">Valores por defecto</button><button class="btn ghost" id="fwSheet" type="button">Modelo de la hoja</button><span class="msg" id="fwMsg" aria-live="polite"></span></div>
+            <div class="row full"><button class="btn" id="fwSave" type="button">Guardar fórmula</button><button class="btn ghost" id="fwReset" type="button">Valores por defecto</button><button class="btn ghost" id="fwSheet" type="button">Modelo clásico</button><span class="msg" id="fwMsg" aria-live="polite"></span></div>
           </div>
         </section>
         <section data-ajc="datos" class="card">

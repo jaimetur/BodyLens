@@ -172,7 +172,7 @@ function applySheet(parsed){
   if(mainOf(next)!==mainOf(base)||changed){next.lastSync=Date.now();saveMain(next)}else{DOC={...base,...next,lastSync:base.lastSync||null};saveLocal();refresh()}
   if(parsed.hasRaw){hideNotice();return}
   const hasW=Object.values(HIST).some(y=>Object.values(y.d||{}).some(v=>v[6]==='w'));
-  showNotice('',hasW?'La hoja no tiene ahora la pestaña «Withings», así que no llegan mediciones nuevas. El script de la hoja la vuelve a crear en su próxima ejecución (cada 4 horas); tu historial guardado sigue intacto.':'Tu hoja todavía no tiene la pestaña «Withings» con el historial de la báscula. El script de la hoja la crea en su próxima ejecución (cada 4 horas).');
+  showNotice('',hasW?'Aún no han llegado pesadas. Conecta tu báscula Withings en Tu cuenta → Fuentes de datos, o añade pesadas a mano.':'Aún no han llegado pesadas. Conecta tu báscula Withings en Tu cuenta → Fuentes de datos, o añade pesadas a mano.');
 }
 const XLSX_MIME='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 function b64ToBytes(s){const bin=atob(s);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u}
@@ -187,7 +187,7 @@ function handleResult(res){
     // una copia guardada de antes de que existiera la pestaña «Withings»: se pide la hoja de nuevo antes de avisar
     if(!parsed.hasRaw&&res.cache&&!freshTried){freshTried=true;syncNow();return}
     lastFetch=res.cache?res.cache.storedAt:Date.now();applySheet(parsed);setPill('ok','Al día · '+ago(lastFetch))}
-  catch(e){setPill('err','Hoja no válida');showNotice('err',e.message||'No pude leer la hoja.')}
+  catch(e){setPill('err','Hoja no válida');showNotice('err',e.message||'No pude leer tus datos.')}
 }
 function handleError(err){
   for(const id of ['syncBtn','pullBtn'])$(id).classList.remove('spin');if(pullAt&&Date.now()-pullAt<6e5&&!TOAST_OK){TOAST_OK=1;toast('Datos al día ✓')}
@@ -204,7 +204,7 @@ function handleError(err){
     not_granted:'Esta vista no puede usar conectores. Se muestran los últimos datos guardados.',
     capability_disabled:'Esta vista no puede usar conectores. Se muestran los últimos datos guardados.'};
   setPill('err',c==='server_unavailable'?'Drive no responde':'Sin sincronizar');
-  const t=map[c]||'No se pudo leer la hoja. Se muestran los últimos datos guardados.';
+  const t=map[c]||'No se pudieron leer tus datos. Se muestran los últimos guardados.';
   if(c==='approval_required')showNotice('err',t,'Permitir acceso',()=>syncNow());
   else if(c==='not_in_manifest')showNotice('err',t,'Abrir permisos',async()=>{try{const pm=await claude.use('permissions');await pm.manage()}catch(e){}});
   else showNotice('err',t);
@@ -708,7 +708,7 @@ function renderPeso(){
       const v=WT==='trend'?(M.all.some(p=>p.k>=lo&&p.k<=fk)?M.trendAt(fk>M.lastK?M.lastK:fk):null):!vals.length?null:WT==='med'?median(vals):percentile(vals,0.2);
       const w={k:fk,from:lo,n:vals.length,val:v,partial:fk>M.lastK,target:planAt(M.plan,fk)};if(v!=null){w.v=prev!=null?v-prev:null;prev=v}wks.push(w)}}
   const items=wks.filter(w=>w.v!=null);
-  $('wkLead').textContent=`Cambio de cada semana (${WM==='nat'?'de lunes a domingo':'de sábado a viernes, como en tu hoja'}) frente a la anterior, usando el ${MET_L[WT]}, desde el inicio del plan.`;
+  $('wkLead').textContent=`Cambio de cada semana (${WM==='nat'?'de lunes a domingo':'de sábado a viernes'}) frente a la anterior, usando el ${MET_L[WT]}, desde el inicio del plan.`;
   document.querySelectorAll('[data-wkm]').forEach(b=>b.classList.toggle('on',b.dataset.wkm===WM));document.querySelectorAll('[data-wkt]').forEach(b=>b.classList.toggle('on',b.dataset.wkt===WT));
   barsChart($('chWeek'),items,{fmt:v=>sgn(v),labelOf:(w,i,a)=>{const d=k2d(w.k),pm=i?k2d(a[i-1].k).getMonth():-1;return [String(d.getDate()),d.getMonth()!==pm?MS[d.getMonth()]:'']},colorOf:w=>w.v<=0?'var(--good)':'var(--bad)',
     tipOf:w=>`<b>${fmtK(w.from,true)} – ${fmtK(w.k,true)}${w.partial?' · en curso':''}</b><div class="r"><span>${WT==='trend'?'Tendencia':WT==='med'?'Mediana':'Percentil 20'}</span><span>${fmtN(w.val,1)} kg</span></div><div class="r"><span>Cambio</span><span>${sgn(w.v)} kg</span></div><div class="r"><span>Objetivo</span><span>${fmtN(w.target,2)} kg</span></div><div class="r"><span>Pesadas</span><span>${w.n}</span></div>`});
@@ -1035,7 +1035,7 @@ REDRAW.all=()=>{if(M&&!M.empty&&VIEW==='historial')drawAll()};
 function renderHistorial(){
   drawAttempts();
   const all=M.all;const wFirst=all.find(p=>p.src==='w');
-  $('histNote').innerHTML=`${all.length.toLocaleString('es-ES')} días con pesada desde el ${fmtK(all[0].k,true)}. Máximo ${fmtN(M.maxAll.kg,1)} kg (${fmtMY(M.maxAll.k)}), mínimo ${fmtN(M.minAll.kg,1)} kg (${fmtMY(M.minAll.k)}).`+(wFirst?` Tu cuenta de Withings tiene datos desde el ${fmtK(wFirst.k,true)}; lo anterior viene de tu hoja antigua.`:'')+(histRange?` El gráfico muestra el periodo elegido abajo; con «Todo», todo el historial.`:'');
+  $('histNote').innerHTML=`${all.length.toLocaleString('es-ES')} días con pesada desde el ${fmtK(all[0].k,true)}. Máximo ${fmtN(M.maxAll.kg,1)} kg (${fmtMY(M.maxAll.k)}), mínimo ${fmtN(M.minAll.kg,1)} kg (${fmtMY(M.minAll.k)}).`+(wFirst?` Tu cuenta de Withings tiene datos desde el ${fmtK(wFirst.k,true)}; lo anterior viene de tus datos importados.`:'')+(histRange?` El gráfico muestra el periodo elegido abajo; con «Todo», todo el historial.`:'');
   drawAll();
   // año a año
   // solo los años que entran en la ventana elegida (con «Todo», todos)
@@ -1151,7 +1151,7 @@ function foodDayHtml(k){const e=foodGet(k)||{t:[null,null,null,null,null,null],s
     ${ctx?`<div class="fctxs">${ctx}</div>`:''}
     <div class="frows">${FOOD_ROWS.map(([ti,si,ph])=>`<div class="frow${si==null?' full':''}${ti==null?' nofld':''}">${ti!=null?fld(ti,ph):`<div class="ffld"><span>${FOOD_S[si][0]}</span></div>`}${si!=null?chips(si):''}</div>`).join('')}
         <p class="hint">${(()=>{const C=foodCfg(),S=foodShares(C);return `Comidas, agua y deporte suman ${fmtInt(S.meals)}/${fmtInt(S.water)}/${fmtInt(S.sport)}; cada punto de pecado resta ${fmtN(S.pc/5,0)} % (comida) y ${fmtN(S.pb/5,0)} % (bebida). Una comida sin nota cuenta como un ${fmtN(C.blank,0)}.`})()}${OWNER?' <a href="#ajustes" class="lnk" data-tgt="cfFood">Cambiar</a> · <a href="#ajustes" class="lnk" data-tgt="platosCard">Gestionar platos</a>':''}</p></div>
-    ${ro?'':`<p class="hint fsaved" id="fSaved">${foodGet(k)&&foodGet(k).app?'Guardado en tu cuenta.':foodGet(k)?'Viene de tu hoja. Si lo cambias aquí, manda lo de aquí.':'Se guarda solo mientras escribes.'}</p>`}`}
+    ${ro?'':`<p class="hint fsaved" id="fSaved">${foodGet(k)&&foodGet(k).app?'Guardado en tu cuenta.':foodGet(k)?'Viene de tus datos importados. Si lo cambias aquí, manda lo de aquí.':'Se guarda solo mientras escribes.'}</p>`}`}
 /* ---------- panel de comidas: pérdida estimada del día elegido, de la semana y desde el inicio ---------- */
 // la nota del día por partes: lo que suman comidas, agua y deporte (hasta 100 %) y lo que restan los pecados
 function foodParts(s,C){C=C||foodCfg();const bonus=C.w.reduce((t,w,i)=>t+w*(s[i]!=null?s[i]:i<3?C.blank:0),0),pen=Math.abs(s[5]||0)*C.pw[0]+Math.abs(s[6]||0)*C.pw[1];return {plus:bonus/(5*C.sw)*100,minus:pen/(5*C.sw)*100}}
@@ -1388,7 +1388,7 @@ document.addEventListener('click',e=>{
     saveMain({...(DOC||{}),cfg:{...DEFAULT_CFG,...((DOC&&DOC.cfg)||{}),food:r}});$('fwMsg').textContent='Fórmula guardada.'}
   if(e.target.id==='fwReset'||e.target.id==='fwSheet'){const cfg={...DEFAULT_CFG,...((DOC&&DOC.cfg)||{})};const sheet=e.target.id==='fwSheet';
     cfg.food=sheet?{v:6,w:[0.2,0.4,0.4,0.5,0.5],pw:[2,2],blank0:5,k:1,unlogged:true,allDays:false,neutral:false}:{v:6};
-    saveMain({...(DOC||{}),cfg});$('fwMsg').textContent=sheet?'Puesto el modelo de tu hoja.':'Vuelven los valores por defecto.';renderFoodCfg()}});
+    saveMain({...(DOC||{}),cfg});$('fwMsg').textContent=sheet?'Puesto el modelo clásico.':'Vuelven los valores por defecto.';renderFoodCfg()}});
 
 /* ---------- deslizar a izquierda o derecha para cambiar de sección (pantallas táctiles) ---------- */
 const SWIPE_ORDER=['resumen','peso','composicion','medidas','corazon','bienestar','actividad','sueno','comidas','intimo','historial'];
@@ -1406,7 +1406,7 @@ const SWIPE_ORDER=['resumen','peso','composicion','medidas','corazon','bienestar
 /* ---------- traer de Withings ahora: abre la aplicación web del script de tu hoja (solo la puedes abrir tú) ---------- */
 const WITHINGS_NOW='https://script.google.com/macros/s/AKfycbyq4X7M4IRxqFM7ez4BYQ9SelLUPo1Wauc9zm4YgCfD8wubBL-rVKe5rytquF4D-7Ac/exec?accion=sincronizar';
 let pullAt=0;
-$('pullBtn').addEventListener('click',()=>{pullAt=Date.now();TOAST_OK=0;setPill('','Trayendo de Withings…');$('pullBtn').classList.add('spin');toast('Sincronizando: la báscula y Apple Salud pasan a tu hoja y de ahí a la app. Tarda unos segundos.',6000);setTimeout(()=>{if(Date.now()-pullAt<6e5)syncNow()},5000);
+$('pullBtn').addEventListener('click',()=>{pullAt=Date.now();TOAST_OK=0;setPill('','Trayendo de Withings…');$('pullBtn').classList.add('spin');toast('Sincronizando con Withings… Tarda unos segundos.',6000);setTimeout(()=>{if(Date.now()-pullAt<6e5)syncNow()},5000);
   // el script tarda unos segundos; la hoja se vuelve a leer al volver aquí y, por si acaso, a los 20 y 45 s
   setTimeout(()=>{if(Date.now()-pullAt<6e5)syncNow()},20000);setTimeout(()=>{if(Date.now()-pullAt<6e5)syncNow()},45000)});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&pullAt&&Date.now()-pullAt<6e5)setTimeout(syncNow,1500)});
@@ -1621,7 +1621,7 @@ function renderAjustes(){renderProfCard();renderFoodCfg();renderPlatos();
   const nd=Object.values(HIST).reduce((s,y)=>s+Object.keys(y.d||{}).length,0);
   const out=snapOutdated();
   $('pubInfo').textContent=(SNAP&&SNAP.at?`Quien abre el enlace sin haber iniciado sesión en claude.ai ve la copia de tus datos que lleva la página, del ${fmtStamp(SNAP.at)}${out?'; ya hay datos más nuevos':''}.`:'La página todavía no lleva una copia de tus datos para quien la abre sin iniciar sesión.')+' Se actualiza sola cuando sales de la app y hay datos nuevos, como mucho cada 2 horas.'+(UI.pubErr?` Último intento: ${UI.pubErr}`:'');
-  $('srcKv').innerHTML=M&&!M.empty?[kvCell('Días guardados',nd.toLocaleString('es-ES'),'',`Desde el ${fmtK(M.all[0].k,true)}`),kvCell('Última pesada',fmtK(M.lastK),'',`${fmtN(M.last.kg,1)} kg`),kvCell('Hoja leída',lastFetch?ago(lastFetch):'—','',DOC&&DOC.lastSync?`Último cambio guardado ${ago(DOC.lastSync)}`:'')].join(''):'';
+  $('srcKv').innerHTML=M&&!M.empty?[kvCell('Días guardados',nd.toLocaleString('es-ES'),'',`Desde el ${fmtK(M.all[0].k,true)}`),kvCell('Última pesada',fmtK(M.lastK),'',`${fmtN(M.last.kg,1)} kg`),kvCell('Datos leídos',lastFetch?ago(lastFetch):'—','',DOC&&DOC.lastSync?`Último cambio guardado ${ago(DOC.lastSync)}`:'')].join(''):'';
 }
 $('pfSave').addEventListener('click',()=>{const h=parseFloat(String($('cfHeight').value).replace(',','.'));if($('cfHeight').value&&(isNaN(h)||h<120||h>230)){$('pfMsg').textContent='La altura tiene que estar entre 120 y 230 cm.';return}
   const bd=$('cfBirth').value;if(bd&&(bd<'1900-01-01'||bd>d2k(new Date()))){$('pfMsg').textContent='Revisa la fecha de nacimiento.';return}
@@ -1704,7 +1704,7 @@ function bkApply(mode){const d=BK_IN;if(!d)return;const cp=x=>JSON.parse(JSON.st
   saveMain({...doc,lastSync:Date.now()});BK_IN=null;$('bkImp').innerHTML=`<p class="lead" style="margin:0">Copia importada (${mode==='replace'?'reemplazando':'combinando'}). Ya se está guardando en tu cuenta.</p>`}
 document.addEventListener('click',e=>{if(e.target.id==='bkMerge')bkApply('merge');else if(e.target.id==='bkReplace'){e.target.outerHTML='<button class="btn danger" type="button" id="bkReplaceOk">Sí, reemplazar todo</button>'}else if(e.target.id==='bkReplaceOk')bkApply('replace');else if(e.target.id==='bkCancel'){BK_IN=null;BK_RAW=null;$('bkImp').hidden=true}});
 $('bkBtn').addEventListener('click',()=>{const msg=$('bkMsg');if(!M||M.empty){msg.textContent='Todavía no hay datos.';return}
-  const src={w:'withings',c:'hoja de control',h:'hoja 2013',m:'manual'};const f=(x,d)=>x==null?'':x.toFixed(d);
+  const src={w:'withings',c:'control diario',h:'histórico',m:'manual'};const f=(x,d)=>x==null?'':x.toFixed(d);
   const csv=['fecha,peso_kg,grasa_pct,masa_grasa_kg,musculo_kg,masa_magra_kg,agua_kg,hueso_kg,imc,origen'].concat(M.all.map(p=>[p.k,f(p.kg,2),f(p.fp,1),f(p.fm,2),f(p.mu,2),f(p.lean,2),f(p.wa,2),f(p.bo,2),f(p.bmi,1),src[p.src]||p.src].join(','))).join('\n');
   download(`peso-historial-${d2k(new Date())}.csv`,csv,msg)});
 $('bkMed').addEventListener('click',()=>{const msg=$('bkMsg');const keys=Object.keys(MED.e||{}).sort();if(!keys.length){msg.textContent='No hay medidas guardadas.';return}
@@ -1872,7 +1872,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-schw]');if
 const lifeEmpty=(ids,t)=>{for(const id of ids)$(id).innerHTML=emptyBox(t)};
 function renderActividad(){
   const L=LIFE;const ids=['chSteps','chMin','chStepsDow','chActW','woTypes','chHr','woList','dayCard','actWeek','chWoWk','chWoDow','actRec','actGoals','chStepsHist','actMonths'];
-  if(!L||!L.hasAct){$('actKv').innerHTML='';$('stepsLead').textContent='';lifeEmpty(ids,'Aún no hay datos de actividad. El script de tu hoja los descarga de Withings en la pestaña «Actividad».');return}
+  if(!L||!L.hasAct){$('actKv').innerHTML='';$('stepsLead').textContent='';lifeEmpty(ids,'Aún no hay datos de actividad. Llegan solos de Apple Salud, Android o Withings: conéctalos en Tu cuenta → Fuentes de datos.');return}
   renderDay(L);
   const W=lifeWin(L.act,actRange),rows=W.rows,prev=W.prev,weeks=W.days/7;
   const wos=L.wo.filter(x=>x.k>=W.k0&&x.k<=W.k1),wosP=actRange?L.wo.filter(x=>x.k>=addK(W.k0,-actRange)&&x.k<W.k0):[];
@@ -2210,7 +2210,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('#shTabs [data-sh
 
 function renderSueno(){
   const L=LIFE;const ids=['chSlp','chSched','chPh','chSlpDow','chSlpW','chSlpTr','chClockTr','slpCal','chSlpHist','slpWk','chPhPct','nightCard'];
-  if(!L||!L.hasSlp){$('slpKv').innerHTML='';$('slpLead').textContent='';$('slpWTxt').textContent='';lifeEmpty(ids,'Aún no hay noches registradas. El script de tu hoja descarga el sueño de Withings (también el de tu Apple Watch) en la pestaña «Sueño».');return}
+  if(!L||!L.hasSlp){$('slpKv').innerHTML='';$('slpLead').textContent='';$('slpWTxt').textContent='';lifeEmpty(ids,'Aún no hay noches registradas. El sueño llega solo de Apple Salud (Apple Watch, AutoSleep), Android o Withings: conéctalos en Tu cuenta → Fuentes de datos.');return}
   const W=lifeWin(L.slp,slpRange),rows=W.rows,prev=W.prev;const av=(a,f)=>mean(a.map(f));
   const asleep=av(rows,s=>s.asleep),asleepP=av(prev,s=>s.asleep);
   const tot=rows.reduce((s,x)=>s+(x.asleep||0),0);const pct=f=>tot?rows.reduce((s,x)=>s+(x[f]||0),0)/tot*100:null;

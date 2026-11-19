@@ -22,7 +22,7 @@ log = logging.getLogger("bodylens.sheets")
 def source_of(user_id: int) -> str:
     with db.ro() as con:
         r = con.execute("SELECT data_source FROM users WHERE id=?", (user_id,)).fetchone()
-    return (r["data_source"] if r else None) or "sheet"
+    return (r["data_source"] if r else None) or "server"
 
 
 def set_source(con, user_id: int, source: str) -> None:

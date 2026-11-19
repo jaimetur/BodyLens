@@ -124,7 +124,7 @@ async function load() {
 async function loadSources() {
   const S = await api('GET', '/api/sources');
   const w = S.withings, h = S.hae;
-  $('sSrc').textContent = S.dataSource === 'server' ? 'directo al servidor' : (ME.sources.sheet ? 'hoja de Google (puente provisional)' : 'ninguna todavía');
+  $('sSrc').textContent = S.dataSource === 'server' ? 'directo al servidor' : 'ninguna todavía';
   $('wSt').textContent = w.connected ? 'conectado' : 'sin conectar'; $('wSt').dataset.on = w.connected ? '1' : '';
   $('wGo').hidden = w.connected || !w.configured; $('wOff').hidden = !w.connected;
   $('wInfo').textContent = !w.configured ? 'El servidor aún no tiene los datos de la aplicación de Withings (Administración → Withings).'

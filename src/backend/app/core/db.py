@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS users (
   active INTEGER NOT NULL DEFAULT 1,
   requested_at TEXT,
   request_note TEXT,
-  data_source TEXT NOT NULL DEFAULT 'sheet',
+  data_source TEXT NOT NULL DEFAULT 'server',
   lang TEXT NOT NULL DEFAULT 'en',
   font_size TEXT NOT NULL DEFAULT 'md',
   created_at TEXT NOT NULL
@@ -160,9 +160,11 @@ def _migrate(con: sqlite3.Connection) -> None:
     cols = {r[1] for r in con.execute("PRAGMA table_info(users)")}
     for col, ddl in (("must_change", "INTEGER NOT NULL DEFAULT 0"), ("email", "TEXT"),
                      ("active", "INTEGER NOT NULL DEFAULT 1"), ("requested_at", "TEXT"), ("request_note", "TEXT"),
-                     ("data_source", "TEXT NOT NULL DEFAULT 'sheet'")):
+                     ("data_source", "TEXT NOT NULL DEFAULT 'server'")):
         if col not in cols:
             con.execute(f"ALTER TABLE users ADD COLUMN {col} {ddl}")
+    # the Google Sheet bridge is retired for new accounts: every account without a sheet keeps its data on the server
+    con.execute("UPDATE users SET data_source='server' WHERE data_source='sheet' AND coalesce(sheet_id, '')=''")
     if "font_size" not in cols:
         con.execute("ALTER TABLE users ADD COLUMN font_size TEXT NOT NULL DEFAULT 'md'")
     if "lang" not in cols:

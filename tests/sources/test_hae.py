@@ -134,7 +134,7 @@ def test_endpoint_pasa_la_cuenta_al_servidor(client, make_user, login):
     c = login("jaimetur")
     url = c.post("/api/sources/hae/token").json()["url"]
     token = url.rsplit("/", 1)[1]
-    assert c.get("/api/sources").json()["dataSource"] == "sheet"
+    assert c.get("/api/sources").json()["dataSource"] == "server"   # new accounts keep their data on the server
     anon = client.__class__(client.app)
     assert anon.post("/api/ingest/hae/malo", json={}).json() == {"ok": False, "error": "token"}
     r = anon.post(f"/api/ingest/hae/{token}", json=sleep(seg("2026-11-18 23:00:00", "2026-11-19 07:00:00", "Asleep", AS)))

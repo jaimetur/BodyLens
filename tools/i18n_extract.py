@@ -44,7 +44,7 @@ def clean(s: str) -> str:
     return re.sub(r"\s+", " ", s.replace("&nbsp;", " ").replace("&amp;", "&")).strip(EDGE).lstrip(". ")
 
 
-HARD = re.compile(r"^#|\[data-|\$\{|''|\?'|'\}|=>|[<>]|(^|\s)[a-z]+-[a-z]+(\s|$)|\b(px|em|rem|var)\b")
+HARD = re.compile(r"NOT NULL|^#|\[data-|\$\{|''|\?'|'\}|=>|[<>]|(^|\s)[a-z]+-[a-z]+(\s|$)|\b(px|em|rem|var)\b")
 
 
 def keep(s: str, html_text: bool = False) -> bool:

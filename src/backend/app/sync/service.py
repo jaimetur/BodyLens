@@ -31,6 +31,8 @@ async def sync_server(user: User, client: httpx.AsyncClient | None = None) -> di
     """Fase 2: Withings directo (si está conectado) y libro regenerado desde las tablas."""
     from app.sheets import service as sheets
     from app.sources import withings
+    if not withings.load_tokens(user.id) and not db.get_setting(f"hae_last:{user.id}"):
+        return {"ok": False, "message": "You have not connected any data source yet: connect them in Your account → Data sources."}
     lock = _locks[user.id]
     async with lock:
         result: dict = {"ok": True}
