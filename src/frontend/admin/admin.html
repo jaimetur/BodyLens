@@ -4,7 +4,6 @@
 <link rel="icon" type="image/svg+xml" href="/icon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/pages.css">
 <style>
-main{max-width:980px}
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
 .tabs button{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
 .tabs button.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
@@ -16,8 +15,8 @@ td.act{white-space:nowrap;text-align:right}
 td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
 .tag{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:8px;background:var(--raised);border:1px solid var(--line);margin-left:4px}
 .tag.adm{background:#3B7BF2;color:#fff;border-color:#3B7BF2}.tag.off{background:var(--bad);color:#fff;border-color:var(--bad)}
-.edit{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
-@media (max-width:640px){.edit{grid-template-columns:1fr}table thead{display:none}table,tbody,tr,td{display:block}tr{border-bottom:1px solid var(--line);padding:6px 0}td{border:0;padding:3px 0}td.act{text-align:left}}
+.edit{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:0 14px}
+@media (max-width:640px){table thead{display:none}table,tbody,tr,td{display:block}tr{border-bottom:1px solid var(--line);padding:6px 0}td{border:0;padding:3px 0}td.act{text-align:left}}
 .secret{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:15px;background:var(--raised);padding:6px 10px;border-radius:8px;display:inline-block}
 </style></head>
 <body><main>

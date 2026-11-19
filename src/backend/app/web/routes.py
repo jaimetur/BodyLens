@@ -15,6 +15,8 @@ BRANDING = {"icon.svg", "wordmark.svg", "favicon-32.png", "apple-touch-icon.png"
 
 
 def _front(*parts: str, **kw) -> FileResponse:
+    # las páginas y sus estilos cambian con cada despliegue: el navegador las revalida siempre (ETag → 304 si no cambian)
+    kw.setdefault("headers", {"Cache-Control": "no-cache"})
     return FileResponse(config.settings.frontend_dir.joinpath(*parts), **kw)
 
 
@@ -67,12 +69,12 @@ def shim():
 
 @router.get("/pages.css")
 def pages_css():
-    return _front("common", "pages.css", media_type="text/css")
+    return _front("common", "pages.css", media_type="text/css", headers={"Cache-Control": "no-cache"})
 
 
 @router.get("/pages.js")
 def pages_js():
-    return _front("common", "pages.js", media_type="text/javascript")
+    return _front("common", "pages.js", media_type="text/javascript", headers={"Cache-Control": "no-cache"})
 
 
 @router.get("/manifest.webmanifest")
