@@ -6,14 +6,15 @@ from pydantic import BaseModel
 
 from app.accounts.users import User
 from app.core import db, i18n
-from app.core.deps import admin_user, bad, current_user
+from app.core.deps import admin_user, bad, optional_user
 from app.help import docs, translate
 
 router = APIRouter()
 
 
-def _lang(request: Request, u: User) -> str:
-    return i18n.clean(request.query_params.get("lang")) or i18n.request_lang(request, u)
+def _lang(request: Request) -> str:
+    """The language asked for, else the account's (if signed in), else the one chosen on the sign-in page."""
+    return i18n.clean(request.query_params.get("lang")) or i18n.request_lang(request, optional_user(request))
 
 
 def _doc(lang: str, doc: str) -> tuple[str, str, bool]:
@@ -35,9 +36,10 @@ def _title(html: str, doc: str) -> str:
     return re.sub(r"<[^>]+>", "", m.group(1)).strip() if m else doc
 
 
+# the help is public: anyone can read it, signed in or not
 @router.get("/api/help")
-def help_index(request: Request, u: User = Depends(current_user)):
-    lang = _lang(request, u)
+def help_index(request: Request):
+    lang = _lang(request)
     mods = []
     for n in docs.module_names():
         html, _, _ = _doc(lang, n)
@@ -46,8 +48,8 @@ def help_index(request: Request, u: User = Depends(current_user)):
 
 
 @router.get("/api/help/{doc}")
-def help_doc(doc: str, request: Request, u: User = Depends(current_user)):
-    lang = _lang(request, u)
+def help_doc(doc: str, request: Request):
+    lang = _lang(request)
     html, shown, pending = _doc(lang, doc)
     return {"doc": doc, "lang": lang, "shown": shown, "pending": pending, "translator": translate.configured(),
             "title": _title(html, doc), "html": html}

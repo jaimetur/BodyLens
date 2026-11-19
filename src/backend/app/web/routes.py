@@ -120,8 +120,7 @@ def account_page(request: Request):
 
 @router.get("/help", response_class=HTMLResponse)
 def help_page(request: Request):
-    if not optional_user(request):
-        return RedirectResponse("/login?next=/help", status_code=303)
+    """Public: the help can be read without signing in."""
     return _page("help", "help.html", request=request)
 
 

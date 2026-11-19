@@ -41,7 +41,8 @@ def test_documents_in_english(client, make_user, login, docs_dir):
     assert "Release: v1" in c.get("/api/help/changelog?lang=en").json()["html"]
     assert c.get("/api/help/../etc?lang=en").status_code == 404
     assert c.get("/api/help/nope?lang=en").status_code == 404
-    assert client.get("/api/help").status_code == 401
+    assert client.get("/api/help").status_code == 200                 # public: no session needed
+    assert "Intro text" in client.get("/api/help/readme?lang=en").json()["html"]
 
 
 def test_without_translator_english(client, make_user, login, docs_dir, monkeypatch):
@@ -112,7 +113,8 @@ def test_help_page(client, make_user, login):
     make_user("ana")
     c = login("ana")
     assert "/i18n.js" in c.get("/help").text
-    assert client.get("/help", follow_redirects=False).headers["location"] == "/login?next=/help"
+    assert client.get("/help", follow_redirects=False).status_code == 200   # public
+    assert 'href="/help"' in client.get("/login").text
 
 
 def test_libretranslate(client, make_user, login, docs_dir, monkeypatch):

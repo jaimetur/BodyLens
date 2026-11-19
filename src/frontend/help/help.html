@@ -14,6 +14,7 @@
 .hnav a:hover{background:var(--raised)}
 .hnav a.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 6px 18px rgba(59,123,242,.28)}
 .hnav a.on i{background:rgba(255,255,255,.22)}
+.hlang select{width:auto;display:inline-block;padding:5px 8px;font-size:14px}
 .hpick{display:none;width:100%;margin-bottom:12px;font-size:16px}
 .hdoc{min-width:0;padding:26px 30px 30px!important}
 .hnote{font-size:14px;border-radius:12px;padding:10px 14px;margin:0 0 18px;background:color-mix(in srgb,var(--accent) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));color:var(--ink)}
@@ -46,7 +47,7 @@
 @media (max-width:760px){.hlp{grid-template-columns:1fr}.hnav{display:none}.hpick{display:block}.hdoc{padding:18px 16px!important}.md{font-size:16px}.md h1{font-size:30px}}
 </style></head>
 <body><main class="acct">
-  <div class="top"><a class="brand" href="/"><img src="/icon.svg" alt=""><b>BodyLens · Help</b></a><a class="btn ghost" href="/">Back to the app</a></div>
+  <div class="top"><a class="brand" href="/"><img src="/icon.svg" alt=""><b>BodyLens · Help</b></a><span><label class="hlang">🌐 <select id="langPick2" aria-label="Language"></select></label> <a class="btn ghost" href="/">Back to the app</a></span></div>
   <select class="hpick" id="pick" aria-label="Help"></select>
   <div class="hlp">
     <nav class="card hnav" id="nav" aria-label="Help"></nav>
@@ -99,6 +100,11 @@ document.addEventListener('click', e => {
   if (a) { e.preventDefault(); location.hash = a.dataset.doc; }
 });
 addEventListener('hashchange', () => load(docOf()));
+// language: signed in, it is the account's; otherwise the one kept in this browser
+langPicker($('langPick2'), async l => {
+  try { await api('POST', '/api/me/lang', { lang: l }); } catch (e) { setLangCookie(l); }
+  location.reload();
+});
 $('pick').addEventListener('change', () => { location.hash = $('pick').value; });
 (async () => {
   try {

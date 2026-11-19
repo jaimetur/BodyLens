@@ -56,7 +56,7 @@
   - Each account picks its own, and emails arrive in the language of whoever receives them.
   - The base catalog is in English (`src/frontend/i18n/`), with a guide for contributing translations.
   - The language is chosen in the access request and invitation forms too.
-- **Help:** a Help section in the app with the help of every module, the README and the changelog, without leaving the tool.
+- **Help:** a Help section in the app with the help of every module, the README and the changelog, without leaving the tool. It is public: it can be read without signing in (link on the sign-in screen, with its own language picker).
   - The documents are written only in English and translated automatically into each account's language with LibreTranslate, a free translator running on the server next to BodyLens (the Claude API can be set as an optional, paid alternative in Administration → **Translator**); each translation is kept until the English text changes.
   - Spanish comes already translated with the app (`help/i18n/es/`), so it needs no translator.
   - Every document is translated in advance into every language when the server starts, and checked again every 10 minutes: only documents whose English text changed (their fingerprint) are translated again, so the help opens already translated.
