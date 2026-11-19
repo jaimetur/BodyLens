@@ -1,6 +1,6 @@
 #!/bin/sh
 # Despliega en el NAS el commit actual de la rama de la versión (lo usa el agente tras cada push).
-#   - Si desde lo desplegado solo cambia código (src/, assets/): copia en caliente con rsync a la carpeta code/ del stack
+#   - Si desde lo desplegado solo cambia código (src/, assets/): copia en caliente (tar por SSH) a la carpeta code/ del stack
 #     y reinicia el contenedor si cambia el backend. Tarda unos segundos.
 #   - Si cambian dependencias, Dockerfile o librerías de la página: espera a la imagen nueva de GitHub Actions y la baja.
 # Uso: tools/deploy.sh [--imagen]      (--imagen fuerza el camino de la imagen)
@@ -29,13 +29,13 @@ if [ "$IMAGE" = 1 ]; then
   gh run watch "$RID" --exit-status >/dev/null || { echo "El build $RID ha fallado." >&2; exit 1; }
 fi
 
-# código: export limpio del commit (solo lo que está en git) y rsync al stack, conservando los inodos (--inplace)
+# código: export limpio del commit (solo lo que está en git). En el NAS se borran los ficheros (no las carpetas, que el
+# contenedor tiene montadas) y se extrae encima; el NAS no permite rsync por SSH.
 TMP=$(mktemp -d); trap 'rm -rf "$TMP"' EXIT
 git archive HEAD src assets | tar -x -C "$TMP"
 echo "$SHA $(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$TMP/REVISION"
-ssh -o BatchMode=yes "$HOST" "mkdir -p $STACK/code"
-rsync -a --delete --inplace --exclude node_modules --exclude vendor --exclude '__pycache__' -e "ssh -o BatchMode=yes" \
-  "$TMP/src" "$TMP/assets" "$TMP/REVISION" "$HOST:$STACK/code/"
+COPYFILE_DISABLE=1 tar -c -C "$TMP" src assets REVISION | ssh -o BatchMode=yes "$HOST" \
+  "mkdir -p $STACK/code && find $STACK/code -type f -delete && tar -x -C $STACK/code && find $STACK/code -depth -type d -empty -delete; mkdir -p $STACK/code"
 
 if [ "$IMAGE" = 1 ]; then
   ssh -o BatchMode=yes "$HOST" "cd $STACK && $DOCKER compose -p bodylens pull -q && $DOCKER compose -p bodylens up -d"
