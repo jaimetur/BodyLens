@@ -1,4 +1,4 @@
-<!-- en: 8a46e69e75e6ce8c -->
+<!-- en: 37e012ec15e96401 -->
 # Cuentas y acceso
 
 Cada persona tiene su propia cuenta de BodyLens, con sus datos separados de los de los demás. Entras con tu nombre de usuario (o tu correo) y tu contraseña.
@@ -25,6 +25,9 @@ Cada persona tiene su propia cuenta de BodyLens, con sus datos separados de los 
 Ábrela desde el menú del perfil (arriba a la izquierda) → **Tu cuenta**.
 - **Nombre y apellidos** y **correo**: el correo recibe todas las notificaciones.
 - **Idioma**: el idioma de toda la app y de los correos que recibes. Antes de entrar, elígelo con el selector 🌐 de la pantalla de acceso. Las cuentas nuevas empiezan en inglés (o en el idioma elegido al pedir la cuenta).
+- **Tamaño del texto**: Pequeño, Normal, Grande o Muy grande, para toda la app.
+- **Tema**: los colores de la app y de estas páginas. **Automático** sigue a tu dispositivo (claro de día y oscuro de noche si tu dispositivo lo hace); **Diurno** es siempre claro, **Nocturno** siempre oscuro, y además están **Sepia** (claro y cálido), **Océano** (azul profundo), **Bosque** (verde oscuro) y **Alto contraste** (blanco y negro, para leer mejor).
+- **Bloquear perfiles con PIN tras**: los minutos sin actividad (1, 2, 5, 10, 15 o 30; 1 por defecto) tras los que un perfil con PIN se bloquea solo.
 - **Contraseña**: pide la actual; al cambiarla se cierra tu sesión en los demás dispositivos.
 - **Pareja** y **Sincronización**: mira [pareja](couples.md) y [sincronización](sync.md). Importar copias está en Tu cuenta → Datos y copias ([importar](import.md)).
 - **Administración**: solo para cuentas de administrador; mira [administración](administration.md).

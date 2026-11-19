@@ -1,0 +1,73 @@
+/* Colour themes chosen in Your account (the server inlines this file and sets <html data-theme="…"> when the account
+   does not use "auto"). "html:root[…]" outranks the light/dark rules of the app and of pages.css. Each theme sets the
+   variables of the app (--bg, --weight, --hero…) and those of the server pages (--accent, --accent2, --ok…). */
+
+/* Daytime: always light, whatever the device says */
+html:root[data-theme="light"]{
+  --bg:#eef1f5;--surface:#ffffff;--raised:#f5f7fa;--ink:#121a26;--muted:#5a6677;--line:#dde3ea;
+  --bad:#d9572b;--accent:#3B7BF2;--accent2:#5B5BF0;--ok:#1f9d6b;color-scheme:light}
+
+/* Night: always dark */
+html:root[data-theme="dark"]{
+  --bg:#0a0f16;--surface:#121a24;--raised:#18222e;--ink:#e8edf3;--muted:#97a4b4;--faint:#687587;--line:#253041;--line2:#1d2733;
+  --weight:#6d7cf0;--fat:#c08316;--mus:#d4566f;--bone:#9a78dc;--wat:#2b9cc9;--dot:#7e8ba0;
+  --weight-soft:#1c2350;--fat-soft:#33270f;--mus-soft:#3a1b25;--bone-soft:#2a2144;--wat-soft:#11303d;
+  --good:#3aa774;--bad:#e06a45;--warn:#d6a24a;--good-soft:#132f24;--bad-soft:#3a2018;--warn-soft:#33280f;
+  --hero:#18213a;--hero-2:#1f2b4a;--hero-line:#33405e;
+  --a1:#1f9c7a;--a2:#e0605a;--a3:#c99a1c;--a4:#c45ab8;--a5:#9aa6b5;--a6:#e27aa3;
+  --act:#25a8aa;--act-soft:#1e5556;--act-1:#1f4f50;--act-2:#2a8f91;--act-3:#71d4d5;
+  --slp:#9a84f0;--nap:#f07ab5;--slp-soft:#3f3570;--ph-deep:#5560d8;--ph-light:#3a4580;--ph-rem:#3fb6d2;--ph-awake:#e3a24e;
+  --g-face:#0b0f16;--g-in:#0f141d;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 8px 28px rgba(0,0,0,.3);
+  --accent:#5b93f5;--accent2:#7474f5;--ok:#48c08f;color-scheme:dark}
+
+/* Sepia: warm, paper-like light */
+html:root[data-theme="sepia"]{
+  --bg:#f3ece0;--surface:#fbf7f0;--raised:#f6efe3;--ink:#2e261c;--muted:#6f6352;--faint:#9a8d79;--line:#e2d6c3;--line2:#ebe1d1;
+  --weight:#8a4f2a;--weight-soft:#f1e2d3;--dot:#9a8d79;
+  --hero:#3a2c1f;--hero-2:#4a3827;--hero-ink:#f8f1e6;--hero-muted:#cbb99f;--hero-line:#5c4733;--hero-accent:#f0b27a;
+  --g-face:#efe6d6;--g-nd:#f6efe3;
+  --shadow:0 1px 2px rgba(60,40,20,.06),0 8px 24px rgba(60,40,20,.07);
+  --bad:#b5502a;--accent:#a0582c;--accent2:#8a4f2a;--ok:#4f8a3a;color-scheme:light}
+
+/* Ocean: deep blue night */
+html:root[data-theme="ocean"]{
+  --bg:#06141f;--surface:#0c1f2e;--raised:#11283a;--ink:#e3f1fa;--muted:#8fb0c4;--faint:#5f8196;--line:#1b3a50;--line2:#143044;
+  --weight:#3fb6e8;--fat:#c08316;--mus:#d4566f;--bone:#9a78dc;--wat:#2fd0c8;--dot:#6f97ad;
+  --weight-soft:#0f3550;--fat-soft:#33270f;--mus-soft:#3a1b25;--bone-soft:#2a2144;--wat-soft:#0d3a3a;
+  --good:#3ac08a;--bad:#ff7a59;--warn:#e0b04a;--good-soft:#0f3328;--bad-soft:#3a1d14;--warn-soft:#33280f;
+  --hero:#0b2a40;--hero-2:#0f3a57;--hero-line:#1d4d6d;--hero-accent:#7fd6ff;
+  --a1:#2fbf9a;--a2:#ff6f6a;--a3:#e0b04a;--a4:#c86ad0;--a5:#8fb0c4;--a6:#f08ab5;
+  --act:#2fd0c8;--act-soft:#124a4a;--act-1:#103c3c;--act-2:#23a6a0;--act-3:#7ee8e2;
+  --slp:#8ea2ff;--nap:#f07ab5;--slp-soft:#2a3a7a;--ph-deep:#4d6ae0;--ph-light:#2f4a80;--ph-rem:#3fc6e2;--ph-awake:#e3a24e;
+  --g-face:#051019;--g-in:#081824;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 28px rgba(0,0,0,.35);
+  --accent:#3fb6e8;--accent2:#5a8cff;--ok:#3ac08a;color-scheme:dark}
+
+/* Forest: dark green */
+html:root[data-theme="forest"]{
+  --bg:#0a130e;--surface:#111e16;--raised:#17281e;--ink:#e6f2e8;--muted:#94ad9a;--faint:#64806b;--line:#21382a;--line2:#1a2e22;
+  --weight:#5fc98a;--fat:#c99a2e;--mus:#d4566f;--bone:#a58adc;--wat:#3aa9c9;--dot:#7c9a84;
+  --weight-soft:#173a26;--fat-soft:#33290f;--mus-soft:#3a1b25;--bone-soft:#2a2144;--wat-soft:#11303d;
+  --good:#5fc98a;--bad:#e8704a;--warn:#d8b04a;--good-soft:#14331f;--bad-soft:#3a2018;--warn-soft:#332a0f;
+  --hero:#13291b;--hero-2:#1a3824;--hero-line:#2a4a35;--hero-accent:#9be8b6;
+  --a1:#3fb08a;--a2:#e0605a;--a3:#d8b04a;--a4:#c45ab8;--a5:#94ad9a;--a6:#e27aa3;
+  --act:#3fb08a;--act-soft:#1c4a38;--act-1:#163d2e;--act-2:#2f8f6c;--act-3:#86e0bd;
+  --slp:#9a84f0;--nap:#f07ab5;--slp-soft:#3f3570;--ph-deep:#5560d8;--ph-light:#3a4580;--ph-rem:#3fb6d2;--ph-awake:#e3a24e;
+  --g-face:#08100b;--g-in:#0c1610;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 28px rgba(0,0,0,.32);
+  --accent:#5fc98a;--accent2:#3fb08a;--ok:#5fc98a;color-scheme:dark}
+
+/* High contrast: black background, white text, bright accents */
+html:root[data-theme="contrast"]{
+  --bg:#000000;--surface:#0b0b0b;--raised:#141414;--ink:#ffffff;--muted:#d0d0d0;--faint:#a8a8a8;--line:#5a5a5a;--line2:#3a3a3a;
+  --weight:#8fa2ff;--fat:#ffc24a;--mus:#ff7a95;--bone:#c9a8ff;--wat:#4ad2ff;--dot:#d0d0d0;
+  --weight-soft:#1d2550;--fat-soft:#3a2c0a;--mus-soft:#3d1622;--bone-soft:#2c2047;--wat-soft:#0b3344;
+  --good:#4ee08f;--bad:#ff7a59;--warn:#ffd24a;--good-soft:#0e3320;--bad-soft:#3d1a10;--warn-soft:#3a300a;
+  --hero:#0b0b0b;--hero-2:#161616;--hero-ink:#ffffff;--hero-muted:#d0d0d0;--hero-line:#5a5a5a;--hero-accent:#a8b6ff;
+  --a1:#3fe0b0;--a2:#ff6f6a;--a3:#ffd24a;--a4:#e07ae0;--a5:#d0d0d0;--a6:#ff8ac0;
+  --act:#3fe0d8;--act-soft:#124a4a;--act-1:#0f3c3c;--act-2:#2ab8b2;--act-3:#9af5f0;
+  --slp:#b0a0ff;--nap:#ff8ac8;--slp-soft:#3a3270;--ph-deep:#6a78ff;--ph-light:#46509a;--ph-rem:#4ad8f0;--ph-awake:#ffb85a;
+  --g-face:#000000;--g-in:#050505;
+  --shadow:none;
+  --accent:#8fb4ff;--accent2:#a8a8ff;--ok:#4ee08f;--bad:#ff7a59;color-scheme:dark}

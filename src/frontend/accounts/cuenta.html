@@ -34,6 +34,8 @@
           <label>Correo (te llegan aquí los avisos)<input id="email" type="email" autocomplete="email"></label>
           <label>Idioma<select id="lang"></select></label>
           <label>Tamaño del texto<select id="fsize"><option value="sm">Pequeño</option><option value="md">Normal</option><option value="lg">Grande</option><option value="xl">Muy grande</option></select></label>
+          <label>Tema<select id="ftheme"><option value="auto">Automático (según el dispositivo)</option><option value="light">Diurno</option><option value="dark">Nocturno</option><option value="sepia">Sepia</option><option value="ocean">Océano</option><option value="forest">Bosque</option><option value="contrast">Alto contraste</option></select></label>
+          <label>Bloquear perfiles con PIN tras<select id="flock"><option value="1">1 minuto sin actividad</option><option value="2">2 minutos sin actividad</option><option value="5">5 minutos sin actividad</option><option value="10">10 minutos sin actividad</option><option value="15">15 minutos sin actividad</option><option value="30">30 minutos sin actividad</option></select></label>
         </div>
         <div class="row"><button id="profGo" type="button">Guardar cambios</button><span class="msg" id="profMsg"></span></div>
       </section>
@@ -53,7 +55,7 @@
         <h2>Datos personales</h2>
         <p class="small">Se usan para el IMC, el índice de masa magra, las zonas de referencia y las fórmulas de las medidas con cinta.</p>
         <div class="fgrid">
-          <label>Altura (cm)<input id="pdHeight" type="number" step="1" inputmode="numeric" placeholder="178"></label>
+          <label>Altura (cm)<input id="pdHeight" type="number" step="1" inputmode="numeric"></label>
           <label>Sexo para las fórmulas<select id="pdSex"><option value="">Sin indicar</option><option value="h">Hombre</option><option value="m">Mujer</option></select></label>
           <label>Fecha de nacimiento<input id="pdBirth" type="date"></label>
         </div>
@@ -122,6 +124,8 @@ async function load() {
   $('kUser').textContent = ME.user.username + (ME.user.isAdmin ? ' · administración' : '');
   $('kName').textContent = ME.user.name; $('name').value = ME.user.name; $('email').value = ME.user.email || '';
   $('fsize').value = ME.user.fontSize || 'md';
+  $('ftheme').value = ME.user.theme || 'auto';
+  $('flock').value = String(ME.user.lockMin || 1);
   $('avatar').textContent = ME.user.name.split(/\s+/).slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
   const p = ME.partner;
   $('pLinked').hidden = !p; $('pFree').hidden = !!p;
@@ -190,6 +194,16 @@ $('out').addEventListener('click', async () => {
   // los datos guardados en este navegador también se van
   try { for (const k of Object.keys(localStorage)) if (k.startsWith('bascula:') || k === 'bodylens:user') localStorage.removeItem(k); sessionStorage.clear(); } catch (e) { }
   TOP.location.href = '/login';
+});
+$('ftheme').addEventListener('change', async () => {
+  try { await api('POST', '/api/me/theme', { theme: $('ftheme').value }); TOP.location.reload(); } catch (e) { say($('profMsg'), e.message, 'err'); }
+});
+$('flock').addEventListener('change', async () => {
+  try {
+    await api('POST', '/api/me/lock', { minutes: +$('flock').value });
+    try { if (TOP.BODYLENS_USER) TOP.BODYLENS_USER.lockMin = +$('flock').value; } catch (e) { /* other origin */ }
+    say($('profMsg'), 'Guardado.', 'ok');
+  } catch (e) { say($('profMsg'), e.message, 'err'); }
 });
 $('fsize').addEventListener('change', async () => {
   try { await api('POST', '/api/me/font', { size: $('fsize').value }); TOP.location.reload(); } catch (e) { say($('profMsg'), e.message, 'err'); }

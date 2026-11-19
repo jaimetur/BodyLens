@@ -26,13 +26,18 @@ def display_css(user) -> str:
     """Text size of the account (CSS zoom of the whole page); phones get half the increase so nothing overflows.
     Embedded pages (Your account, Administration, Help) cancel the zoom of their frame and apply it inside, so their
     content is laid out at the real width of the frame."""
-    from app.accounts.users import FONT_SIZES
+    from app.accounts.users import FONT_SIZES, THEMES
+    out = ""
+    theme = getattr(user, "theme", None) or "auto"
+    if theme in THEMES and theme != "auto":   # colour theme: its variables and the attribute that selects them
+        css = config.settings.frontend_dir.joinpath("common", "themes.css").read_text(encoding="utf-8")
+        out += f"<style>{css}</style><script>document.documentElement.setAttribute('data-theme','{theme}')</script>"
     z = FONT_SIZES.get(getattr(user, "font_size", None) or "md", FONT_SIZES["md"])
     if z == 1:
-        return ""
+        return out
     zp = round(1 + (z - 1) / 2, 3)
     rule = lambda k: f"html{{zoom:{k}}}.srvframe{{zoom:{round(1 / k, 5)}}}"   # noqa: E731
-    return f"<style>{rule(z)}@media (max-width:700px){{{rule(zp)}}}</style>"
+    return out + f"<style>{rule(z)}@media (max-width:700px){{{rule(zp)}}}</style>"
 
 
 def _page(*parts: str, request: Request | None = None) -> HTMLResponse:

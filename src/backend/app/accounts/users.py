@@ -45,18 +45,22 @@ class User:
     request_note: str | None = None
     lang: str = "en"
     font_size: str = "md"
+    theme: str = "auto"
+    lock_min: int = 1
 
     @classmethod
     def from_row(cls, r: sqlite3.Row) -> "User":
         return cls(r["id"], r["username"], r["name"], bool(r["is_admin"]), r["partner_id"], r["partner_since"],
                    r["sheet_id"], r["apps_script_url"], bool(r["must_change"]), r["email"], bool(r["active"]),
                    r["requested_at"], r["request_note"], r["lang"] if "lang" in r.keys() else "en",
-                   r["font_size"] if "font_size" in r.keys() else "md")
+                   r["font_size"] if "font_size" in r.keys() else "md",
+                   r["theme"] if "theme" in r.keys() else "auto",
+                   r["lock_min"] if "lock_min" in r.keys() else 1)
 
     def public(self) -> dict:
         return {"id": self.id, "username": self.username, "name": self.name, "isAdmin": self.is_admin,
                 "mustChange": self.must_change, "email": self.email or "", "lang": self.lang,
-                "fontSize": self.font_size}
+                "fontSize": self.font_size, "theme": self.theme, "lockMin": self.lock_min}
 
 
 def _utcnow() -> datetime:
@@ -159,6 +163,26 @@ def set_font_size(con: sqlite3.Connection, user_id: int, size: str | None) -> st
         raise UserError("Ese tamaño de texto no está disponible.")
     con.execute("UPDATE users SET font_size=? WHERE id=?", (size, user_id))
     return size
+
+
+# colour themes of the interface (CSS in src/frontend/common/themes.css); "auto" follows the device
+THEMES = ("auto", "light", "dark", "sepia", "ocean", "forest", "contrast")
+# minutes without activity before a profile with a PIN locks itself
+LOCK_MINUTES = (1, 2, 5, 10, 15, 30)
+
+
+def set_theme(con: sqlite3.Connection, user_id: int, theme: str | None) -> str:
+    if theme not in THEMES:
+        raise UserError("Ese tema no está disponible.")
+    con.execute("UPDATE users SET theme=? WHERE id=?", (theme, user_id))
+    return theme
+
+
+def set_lock_minutes(con: sqlite3.Connection, user_id: int, minutes: int | None) -> int:
+    if minutes not in LOCK_MINUTES:
+        raise UserError("Ese tiempo de bloqueo no está disponible.")
+    con.execute("UPDATE users SET lock_min=? WHERE id=?", (minutes, user_id))
+    return minutes
 
 
 def set_email(con: sqlite3.Connection, user_id: int, email: str | None) -> None:

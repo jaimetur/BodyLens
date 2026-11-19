@@ -27,6 +27,8 @@ CREATE TABLE IF NOT EXISTS users (
   data_source TEXT NOT NULL DEFAULT 'server',
   lang TEXT NOT NULL DEFAULT 'en',
   font_size TEXT NOT NULL DEFAULT 'md',
+  theme TEXT NOT NULL DEFAULT 'auto',
+  lock_min INTEGER NOT NULL DEFAULT 1,
   created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS sessions (
@@ -167,6 +169,10 @@ def _migrate(con: sqlite3.Connection) -> None:
     con.execute("UPDATE users SET data_source='server' WHERE data_source='sheet' AND coalesce(sheet_id, '')=''")
     if "font_size" not in cols:
         con.execute("ALTER TABLE users ADD COLUMN font_size TEXT NOT NULL DEFAULT 'md'")
+    if "theme" not in cols:
+        con.execute("ALTER TABLE users ADD COLUMN theme TEXT NOT NULL DEFAULT 'auto'")
+    if "lock_min" not in cols:
+        con.execute("ALTER TABLE users ADD COLUMN lock_min INTEGER NOT NULL DEFAULT 1")
     if "lang" not in cols:
         # las cuentas de antes del multi-idioma usaban la app en español: lo conservan; las nuevas, inglés
         con.execute("ALTER TABLE users ADD COLUMN lang TEXT NOT NULL DEFAULT 'en'")

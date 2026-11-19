@@ -1,4 +1,4 @@
-<!-- en: 582f9f8070ace2dd -->
+<!-- en: 262184dd38c011a0 -->
 # Peso
 
 Sirve para seguir la evolución de tu peso frente al plan de pérdida: tendencia, ritmo, semanas, días de la semana, calendario de pesadas e hitos. Las pesadas vienen de la báscula **Withings**; también puedes añadir pesadas manuales.
@@ -26,7 +26,7 @@ Sirve para seguir la evolución de tu peso frente al plan de pérdida: tendencia
   - **Intentos de pérdida**: bandas verdes sobre los periodos detectados como intentos.
   - Al tocar un elemento de la leyenda se oculta o se muestra. Al pasar el ratón o deslizar el dedo por el gráfico se ve el detalle del día (y la nota del día, si la hay).
 - **Tarjetas de cifras**: ritmo de 4 y de 2 semanas (regresión de las pesadas), comparado con el plan, ritmo necesario para llegar al objetivo en la fecha del plan, próximo hito, fecha del objetivo a tu ritmo, ruido diario (oscilación típica de un día al siguiente) y racha de semanas bajando.
-- **Nueva pesada manual**: fecha, peso y, si quieres, grasa, músculo, agua y hueso, para los días sin pesada de la báscula (o si no tienes báscula Withings). Si más tarde llega una pesada de la báscula para ese día, prevalece la de la báscula. Debajo se listan las pesadas manuales con **Editar** y **Quitar**. Sin ninguna pesada todavía, Peso muestra solo esta tarjeta y una nota.
+- **Nueva pesada manual**: cada campo muestra tu último valor como referencia (vacío si no hay ninguno). En el móvil, al tocar un número se abre una rueda: deslízala arriba o abajo para cambiar el valor y pulsa **Listo** (o **Teclado** para escribirlo). Fecha, peso y, si quieres, grasa, músculo, agua y hueso, para los días sin pesada de la báscula (o si no tienes báscula Withings). Si más tarde llega una pesada de la báscula para ese día, prevalece la de la báscula. Debajo se listan las pesadas manuales con **Editar** y **Quitar**. Sin ninguna pesada todavía, Peso muestra solo esta tarjeta y una nota.
 
 ## Semanas
 

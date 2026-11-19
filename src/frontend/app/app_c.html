@@ -131,7 +131,9 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeProfMenu()});
 // a profile with a PIN locks itself after 1 minute without activity (here or in the pages shown inside the app)
 let LAST_ACT=Date.now();window.blActivity=()=>{LAST_ACT=Date.now()};
 for(const ev of ['pointerdown','pointermove','keydown','wheel','touchstart','scroll'])addEventListener(ev,()=>{LAST_ACT=Date.now()},{passive:true,capture:true});
-function idleCheck(){const p=PROF();if(!p||!p.pinH||LOCK||!unlocked(p)||Date.now()-LAST_ACT<60000)return;
+// minutes chosen in Your account (1 by default)
+const lockMs=()=>Math.max(1,+((window.BODYLENS_USER||{}).lockMin)||1)*60000;
+function idleCheck(){const p=PROF();if(!p||!p.pinH||LOCK||!unlocked(p)||Date.now()-LAST_ACT<lockMs())return;
   for(const q of PROFS){delete UNL[q.id];try{sessionStorage.removeItem('bascula:unl:'+q.id)}catch(e){}}try{sessionStorage.removeItem('bascula:grp')}catch(e){}
   closeProfMenu();showLock(p,null);document.body.classList.add('locked')}
 setInterval(idleCheck,5000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)idleCheck()});
@@ -3457,7 +3459,50 @@ function applyVTabs(){for(const nav of document.querySelectorAll('.vtabs')){cons
   document.querySelectorAll(`#v-${v} [data-tg]`).forEach(el=>el.classList.toggle('vt-off',el.dataset.tg!==cur))}}
 document.addEventListener('click',e=>{const m=e.target.closest('[data-vt]');if(m){e.preventDefault();UI.vt={...(UI.vt||{}),resumen:m.dataset.vt};saveUI();applyVTabs();renderView();window.scrollTo({top:0});return}const a=e.target.closest('.vtabs a');if(!a)return;e.preventDefault();const v=a.closest('.vtabs').dataset.view;
   if(curTab(v)===a.dataset.tab){goY(0);return}SCR[posKey()]=scrollY;UI.vt={...(UI.vt||{}),[v]:a.dataset.tab};saveUI();applyVTabs();renderView();goY(SCR[posKey()]||0)});
-function renderView(){applyVTabs();if(VIEW==='sueno')try{renderBankTab()}catch(e){console.warn(e)}
+/* ---------- picker for numbers: tapping a manual-entry field on a phone opens a wheel to slide the value up or down;
+   «Teclado» goes back to typing it ---------- */
+const WHL_R={qmKg:[30,300,.1],qmFp:[3,70,.1],qmMu:[10,150,.1],qmWp:[20,80,.1],qmBo:[.5,8,.05],mKg:[30,300,.1],
+  maSteps:[0,60000,100],maMin:[0,600,1],maKcal:[0,5000,10],mwDur:[1,600,1],mwKcal:[0,5000,10],mwDist:[0,300,.1],
+  mhRhr:[30,200,1],mhHrv:[5,300,1],mhSpo:[70,100,.5],mhVo2:[10,90,.5],cfHeight:[120,230,1]};
+const whlRange=el=>WHL_R[el.id]||(/^md-/.test(el.id)?[10,300,.5]:null);
+let WHL=null;
+function whlOpen(el){const R=whlRange(el);if(!R)return;const [lo,hi,st]=R,dec=st<1?(String(st).split('.')[1]||'').length:0;
+  const vals=[];for(let i=0;lo+i*st<=hi+1e-9;i++)vals.push(+(lo+i*st).toFixed(dec));
+  const num=s=>{const v=parseFloat(String(s||'').replace(/\./g,dec?'.':'').replace(',','.'));return isNaN(v)?null:v};
+  const start=num(el.value)??num(el.placeholder)??vals[Math.floor(vals.length/2)];
+  let idx=0,best=Infinity;vals.forEach((v,i)=>{const d=Math.abs(v-start);if(d<best){best=d;idx=i}});
+  WHL={el,vals,dec,idx};const lab=el.closest('label');$('whlLbl').textContent=lab?lab.childNodes[0].textContent.trim():'';
+  $('whlList').innerHTML=vals.map(v=>`<div>${fmtN(v,dec)}</div>`).join('');$('whl').hidden=false;
+  const L=$('whlList');L.scrollTop=idx*44;whlMark()}
+function whlMark(){if(!WHL)return;const L=$('whlList'),i=Math.max(0,Math.min(WHL.vals.length-1,Math.round(L.scrollTop/44)));WHL.idx=i;
+  $('whlVal').textContent=fmtN(WHL.vals[i],WHL.dec);const on=L.querySelector('.on');if(on)on.classList.remove('on');if(L.children[i])L.children[i].classList.add('on')}
+$('whlList').addEventListener('scroll',whlMark,{passive:true});
+$('whlList').addEventListener('click',e=>{const d=e.target.closest('#whlList div');if(!d)return;const i=[...$('whlList').children].indexOf(d);$('whlList').scrollTo({top:i*44,behavior:'smooth'})});
+function whlClose(){$('whl').hidden=true;WHL=null}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-whl]');if(!b||!WHL)return;whlMark();const {el,vals,dec,idx}=WHL,a=b.dataset.whl;
+  if(a==='ok'){el.value=vals[idx].toFixed(dec);el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))}
+  whlClose();el.readOnly=false;if(a==='kbd'){el.dataset.kb='1';el.focus()}else el.blur()});
+$('whl').addEventListener('click',e=>{if(e.target.id==='whl'&&WHL){const el=WHL.el;whlClose();el.readOnly=false;el.blur()}});
+document.addEventListener('keydown',e=>{if(WHL&&e.key==='Escape'){const el=WHL.el;whlClose();el.readOnly=false}});
+// only on touch screens: with a mouse and keyboard the field is typed as usual
+// (read-only while the wheel is open, so the phone keyboard does not come up)
+document.addEventListener('pointerdown',e=>{const el=e.target.closest('input[type=number]');if(!el||el.dataset.kb||e.pointerType==='mouse'||!whlRange(el))return;
+  el.readOnly=true;whlOpen(el)});
+document.addEventListener('focusout',e=>{const el=e.target;if(el&&el.dataset&&el.dataset.kb&&!WHL)delete el.dataset.kb});
+// reference shown in the empty manual-entry fields: the last value of this account (blank when there is none)
+function lastRow(S,f){for(const y of Object.keys(S||{}).sort().reverse()){const d=(S[y]||{}).d||{};for(const k of Object.keys(d).sort().reverse()){const v=d[k];if(Array.isArray(v)&&f(v))return [k,v]}}return null}
+function lastWeighRow(f){let best=null;const h=lastRow(HIST,v=>f(v));if(h)best=h;
+  for(const [k,v] of Object.entries((DOC&&DOC.manual)||{})){const a=Array.isArray(v)?v:[v];if(f(a)&&(!best||k>best[0]))best=[k,a]}return best}
+function refPh(){const ph=(id,v,dec)=>{const el=$(id);if(el)el.placeholder=v==null||isNaN(v)?'':(dec?fmtN(v,dec):String(Math.round(v)))};
+  const w=lastWeighRow(v=>v[0]!=null);for(const id of ['qmKg','mKg'])ph(id,w&&w[1][0],1);
+  const fp=lastWeighRow(v=>v[1]!=null),mu=lastWeighRow(v=>v[3]!=null),wa=lastWeighRow(v=>v[4]!=null&&v[0]),bo=lastWeighRow(v=>v[5]!=null);
+  ph('qmFp',fp&&fp[1][1],1);ph('qmMu',mu&&mu[1][3],1);ph('qmWp',wa&&wa[1][4]/wa[1][0]*100,1);ph('qmBo',bo&&bo[1][5],2);
+  const a=i=>{const r=lastRow(ACT,v=>v[i]!=null);return r&&r[1][i]};ph('maSteps',a(0));ph('maMin',(()=>{const r=lastRow(ACT,v=>v[4]!=null||v[5]!=null);return r?(r[1][4]||0)+(r[1][5]||0):null})());ph('maKcal',a(6));
+  const wo=(()=>{let b=null;for(const Y of Object.values(WO||{}))for(const v of Object.values(Y.d||{}))if(v&&(!b||v[0]>b[0]||(v[0]===b[0]&&(v[1]||0)>(b[1]||0))))b=v;return b})();
+  if($('mwType'))$('mwType').placeholder=wo&&wo[3]||'';ph('mwDur',wo&&wo[2]);ph('mwKcal',wo&&wo[4]);ph('mwDist',wo&&wo[6]!=null?wo[6]/1000:null,1);
+  for(const [id,i,,,dec] of (typeof MH!=='undefined'?MH:[])){const r=lastRow(HK,v=>v[i]!=null);ph(id,r&&r[1][i],dec?1:0)}
+  const mk=Object.keys((MED&&MED.e)||{}).sort().reverse();for(const [f] of (typeof MEDF!=='undefined'?MEDF:[])){const k=mk.find(k=>MED.e[k][f]!=null);ph('md-'+f,k?MED.e[k][f]:null,1)}}
+function renderView(){try{refPh()}catch(e){console.warn(e)}applyVTabs();if(VIEW==='sueno')try{renderBankTab()}catch(e){console.warn(e)}
   try{
     if(VIEW==='cuenta'||VIEW==='admin'||VIEW==='help'){srvShow(VIEW);if(VIEW==='cuenta')try{$('emb-cuenta').contentWindow.blPdFill()}catch(e){}return}
     syncGoals();

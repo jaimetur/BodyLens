@@ -1,4 +1,4 @@
-<!-- en: 0f60cf9f0d83ae24 -->
+<!-- en: 6e8832050ec8039d -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -66,6 +66,9 @@
   - El español viene ya traducido con la app (`help/i18n/es/`), así que no necesita traductor.
   - Todos los documentos se traducen de antemano a todos los idiomas al arrancar el servidor y se revisan cada 10 minutos: solo se vuelven a traducir los documentos cuyo texto en inglés ha cambiado (su huella), así que la ayuda se abre ya traducida.
 - **Tamaño del texto** por cuenta (Pequeño, Normal, Grande, Muy grande) en *Tu cuenta*, igual que el idioma; el nuevo Normal es algo más grande que antes.
+- **Temas** por cuenta en *Tu cuenta*: Automático (según el dispositivo), Diurno, Nocturno, Sepia, Océano, Bosque y Alto contraste, para la app y las páginas del servidor.
+- **Minutos hasta que un perfil con PIN se bloquea**, a elegir en *Tu cuenta* (1 por defecto).
+- **Entrada manual más cómoda:** cada campo muestra como referencia el último valor de la cuenta (vacío si no hay ninguno, en vez de un ejemplo fijo) y, en el móvil, al tocar un número se abre una rueda para deslizar el valor, con Teclado para escribirlo.
 
 #### 🚀 Mejoras:
 - **Un único importador** (Tu cuenta → Datos y copias) para la copia completa y para el `snap.json` de la versión anterior. Si la copia tiene varios perfiles, eliges cuál importar.

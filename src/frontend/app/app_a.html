@@ -216,7 +216,7 @@ body.viewer .appbar .pill{display:inline-flex}
 .kh{margin:16px 0 8px;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}.kdw{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;align-items:end;text-align:center}.kdw div{display:flex;flex-direction:column;align-items:center;gap:3px}.kdw i{width:70%;border-radius:4px 4px 0 0}.kdw b{font-size:.68rem;font-variant-numeric:tabular-nums}.kdw small{font-size:.68rem;color:var(--muted)}
 .kdesc{margin:14px 0 8px;color:var(--muted);font-size:.86rem;line-height:1.45}.kgo{display:inline-block;margin-top:6px;text-decoration:none}.htile.tap{cursor:pointer}
 .tnb{display:inline-block;font-style:normal;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:1px 7px;border-radius:999px;vertical-align:1px;white-space:nowrap}.tnb-p{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}.tnb-n{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}.tnb-i{background:var(--line2);color:var(--muted)}
-body.locked .app{visibility:hidden}.lock{position:fixed;inset:0;z-index:200;background:var(--bg);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) 16px max(16px,env(safe-area-inset-bottom,0px));overflow:auto}
+body.locked .app{visibility:hidden}.whl{position:fixed;inset:0;z-index:190;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center}.whl[hidden]{display:none}.whl-b{width:100%;max-width:520px;background:var(--surface);color:var(--ink);border-radius:22px 22px 0 0;padding:16px 16px max(16px,env(safe-area-inset-bottom,0px));box-shadow:var(--shadow)}.whl-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:2px 4px 10px}.whl-h span{color:var(--muted);font-weight:600}.whl-h b{font-family:var(--display);font-size:2.2rem;line-height:1;color:var(--weight)}.whl-w{position:relative;height:220px}.whl-l{box-sizing:border-box;height:220px;overflow-y:auto;scroll-snap-type:y mandatory;padding:88px 0;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;-webkit-mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent);mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent)}.whl-l::-webkit-scrollbar{display:none}.whl-l div{height:44px;line-height:44px;text-align:center;scroll-snap-align:center;font-size:1.25rem;color:var(--muted);font-variant-numeric:tabular-nums}.whl-l div.on{color:var(--ink);font-weight:700;font-size:1.45rem}.whl-sel{position:absolute;left:0;right:0;top:88px;height:44px;border-radius:12px;background:var(--weight-soft);pointer-events:none}.whl-a{display:flex;gap:8px;margin-top:12px}.whl-a .btn{flex:1}.lock{position:fixed;inset:0;z-index:200;background:var(--bg);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) 16px max(16px,env(safe-area-inset-bottom,0px));overflow:auto}
 .lk{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;max-width:300px;text-align:center}.lk h2{margin:0;font-size:1.3rem}.lk-av{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;color:#fff;font-style:normal;font-weight:800;font-size:1.3rem}.lk-msg{margin:0;color:var(--muted);min-height:1.3em}
 .lk-dots{display:flex;gap:14px;margin:6px 0 10px}.lk-dots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--ink);opacity:.6}.lk-dots i.on{background:var(--ink);opacity:1}.lk-dots.shake{animation:lkshake .35s}@keyframes lkshake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 .lk-pad{display:grid;grid-template-columns:repeat(3,72px);gap:14px;justify-content:center}.lk-pad button{width:72px;height:72px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:1.6rem;font-weight:600;cursor:pointer}.lk-pad button:active{background:var(--line2)}
@@ -786,6 +786,7 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <div class="lock" id="lock" role="dialog" aria-modal="true" aria-label="Introduce el PIN" hidden></div>
+<div class="whl" id="whl" role="dialog" aria-modal="true" aria-labelledby="whlLbl" hidden><div class="whl-b"><div class="whl-h"><span id="whlLbl"></span><b id="whlVal"></b></div><div class="whl-w"><div class="whl-sel" aria-hidden="true"></div><div class="whl-l" id="whlList"></div></div><div class="whl-a"><button type="button" class="btn ghost" data-whl="kbd">Teclado</button><button type="button" class="btn ghost" data-whl="cancel">Cancelar</button><button type="button" class="btn" data-whl="ok">Listo</button></div></div></div>
 <div class="app">
   <aside class="rail" aria-label="Secciones">
     <div class="brand"><div class="bl"><svg class="bl-ic" viewBox="0 0 512 512" aria-hidden="true"> <defs> <linearGradient id="blbg" x1="0" y1="0" x2="1" y2="1"> <stop offset="0" stop-color="#5B5BF0"/> <stop offset=".55" stop-color="#3B7BF2"/> <stop offset="1" stop-color="#14B8C8"/> </linearGradient> <linearGradient id="blgl" x1="0" y1="0" x2="1" y2="1"> <stop offset="0" stop-color="#fff" stop-opacity=".55"/> <stop offset="1" stop-color="#fff" stop-opacity="0"/> </linearGradient> </defs> <rect width="512" height="512" rx="116" fill="url(#blbg)"/> <circle cx="256" cy="256" r="150" fill="#fff" fill-opacity=".1"/> <circle cx="256" cy="256" r="150" fill="none" stroke="#fff" stroke-width="30"/> <circle cx="256" cy="256" r="104" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="10"/> <path d="M148 186a128 128 0 0 1 86-60" fill="none" stroke="url(#blgl)" stroke-width="18" stroke-linecap="round"/> <path d="M120 270h78l28-62 40 120 34-86 20 28h72" fill="none" stroke="#fff" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/> </svg><b>Body<em>Lens</em></b></div><span id="brandSub">Salud y seguimiento</span></div>
@@ -845,7 +846,7 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
           <p class="lead">Para los días en que no te pesas con la Withings o no sincroniza. Si después llega una pesada de la báscula ese día, manda la de la báscula.</p>
           <div class="form">
             <label for="qmDate">Fecha<input id="qmDate" type="date"></label>
-            <label for="qmKg">Peso (kg)<input id="qmKg" type="number" step="0.1" inputmode="decimal" placeholder="109.4"></label>
+            <label for="qmKg">Peso (kg)<input id="qmKg" type="number" step="0.1" inputmode="decimal"></label>
             <details class="full"><summary>Composición (opcional)</summary><div class="form">
               <label for="qmFp">Grasa (%)<input id="qmFp" type="number" step="0.1" inputmode="decimal"></label>
               <label for="qmMu">Músculo (kg)<input id="qmMu" type="number" step="0.1" inputmode="decimal"></label>
@@ -906,10 +907,10 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
           <p class="lead">Si mides tu pulso o tu oxígeno sin reloj (con un pulsioxímetro, por ejemplo), apúntalo aquí. Rellena lo que tengas. Si después llegan datos de tus fuentes para ese día, mandan los de las fuentes.</p>
           <div class="form">
             <label for="mhDate">Fecha<input id="mhDate" type="date"></label>
-            <label for="mhRhr">Pulso en reposo (lpm)<input id="mhRhr" type="number" step="1" inputmode="numeric" placeholder="60"></label>
-            <label for="mhHrv">VFC (ms)<input id="mhHrv" type="number" step="1" inputmode="numeric" placeholder="45"></label>
-            <label for="mhSpo">Saturación de oxígeno (%)<input id="mhSpo" type="number" step="0.1" inputmode="decimal" placeholder="97"></label>
-            <label for="mhVo2">VO2 máx<input id="mhVo2" type="number" step="0.1" inputmode="decimal" placeholder="40"></label>
+            <label for="mhRhr">Pulso en reposo (lpm)<input id="mhRhr" type="number" step="1" inputmode="numeric"></label>
+            <label for="mhHrv">VFC (ms)<input id="mhHrv" type="number" step="1" inputmode="numeric"></label>
+            <label for="mhSpo">Saturación de oxígeno (%)<input id="mhSpo" type="number" step="0.1" inputmode="decimal"></label>
+            <label for="mhVo2">VO2 máx<input id="mhVo2" type="number" step="0.1" inputmode="decimal"></label>
             <div class="row full"><button class="btn" id="mhAdd" type="button">Guardar el día</button><span class="msg" id="mhMsg" aria-live="polite"></span></div>
           </div>
           <div class="list" id="mhList"></div>
@@ -971,9 +972,9 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
           <p class="lead">Si no llevas reloj ni conectas el móvil, apunta aquí tu actividad del día. Si después llegan datos de tus fuentes para ese día, mandan los de las fuentes.</p>
           <div class="form">
             <label for="maDate">Fecha<input id="maDate" type="date"></label>
-            <label for="maSteps">Pasos<input id="maSteps" type="number" step="1" inputmode="numeric" placeholder="8000"></label>
-            <label for="maMin">Minutos de ejercicio<input id="maMin" type="number" step="1" inputmode="numeric" placeholder="30"></label>
-            <label for="maKcal">Calorías activas (kcal)<input id="maKcal" type="number" step="1" inputmode="numeric" placeholder="300"></label>
+            <label for="maSteps">Pasos<input id="maSteps" type="number" step="1" inputmode="numeric"></label>
+            <label for="maMin">Minutos de ejercicio<input id="maMin" type="number" step="1" inputmode="numeric"></label>
+            <label for="maKcal">Calorías activas (kcal)<input id="maKcal" type="number" step="1" inputmode="numeric"></label>
             <div class="row full"><button class="btn" id="maAdd" type="button">Guardar el día</button><span class="msg" id="maMsg" aria-live="polite"></span></div>
           </div>
           <div class="list" id="maList"></div>
@@ -992,8 +993,8 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
           <div class="form">
             <label for="mwDate">Fecha<input id="mwDate" type="date"></label>
             <label for="mwStart">Hora de inicio<input id="mwStart" type="time"></label>
-            <label for="mwType">Tipo<input id="mwType" list="mwTypes" placeholder="Caminar"></label>
-            <label for="mwDur">Duración (min)<input id="mwDur" type="number" step="1" inputmode="numeric" placeholder="45"></label>
+            <label for="mwType">Tipo<input id="mwType" list="mwTypes"></label>
+            <label for="mwDur">Duración (min)<input id="mwDur" type="number" step="1" inputmode="numeric"></label>
             <label for="mwKcal">Calorías (kcal, opcional)<input id="mwKcal" type="number" step="1" inputmode="numeric"></label>
             <label for="mwDist">Distancia (km, opcional)<input id="mwDist" type="number" step="0.1" inputmode="decimal"></label>
             <datalist id="mwTypes"></datalist>
@@ -1100,7 +1101,7 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
           <h2>Perfil</h2>
           <p class="lead">Se usan para el IMC, el índice de masa magra, las zonas de referencia y las fórmulas de las medidas con cinta.</p>
           <div class="form">
-            <label for="cfHeight">Altura (cm)<input id="cfHeight" type="number" step="1" inputmode="numeric" placeholder="178"></label>
+            <label for="cfHeight">Altura (cm)<input id="cfHeight" type="number" step="1" inputmode="numeric"></label>
             <label for="cfSex">Sexo para las fórmulas<select id="cfSex"><option value="">Sin indicar</option><option value="h">Hombre</option><option value="m">Mujer</option></select></label>
             <label for="cfBirth">Fecha de nacimiento<input id="cfBirth" type="date"></label>
             <div class="row full"><button class="btn" id="pfSave" type="button">Guardar perfil</button><span class="msg" id="pfMsg" aria-live="polite"></span></div>
@@ -1187,7 +1188,7 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
           <p class="lead">Solo para días en que la báscula no sincronice. Si después llega una pesada de Withings para ese día, manda la de la báscula.</p>
           <div class="form">
             <label for="mDate">Fecha<input id="mDate" type="date"></label>
-            <label for="mKg">Peso (kg)<input id="mKg" type="number" step="0.1" inputmode="decimal" placeholder="109.4"></label>
+            <label for="mKg">Peso (kg)<input id="mKg" type="number" step="0.1" inputmode="decimal"></label>
             <div class="row full"><button class="btn" id="mAdd" type="button">Añadir pesada</button><span class="msg" id="mMsg" aria-live="polite"></span></div>
           </div>
           <div class="list" id="manualList"></div>

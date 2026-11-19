@@ -217,6 +217,34 @@ def change_font_size(body: FontIn, u: User = Depends(current_user)):
     return {"ok": True, "size": size}
 
 
+class ThemeIn(BaseModel):
+    theme: str
+
+
+@router.post("/api/me/theme")
+def change_theme(body: ThemeIn, u: User = Depends(current_user)):
+    try:
+        with db.tx() as con:
+            theme = users.set_theme(con, u.id, body.theme)
+    except UserError as e:
+        bad(e)
+    return {"ok": True, "theme": theme}
+
+
+class LockIn(BaseModel):
+    minutes: int
+
+
+@router.post("/api/me/lock")
+def change_lock_minutes(body: LockIn, u: User = Depends(current_user)):
+    try:
+        with db.tx() as con:
+            minutes = users.set_lock_minutes(con, u.id, body.minutes)
+    except UserError as e:
+        bad(e)
+    return {"ok": True, "minutes": minutes}
+
+
 # ---------- administración de cuentas ----------
 
 class InviteIn(BaseModel):

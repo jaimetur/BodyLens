@@ -25,7 +25,7 @@ Use it to follow the progress of your weight against the weight-loss plan: trend
   - **Weight-loss attempts**: green bands over the periods detected as attempts.
   - Tapping a legend item hides or shows it. Hovering or swiping over the chart shows the detail for the day (and the note for the day, if there is one).
 - **Figure cards**: 4-week and 2-week pace (regression of the weigh-ins), compared with the plan, pace needed to reach the goal by the plan's date, next milestone, goal date at your pace, daily noise (typical swing from one day to the next) and streak of weeks going down.
-- **New manual weigh-in**: date, weight and, if you want, fat, muscle, water and bone, for days without a scale weigh-in (or if you have no Withings scale). If a scale weigh-in arrives for that day later, the scale's one takes precedence. Below, the manual weigh-ins are listed with **Edit** and **Remove**. Without any weigh-in yet, Weight shows only this card and a short note.
+- **New manual weigh-in**: each field shows your last value as a reference (empty if there is none). On a phone, tapping a number opens a wheel: slide it up or down to change the value and press **Done** (or **Keyboard** to type it). Date, weight and, if you want, fat, muscle, water and bone, for days without a scale weigh-in (or if you have no Withings scale). If a scale weigh-in arrives for that day later, the scale's one takes precedence. Below, the manual weigh-ins are listed with **Edit** and **Remove**. Without any weigh-in yet, Weight shows only this card and a short note.
 
 ## Weeks
 

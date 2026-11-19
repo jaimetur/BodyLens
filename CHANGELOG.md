@@ -65,6 +65,9 @@
   - Spanish comes already translated with the app (`help/i18n/es/`), so it needs no translator.
   - Every document is translated in advance into every language when the server starts, and checked again every 10 minutes: only documents whose English text changed (their fingerprint) are translated again, so the help opens already translated.
 - **Text size** per account (Small, Normal, Large, Extra large) in *Your account*, like the language; the new Normal is slightly bigger than before.
+- **Themes** per account in *Your account*: Automatic (as the device), Daytime, Night-time, Sepia, Ocean, Forest and High contrast, for the app and the server pages.
+- **Minutes before a profile with a PIN locks itself**, chosen in *Your account* (1 by default).
+- **Manual entry, more comfortable:** each field shows the account's last value as a reference (empty when there is none, instead of a fixed example), and on a phone tapping a number opens a wheel to slide the value, with Keyboard to type it.
 
 #### 🚀 Enhancements:
 - **A single importer** (Your account → Data and backups) for the full backup and for the previous version's `snap.json`. If the backup has several profiles, you choose which one to import.
