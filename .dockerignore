@@ -15,8 +15,7 @@ bodylens-datos-privados
 data
 datos
 docs
-legacy
-help
+# help/ goes into the image (the Help module reads it)
 tests
 .github
 .idea
