@@ -1,6 +1,6 @@
 # datos personales y secretos: nunca al repositorio
-data/
-datos/
+/data/
+/datos/
 *.db
 *.db-*
 snap.json
