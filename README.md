@@ -89,9 +89,11 @@ python3.12 -m venv .venv && .venv/bin/pip install -e '.[test]'
 (cd src/frontend && npm ci) && PYTHON=$PWD/.venv/bin/python node tests/frontend/smoke.mjs
 ```
 ```bash
-docker compose -f docker/compose.dev.yml up --build
+tools/dev-data.sh && tools/dev.sh
 ```
-La última orden levanta http://localhost:8000 con recarga automática del backend y la página servida desde `src/`.
+La última orden levanta http://localhost:8000 en caliente: la página se sirve tal cual desde `src/` (basta recargar) y el
+backend se reinicia solo al guardar. `tools/dev-data.sh` copia a `data-dev/` los datos del NAS (lo que se cambie en
+desarrollo no vuelve al NAS). También hay `docker compose -f docker/compose.dev.yml up --build`.
 
 ## Despliegue
 

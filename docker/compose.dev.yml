@@ -1,5 +1,6 @@
-# Desarrollo con recarga automática: docker compose -f docker/compose.dev.yml up --build
+# Desarrollo en caliente: docker compose -f docker/compose.dev.yml up --build   →  http://localhost:8000
 # La página se sirve directamente desde src/frontend (sin compilar) y el backend se recarga al guardar.
+# Datos: data-dev/ (tools/dev-data.sh copia ahí los del NAS; lo que se cambie aquí no vuelve al NAS).
 services:
   bodylens:
     build:
@@ -11,6 +12,9 @@ services:
       SYNC_INTERVAL_MIN: "${SYNC_INTERVAL_MIN:-15}"
       GOOGLE_SERVICE_ACCOUNT_JSON: "${GOOGLE_SERVICE_ACCOUNT_JSON:-}"
       PUBLIC_URL: "http://localhost:8000"
+      # Docker Desktop no siempre avisa de los cambios en carpetas montadas: se comprueban cada poco
+      WATCHFILES_FORCE_POLLING: "true"
+      BODYLENS_REVISION: "desarrollo"
     ports:
       - "8000:8000"
     volumes:
@@ -20,5 +24,6 @@ services:
       - ../src/frontend/common:/app/frontend/common
       - ../src/frontend/compat:/app/frontend/compat
       - ../src/frontend/admin:/app/frontend/admin
+      - ../assets/branding:/app/branding
       - ../data-dev:/data
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--reload-dir", "/app/backend/app"]

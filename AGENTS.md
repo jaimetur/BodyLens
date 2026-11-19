@@ -62,7 +62,7 @@ Lo que hay que crear está descrito en `docs/MIGRACION.md` (backend FastAPI, cap
 ## Comandos (cuando existan)
 
 ```
-docker compose -f docker/compose.dev.yml up --build    # desarrollo con recarga automática
+tools/dev-data.sh && tools/dev.sh                      # desarrollo en caliente (http://localhost:8000) con copia de los datos del NAS
 python3.12 -m venv .venv && .venv/bin/pip install -e '.[test]'   # entorno local (PyCharm usa .venv)
 .venv/bin/python -m pytest -q                          # tests del backend
 (cd src/frontend && npm ci) && PYTHON=$PWD/.venv/bin/python node tests/frontend/smoke.mjs   # arranque de la página
