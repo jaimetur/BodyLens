@@ -22,7 +22,7 @@ Puerto en el NAS: **7280** → 8000 del contenedor. HTTPS: el **Caddy** del NAS.
 
 1. En Dockhand, stack `bodylens` desde `/volume1/docker/stacks/bodylens` → **Deploy** (descarga la imagen de Docker Hub).
 2. Crea tu cuenta de administración (desde una consola del contenedor en Dockhand, o por SSH con permisos de Docker):
-   `docker exec -it bodylens python -m app.admin crear-admin jaime "Jaime Tur"` (pide la contraseña, mínimo 10 caracteres).
+   `docker exec -it bodylens python -m app.admin crear-admin jaime "Jaime Tur"` (pide la contraseña, mínimo 4 caracteres).
 3. Siembra tus datos (los ficheros van en `/volume1/docker/data/bodylens/import/`, que dentro es `/data/import/`):
    - `docker exec bodylens python -m app.seed /data/import/snap.json --usuario jaime`
    - Copia fresca de Ajustes → Copia de seguridad del artefacto: `docker exec bodylens python -m app.seed /data/import/Bascula-copia-AAAA-MM-DD.json --usuario jaime`

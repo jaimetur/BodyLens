@@ -14,7 +14,7 @@ _ph = PasswordHasher()
 # hash de relleno para que un usuario inexistente tarde lo mismo que una contraseña mala
 _DUMMY = _ph.hash("bodylens-relleno")
 
-MIN_PASSWORD = 10
+MIN_PASSWORD = 4
 
 
 def hash_password(pw: str) -> str:

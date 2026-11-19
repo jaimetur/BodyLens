@@ -39,8 +39,8 @@ def test_invite_registration(client, make_user, login):
     code = inv["code"]
     assert inv["url"].endswith(f"/registro?c={code}")
     assert client.get(f"/api/invite/{code}").json() == {"valid": True}
-    r = client.post("/api/register", json={"code": code, "username": "laura", "name": "Laura", "password": "corta"})
-    assert r.status_code == 400 and "10 caracteres" in r.json()["detail"]
+    r = client.post("/api/register", json={"code": code, "username": "laura", "name": "Laura", "password": "abc"})
+    assert r.status_code == 400 and "4 caracteres" in r.json()["detail"]
     r = client.post("/api/register", json={"code": code, "username": "laura", "name": "Laura Romero",
                                            "password": "otra-contraseña-larga"})
     assert r.status_code == 200
