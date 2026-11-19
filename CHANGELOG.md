@@ -75,7 +75,7 @@
   - Each score sits on its meal's row, with large buttons, and Water has its own row.
   - The day's log comes before the estimated loss.
   - The day's log shows the last 4 weeks (Monday to Sunday) at the top instead of just one; the arrows jump 4 weeks.
-- **Email:** the server greets the mail server with its public name instead of the container's private address, which spam filters penalise.
+- **Email:** the server greets the mail server with its public name instead of the container's private address, which spam filters penalise; the test email reads like a real notice (greeting, what it is for, a link to the app) instead of a one-line message.
 - **Profiles panel:** each row adapts to the width of the panel, so the PIN buttons no longer end up out of view.
 - **Manual entry in every module:** the new manual weigh-in card is in Weight (also when there is no weigh-in yet, instead of an empty page); Activity has cards to log the day's activity (steps, exercise minutes, active calories) and workouts by hand; Sleep has one to log any night by hand, and Body → Heart one to log resting heart rate, HRV, oxygen saturation and VO2 max. Data from your sources for the same day takes precedence. Tape measurements, meals, mood and personal records could already be logged by hand.
 - **Android at the same level as the iPhone:** every screen, empty state and notice that spoke only of Apple Health / Health Auto Export now also explains the Android path (Health Connect with the BodyLens app), with the same sending address for both.

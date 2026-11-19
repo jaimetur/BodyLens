@@ -1,4 +1,4 @@
-<!-- en: 6e8832050ec8039d -->
+<!-- en: 38e4f2be37938aea -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -76,7 +76,7 @@
   - Cada nota está en la fila de su comida, con botones grandes, y el Agua tiene su propia fila.
   - El registro del día va antes de la pérdida estimada.
   - El registro del día muestra arriba las últimas 4 semanas (de lunes a domingo) en lugar de una sola; las flechas saltan 4 semanas.
-- **Correo:** el servidor saluda al servidor de correo con su nombre público en vez de con la dirección privada del contenedor, que los filtros de spam penalizan.
+- **Correo:** el servidor saluda al servidor de correo con su nombre público en vez de con la dirección privada del contenedor, que los filtros de spam penalizan; el correo de prueba es como un aviso real (saludo, para qué sirve, enlace a la app) en vez de una sola frase.
 - **Panel de perfiles:** cada fila se adapta al ancho del panel, así que los botones de PIN ya no quedan fuera de la vista.
 - **Entrada manual en todos los módulos:** la tarjeta de pesada manual está en Peso (también cuando aún no hay pesadas, en vez de una página vacía); Actividad tiene tarjetas para apuntar a mano la actividad del día (pasos, minutos de ejercicio, calorías activas) y los entrenamientos; Sueño, una para apuntar a mano cualquier noche, y Cuerpo → Corazón, una para apuntar el pulso en reposo, la VFC, la saturación de oxígeno y el VO2 máx. Los datos de tus fuentes para el mismo día mandan. Las medidas, las comidas, el ánimo y los registros personales ya se podían apuntar a mano.
 - **Android al mismo nivel que el iPhone:** todas las pantallas, avisos y mensajes de «sin datos» que solo hablaban de Apple Salud / Health Auto Export explican también el camino de Android (Health Connect con la app de BodyLens), con la misma dirección de envío para los dos.
