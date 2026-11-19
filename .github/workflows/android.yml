@@ -1,16 +1,23 @@
-name: 🤖 App Android
+name: 🤖 Android app
 
-# Compila la app de Android (Health Connect → servidor de BodyLens) cuando cambia android/ y deja el APK en la
-# release «android-latest» del repositorio (el almacén de artefactos de Actions está lleno). tools/deploy-android.sh
-# lo baja de ahí y lo pone en el NAS, que lo sirve en /android.apk.
+# Builds the Android app (Health Connect → BodyLens server).
+# - On every change in android/ it refreshes the rolling "android-latest" pre-release (the Actions artifact storage is
+#   full), from which tools/deploy-android.sh takes the APK to the NAS, which serves it at /android.apk.
+# - Called by release.yml with a release tag, it attaches the APK to that version's release instead.
 on:
   push:
     branches: [main, "[0-9]+.[0-9]+.[0-9]+"]
     paths: ["android/**", ".github/workflows/android.yml"]
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      release_tag:
+        description: "Release (vX.Y.Z) to attach the APK to"
+        type: string
+        required: true
 
 concurrency:
-  group: bodylens-android-${{ github.ref }}
+  group: bodylens-android-${{ github.ref }}-${{ inputs.release_tag || 'rolling' }}
   cancel-in-progress: true
 
 permissions:
@@ -28,12 +35,12 @@ jobs:
       - uses: gradle/actions/setup-gradle@v6
         with:
           gradle-version: "8.11.1"
-      - name: Firma (si hay almacén de claves en los secretos)
+      - name: Signing key (if the keystore is in the secrets)
         env:
           KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
         run: |
           if [ -n "$KEYSTORE_B64" ]; then echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/bodylens.jks"; echo "ANDROID_KEYSTORE_FILE=$RUNNER_TEMP/bodylens.jks" >> "$GITHUB_ENV"; fi
-      - name: Compilar
+      - name: Build
         working-directory: android
         env:
           BODYLENS_ANDROID_BUILD: ${{ github.run_number }}
@@ -41,13 +48,26 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: gradle --no-daemon assembleRelease
-      - name: Publicar en la release android-latest
+      - name: Publish to the rolling android-latest pre-release
+        if: ${{ !inputs.release_tag }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           cp android/app/build/outputs/apk/release/app-release.apk bodylens-android.apk
-          gh release view android-latest >/dev/null 2>&1 || gh release create android-latest --prerelease \
-            --title "App Android (última)" --notes "APK de la app de Android de BodyLens. Se rehace con cada cambio en android/."
+          TITLE="Android app (rolling build)"
+          NOTES="Latest APK of the BodyLens Android app, rebuilt on every change in android/. It is a rolling build (hence a pre-release); each version's APK is attached to its own vX.Y.Z release."
+          if gh release view android-latest >/dev/null 2>&1; then
+            gh release edit android-latest --title "$TITLE" --notes "$NOTES" --prerelease
+          else
+            gh release create android-latest --prerelease --title "$TITLE" --notes "$NOTES"
+          fi
           gh release upload android-latest bodylens-android.apk --clobber
           echo "build ${{ github.run_number }} · ${GITHUB_SHA::7}" > android-build.txt
           gh release upload android-latest android-build.txt --clobber
+      - name: Attach to the version release
+        if: ${{ inputs.release_tag }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/apk/release/app-release.apk "bodylens-android-${{ inputs.release_tag }}.apk"
+          gh release upload "${{ inputs.release_tag }}" "bodylens-android-${{ inputs.release_tag }}.apk" --clobber

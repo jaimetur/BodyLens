@@ -65,7 +65,7 @@
   - The documents are written only in English and translated automatically into each account's language with LibreTranslate, a free translator running on the server next to BodyLens (the Claude API can be set as an optional, paid alternative in Administration → **Translator**); each translation is kept until the English text changes.
   - Spanish comes already translated with the app (`help/i18n/es/`), so it needs no translator.
   - Every document is translated in advance into every language when the server starts, and checked again every 10 minutes: only documents whose English text changed (their fingerprint) are translated again, so the help opens already translated.
-- **Release tool** (`tools/CreateUpdateRelease.py`, adapted from DriveTest Analyzer): creates the next version's branch with its version, Android version and empty changelog release (English and Spanish), commits and pushes it, or updates the current release's version and date.
+- **Releases** (adapted from DriveTest Analyzer): `tools/CreateUpdateRelease.py` creates the next version's branch with its version, Android version and empty changelog release (English and Spanish), commits and pushes it, or updates the current release's version and date; the **🚀 Release** workflow publishes a version on GitHub with the notes of its changelog block, the source code and the Android APK. The rolling Android APK is published as "Android app (rolling build)".
 
 #### 🚀 Enhancements:
 - **A single importer** (Your account → Data and backups) for the full backup and for the previous version's `snap.json`. If the backup has several profiles, you choose which one to import.

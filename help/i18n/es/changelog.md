@@ -1,4 +1,4 @@
-<!-- en: cecda9e90a1c13e3 -->
+<!-- en: 357500900470799b -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -66,7 +66,7 @@
   - Los documentos están escritos solo en inglés y se traducen automáticamente al idioma de cada cuenta con LibreTranslate, un traductor gratuito que funciona en el propio servidor junto a BodyLens (la API de Claude se puede poner como alternativa opcional y de pago en Administración → **Traductor**); cada traducción se conserva hasta que cambia el texto en inglés.
   - El español viene ya traducido con la app (`help/i18n/es/`), así que no necesita traductor.
   - Todos los documentos se traducen de antemano a todos los idiomas al arrancar el servidor y se revisan cada 10 minutos: solo se vuelven a traducir los documentos cuyo texto en inglés ha cambiado (su huella), así que la ayuda se abre ya traducida.
-- **Herramienta de versiones** (`tools/CreateUpdateRelease.py`, adaptada de DriveTest Analyzer): crea la rama de la siguiente versión con su número de versión, la versión de Android y el bloque vacío del registro de cambios (inglés y español), la confirma y la sube, o actualiza la versión y la fecha de la versión actual.
+- **Versiones** (adaptado de DriveTest Analyzer): `tools/CreateUpdateRelease.py` crea la rama de la siguiente versión con su número de versión, la versión de Android y el bloque vacío del registro de cambios (inglés y español), la confirma y la sube, o actualiza la versión y la fecha de la versión actual; el flujo **🚀 Release** publica una versión en GitHub con las notas de su bloque del registro de cambios, el código fuente y el APK de Android. El APK continuo de Android se publica como «Android app (rolling build)».
 
 #### 🚀 Mejoras:
 - **Un único importador** (Tu cuenta → Datos y copias) para la copia completa y para el `snap.json` de la versión anterior. Si la copia tiene varios perfiles, eliges cuál importar.

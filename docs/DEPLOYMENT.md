@@ -83,6 +83,13 @@ python3 tools/CreateUpdateRelease.py --update 0.1.0 2026-11-20
   one, or discard it (from the command line, `--dirty`; without it, it stops).
 - **Update Current Release** only rewrites the version and date of the current release (no branch, no commit).
 - After pushing, GitHub Actions builds the image; deploy it as usual with `tools/deploy.sh`.
+- **Publishing a version on GitHub** (Releases), when it is finished: run the **🚀 Release** workflow on the version
+  branch (Actions → 🚀 Release → Run workflow, or `gh workflow run release.yml --ref 0.1.0`), or push a tag `vX.Y.Z`.
+  It creates the `vX.Y.Z` release with the notes of that version's block in `CHANGELOG.md`, the source code and the
+  Android APK of the version; "final" makes it the latest release, otherwise it is a pre-release. Running it again
+  recreates it on the current commit.
+- The **Android app (rolling build)** pre-release (`android-latest`) is not a version: it is the APK rebuilt on every
+  change in `android/`, which `tools/deploy-android.sh` copies to the NAS.
 - If the Python has no Tk (Homebrew's, without `brew install python-tk@3.12`), it asks the same questions in the
   terminal instead of opening the window.
 

@@ -1,7 +1,8 @@
-name: 🐳 Tests y build Docker
+name: 🐳 Tests and Docker build
 
-# Se trabaja en la rama de la versión actual (p. ej. 0.1.0): cada push construye la imagen «latest» y la etiqueta
-# de la versión, que es lo que se despliega en el NAS. main se pone al día de vez en cuando (imagen «main»).
+# Work happens on the current version branch (e.g. 0.1.0): every push builds the "latest" image and the version's
+# tag, which is what the NAS runs. main is brought up to date from time to time (image "main"); a tag vX.Y.Z builds
+# the image X.Y.Z (release.yml publishes the GitHub release).
 on:
   push:
     branches: [main, "[0-9]+.[0-9]+.[0-9]+"]
@@ -24,11 +25,11 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "22"
-      - name: Tests del backend
+      - name: Backend tests
         run: |
           pip install -e ".[test]"
           python -m pytest -q
-      - name: Prueba de arranque de la página
+      - name: Page start-up and translator tests
         run: |
           (cd src/frontend && npm ci --no-audit --no-fund --ignore-scripts)
           node tests/frontend/smoke.mjs
@@ -41,7 +42,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Nombre y etiquetas de la imagen
+      - name: Image name and tags
         id: image
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -55,12 +56,12 @@ jobs:
             echo "${IMAGE}:sha-${GITHUB_SHA::7}"
             if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then echo "${IMAGE}:${GITHUB_REF_NAME#v}"; fi
             if [[ "${GITHUB_REF}" == refs/heads/main ]]; then echo "${IMAGE}:main"; fi
-            # rama de versión (0.1.0…): su etiqueta y «latest», que es la que usa el NAS
+            # version branch (0.1.0…): its tag and "latest", which is what the NAS runs
             if [[ "${GITHUB_REF_NAME}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then echo "${IMAGE}:${GITHUB_REF_NAME}"; echo "${IMAGE}:latest"; fi
             echo "EOF"
           } >> "${GITHUB_OUTPUT}"
 
-      - name: Entrar en Docker Hub
+      - name: Sign in to Docker Hub
         uses: docker/login-action@v4
         with:
           username: ${{ steps.image.outputs.username }}
@@ -69,10 +70,10 @@ jobs:
       - uses: docker/setup-qemu-action@v4
       - uses: docker/setup-buildx-action@v4
 
-      - name: Construir y publicar (amd64 + arm64)
+      - name: Build and push (amd64 + arm64)
         uses: docker/build-push-action@v7
         env:
-          # sin artefacto de registro del build (la cuota de almacenamiento de Actions está llena)
+          # no build record artifact (the Actions storage quota is full)
           DOCKER_BUILD_RECORD_UPLOAD: false
         with:
           context: .

@@ -1,0 +1,85 @@
+name: 🚀 Release
+
+# Publishes the GitHub release of a BodyLens version (vX.Y.Z, from pyproject.toml), as DriveTest Analyzer does:
+# notes taken from that version's block in CHANGELOG.md, the source code and the Android APK of the version.
+# - Manual run (Actions → 🚀 Release → Run workflow, on the version branch): recreates the release and its tag on the
+#   commit built; "final" makes it the latest release, otherwise it is a pre-release.
+# - Pushing a tag vX.Y.Z publishes it as final (docker.yml also builds the image jaimetur/bodylens:X.Y.Z for the tag).
+on:
+  workflow_dispatch:
+    inputs:
+      final_release:
+        description: "Final release (otherwise a pre-release)"
+        type: boolean
+        default: true
+  push:
+    tags: ["v*"]
+
+concurrency:
+  group: bodylens-release-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Version
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(python3 -c "import re,pathlib;print(re.search(r'^version\s*=\s*\"([^\"]+)\"',pathlib.Path('pyproject.toml').read_text(),re.M).group(1))")
+          if [[ "${GITHUB_REF}" == refs/tags/v* && "${GITHUB_REF_NAME}" != "v${VERSION}" ]]; then
+            echo "The tag ${GITHUB_REF_NAME} does not match the version in pyproject.toml (${VERSION})." >&2; exit 1
+          fi
+          echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
+          echo "tag=v${VERSION}" >> "${GITHUB_OUTPUT}"
+
+      - name: Release notes from the changelog
+        shell: bash
+        run: |
+          mkdir -p dist
+          python3 - "${{ steps.version.outputs.version }}" <<'PY'
+          import re, sys
+          from pathlib import Path
+          version = sys.argv[1]
+          text = Path("CHANGELOG.md").read_text(encoding="utf-8")
+          m = re.search(rf"^## Release: v{re.escape(version)}\s*$(.*?)(?=^---\s*$|^## Release:|\Z)", text, re.M | re.S)
+          if not m:
+              sys.exit(f"Release v{version} not found in CHANGELOG.md")
+          Path("dist/release_notes.md").write_text(m.group(1).strip() + "\n", encoding="utf-8")
+          PY
+          cat dist/release_notes.md
+
+      - name: Source code
+        run: git archive --format=zip --prefix="BodyLens-${{ steps.version.outputs.version }}/" -o "dist/BodyLens_${{ steps.version.outputs.version }}_source.zip" HEAD
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          FINAL: ${{ github.event_name == 'push' || inputs.final_release }}
+        shell: bash
+        run: |
+          # a manual run recreates the release and its tag on the commit built; a tag push keeps the tag it came with
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then gh release delete "$TAG" --yes --cleanup-tag; else gh release delete "$TAG" --yes; fi
+          elif [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]] && git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null; then
+            git push origin ":refs/tags/$TAG"
+          fi
+          flags=(--title "$TAG" --notes-file dist/release_notes.md --target "${GITHUB_SHA}")
+          if [[ "$FINAL" == "true" ]]; then flags+=(--latest); else flags+=(--prerelease); fi
+          gh release create "$TAG" dist/*.zip "${flags[@]}"
+
+  android:
+    needs: publish
+    uses: ./.github/workflows/android.yml
+    with:
+      release_tag: ${{ needs.publish.outputs.tag }}
+    secrets: inherit
