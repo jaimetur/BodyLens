@@ -1,4 +1,4 @@
-<!-- en: 9c485369cc482b1b -->
+<!-- en: 1ea22960c481949c -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -29,7 +29,8 @@
 - **Tu cuenta:**
   - **Cuenta:** perfil, correo, idioma y contraseña, pareja, fuentes de datos, sincronización e importación.
   - **Perfiles:** gestión de los perfiles de la app, explicada en el propio panel. A cada perfil (menos el principal) se le pueden dar solo los módulos que elijas, con fichas como en DriveTest Analyzer; en el menú solo ve esos.
-  - **Datos personales** (altura, sexo, fecha de nacimiento) es un panel de la pestaña **Cuenta**.
+  - **Datos personales** (altura, sexo, fecha de nacimiento) es un panel de la pestaña **Cuenta**, debajo de Contraseña.
+  - En cada fila de perfil, **Recibe el ciclo** y **Pareja** solo aparecen con varios perfiles y se explican en el panel; el perfil principal muestra como pareja la cuenta unida.
   - **Datos y copias:** de dónde llegan los datos del móvil, origen de los datos, copia completa y exportación a CSV.
 - **Administración** (cuentas de administrador), con estas pestañas:
   - **Usuarios:** editar usuario, nombre, correo y contraseña; activar o desactivar con un interruptor; dar o quitar el rol de admin; restablecer la contraseña; borrar.

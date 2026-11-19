@@ -28,7 +28,8 @@
 - **Your account:**
   - **Account:** profile, email, language and password, partner, data sources, synchronisation and import.
   - **Profiles:** management of the app's profiles, explained on the panel itself. Each profile (except the main one) can be given access to only the modules you choose, with chips like in DriveTest Analyzer; it only sees those in the menu.
-  - **Personal data** (height, sex, date of birth) is a panel of the **Account** tab.
+  - **Personal data** (height, sex, date of birth) is a panel of the **Account** tab, under Password.
+  - In each profile row, **Receives the cycle** and **Partner** only appear with several profiles and are explained on the panel; the main profile shows the linked account as its partner.
   - **Data and backups:** where your phone data comes from, data source, full backup and CSV export.
 - **Administration** (administrator accounts), with these tabs:
   - **Users:** edit username, name, email and password; activate or deactivate with a switch; grant or remove admin; reset the password; delete.

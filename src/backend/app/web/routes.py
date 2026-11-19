@@ -4,7 +4,8 @@ from __future__ import annotations
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse, Response
 
-from app.core import config, i18n
+from app.accounts import users
+from app.core import config, db, i18n
 from app.core.deps import optional_user
 from app.web import page
 
@@ -77,7 +78,13 @@ def index(request: Request):
         return RedirectResponse("/login", status_code=303)
     if u.must_change:
         return RedirectResponse("/cuenta?cambiar=1", status_code=303)
-    return HTMLResponse(page.page(u.public(), i18n_tags(u.lang) + display_css(u)), headers={"Cache-Control": "no-store"})
+    boot = u.public()
+    if u.partner_id:  # the linked account (couple), shown in the profiles panel
+        with db.ro() as con:
+            p = users.get_user(con, u.partner_id)
+        if p:
+            boot["partner"] = {"name": p.name or p.username, "username": p.username, "since": u.partner_since}
+    return HTMLResponse(page.page(boot, i18n_tags(u.lang) + display_css(u)), headers={"Cache-Control": "no-store"})
 
 
 def android_apk_path():
