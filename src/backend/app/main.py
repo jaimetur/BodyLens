@@ -13,7 +13,7 @@ from app.accounts import access_requests, users
 from app.admin import routes as admin_routes
 from app.accounts import routes as accounts_routes
 from app.accounts.users import UserError
-from app.core import config, db, version
+from app.core import backup, config, db, version
 from app.core.deps import CSRF_HEADER
 from app.couples import routes as couples_routes
 from app.data import routes as data_routes
@@ -61,10 +61,10 @@ async def lifespan(app: FastAPI):
             users.bootstrap_email(con, s.admin_username, s.admin_email)
         except UserError:
             log.warning("BODYLENS_ADMIN_EMAIL no es un correo válido.")
-    task = asyncio.create_task(sync_service.scheduler_loop()) if s.scheduler_enabled else None
+    tasks = [asyncio.create_task(sync_service.scheduler_loop()), asyncio.create_task(backup.loop())] if s.scheduler_enabled else []
     yield
-    if task:
-        task.cancel()
+    for t in tasks:
+        t.cancel()
 
 
 app = FastAPI(title="BodyLens", lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)

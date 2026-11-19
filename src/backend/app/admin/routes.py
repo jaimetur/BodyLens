@@ -138,6 +138,31 @@ def put_withings_app(body: WithingsAppIn, u: User = Depends(admin_user)):
     return get_withings_app(u)
 
 
+# ---------- copias de seguridad ----------
+
+@router.get("/api/admin/backups")
+def backups(u: User = Depends(admin_user)):
+    from app.core import backup
+    return {"backups": backup.listing(), "keep": backup.keep()}
+
+
+@router.post("/api/admin/backups")
+async def backup_now(u: User = Depends(admin_user)):
+    import asyncio
+    from app.core import backup
+    p = await asyncio.to_thread(backup.make)
+    return {"ok": True, "name": p.name}
+
+
+@router.get("/api/admin/backups/{name}")
+def backup_file(name: str, u: User = Depends(admin_user)):
+    from fastapi.responses import FileResponse
+    from app.core import backup
+    if not backup.NAME.match(name) or not (backup.folder() / name).exists():
+        raise HTTPException(404, "No existe esa copia.")
+    return FileResponse(backup.folder() / name, media_type="application/octet-stream", filename=name)
+
+
 # ---------- correo ----------
 
 class MailIn(BaseModel):

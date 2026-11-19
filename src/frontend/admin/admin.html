@@ -29,6 +29,7 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
     <button type="button" data-tab="invitaciones">Invitaciones</button>
     <button type="button" data-tab="correo">Correo</button>
     <button type="button" data-tab="withings">Withings</button>
+    <button type="button" data-tab="copias">Copias</button>
     <button type="button" data-tab="fuentes">Fuentes de datos</button>
   </div>
 
@@ -90,6 +91,13 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
     <p class="small" id="wState"></p>
   </section>
 
+  <section class="card" data-panel="copias" hidden>
+    <h2>Copias de seguridad</h2>
+    <p>Cada noche (03:30) el servidor guarda una copia de toda la base de datos (cuentas y datos de todos) en <code>/data/backups</code>. Se conservan las últimas <span id="bKeep">30</span>. Para restaurar una, se para el contenedor y se pone en lugar de <code>bodylens.db</code>.</p>
+    <div class="row"><button class="ghost" id="bNow" type="button">Hacer una copia ahora</button><span class="msg" id="bMsg"></span></div>
+    <ul class="list" id="bList"></ul>
+  </section>
+
   <section class="card" data-panel="fuentes" hidden>
     <h2>Fuentes de datos (puente con Google)</h2>
     <p>Mientras la báscula y el iPhone sigan pasando por la hoja de Google: ID de la hoja de cada cuenta (compartida como lector con la cuenta de servicio del servidor) y URL de la aplicación web de su Apps Script.</p>
@@ -104,7 +112,9 @@ document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click
 show((location.hash || '#usuarios').slice(1).replace(/[^a-z]/g, '') || 'usuarios');
 
 async function load() {
-  const [acc, rq, inv, mail, wapp] = await Promise.all([api('GET', '/api/admin/accounts'), api('GET', '/api/admin/access-requests'), api('GET', '/api/admin/invites'), api('GET', '/api/admin/mail'), api('GET', '/api/admin/withings')]);
+  const [acc, rq, inv, mail, wapp, bk] = await Promise.all([api('GET', '/api/admin/accounts'), api('GET', '/api/admin/access-requests'), api('GET', '/api/admin/invites'), api('GET', '/api/admin/mail'), api('GET', '/api/admin/withings'), api('GET', '/api/admin/backups')]);
+  $('bKeep').textContent = bk.keep;
+  $('bList').innerHTML = bk.backups.map(b => `<li><span>${esc(b.name)} <span class="small">· ${(b.size / 1048576).toFixed(1)} MB</span></span><a class="btn ghost" href="/api/admin/backups/${encodeURIComponent(b.name)}" download>Descargar</a></li>`).join('') || '<li><span class="small">Todavía no hay copias.</span></li>';
   $('wCb').textContent = wapp.callback; $('wId').value = wapp.clientId || ''; $('wSecret').value = '';
   $('wSecret').placeholder = wapp.hasSecret ? '(guardado; escribe otro para cambiarlo)' : '';
   $('wState').textContent = wapp.configured ? 'Configurado: cada cuenta puede conectar su Withings en «Tu cuenta».' : 'Sin configurar.';
@@ -167,6 +177,10 @@ $('mSave').addEventListener('click', async () => {
     await api('PUT', '/api/admin/mail', { host: $('mHost').value, port: +$('mPort').value || null, security: $('mSec').value, username: $('mUser').value, password: $('mPass').value, from_address: $('mFrom').value, from_name: $('mName').value });
     say($('mMsg'), 'Guardado.', 'ok'); await load();
   } catch (e) { say($('mMsg'), e.message, 'err'); }
+});
+$('bNow').addEventListener('click', async () => {
+  $('bNow').disabled = true; say($('bMsg'), 'Copiando…');
+  try { const r = await api('POST', '/api/admin/backups'); say($('bMsg'), 'Copia hecha: ' + r.name, 'ok'); await load(); } catch (e) { say($('bMsg'), e.message, 'err'); } finally { $('bNow').disabled = false; }
 });
 $('wSave').addEventListener('click', async () => {
   try { await api('PUT', '/api/admin/withings', { clientId: $('wId').value, clientSecret: $('wSecret').value }); say($('wMsg'), 'Guardado.', 'ok'); await load(); } catch (e) { say($('wMsg'), e.message, 'err'); }
