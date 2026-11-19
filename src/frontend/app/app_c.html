@@ -251,7 +251,7 @@ function srvShow(v){const f=$('emb-'+v);if(!f)return;
     f.src='/'+v+'?embed=1'+(v==='admin'&&location.hash.includes(':')?'#'+location.hash.split(':')[1]:'')}}
 const link=(id,label,cls)=>`<a class="${cls}${id==='ajustes'?' owner-only':''}" href="#${id}" data-v="${id}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[id]}</svg><span>${label}</span></a>`;
 const SUBV={medidas:'composicion',corazon:'composicion',bienestar:'composicion'};
-$('railNav').innerHTML=VIEWS.filter(([id])=>!SUBV[id]).map(([id,l])=>(id==='ajustes'?`<a class="nav owner-only" href="#ajustes" data-pfnav><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2a4.5 4.5 0 0 1 5 4.8"/></svg><span>Gestionar perfiles</span></a>`:'')+link(id,id==='composicion'?'Cuerpo':l,'nav')).join('');
+$('railNav').innerHTML=VIEWS.filter(([id])=>!SUBV[id]).map(([id,l])=>(id==='ajustes'&&!SRV_V.length?`<a class="nav owner-only" href="#ajustes" data-pfnav><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2a4.5 4.5 0 0 1 5 4.8"/></svg><span>Gestionar perfiles</span></a>`:'')+link(id,id==='composicion'?'Cuerpo':l,'nav')).join('');
 // «Gestionar perfiles» en la barra lateral: abre Ajustes en la parte de perfiles
 document.addEventListener('click',e=>{const a=e.target.closest('a[data-v="intimo"]');if(!a||VIEW!=='intimo')return;e.preventDefault();
   if(privOK()){privSet(PROF(),false);renderView();scrollTo(0,0)}else showLock(PROF(),null,'priv')});
@@ -1565,6 +1565,23 @@ $('ajTabs').addEventListener('click',e=>{const b=e.target.closest('[data-ajt]');
 showAj(AJT);
 // Ajustes (barra lateral, menú): siempre los ajustes generales; «Gestionar perfiles» abre después la parte de perfiles
 addEventListener('hashchange',()=>{if(VIEW==='ajustes'){if(PFNAV){PFNAV=false;showAj(UI.ajTabPf||'perfiles')}else showAj(UI.ajTab&&!AJ_PF.includes(UI.ajTab)?UI.ajTab:'plan')}else ajNavMark()});
+// Server: profile management lives inside «Tu cuenta» as tabs (Cuenta · Perfiles · Datos personales)
+if(SRV_V.length){
+  const accIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>';
+  const pfBtns=[...document.querySelectorAll('#ajTabs [data-ajm="pf"]')];
+  // the «Cuenta» tab in the profiles part of Ajustes
+  $('ajTabs').insertAdjacentHTML('afterbegin',`<button type="button" role="tab" data-acct>${accIcon}<span>Cuenta</span></button>`);
+  // the same tab strip on top of the «Tu cuenta» page
+  $('v-cuenta').insertAdjacentHTML('afterbegin',`<div class="ajtabs" role="tablist"><button type="button" role="tab" class="on" aria-selected="true">${accIcon}<span>Cuenta</span></button>${pfBtns.map(b=>`<button type="button" role="tab" data-acpf="${b.dataset.ajt}">${b.innerHTML}</button>`).join('')}</div>`);
+  $('ajTabs').addEventListener('click',e=>{if(e.target.closest('[data-acct]')){e.stopPropagation();location.hash='cuenta'}},true);
+  $('v-cuenta').addEventListener('click',e=>{const b=e.target.closest('[data-acpf]');if(!b)return;UI.ajTabPf=b.dataset.acpf;saveUI();PFNAV=true;location.hash='ajustes'});
+  const _showAj=showAj;showAj=function(cat){_showAj(cat);const pf=AJ_PF.includes(AJT);
+    const a=document.querySelector('#ajTabs [data-acct]');if(a)a.hidden=!pf;
+    if(VIEW==='ajustes'&&pf)$('viewTitle').textContent='Tu cuenta';ajNavMark()};
+  const _mark=ajNavMark;ajNavMark=function(){_mark();const pf=VIEW==='ajustes'&&AJ_PF.includes(AJT);
+    document.querySelectorAll('#railNav [data-v="cuenta"]').forEach(x=>{if(pf||VIEW==='cuenta')x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')})};
+  showAj(AJT);
+}
 function renderProfCard(){const h=$('pfList');if(!h)return;
   h.innerHTML=PROFS.map((p,i)=>`<div class="pfrow" data-pfi="${i}"><i style="background:${p.col}">${esc(initials(p.name))}</i><input type="text" value="${esc(p.name)}" data-pfname aria-label="Nombre del perfil"><input type="color" value="${p.col}" data-pfcol aria-label="Color"><label class="pfcy"><input type="radio" name="pfcy" data-pfcy${p.cycle?' checked':''}>Ciclo</label><label class="pfcy">Pareja<select data-pfpar><option value="">—</option>${PROFS.filter(q=>q.id!==p.id).map(q=>`<option value="${esc(q.id)}"${hasPartner(p)&&p.partner===q.id?' selected':''}>${esc(q.name.split(' ')[0])}</option>`).join('')}</select></label>${hasPartner(p)?`<label class="pfcy">desde<input type="date" data-pfsince value="${p.partnerSince||''}"></label>`:'<span></span>'}<button type="button" class="btn ghost" data-pfpin>${p.pinH?'Cambiar PIN':'Poner PIN'}</button><button type="button" class="btn ghost" data-pfppin title="PIN para ver Ciclo e intimidad">PIN privado</button>${i?`<button type="button" class="btn ghost danger" data-pfdel>${PF_DEL===i?'¿Seguro?':'Borrar'}</button>`:'<span class="pfmain">Principal</span>'}${PF_PIN===i?`<span class="pfpin"><input type="password" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="4 cifras" data-pfpinv aria-label="Nuevo PIN"><button type="button" class="btn" data-pfpinok>Guardar</button>${p.pinH?'<button type="button" class="btn ghost danger" data-pfpinoff>Quitar PIN</button>':''}</span>`:''}${PF_PPIN===i?`<span class="pfpin"><small class="pfpn">PIN privado (Ciclo e intimidad)${p.privH?'':' · ahora 0000'}</small><input type="password" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="Actual" data-pfppcur aria-label="PIN privado actual"><input type="password" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="Nuevo" data-pfppv aria-label="Nuevo PIN privado"><button type="button" class="btn" data-pfppok>Guardar</button>${p.privH?'<button type="button" class="btn ghost" data-pfppoff>Volver a 0000</button>':''}</span>`:''}</div>`).join('')}
 let PF_DEL=null,PF_PIN=null,PF_PPIN=null;

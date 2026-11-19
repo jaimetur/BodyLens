@@ -4,7 +4,7 @@ Sirve para configurar la app: perfiles y PIN, datos personales, objetivos y plan
 
 ## Cómo se abre
 
-- En el ordenador, en la barra lateral: **Ajustes** (ajustes generales) y **Gestionar perfiles** (parte de perfiles).
+- En el ordenador, en la barra lateral: **Ajustes** (ajustes generales) y **Tu cuenta**, que reúne la cuenta y los perfiles en pestañas: **Cuenta**, **Perfiles** y **Datos personales**.
 - En el móvil, con el icono de ajustes de la barra superior. Desde el botón de perfil también se llega a ambas.
 - El botón **✕** de la barra superior cierra Ajustes y te devuelve a la sección y al punto de la página en que estabas.
 
