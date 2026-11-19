@@ -1,4 +1,4 @@
-<!-- en: 439bb5d298b492b4 -->
+<!-- en: a43dcc0bec8cb337 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -28,7 +28,7 @@
 - **Parejas:** dos cuentas se pueden unir para compartir y editar juntas los registros de ciclo e intimidad. Invitas a tu pareja con su usuario o su correo desde Tu cuenta → Cuenta → Pareja; le llega un correo con la invitación (si no hay ninguna cuenta con ese usuario o correo, te lo dice al momento) y a ti otro cuando la acepta. Un perfil de la app se puede mover a la cuenta propia de esa persona.
 - **Tu cuenta:**
   - **Cuenta:** perfil, correo, idioma y contraseña, pareja, fuentes de datos, sincronización e importación.
-  - **Perfiles:** niveles de acceso a los datos de tu cuenta (todos los perfiles ven los mismos datos), explicados en el propio panel. A cada perfil, también al principal, se le pueden dar solo los módulos que elijas, con fichas como en DriveTest Analyzer; en el menú solo ve esos. Un perfil con módulos limitados no puede gestionar los perfiles ni ver Datos y copias, y siempre queda al menos un perfil con todos los módulos. Los perfiles ya no tienen pareja ni ciclo propios.
+  - **Perfiles:** niveles de acceso a los datos de tu cuenta (todos los perfiles ven los mismos datos), explicados en el propio panel. A cada perfil, también al principal, se le pueden dar solo los módulos que elijas, con fichas como en DriveTest Analyzer; en el menú solo ve esos. Los módulos incluyen Objetivos, plan y comidas, Tu cuenta y, en administradores, Administración; al menos un perfil tiene que tener esos, y los demás pueden tener los módulos que quieras. Los perfiles ya no tienen pareja ni ciclo propios.
   - **El PIN decide el perfil:** el PIN que se escribe en la pantalla de bloqueo abre el perfil que lo tiene; si varios perfiles comparten PIN, al entrar con él se ven los módulos de todos (el panel avisa cuando pones un PIN que ya usa otro perfil). Desaparece el PIN privado aparte para Ciclo e intimidad: Íntimo es un módulo como los demás, y un perfil solo exporta a PDF los módulos que tiene.
   - **Datos personales** (altura, sexo, fecha de nacimiento) es un panel de la pestaña **Cuenta**, debajo de Contraseña.
   - **Datos y copias:** de dónde llegan los datos del móvil, origen de los datos, copia completa y exportación a CSV.

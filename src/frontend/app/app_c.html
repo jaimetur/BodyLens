@@ -258,13 +258,17 @@ function srvShow(v){const f=$('emb-'+v);if(!f)return;
 const link=(id,label,cls)=>`<a class="${cls}${id==='ajustes'?' owner-only':''}" href="#${id}" data-v="${id}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[id]}</svg><span>${label}</span></a>`;
 const SUBV={medidas:'composicion',corazon:'composicion',bienestar:'composicion'};
 // modules a profile can be given access to (a profile without «mods» sees all of them)
-const MODS=[['resumen','Resumen'],['peso','Peso'],['composicion','Cuerpo'],['actividad','Actividad'],['sueno','Sueño'],['comidas','Comidas'],['intimo','Íntimo'],['historial','Historial de pesos']];
+const MODS=[['resumen','Resumen'],['peso','Peso'],['composicion','Cuerpo'],['actividad','Actividad'],['sueno','Sueño'],['comidas','Comidas'],['intimo','Íntimo'],['historial','Historial de pesos'],['ajustes',SRV_V.length?'Objetivos, plan y comidas':'Ajustes'],
+  ...(SRV_V.length?[['cuenta','Tu cuenta']]:[]),...(SRV_V.some(([v])=>v==='admin')?[['admin','Administración']]:[])];
+// modules that at least one profile must keep: they manage the account, the profiles and the server
+const MODS_REQ=MODS.map(([id])=>id).filter(id=>id==='ajustes'||id==='cuenta'||id==='admin');
 const modsOf=p=>p&&Array.isArray(p.mods)&&p.mods.length?p.mods:null;
 // profiles entered together with a shared PIN (this session): their modules add up
 function pinGroup(){try{const g=JSON.parse(sessionStorage.getItem('bascula:grp')||'null');if(Array.isArray(g)&&g.includes(PROF().id))return PROFS.filter(p=>g.includes(p.id))}catch(e){}return [PROF()]}
 function curMods(){const G=pinGroup();if(G.some(p=>!modsOf(p)))return null;return MODS.map(([id])=>id).filter(id=>G.some(p=>p.mods.includes(id)))}
 function modAllowed(v){const m=curMods(),b=SUBV[v]||v;return !m||!MODS.some(([id])=>id===b)||m.includes(b)}
-function applyModVis(){document.querySelectorAll('[data-v]').forEach(a=>a.classList.toggle('nomod',!modAllowed(a.dataset.v)))}
+function applyModVis(){document.querySelectorAll('[data-v],a[href^="#"]').forEach(a=>{const v=a.dataset.v||(a.getAttribute('href')||'').slice(1).split(':')[0];if(v)a.classList.toggle('nomod',!modAllowed(v))})}
+{const f=openProfMenu;openProfMenu=function(){f.apply(this,arguments);applyModVis()}}
 $('railNav').innerHTML=VIEWS.filter(([id])=>!SUBV[id]).map(([id,l])=>(id==='ajustes'&&!SRV_V.length?`<a class="nav owner-only" href="#ajustes" data-pfnav><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2a4.5 4.5 0 0 1 5 4.8"/></svg><span>Gestionar perfiles</span></a>`:'')+link(id,id==='composicion'?'Cuerpo':l,'nav')).join('');
 // «Gestionar perfiles» en la barra lateral: abre Ajustes en la parte de perfiles
 document.addEventListener('click',e=>{const a=e.target.closest('a[data-v="intimo"]');if(!a||VIEW!=='intimo')return;e.preventDefault();
@@ -278,7 +282,7 @@ $('tabNav').innerHTML=VIEWS.filter(([id])=>id!=='ajustes'&&!SUBV[id]&&!SRV_V.som
 let VIEW='resumen';
 let BACK=null,BACK_Y=0,CUR_Y=0;addEventListener('scroll',()=>{if(VIEW!=='ajustes')CUR_Y=scrollY},{passive:true});
 function route(){const h=(location.hash||'').slice(1);const prevV=VIEW;VIEW=VIEWS.some(([id])=>id===h)&&(h!=='ajustes'||!document.body.classList.contains('viewer'))&&(h!=='intimo'||applyIntimoVis())?h:'resumen';
-  if(!modAllowed(VIEW)){const f=MODS.find(([id])=>modAllowed(id));VIEW=f?f[0]:'ajustes'}applyModVis();
+  if(!modAllowed(VIEW)){const f=MODS.find(([id])=>modAllowed(id));VIEW=f?f[0]:(SRV_V.length?'help':'resumen')}applyModVis();
   if(VIEW==='intimo'&&prevV!=='intimo'&&!privOK())setTimeout(()=>{if(VIEW==='intimo'&&!privOK()&&!LOCK&&unlocked(PROF()))showLock(PROF(),null,'priv')},60);
   for(const [id] of VIEWS){$('v-'+id).hidden=id!==VIEW}
   // Medidas cuelga de Cuerpo en la barra del móvil
@@ -1593,7 +1597,6 @@ if(SRV_V.length){
         save(v){$('cfHeight').value=v.height??'';$('cfSex').value=v.sex||'';$('cfBirth').value=v.birth||'';$('pfMsg').textContent='';$('pfSave').click();
           const m=$('pfMsg').textContent;return {ok:m==='Perfil guardado.',msg:m}}}}}
   if(UI.ajTabPf==='perfil')UI.ajTabPf='perfiles';
-  if(curMods())document.querySelectorAll('#ajTabs [data-ajm="pf"]').forEach(b=>{b.remove();AJ_PF.splice(AJ_PF.indexOf(b.dataset.ajt),1)});
   const pfBtns=[...document.querySelectorAll('#ajTabs [data-ajm="pf"]')];
   // the «Cuenta» tab in the profiles part of Ajustes
   $('ajTabs').insertAdjacentHTML('afterbegin',`<button type="button" role="tab" data-acct>${accIcon}<span>Cuenta</span></button>`);
@@ -1617,7 +1620,7 @@ document.addEventListener('change',e=>{const r=e.target.closest('.pfrow');if(!r)
   else if(e.target.matches('[data-pfmod]')){const m=[...r.querySelectorAll('[data-pfmod]:checked')].map(x=>x.dataset.pfmod);
     if(!m.length){renderProfCard();$('pfMsg2').textContent='Cada perfil necesita al menos un módulo.';return}
     if(m.length===MODS.length)delete L[i].mods;else L[i].mods=m;
-    if(L.every(q=>modsOf(q))){renderProfCard();$('pfMsg2').textContent='Al menos un perfil tiene que tener todos los módulos: es el que gestiona los perfiles.';return}}
+    if(MODS_REQ.some(id=>!L.some(q=>!modsOf(q)||q.mods.includes(id)))){renderProfCard();$('pfMsg2').textContent=MODS_REQ.includes('admin')?'Al menos un perfil tiene que tener Objetivos, plan y comidas, Tu cuenta y Administración.':MODS_REQ.includes('cuenta')?'Al menos un perfil tiene que tener Objetivos, plan y comidas y Tu cuenta.':'Al menos un perfil tiene que tener Ajustes.';return}}
   else if(e.target.matches('[data-pfcy]'))L.forEach((p,j)=>{if(j===i)p.cycle=1;else delete p.cycle});
   else if(e.target.matches('[data-pfsince]')){const v=e.target.value||'';L[i].partnerSince=v;const t=L.find(p=>p.id===L[i].partner);if(t)t.partnerSince=v}
   else if(e.target.matches('[data-pfpar]')){const me=L[i].id,sel=e.target.selectedIndex>0?e.target.value:null;for(const p of L)if(p.id===me||p.partner===me||(sel!=null&&(p.id===sel||p.partner===sel))){delete p.partner;delete p.partnerSince}if(sel!=null){const t=L.find(p=>p.id===sel);if(t){L[i].partner=sel;t.partner=me}}}

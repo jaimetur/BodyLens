@@ -1,4 +1,4 @@
-<!-- en: cb2d7cdee0e63137 -->
+<!-- en: 07f8d06cfd7c8323 -->
 # Objetivos, plan y comidas
 
 Sirve para fijar tus objetivos y el plan de pérdida y la fórmula de Comidas. La misma página de la app incluye también las pestañas de **Tu cuenta** que se describen al final de este documento: perfiles y PIN, datos personales, copias de seguridad y exportar a PDF.
@@ -63,7 +63,7 @@ Las tres secciones siguientes son pestañas de **Tu cuenta**, no de Objetivos, p
 - Cada fila de perfil te permite definir:
   - **Nombre** y **color** (el color y las iniciales identifican el perfil).
   - **Poner PIN** / **Cambiar PIN** / **Quitar PIN**: PIN de 4 dígitos para el perfil.
-  - **Módulos** (todos los perfiles, también el principal): toca cada módulo para darle acceso al perfil o quitárselo: Resumen, Peso, Cuerpo, Actividad, Sueño, Comidas, Íntimo e Historial de pesos. Un perfil solo ve sus módulos en el menú, y si abre otro va al primero que tiene. Objetivos, plan y comidas, Tu cuenta → Cuenta y la Ayuda están siempre disponibles. Un perfil con módulos limitados no puede gestionar los perfiles ni ver Datos y copias, así que siempre queda al menos un perfil con todos los módulos.
+  - **Módulos** (todos los perfiles, también el principal): toca cada módulo para darle acceso al perfil o quitárselo: Resumen, Peso, Cuerpo, Actividad, Sueño, Comidas, Íntimo, Historial de pesos, **Objetivos, plan y comidas**, **Tu cuenta** (donde se gestionan los perfiles, los datos y las copias) y, en las cuentas de administrador, **Administración**. Un perfil solo ve sus módulos en el menú, y si abre otro va al primero que tiene; la Ayuda está siempre disponible. **Al menos un perfil tiene que tener Objetivos, plan y comidas, Tu cuenta y (en administradores) Administración**, para que la cuenta siempre se pueda gestionar; los demás perfiles pueden tener los módulos que quieras.
   - **Borrar** (pide confirmación con «¿Seguro?»): quita el perfil; los datos se quedan, porque son de tu cuenta. El perfil principal no se puede borrar.
 - **Añadir perfil**: escribe un nombre y pulsa **Añadir perfil**. Cambia a él con el botón del perfil.
 

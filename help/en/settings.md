@@ -62,7 +62,7 @@ The following three sections are tabs of **Your account**, not of Goals, plan an
 - Each profile row lets you set:
   - **Name** and **colour** (the colour and initials identify the profile).
   - **Set PIN** / **Change PIN** / **Remove PIN**: 4-digit PIN for the profile.
-  - **Modules** (every profile, the main one included): tap each module to give the profile access to it or take it away: Summary, Weight, Body, Activity, Sleep, Meals, Intimate and Weight history. A profile only sees its modules in the menu, and opening another one takes it to the first module it has. Goals, plan and meals, Your account → Account and Help are always available. A profile with limited modules cannot manage profiles nor see Data and backups, so at least one profile always keeps every module.
+  - **Modules** (every profile, the main one included): tap each module to give the profile access to it or take it away: Summary, Weight, Body, Activity, Sleep, Meals, Intimate, Weight history, **Goals, plan and meals**, **Your account** (where profiles, data and backups are managed) and, in administrator accounts, **Administration**. A profile only sees its modules in the menu, and opening another one takes it to the first module it has; Help is always available. **At least one profile must keep Goals, plan and meals, Your account and (for administrators) Administration**, so the account can always be managed; the other profiles can have whichever modules you like.
   - **Delete** (asks for confirmation with "Sure?"): removes the profile; the data stays, since it is your account's. The main profile cannot be deleted.
 - **Add profile**: type a name and press **Add profile**. Switch to it with the profile button.
 
