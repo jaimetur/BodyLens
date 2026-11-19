@@ -25,8 +25,9 @@ def test_sync_bridge(client, make_user, login, monkeypatch):
         return "tok"
     monkeypatch.setattr(google_bridge, "drive_token", fake_token)
     script = respx.get("https://script.google.com/macros/s/xyz/exec?accion=sincronizar").mock(return_value=httpx.Response(200, text="ok"))
+    v1 = _xlsx("v1")   # una sola vez: el XLSX lleva la hora y dos generados en segundos distintos no son iguales
     export = respx.get(url__startswith=f"https://www.googleapis.com/drive/v3/files/{'A' * 44}/export").mock(
-        return_value=httpx.Response(200, content=_xlsx("v1")))
+        return_value=httpx.Response(200, content=v1))
 
     c = login("jaime")
     assert c.get("/api/workbook.xlsx").status_code == 404
@@ -35,7 +36,7 @@ def test_sync_bridge(client, make_user, login, monkeypatch):
     assert export.calls.last.request.headers["authorization"] == "Bearer tok"
     meta = c.get("/api/workbook/meta").json()
     wb = c.get("/api/workbook.xlsx")
-    assert wb.status_code == 200 and wb.content == _xlsx("v1") and wb.headers["etag"] == f'"{meta["etag"]}"'
+    assert wb.status_code == 200 and wb.content == v1 and wb.headers["etag"] == f'"{meta["etag"]}"'
     assert c.get("/api/workbook.xlsx", headers={"If-None-Match": wb.headers["etag"]}).status_code == 304
     # sin cambios: mismo ETag
     r = c.post("/api/sync").json()
