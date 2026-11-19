@@ -2,6 +2,12 @@
 
 Solo para cuentas administradoras. Está en «Tu cuenta» → **Administración**.
 
+## Usuarios
+- Todas las cuentas del servidor. El **interruptor** de cada fila activa o desactiva la cuenta (una desactivada no puede entrar, pero sus datos se conservan). La tuya no se puede desactivar.
+- **Editar**: usuario, nombre y apellidos, correo y, si quieres, una contraseña nueva (escrita dos veces; vacía = no se cambia). Al cambiar la contraseña se cierran las sesiones abiertas de esa cuenta.
+- **Restablecer contraseña**: pone una provisional, se la envía por correo y le pide cambiarla al entrar.
+- **Hacer/Quitar admin** y **Borrar** (borra la cuenta y todos sus datos).
+
 ## Peticiones de acceso
 - Lista de cuentas pedidas desde la pantalla de entrar, con nombre, usuario, correo, fecha y mensaje.
 - **Aprobar**: la cuenta se activa y la persona recibe un correo con el enlace para entrar.
