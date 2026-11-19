@@ -284,7 +284,9 @@ const modsOf=p=>p&&Array.isArray(p.mods)&&p.mods.length?p.mods:null;
 function pinGroup(){try{const g=JSON.parse(sessionStorage.getItem('bascula:grp')||'null');if(Array.isArray(g)&&g.includes(PROF().id))return PROFS.filter(p=>g.includes(p.id))}catch(e){}return [PROF()]}
 function curMods(){const G=pinGroup();if(G.some(p=>!modsOf(p)))return null;return MODS.map(([id])=>id).filter(id=>G.some(p=>p.mods.includes(id)))}
 function modAllowed(v){const m=curMods(),b=SUBV[v]||v;return !m||!MODS.some(([id])=>id===b)||m.includes(b)}
-function applyModVis(){document.querySelectorAll('[data-v],a[href^="#"]').forEach(a=>{const v=a.dataset.v||(a.getAttribute('href')||'').slice(1).split(':')[0];if(v)a.classList.toggle('nomod',!modAllowed(v))})}
+function applyModVis(){document.querySelectorAll('[data-v],a[href^="#"]').forEach(a=>{const v=a.dataset.v||(a.getAttribute('href')||'').slice(1).split(':')[0];if(v)a.classList.toggle('nomod',!modAllowed(v))});
+  // with fewer sections, the bottom bar shows them bigger
+  const tn=$('tabNav');if(tn){const n=[...tn.querySelectorAll('.tab')].filter(a=>!a.hidden&&!a.classList.contains('nomod')).length;tn.dataset.n=n;document.body.classList.toggle('tabbig',n<=4);document.body.classList.toggle('tabmid',n===5||n===6)}}
 {const f=openProfMenu;openProfMenu=function(){f.apply(this,arguments);applyModVis()}}
 $('railNav').innerHTML=VIEWS.filter(([id])=>!SUBV[id]).map(([id,l])=>(id==='ajustes'&&!SRV_V.length?`<a class="nav owner-only" href="#ajustes" data-pfnav><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2a4.5 4.5 0 0 1 5 4.8"/></svg><span>Gestionar perfiles</span></a>`:'')+link(id,id==='composicion'?'Cuerpo':l,'nav')).join('');
 // «Gestionar perfiles» en la barra lateral: abre Ajustes en la parte de perfiles
