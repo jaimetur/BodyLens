@@ -1,4 +1,4 @@
-<!-- en: 6f8f35a784bb4e0d -->
+<!-- en: 443ac03caee12d8f -->
 # Objetivos, plan y comidas
 
 Sirve para fijar tus objetivos y el plan de pérdida y la fórmula de Comidas. La misma página de la app incluye también las pestañas de **Tu cuenta** que se describen al final de este documento: perfiles y PIN, datos personales, copias de seguridad y exportar a PDF.
@@ -55,7 +55,7 @@ Fijan las líneas de objetivo de las barras y cuentan los días y las noches en 
 ---
 
 ## Pestañas de Tu cuenta
-Las tres secciones siguientes son pestañas de **Tu cuenta**, no de Objetivos, plan y comidas.
+Las tres secciones siguientes son pestañas de **Tu cuenta**, no de Objetivos, plan y comidas. El resto de Tu cuenta (nombre, email, idioma, tema, contraseña…) se describe en [Cuentas y acceso](accounts.md).
 
 ### Perfiles (Tu cuenta → Perfiles)
 

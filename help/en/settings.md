@@ -19,7 +19,7 @@ The last tab opened in each group is remembered.
 
 ## Goals and plan
 
-### Daily goals
+### Daily targets
 They set the goal lines on the bars and count the days and nights on which you meet them (Activity and Sleep).
 
 - **Steps per day** (1,000 to 50,000; default 8,000).
@@ -54,7 +54,7 @@ They set the goal lines on the bars and count the days and nights on which you m
 ---
 
 ## Your account tabs
-The following three sections are tabs of **Your account**, not of Goals, plan and meals.
+The following three sections are tabs of **Your account**, not of Goals, plan and meals. The rest of Your account (name, email, language, theme, password…) is described in [Accounts and access](accounts.md).
 
 ### Profiles (Your account → Profiles)
 

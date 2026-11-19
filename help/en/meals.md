@@ -5,6 +5,7 @@ Use it to record what you eat each day and score it, and to see how much it shou
 ## Tabs
 
 - **Today**, **Log** and **Analysis**. The app remembers the last one you opened.
+- On a phone, the explanation of a chart card waits behind the **ⓘ** next to its title (tap the title to show or hide it).
 
 ## Period
 

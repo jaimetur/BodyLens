@@ -2,24 +2,10 @@
 
 Use it to see how you sleep: last night, your sleep balance, progress, schedule and analysis. It includes naps, sleep stages and comparisons with your weight.
 
-## Source of the data and rules for nights
-
-- Sleep comes mainly from **Apple Health** (iPhone, through Health Auto Export) or **Android** (Health Connect, through the BodyLens app): nights from AutoSleep or the Apple Watch (iPhone) or from your Android health app, and naps. **Withings** fills in the nights that Health does not have.
-- **Night window**: the night of a given day is the one that ends between 17:00 the day before and 17:00 of that day. It must end after 03:00; anything that ends earlier is treated as a nap. Each night is assigned to the day you wake up.
-- **Episodes**: two bouts of sleep separated by more than 90 minutes are different episodes. Two night episodes separated by 4 hours or less are merged and the gap counts as a sleepless spell.
-- **Sleepless spells**: gaps of at least 10 minutes within the night.
-- **Source of the night**: schedule, time asleep and sleepless spells from AutoSleep if available; if not, from the Apple Watch; if not, from the source with the most sleep. If the Watch clearly records more sleep than AutoSleep, the Watch takes precedence. Stages (deep and REM) come from the Watch.
-- **Naps**: episodes of at least 10 minutes outside the night. On the naps card, the day runs from 20:00 the day before to 20:00.
-- If Health resends a night (for example, AutoSleep redoes it when you wake up), the latest version replaces the previous one.
-
-## Logging by hand
-
-- **Log a night by hand** (Night tab): the day you got up, the time you went to bed and the time you got up. The night must last between 30 min and 20 h. The card lists the nights you logged, with **Remove**.
-- If that night arrives later from your sources, the sources' night takes precedence; a night that already has data cannot be logged by hand.
-
 ## Tabs
 
 - **Night**, **Balance**, **Progress**, **Schedule** and **Analysis**. The app remembers the last one you opened.
+- On a phone, the explanation of a chart card waits behind the **ⓘ** next to its title (tap the title to show or hide it), and **Add a night by hand** goes to the end of the Night tab.
 
 ## Period
 
@@ -43,8 +29,10 @@ Use it to see how you sleep: last night, your sleep balance, progress, schedule 
 - **Sleep balance**: link to the Balance section with your current balance.
 - **Note for the day**: box to add a comment (up to 300 characters).
 - **Naps**: list of the day's naps with time, duration and heart rate, and a strip that places them next to the night. Naps add to the sleep balance.
+- **Add a night by hand**: the day you wake up, the time you went to bed and the time you got up. The night must last between 30 min and 20 h. The card lists the nights you logged, with **Remove**. If that night arrives later from your sources, the sources' night takes precedence; a night that already has data cannot be added by hand.
 - **Wellbeing from last night**: gauge-style indicators for the night (time asleep, preparation, sleeping heart rate, consistency, efficiency, deep sleep, awakenings and recommended bedtime for tonight). They are calculated from your last few weeks and need at least 3 nights.
   - **Preparation** (0 to 100): 45 % night score, 30 % balance of the last week and 25 % sleeping heart rate compared with your last nights. Labels: Low, Fair, Good, Excellent.
+- Below them, a note on the sources: overnight SpO2, respiratory rate, apnoea, HRV and wrist temperature come from Apple Health or Android; Withings only provides schedules, stages and heart rate.
 
 ## Balance
 
@@ -53,14 +41,14 @@ Use it to see how you sleep: last night, your sleep balance, progress, schedule 
 - **Night by night**: what each night adds or subtracts (naps included). On nights without data, **Add** appears: you can log by hand the time you went to bed and got up (the night must last between 30 minutes and 20 hours). If the real night from Withings or Apple Health arrives later, it replaces it. Nights logged by hand can be edited or deleted.
 - **In numbers**: average slept, nights on goal, current streak, days in debt, worst balance and naps contributed.
 - **Which nights put you in debt**: average balance by day of the week.
-- **How debt affects you**: compares your days with a lot of debt with the days when you are up to date in HRV, resting heart rate, steps, meal score and score (needs at least 5 days of each type).
+- **How debt affects you**: compares your days with a lot of debt with the days when you are up to date in HRV, resting heart rate, steps, meal score and sleep score (needs at least 5 days of each type).
 - **Plan to pay off the debt**: if there is debt, a table with how much to sleep each night and what time to go to bed to pay it off in 3, 5, 7, 10 or 14 nights. It uses your average efficiency of the last month.
 - Tapping the balance card opens the report, with the target bedtime and wake-up time.
 
 ## Progress
 
 - **Historical**: tabs **Score**, **Quality** (deep plus REM), **Sleep** (hours), **Deep**, **When you go to bed** and **Heart rate**. It shows bars for the period and a calendar of up to 18 weeks; tapping a day selects it.
-- **Figures for the period**: time asleep, time in bed and efficiency, median time you fall asleep and wake up, regularity of your bedtime, nights that reach the goal and breakdown of deep, REM and light.
+- **Trends and details**, starting with figures for the period: **Asleep**, **In bed** (with efficiency), **You fall asleep** and **You get up** (median times), **Regularity** of your bedtime, **Nights of 7 h or more** (your goal), **Deep sleep** (with REM and light) and **HR while sleeping** (with its minimum).
 - **Hours of sleep** per night with the goal line.
 - **What your sleep says**: sentences with your own data.
 - **Trend**: monthly median of how much you sleep and its 3-month average, using your whole history.
@@ -79,6 +67,16 @@ Use it to see how you sleep: last night, your sleep balance, progress, schedule 
 - **Weekdays and weekends**: Sunday to Thursday nights compared with Friday and Saturday.
 - **Quality: deep and REM sleep**: share of each week in deep and in REM.
 - **Sleep and weight**: how much you weigh in the morning compared with the surrounding days, according to how you slept that night (using your whole history).
+
+## Source of the data and rules for nights
+
+- Sleep comes mainly from **Apple Health** (iPhone, through Health Auto Export) or **Android** (Health Connect, through the BodyLens app): nights from AutoSleep or the Apple Watch (iPhone) or from your Android health app, and naps. **Withings** fills in the nights that Health does not have.
+- **Night window**: the night of a given day is the one that ends between 17:00 the day before and 17:00 of that day. It must end after 03:00; anything that ends earlier is treated as a nap. Each night is assigned to the day you wake up.
+- **Episodes**: two bouts of sleep separated by more than 90 minutes are different episodes. Two night episodes separated by 4 hours or less are merged and the gap counts as a sleepless spell.
+- **Sleepless spells**: gaps of at least 10 minutes within the night.
+- **Source of the night**: schedule, time asleep and sleepless spells from AutoSleep if available; if not, from the Apple Watch; if not, from the source with the most sleep. If the Watch clearly records more sleep than AutoSleep, the Watch takes precedence. Stages (deep and REM) come from the Watch.
+- **Naps**: episodes of at least 10 minutes outside the night. On the naps card, the day runs from 20:00 the day before to 20:00.
+- If Health resends a night (for example, AutoSleep redoes it when you wake up), the latest version replaces the previous one.
 
 ## Goals
 

@@ -10,15 +10,12 @@ Use it to see how much you move: steps, active calories, exercise minutes, heart
 
 ## Logging by hand
 
-If you do not wear a watch or connect your phone, you can keep your activity by hand:
-
-- **Log activity by hand** (Today tab): date, steps, exercise minutes and active calories (fill in what you know). One entry per day; logging the same day again replaces it.
-- **Log a workout by hand** (Workouts tab): date, start time, type (with suggestions), duration and, optionally, calories and distance.
-- Each card lists what you logged, with **Remove**. If data for that day arrives later from your sources, the sources' data takes precedence; a day that already has data from your sources cannot be logged by hand.
+If you do not wear a watch or connect your phone, you can keep your activity by hand with **Add activity by hand** (Today tab) and **Add workout by hand** (Workouts tab). Each card lists what you logged, with **Remove**. If data for that day arrives later from your sources, the sources' data takes precedence; a day that already has data from your sources cannot be logged by hand.
 
 ## Tabs
 
 - **Today**, **Progress**, **Workouts** and **Analysis**. The app remembers the last one you opened.
+- On phones, the explanation of a chart card is behind the **ⓘ** next to its title (tap the title to show it), and the cards to add data by hand move to the end of their tab.
 
 ## Period
 
@@ -33,10 +30,11 @@ If you do not wear a watch or connect your phone, you can keep your activity by 
   - Tapping the rings enlarges them.
   - At the end there is a box to add a **note for the day** (up to 300 characters). This note also appears on the weight chart.
 - **This week**: the seven days as mini rings, with the week's average, the days you met each goal and the comparison with the previous week.
+- **Add activity by hand**: date, steps, exercise minutes and active calories (fill in what you know), then **Save the day**. One entry per day; logging the same day again replaces it.
 
 ## Progress
 
-- **Figures**: steps per day, distance per day, active minutes (moderate plus vigorous), active calories, workouts per week, workout minutes per week, resting heart rate (average of each day's minimum) and days with data in the period.
+- **Figures** at the top: **Steps per day**, **Distance per day**, **Active minutes** (moderate plus vigorous), **Active calories**, **Workouts** (per week), **Training** (minutes per week), **Resting HR** (average of each day's minimum) and **Days with data** in the period.
 - **Steps**: bars for each day (or weekly average) and a 7-day average. A dashed line marks your steps goal; bars that exceed it are shown in full colour.
 - **Minutes of activity**: stacked bars by intensity (Light, Moderate, Vigorous). Tapping a legend item hides that intensity.
 - **Steps by day of the week**: average steps for each day of the week in the period (in thousands). More days with data are needed if the period is short.
@@ -44,7 +42,9 @@ If you do not wear a watch or connect your phone, you can keep your activity by 
 
 ## Workouts
 
-- **Training minutes per week** and figures for the period.
+- **Figures** at the top: **Sessions**, **Total time**, **Calories** and **Average duration** of the workouts in the period.
+- **Add workout by hand**: date, start time, type (with suggestions), duration and, optionally, calories and distance, then **Add workout**.
+- **Training minutes per week**: total duration of each week's workouts, with a dashed line at your weekly goal (your daily exercise minutes × 7).
 - **Workouts by type**: sessions, minutes, average duration, kcal and average heart rate by type.
 - **When you train**: sessions by day of the week.
 - **Latest workouts**: table with date, start time, type, duration, kcal, steps, distance and average heart rate for the 20 most recent ones.
@@ -52,7 +52,8 @@ If you do not wear a watch or connect your phone, you can keep your activity by 
 ## Analysis
 
 - **Records and streaks** from your whole history: day with most steps, best week, best month, longest distance, current and longest streak of meeting the goal, days with 10,000 steps and total distance.
-- **Targets met** and **Steps distribution** (days in the period by steps).
+- **Targets met**: percentage of the days with data in the period on which you reached each goal.
+- **Steps distribution**: days in the period by the steps you took.
 - **Month by month**: daily averages for the last 12 months.
 - **Activity and weight**: weekly change in your weight trend according to daily steps, grouped into bands (under 3,000, 3,000 to 5,000 and 5,000 or more) with the median of each band. At least 8 weeks per band are needed; a text explains the result, distinguishing weeks inside and outside a weight-loss attempt.
 

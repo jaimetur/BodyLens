@@ -1,4 +1,4 @@
-<!-- en: 76c2fb01b8c43c2a -->
+<!-- en: 4b69152650836674 -->
 # Comidas
 
 Sirve para apuntar lo que comes cada día y puntuarlo, y para ver cuánto debería afectar a tu peso según una fórmula, comparado con lo que marca la báscula al día siguiente. Los pesos vienen de la báscula **Withings**; las comidas las escribes tú.
@@ -6,6 +6,7 @@ Sirve para apuntar lo que comes cada día y puntuarlo, y para ver cuánto deber�
 ## Pestañas
 
 - **Hoy**, **Registro** y **Análisis**. La app recuerda la última que abriste.
+- En el móvil, la explicación de cada tarjeta con gráfico espera tras la **ⓘ** junto a su título (toca el título para verla u ocultarla).
 
 ## Periodo
 
@@ -39,7 +40,7 @@ Sirve para apuntar lo que comes cada día y puntuarlo, y para ver cuánto deber�
 
 ## Análisis
 
-- **Pérdida estimada y real**: gráfico desde el inicio del plan con tres líneas: **Real**, **Estimada** y **Estimada sin pasarse a la real** (la estimación acumulada no puede adelantarse a la real). Necesita tu plan (peso de partida, objetivo y fecha de inicio) y al menos dos pesadas. Debajo, la fórmula en uso y un enlace para ajustarla.
+- **Pérdida estimada y real**: gráfico desde el inicio del plan con tres líneas: **Real**, **Estimada** y **Estimada sin pasar a la real** (la estimación acumulada no puede adelantarse a la real). Necesita tu plan (peso de partida, objetivo y fecha de inicio) y al menos dos pesadas. Debajo, la fórmula en uso y un enlace para ajustarla.
 - **Lo que comes y tu peso**: mediana del cambio de peso del día siguiente según la nota del día (menos del 40 %, del 40 al 69 % y 70 % o más). Hacen falta al menos 8 días con nota y con peso al día siguiente.
 
 ## Cómo se calcula

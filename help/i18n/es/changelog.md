@@ -1,4 +1,4 @@
-<!-- en: 3b28389ad1538ad6 -->
+<!-- en: cc1b1bcb1d9d7a2b -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -90,6 +90,7 @@
 - **Reloj de sueño (ampliado):** muestra solo la noche elegida, como un anillo grueso coloreado por fases (profundo, ligero, REM, despierto) cuando el reloj registra fases, con la media de las 14 noches anteriores como una barra gris por dentro, el horario objetivo de ese día (entre semana o fin de semana) discontinuo por fuera y el tiempo dormido más grande en el centro.
 - **Móvil:** cada pestaña muestra un gráfico o un panel de cifras completo sin desplazarte: la explicación de cada tarjeta con gráfico espera tras una ⓘ junto a su título (toca el título), las tarjetas para apuntar datos a mano van al final de la pestaña, las tarjetas de cifras tienen colores y minigráficos, y el avatar del perfil es más grande.
 - **Tarjetas ampliadas:** deslizar el dedo a un lado en el móvil o la tableta, o las flechas de cada lado en el ordenador, pasa al día anterior o al siguiente.
+- **Deslizar entre pestañas:** en pantallas táctiles, deslizar el dedo a un lado pasa a la pestaña siguiente o anterior del módulo (los apartados de Cuerpo cuentan como sus pestañas); después de la última pestaña pasa al módulo siguiente, y antes de la primera, a la última pestaña del anterior.
 #### 🐛 Correcciones:
 - **Seguridad:** el registro de accesos ya no guarda la dirección de subida de Apple Salud, los códigos OAuth ni las invitaciones.
 - **Withings:** la dirección de retorno acepta las pruebas y los avisos de Withings (POST y HEAD).

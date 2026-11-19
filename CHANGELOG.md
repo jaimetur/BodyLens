@@ -89,6 +89,7 @@
 - **Sleep clock (enlarged):** shows only the chosen night, as a thick ring coloured by phase (deep, light, REM, awake) when the watch records phases, with the average of the 14 earlier nights as a grey bar inside, the target schedule for that day (weekday or weekend) dashed outside and a larger time asleep in the centre.
 - **Phones:** every tab shows a chart or a full set of figures without scrolling: the explanation of each chart card waits behind an ⓘ by its title (tap the title), the cards to enter data by hand go to the end of the tab, the figure tiles have colours and mini charts, and the profile avatar is bigger.
 - **Enlarged cards:** a sideways swipe on phones and tablets, or the arrows at each side on a computer, goes to the previous or next day.
+- **Swiping between tabs:** on touch screens a sideways swipe moves to the next or previous tab of the module (the parts of Body count as its tabs); past the last tab it goes on to the next module, and before the first, back to the last tab of the previous one.
 #### 🐛 Bug fixes:
 - **Security:** the access log no longer stores the Apple Health upload address, OAuth codes or invitations.
 - **Withings:** the callback address accepts Withings' tests and notices (POST and HEAD).

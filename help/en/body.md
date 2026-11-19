@@ -6,6 +6,8 @@ It groups everything that describes your body into four sections: the compositio
 
 A top bar lets you switch between **Scale**, **Measurements**, **Heart** and **Wellbeing**. On mobile, swiping left or right also changes section.
 
+On phones, the explanation of a chart card is behind the **ⓘ** next to its title (tap the title to show it), and cards to enter data by hand (such as **Log heart data by hand**) move to the end of their tab.
+
 ## Source of the data
 
 - **Scale and Measurements**: composition comes from the **Withings** scale (bioimpedance). You log the tape measurements yourself.
@@ -21,20 +23,19 @@ Body composition measured by the scale: fat, muscle, bone and water.
 - The floating selector (1 wk to All) controls the charts. Up to 3 months you see smoothed daily measurements (median of the measurements within ±7 days, with a larger window if there are few); for long periods, the 3-week median. Bioimpedance varies a lot with hydration, which is why it is smoothed.
 
 ### What you will see
-- **Body fat summary**: ring with the fat % (coloured according to your zone), kilos of fat, lean mass, date of the last measurement and the range you are in. If you are above normal, it says how many kg of fat you would need to lose, without losing muscle, to reach the normal range.
-- **Quality of the loss**: of the kilos lost since the start of the plan, how many are fat and how many are lean mass. It is considered good if at least 75 % is fat.
+- **Body fat**: ring with the fat % (coloured according to your zone) and how your weight splits into muscle, fat and bone, kilos of fat, lean mass, date of the last measurement and the range you are in. If you are above normal, it says how many kg of fat you would need to lose, without losing muscle, to reach the normal range.
+  - **Quality of the loss** (at the bottom of the same panel, once you have lost weight): of the kilos lost since the start of the plan, how many are fat and how many are lean mass. It is considered good if at least 75 % is fat.
 - **Body composition · last 30 days**: a headline summarising how muscle and fat have moved (for example "Fat loss", "Body recomposition" or "Muscle mass loss"), with bars for muscle mass, fat and bone and two bell curves that place you against a reference group of your sex and age. Tapping it opens "More information".
 - **All biomarkers**: composition tree (weight = fat mass + lean mass; lean mass = muscle + bone; water is included within and is not added) with a Low/Normal/High label per row, plus BMI and estimated basal metabolism.
-- **What your weight is made of**: stacked chart of muscle, bone and fat (the three add up to your weight). Tapping a legend item hides that layer.
-- **Every measurement**: one chart per indicator (weight, BMI, fat %, fat mass, muscle, lean mass, water %, bone, lean mass index and basal metabolism), with the current value and its change since the plan.
-- **Quality of the loss (chart)**: cumulative change in fat mass and lean mass since the start of the plan.
-- **Zones**: BMI (WHO classification), fat % (ranges from Gallagher et al., 2000, by sex and age band) and lean mass index, each on a bar with your position.
+- **What your weight is made of**: stacked chart of muscle, bone and fat (the three add up to your weight). Tapping a legend item hides that layer. **More information ›** opens the same explanation as the composition card.
+- **Every measurement**: one chart per indicator (weight, BMI, fat %, fat mass, muscle, lean mass, water %, bone, lean mass index and basal metabolism; BMI and lean mass index only if you entered your height), with the current value and its change since the plan.
+- **Quality of the loss**: chart of the cumulative change in fat mass and lean mass since the start of the plan, with the kilos of weight, fat and lean mass lost below it.
 - **Month by month**: table with the monthly median of weight, fat, fat mass, muscle, lean mass, water and bone (up to 24 months).
-- **＋ Add manual weigh-in**: takes you to the "New manual weigh-in" card, which is in Weight.
+- **＋ Add manual weigh-in** (button at the end of the tab): takes you to the "New manual weigh-in" card, which is in Weight.
 
 ### Rules
 - You need to enter your **height**, **sex** and **date of birth** in Your account → Account → Personal data to see BMI, lean mass index and ranges adjusted to your age. Without them, generic values are used or you are asked to enter them.
-- Zones and bell curves are approximate; bioimpedance measurements are not a diagnosis.
+- Ranges and bell curves are approximate; bioimpedance measurements are not a diagnosis.
 
 ---
 
@@ -43,6 +44,7 @@ Body composition measured by the scale: fat, muscle, bone and water.
 Tape measurements (waist, hips, chest, neck, arm and thigh), because the scale does not measure circumferences.
 
 ### What you will see
+- If there are no measurements yet, only **There are no measurements yet** appears, with a **Log your waist** button that takes you to the form at the end.
 - **Indicators** (calculated from your latest measurements):
   - **Waist / height**: Low, Healthy (0.4 to 0.5), Increased (0.5 to 0.6) or High.
   - **Waist / hip**: WHO thresholds according to your sex. It needs your sex to be set in Your account → Account → Personal data.
@@ -51,7 +53,6 @@ Tape measurements (waist, hips, chest, neck, arm and thigh), because the scale d
 - **Progress**: one chart per zone with at least two measurements.
 - **Log**: list of measurements by date, with **Delete**.
 - **New tape measurement**: choose the date and fill in only the zones you have. Each value must be between 10 and 300 cm. Recommendation: measure yourself in the morning, standing and relaxed, with the waist at navel level and the hips at the widest part.
-- If there are no measurements yet, "There are no measurements yet" appears with a **Log your waist** button that takes you to the form.
 
 ---
 
@@ -79,5 +80,6 @@ Symptoms and habits that you log in Apple Health (iPhone) or here by hand; Andro
 
 ### What you will see
 - **Wellbeing**: two groups, **Symptoms** (headache, back pain, pelvic pain, fatigue, appetite, night sweats, bloating, cramps, nausea and other symptoms) and **Habits** (mindfulness and alcohol; mood is in Intimate). Each row shows how many records there are in 30 days and in 12 months, a 52-week strip with the weeks that had any record, the date of the last one and, for alcohol, the drinks of the last 30 days.
-- **Log**: choose the type, the date and time and a detail (mild, moderate or severe; number of drinks for alcohol; minutes for mindfulness) and press **Log**. In the list of latest records you can edit or delete each one.
+- **Log**: choose the type, the date and time and a detail (mild, moderate or severe; number of drinks for alcohol; minutes for mindfulness) and press **Log**.
+  - **Latest records** (in the same card): your 20 most recent records; you can edit or delete each one.
 - Records that came from Apple Health / Android and that you remove here are hidden, and a new import does not show them again.

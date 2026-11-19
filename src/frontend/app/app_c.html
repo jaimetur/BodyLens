@@ -1442,7 +1442,7 @@ document.addEventListener('click',e=>{
     cfg.food=sheet?{v:6,w:[0.2,0.4,0.4,0.5,0.5],pw:[2,2],blank0:5,k:1,unlogged:true,allDays:false,neutral:false}:{v:6};
     saveMain({...(DOC||{}),cfg});$('fwMsg').textContent=sheet?'Puesto el modelo clásico.':'Vuelven los valores por defecto.';renderFoodCfg()}});
 
-/* ---------- deslizar a izquierda o derecha para cambiar de sección (pantallas táctiles) ---------- */
+/* ---------- swipe left or right to change tab, and past the last or first tab, module (touch screens) ---------- */
 const SWIPE_ORDER=['resumen','peso','composicion','medidas','corazon','bienestar','actividad','sueno','comidas','intimo','historial'];
 (()=>{let sx=0,sy=0,st=0,ok=false;const main=document.querySelector('.main');
   // una tabla ancha solo se queda el gesto si de verdad se ha desplazado; si ya estaba en el borde, cambia de sección
@@ -1451,8 +1451,16 @@ const SWIPE_ORDER=['resumen','peso','composicion','medidas','corazon','bienestar
   main.addEventListener('touchstart',e=>{if(e.touches.length!==1||!$('sheet').hidden||!$('expDlg').hidden){ok=false;return}const t=e.touches[0];sx=t.clientX;sy=t.clientY;st=Date.now();ok=!blocked(e.target);scr=(()=>{for(let n=e.target;n&&n!==main;n=n.parentElement){if(n.scrollWidth>n.clientWidth+2&&/auto|scroll/.test(getComputedStyle(n).overflowX))return n}return null})();scrL=scr?scr.scrollLeft:0},{passive:true});
   main.addEventListener('touchend',e=>{if(!ok)return;ok=false;if(scr&&Math.abs(scr.scrollLeft-scrL)>2)return;if(PKSCRUB_AT>=st||Date.now()-CHART_TOUCH<120||document.querySelector('.chart.inspect'))return;const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;
     if(Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*2||Date.now()-st>700)return;
-    const list=SWIPE_ORDER.filter(v=>(!SUBV[v]||v===VIEW)&&(v!=='intimo'||privVisible()));let i=list.indexOf(VIEW);if(i<0)return;const j=i+(dx<0?1:-1);if(j<0||j>=list.length)return;
-    const sec=$('v-'+list[j]);location.hash='#'+list[j];requestAnimationFrame(()=>{sec.classList.remove('swl','swr');void sec.offsetWidth;sec.classList.add(dx<0?'swl':'swr')})},{passive:true});
+    const fw=dx<0,anim=sec=>requestAnimationFrame(()=>{sec.classList.remove('swl','swr');void sec.offsetWidth;sec.classList.add(fw?'swl':'swr')});
+    // first through the tabs of the module; past the last (or before the first) tab, on to the next (previous) module
+    const nav=document.querySelector(`.vtabs[data-view="${VIEW}"]`),tabs=nav&&!nav.hidden?[...nav.querySelectorAll('a[data-tab]')].filter(a=>a.getClientRects().length):[];
+    const ti=tabs.findIndex(a=>a.dataset.tab===curTab(VIEW)),tj=ti+(fw?1:-1);
+    if(ti>=0&&tj>=0&&tj<tabs.length){tabs[tj].click();anim($('v-'+VIEW));return}
+    // the parts of Body (Scale, Measurements, Heart, Wellbeing) count as its tabs
+    const list=SWIPE_ORDER.filter(v=>modAllowed(v)&&(v!=='intimo'||privVisible()));let i=list.indexOf(VIEW);if(i<0)return;const j=i+(fw?1:-1);if(j<0||j>=list.length)return;
+    const nv=list[j],nt=[...document.querySelectorAll(`.vtabs[data-view="${nv}"] a[data-tab]`)];
+    if(nt.length){UI.vt={...(UI.vt||{}),[nv]:(fw?nt[0]:nt[nt.length-1]).dataset.tab};saveUI();applyVTabs()}   // going back lands on its last tab
+    location.hash='#'+nv;anim($('v-'+nv))},{passive:true});
 })();
 
 /* ---------- traer de Withings ahora: abre la aplicación web del script de tu hoja (solo la puedes abrir tú) ---------- */
