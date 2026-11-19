@@ -33,7 +33,9 @@ fi
 # código: export limpio del commit (solo lo que está en git). En el NAS se borran los ficheros (no las carpetas, que el
 # contenedor tiene montadas) y se extrae encima; el NAS no permite rsync por SSH.
 TMP=$(mktemp -d); trap 'rm -rf "$TMP"' EXIT
-git archive HEAD src assets help README.md README_*.md CHANGELOG.md | tar -x -C "$TMP"
+git archive -o "$TMP/code.tar" HEAD src assets help README.md CHANGELOG.md
+tar -xf "$TMP/code.tar" -C "$TMP" && rm "$TMP/code.tar"
+[ -d "$TMP/src/backend/app" ] || { echo "The code export is empty: nothing deployed." >&2; exit 1; }
 echo "$SHA $(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$TMP/REVISION"
 COPYFILE_DISABLE=1 tar --no-xattrs -c -C "$TMP" . | ssh -o BatchMode=yes "$HOST" \
   "mkdir -p $STACK/code && find $STACK/code -type f -delete && tar -x -C $STACK/code && find $STACK/code -depth -type d -empty -delete; mkdir -p $STACK/code"
