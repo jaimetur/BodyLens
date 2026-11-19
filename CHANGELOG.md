@@ -7,7 +7,7 @@
 ### Release Date: 2026-11-19
 #### ⚠️ Breaking Changes:
 - **From a claude.ai artifact to a server of its own:** BodyLens no longer lives in claude.ai and moves to a Docker container on the NAS (`https://bodylens.jaimetur.cloud`). The data is in a SQLite database on the server, not in the artifact's data space. You sign in with a BodyLens username and password, not with your Claude account.
-- **The Google sheet is no longer needed:** Withings and Apple Health send the data straight to the server. The sheet and its Apps Script remain only as a temporary bridge, for the accounts that have not been moved yet.
+- **The Google sheet is no longer needed:** Withings, Apple Health and Android send the data straight to the server, and every account keeps its data there; the sheet and its Apps Script are no longer used.
 - **Default language: English.** New accounts start in English; existing ones keep Spanish.
 
 #### 🌟 New Features:
@@ -17,27 +17,28 @@
   - Health check (`/healthz`) and a warning if `/data` cannot be written to.
 - **Hot deployment:** `tools/deploy.sh` copies the code to the NAS and the container uses it without waiting for a new image. Open pages show a "BodyLens has been updated" notice with a button to reload.
 - **Several accounts, each with its own data:**
-  - You sign in with username and password; passwords are stored with argon2 and sessions on the server.
+  - You sign in with your username or your email and a password; passwords are stored with argon2 and sessions on the server.
   - Each account has a username, first and last name, a valid and unique email and a password of at least 4 characters, typed twice.
 - **Account sign-up:**
   - Account request from the sign-in screen, approved by the administration; notices go by email.
   - Single-use invitation links.
   - Initial `admin`/`admin123` account, which the sign-in screen shows while it keeps the default password.
-- **Outgoing email (SMTP)** for requests, approvals, temporary passwords and notices, configurable from Administration.
+- **Outgoing email (SMTP)** for requests, approvals, temporary passwords, partner invitations and notices, configurable from Administration. The server greets the mail server with its public name, and the test email reads like a real notice; Administration → Mail explains what to do if it lands in spam.
 - **Couples:** two accounts can be linked to share and edit the cycle and intimacy records together. You invite your partner with their username or email from Your account → Account → Partner; they get an email with the invitation (you are told at once if no account has that username or email), and you get one when they accept. An app profile can be moved to that person's own account.
 - **Your account:**
-  - **Account:** profile, email, language and password, partner, data sources, synchronisation and import.
-  - **Profiles:** access levels over your account's data (all profiles see the same data), explained on the panel itself. Each profile, the main one included, can be given only the modules you choose, with chips like in DriveTest Analyzer; it only sees those in the menu. The modules include Goals, plan and meals, Your account (which also opens Profiles and Data and backups) and, for administrators, Administration; at least one profile must keep those, the rest can have any modules. Profiles no longer have their own partner or cycle.
-  - **The PIN decides the profile:** the PIN typed on the lock screen opens the profile that has it; if several profiles share a PIN, entering with it shows the modules of all of them (the panel warns when you set a PIN another profile already uses). The separate private PIN for Cycle and intimacy is gone: Intimate is a module like the others, and a profile only exports to PDF the modules it has.
-  - **Order and main profile:** profiles are reordered by dragging their ⋮⋮ handle; the first one is the main profile. Opening the app enters the main profile if it has no PIN; if it has one, it is asked for and the PIN typed decides the profile. A profile with a PIN locks itself after 1 minute without activity, and each profile reopens the section and tabs it had open, also after a restart or on another device (it is kept in the account on the server). On mobile, the bottom bar shows the sections bigger when the profile has fewer of them.
-  - **Personal data** (height, sex, date of birth) is a panel of the **Account** tab, under Password.
-  - **Data and backups:** where your phone data comes from, data source, full backup and CSV export.
+  - **Account:** profile, email, language, text size (Small, Normal, Large, Extra large; the new Normal is slightly bigger than before), theme (Automatic as the device, Daytime, Night-time, Sepia, Ocean, Forest or High contrast, for the app and the server pages), minutes without activity before a profile with a PIN locks itself (1 by default), password, personal data (height, sex, date of birth), partner and data sources.
+  - **Profiles** and **Data and backups** (where your phone data comes from, data source, full backup and import, CSV export).
+- **Profiles** (Your account → Profiles):
+  - Access levels over the account's data: every profile sees the same data, and each one, the main one included, sees only the modules chosen with chips (as in DriveTest Analyzer), Goals, plan and meals, Your account and Administration included. At least one profile must keep those three. A profile only exports to PDF the modules it has, and on mobile the bottom bar shows fewer sections bigger.
+  - The PIN decides the profile: typed on the lock screen, it opens the profile that has it; profiles that share a PIN open together, with all their modules (the panel warns when a PIN is already in use). Intimate is a module like the others, with no separate private PIN.
+  - Profiles are reordered by dragging their ⋮⋮ handle, and the first one is the main profile. Opening the app enters it directly if it has no PIN; otherwise the PIN is asked for and decides the profile. A profile with a PIN locks itself after the minutes without activity chosen in Your account.
+  - Each profile reopens the section and tabs it had open, also after a restart or on another device (kept in the account on the server).
 - **Administration** (administrator accounts), with these tabs:
   - **Users:** edit username, name, email and password; activate or deactivate with a switch; grant or remove admin; reset the password; delete.
   - **Access requests** and **Invitations**.
   - **Mail:** SMTP settings and test email.
   - **Withings:** developer application data.
-  - **Backups** and **Data sources**.
+  - **Backups** and **Translator**.
   - The server never ends up without an active administration account.
 - **Direct Withings:**
   - OAuth connection per account, with the token stored encrypted.
@@ -48,9 +49,9 @@
   - Daily activity, workouts, ECG, alerts and records (cycle, mood, symptoms…).
   - Health takes precedence over Withings, which only fills gaps.
 - **Android app (Health Connect):**
-  - Sends hourly steps, distance, floors, energy, heart rate, HRV, SpO2, respiration, VO2 max, sleep with stages, workouts, cycle and sexual activity.
-  - Uses the same format as Health Auto Export.
+  - Sends hourly steps, distance, floors, energy, heart rate, HRV, SpO2, respiration, VO2 max, sleep with stages, workouts, cycle and sexual activity, to the same sending address as Health Auto Export and in the same format.
   - The APK is built by GitHub Actions and downloaded from Your account (`/android.apk`).
+  - Every screen, empty state and help page explains the Android path at the same level as the iPhone's.
 - **Data on the server:**
   - The sheet's tabs become tables on the server, and the workbook the page reads is generated from them.
   - Parity with the original sheet checked on all 16 tabs.
@@ -64,10 +65,6 @@
   - The documents are written only in English and translated automatically into each account's language with LibreTranslate, a free translator running on the server next to BodyLens (the Claude API can be set as an optional, paid alternative in Administration → **Translator**); each translation is kept until the English text changes.
   - Spanish comes already translated with the app (`help/i18n/es/`), so it needs no translator.
   - Every document is translated in advance into every language when the server starts, and checked again every 10 minutes: only documents whose English text changed (their fingerprint) are translated again, so the help opens already translated.
-- **Text size** per account (Small, Normal, Large, Extra large) in *Your account*, like the language; the new Normal is slightly bigger than before.
-- **Themes** per account in *Your account*: Automatic (as the device), Daytime, Night-time, Sepia, Ocean, Forest and High contrast, for the app and the server pages.
-- **Minutes before a profile with a PIN locks itself**, chosen in *Your account* (1 by default).
-- **Manual entry, more comfortable:** each field shows the account's last value as a reference (empty when there is none, instead of a fixed example), and on a phone tapping a number opens a wheel to slide the value, with Keyboard to type it. Without an earlier value, the wheel starts at a typical value for the profile's sex, age and height (Personal data).
 
 #### 🚀 Enhancements:
 - **A single importer** (Your account → Data and backups) for the full backup and for the previous version's `snap.json`. If the backup has several profiles, you choose which one to import.
@@ -75,20 +72,18 @@
   - Each score sits on its meal's row, with large buttons, and Water has its own row.
   - The day's log comes before the estimated loss.
   - The day's log shows the last 4 weeks (Monday to Sunday) at the top instead of just one; the arrows jump 4 weeks.
-- **Email:** the server greets the mail server with its public name instead of the container's private address, which spam filters penalise; the test email reads like a real notice (greeting, what it is for, a link to the app) instead of a one-line message, and Administration → Mail explains what to do if it lands in spam.
-- **Profiles panel:** each row adapts to the width of the panel, so the PIN buttons no longer end up out of view.
-- **Manual entry in every module:** the new manual weigh-in card is in Weight (also when there is no weigh-in yet, instead of an empty page); Activity has cards to log the day's activity (steps, exercise minutes, active calories) and workouts by hand; Sleep has one to log any night by hand, and Body → Heart one to log resting heart rate, HRV, oxygen saturation and VO2 max. Data from your sources for the same day takes precedence. Tape measurements, meals, mood and personal records could already be logged by hand.
-- **Android at the same level as the iPhone:** every screen, empty state and notice that spoke only of Apple Health / Health Auto Export now also explains the Android path (Health Connect with the BodyLens app), with the same sending address for both.
+- **Manual entry in every module**, for those without a watch or a connected phone:
+  - The manual weigh-in card is in Weight (also when there is no weigh-in yet, instead of an empty page); Activity has cards for the day's activity (steps, exercise minutes, active calories) and for workouts; Sleep, one for any night; and Body → Heart, one for resting heart rate, HRV, oxygen saturation and VO2 max. Data from your sources for the same day takes precedence.
+  - Each field shows the account's last value as a reference (empty when there is none). On a phone, tapping a number opens a wheel to slide the value, with Keyboard to type it; without an earlier value, the wheel starts at a typical value for the profile's sex, age and height.
 - **Mood:** past moods can be recorded, with date and time or by tapping the day in the calendar.
 - **History** is now called **Weight history**.
 - **Wide screens:** the app reaches 1600 px, and Your account and Administration use the width with columns.
 - **Sidebar:**
-  - Your account and Administration (administrators only) are sections of the app, with the sidebar.
+  - Your account, Administration (administrators only) and Help are sections of the app, with the sidebar.
   - "Manage profiles" moves to Your account.
   - **Settings** is now called **Goals, plan and meals**; its **Data and backups** tab moves to Your account.
-- **Avatar menu:** shows the full name and includes Your account, Administration and **Sign out**, in red.
+- **Avatar menu:** shows the full name and includes Your account, Administration, Help and **Sign out**, in red.
 - **Administration command line** (`python -m app.accounts.cli`): create accounts with a temporary password, invitations, passwords, users, sources and move profiles.
-
 #### 🐛 Bug fixes:
 - **Security:** the access log no longer stores the Apple Health upload address, OAuth codes or invitations.
 - **Withings:** the callback address accepts Withings' tests and notices (POST and HEAD).

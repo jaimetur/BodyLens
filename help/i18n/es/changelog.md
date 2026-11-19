@@ -1,4 +1,4 @@
-<!-- en: 9035325957e060bc -->
+<!-- en: 4b18022edf59a7f0 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -8,7 +8,7 @@
 ### Release Date: 2026-11-19
 #### ⚠️ Cambios incompatibles:
 - **De un artefacto de claude.ai a un servidor propio:** BodyLens ya no vive en claude.ai y pasa a un contenedor Docker en el NAS (`https://bodylens.jaimetur.cloud`). Los datos están en una base de datos SQLite del servidor, no en el espacio de datos del artefacto. Entras con un usuario y una contraseña de BodyLens, no con tu cuenta de Claude.
-- **Ya no hace falta la hoja de Google:** Withings y Apple Salud envían los datos directamente al servidor. La hoja y su Apps Script quedan solo como puente temporal, para las cuentas que aún no se han migrado.
+- **Ya no hace falta la hoja de Google:** Withings, Apple Salud y Android envían los datos directamente al servidor, y cada cuenta guarda allí sus datos; la hoja y su Apps Script ya no se usan.
 - **Idioma por defecto: inglés.** Las cuentas nuevas empiezan en inglés; las existentes conservan el español.
 
 #### 🌟 Novedades:
@@ -18,27 +18,28 @@
   - Comprobación de estado (`/healthz`) y un aviso si no se puede escribir en `/data`.
 - **Despliegue en caliente:** `tools/deploy.sh` copia el código al NAS y el contenedor lo usa sin esperar a una imagen nueva. Las páginas abiertas muestran un aviso «BodyLens se ha actualizado» con un botón para recargar.
 - **Varias cuentas, cada una con sus propios datos:**
-  - Entras con usuario y contraseña; las contraseñas se guardan con argon2 y las sesiones en el servidor.
+  - Entras con tu usuario o tu correo y una contraseña; las contraseñas se guardan con argon2 y las sesiones en el servidor.
   - Cada cuenta tiene un usuario, nombre y apellidos, un correo válido y único y una contraseña de al menos 4 caracteres, escrita dos veces.
 - **Alta de cuentas:**
   - Petición de cuenta desde la pantalla de acceso, aprobada por la administración; los avisos van por correo.
   - Enlaces de invitación de un solo uso.
   - Cuenta inicial `admin`/`admin123`, que la pantalla de acceso muestra mientras conserva la contraseña por defecto.
-- **Correo saliente (SMTP)** para peticiones, aprobaciones, contraseñas temporales y avisos, configurable desde Administración.
+- **Correo saliente (SMTP)** para peticiones, aprobaciones, contraseñas temporales, invitaciones de pareja y avisos, configurable desde Administración. El servidor saluda al servidor de correo con su nombre público, y el correo de prueba es como un aviso real; Administración → Correo explica qué hacer si llega al spam.
 - **Parejas:** dos cuentas se pueden unir para compartir y editar juntas los registros de ciclo e intimidad. Invitas a tu pareja con su usuario o su correo desde Tu cuenta → Cuenta → Pareja; le llega un correo con la invitación (si no hay ninguna cuenta con ese usuario o correo, te lo dice al momento) y a ti otro cuando la acepta. Un perfil de la app se puede mover a la cuenta propia de esa persona.
 - **Tu cuenta:**
-  - **Cuenta:** perfil, correo, idioma y contraseña, pareja, fuentes de datos, sincronización e importación.
-  - **Perfiles:** niveles de acceso a los datos de tu cuenta (todos los perfiles ven los mismos datos), explicados en el propio panel. A cada perfil, también al principal, se le pueden dar solo los módulos que elijas, con fichas como en DriveTest Analyzer; en el menú solo ve esos. Los módulos incluyen Objetivos, plan y comidas, Tu cuenta (que también abre Perfiles y Datos y copias) y, en administradores, Administración; al menos un perfil tiene que tener esos, y los demás pueden tener los módulos que quieras. Los perfiles ya no tienen pareja ni ciclo propios.
-  - **El PIN decide el perfil:** el PIN que se escribe en la pantalla de bloqueo abre el perfil que lo tiene; si varios perfiles comparten PIN, al entrar con él se ven los módulos de todos (el panel avisa cuando pones un PIN que ya usa otro perfil). Desaparece el PIN privado aparte para Ciclo e intimidad: Íntimo es un módulo como los demás, y un perfil solo exporta a PDF los módulos que tiene.
-  - **Orden y perfil principal:** los perfiles se ordenan arrastrando su asa ⋮⋮; el primero es el perfil principal. Al abrir la app se entra en el perfil principal si no tiene PIN; si lo tiene, se pide y el PIN que se escriba decide el perfil. Un perfil con PIN se bloquea solo tras 1 minuto sin actividad, y cada perfil se reabre en la sección y las pestañas que tenía abiertas, también tras un reinicio o en otro dispositivo (se guarda en la cuenta, en el servidor). En el móvil, la barra de abajo muestra las secciones más grandes cuando el perfil tiene menos.
-  - **Datos personales** (altura, sexo, fecha de nacimiento) es un panel de la pestaña **Cuenta**, debajo de Contraseña.
-  - **Datos y copias:** de dónde llegan los datos del móvil, origen de los datos, copia completa y exportación a CSV.
+  - **Cuenta:** perfil, correo, idioma, tamaño del texto (Pequeño, Normal, Grande, Muy grande; el nuevo Normal es algo más grande que antes), tema (Automático según el dispositivo, Diurno, Nocturno, Sepia, Océano, Bosque o Alto contraste, para la app y las páginas del servidor), minutos sin actividad hasta que un perfil con PIN se bloquea (1 por defecto), contraseña, datos personales (altura, sexo, fecha de nacimiento), pareja y fuentes de datos.
+  - **Perfiles** y **Datos y copias** (de dónde llegan los datos del móvil, origen de los datos, copia completa e importación, exportación a CSV).
+- **Perfiles** (Tu cuenta → Perfiles):
+  - Niveles de acceso a los datos de la cuenta: todos los perfiles ven los mismos datos, y cada uno, también el principal, ve solo los módulos elegidos con fichas (como en DriveTest Analyzer), incluidos Objetivos, plan y comidas, Tu cuenta y Administración. Al menos un perfil tiene que tener esos tres. Un perfil solo exporta a PDF los módulos que tiene, y en el móvil la barra de abajo muestra más grandes las secciones cuando son menos.
+  - El PIN decide el perfil: escrito en la pantalla de bloqueo, abre el perfil que lo tiene; los perfiles que comparten PIN se abren juntos, con todos sus módulos (el panel avisa cuando un PIN ya está en uso). Íntimo es un módulo como los demás, sin un PIN privado aparte.
+  - Los perfiles se ordenan arrastrando su asa ⋮⋮, y el primero es el perfil principal. Al abrir la app se entra directamente en él si no tiene PIN; si lo tiene, se pide y el PIN decide el perfil. Un perfil con PIN se bloquea solo tras los minutos sin actividad elegidos en Tu cuenta.
+  - Cada perfil se reabre en la sección y las pestañas que tenía abiertas, también tras un reinicio o en otro dispositivo (se guarda en la cuenta, en el servidor).
 - **Administración** (cuentas de administrador), con estas pestañas:
   - **Usuarios:** editar usuario, nombre, correo y contraseña; activar o desactivar con un interruptor; dar o quitar el rol de admin; restablecer la contraseña; borrar.
   - **Peticiones de acceso** e **Invitaciones**.
   - **Correo:** ajustes SMTP y correo de prueba.
   - **Withings:** datos de la aplicación de desarrollador.
-  - **Copias de seguridad** y **Fuentes de datos**.
+  - **Copias de seguridad** y **Traductor**.
   - El servidor nunca se queda sin una cuenta de administración activa.
 - **Withings directo:**
   - Conexión OAuth por cuenta, con el token guardado cifrado.
@@ -49,9 +50,9 @@
   - Actividad diaria, entrenamientos, ECG, avisos y registros (ciclo, ánimo, síntomas…).
   - Salud tiene prioridad sobre Withings, que solo rellena huecos.
 - **App para Android (Health Connect):**
-  - Envía por horas pasos, distancia, pisos, energía, frecuencia cardiaca, HRV, SpO2, respiración, VO2 máx, sueño con fases, entrenamientos, ciclo y actividad sexual.
-  - Usa el mismo formato que Health Auto Export.
+  - Envía por horas pasos, distancia, pisos, energía, frecuencia cardiaca, HRV, SpO2, respiración, VO2 máx, sueño con fases, entrenamientos, ciclo y actividad sexual, a la misma dirección de envío que Health Auto Export y en el mismo formato.
   - El APK lo construye GitHub Actions y se descarga desde Tu cuenta (`/android.apk`).
+  - Todas las pantallas, los mensajes de «sin datos» y la ayuda explican el camino de Android al mismo nivel que el del iPhone.
 - **Datos en el servidor:**
   - Las pestañas de la hoja pasan a ser tablas del servidor, y el libro que lee la página se genera a partir de ellas.
   - Paridad con la hoja original comprobada en las 16 pestañas.
@@ -65,10 +66,6 @@
   - Los documentos están escritos solo en inglés y se traducen automáticamente al idioma de cada cuenta con LibreTranslate, un traductor gratuito que funciona en el propio servidor junto a BodyLens (la API de Claude se puede poner como alternativa opcional y de pago en Administración → **Traductor**); cada traducción se conserva hasta que cambia el texto en inglés.
   - El español viene ya traducido con la app (`help/i18n/es/`), así que no necesita traductor.
   - Todos los documentos se traducen de antemano a todos los idiomas al arrancar el servidor y se revisan cada 10 minutos: solo se vuelven a traducir los documentos cuyo texto en inglés ha cambiado (su huella), así que la ayuda se abre ya traducida.
-- **Tamaño del texto** por cuenta (Pequeño, Normal, Grande, Muy grande) en *Tu cuenta*, igual que el idioma; el nuevo Normal es algo más grande que antes.
-- **Temas** por cuenta en *Tu cuenta*: Automático (según el dispositivo), Diurno, Nocturno, Sepia, Océano, Bosque y Alto contraste, para la app y las páginas del servidor.
-- **Minutos hasta que un perfil con PIN se bloquea**, a elegir en *Tu cuenta* (1 por defecto).
-- **Entrada manual más cómoda:** cada campo muestra como referencia el último valor de la cuenta (vacío si no hay ninguno, en vez de un ejemplo fijo) y, en el móvil, al tocar un número se abre una rueda para deslizar el valor, con Teclado para escribirlo. Sin un valor anterior, la rueda empieza en un valor típico para el sexo, la edad y la altura del perfil (Datos personales).
 
 #### 🚀 Mejoras:
 - **Un único importador** (Tu cuenta → Datos y copias) para la copia completa y para el `snap.json` de la versión anterior. Si la copia tiene varios perfiles, eliges cuál importar.
@@ -76,20 +73,18 @@
   - Cada nota está en la fila de su comida, con botones grandes, y el Agua tiene su propia fila.
   - El registro del día va antes de la pérdida estimada.
   - El registro del día muestra arriba las últimas 4 semanas (de lunes a domingo) en lugar de una sola; las flechas saltan 4 semanas.
-- **Correo:** el servidor saluda al servidor de correo con su nombre público en vez de con la dirección privada del contenedor, que los filtros de spam penalizan; el correo de prueba es como un aviso real (saludo, para qué sirve, enlace a la app) en vez de una sola frase, y Administración → Correo explica qué hacer si llega al spam.
-- **Panel de perfiles:** cada fila se adapta al ancho del panel, así que los botones de PIN ya no quedan fuera de la vista.
-- **Entrada manual en todos los módulos:** la tarjeta de pesada manual está en Peso (también cuando aún no hay pesadas, en vez de una página vacía); Actividad tiene tarjetas para apuntar a mano la actividad del día (pasos, minutos de ejercicio, calorías activas) y los entrenamientos; Sueño, una para apuntar a mano cualquier noche, y Cuerpo → Corazón, una para apuntar el pulso en reposo, la VFC, la saturación de oxígeno y el VO2 máx. Los datos de tus fuentes para el mismo día mandan. Las medidas, las comidas, el ánimo y los registros personales ya se podían apuntar a mano.
-- **Android al mismo nivel que el iPhone:** todas las pantallas, avisos y mensajes de «sin datos» que solo hablaban de Apple Salud / Health Auto Export explican también el camino de Android (Health Connect con la app de BodyLens), con la misma dirección de envío para los dos.
+- **Entrada manual en todos los módulos**, para quien no lleva reloj ni conecta el móvil:
+  - La tarjeta de pesada manual está en Peso (también cuando aún no hay pesadas, en vez de una página vacía); Actividad tiene tarjetas para la actividad del día (pasos, minutos de ejercicio, calorías activas) y para los entrenamientos; Sueño, una para cualquier noche; y Cuerpo → Corazón, una para el pulso en reposo, la VFC, la saturación de oxígeno y el VO2 máx. Los datos de tus fuentes para el mismo día mandan.
+  - Cada campo muestra como referencia el último valor de la cuenta (vacío si no hay ninguno). En el móvil, al tocar un número se abre una rueda para deslizar el valor, con Teclado para escribirlo; sin un valor anterior, la rueda empieza en un valor típico para el sexo, la edad y la altura del perfil.
 - **Ánimo:** se pueden registrar ánimos pasados, con fecha y hora o tocando el día en el calendario.
 - **Historial** pasa a llamarse **Historial de pesos**.
 - **Pantallas anchas:** la app llega a 1600 px, y Tu cuenta y Administración aprovechan el ancho con columnas.
 - **Barra lateral:**
-  - Tu cuenta y Administración (solo administradores) son secciones de la app, con la barra lateral.
+  - Tu cuenta, Administración (solo administradores) y Ayuda son secciones de la app, con la barra lateral.
   - «Gestionar perfiles» pasa a Tu cuenta.
   - **Ajustes** pasa a llamarse **Objetivos, plan y comidas**; su pestaña **Datos y copias** pasa a Tu cuenta.
-- **Menú del avatar:** muestra el nombre completo e incluye Tu cuenta, Administración y **Cerrar sesión**, en rojo.
+- **Menú del avatar:** muestra el nombre completo e incluye Tu cuenta, Administración, Ayuda y **Cerrar sesión**, en rojo.
 - **Línea de comandos de administración** (`python -m app.accounts.cli`): crear cuentas con contraseña temporal, invitaciones, contraseñas, usuarios, fuentes y mover perfiles.
-
 #### 🐛 Correcciones:
 - **Seguridad:** el registro de accesos ya no guarda la dirección de subida de Apple Salud, los códigos OAuth ni las invitaciones.
 - **Withings:** la dirección de retorno acepta las pruebas y los avisos de Withings (POST y HEAD).
