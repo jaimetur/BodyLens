@@ -61,16 +61,17 @@ The following three sections are tabs of **Your account**, not of Goals, plan an
 - Profiles are ways of using your account with access to only some modules: for example, one with Weight and Meals to hand your phone to someone without them seeing the rest. **All profiles see the same data, your account's**, and each one can have its own PIN. You switch profile with the profile button (initials and name) next to the title in the top bar, which also offers **Goals, plan and meals**, **Your account** (where profiles are managed), **Administration** (if you are an administrator), **Lock profile** (if the profile has a PIN) and **Sign out**.
 - Each profile row lets you set:
   - **Name** and **colour** (the colour and initials identify the profile).
-  - **Set PIN** / **Change PIN** / **Remove PIN**: 4-digit PIN for the profile.
+  - **Set PIN** / **Change PIN** / **Remove PIN**: PIN of 4 to 8 digits for the profile.
   - **Modules** (every profile, the main one included): tap each module to give the profile access to it or take it away: Summary, Weight, Body, Activity, Sleep, Meals, Intimate, Weight history, **Goals, plan and meals**, **Your account** (where profiles, data and backups are managed) and, in administrator accounts, **Administration**. A profile only sees its modules in the menu, and opening another one takes it to the first module it has; Help is always available. **At least one profile must keep Goals, plan and meals, Your account and (for administrators) Administration**, so the account can always be managed; the other profiles can have whichever modules you like.
-  - **Delete** (asks for confirmation with "Sure?"): removes the profile; the data stays, since it is your account's. The main profile cannot be deleted.
+  - **Delete** (asks for confirmation with "Sure?"): removes the profile; the data stays, since it is your account's. The main profile (the first one) cannot be deleted; move another one to the top first.
 - **Add profile**: type a name and press **Add profile**. Switch to it with the profile button.
+- **Order and main profile:** drag a profile by its **⋮⋮** handle to change the order. The first one in the list is the **main profile**, and the order decides which profile opens when you open the app (see Profile PIN).
 
 ### Profile PIN
-- It is a 4-digit screen lock with a numeric keypad. It **does not encrypt the data.**
+- It is a screen lock of **4 to 8 digits**: type it on the numeric keypad and press **✓** (or Enter). It **does not encrypt the data.**
 - **The PIN decides the profile:** on the lock screen, the PIN you type opens the profile that has it. So each person can enter with their own PIN and see only the modules of their profile.
 - **Shared PIN:** if several profiles have the same PIN, entering with it opens them together and you see the modules of all of them. When you set a PIN that another profile already has, the panel tells you so.
-- When you open the app or switch to a profile with a PIN, it is asked for. After 5 failed attempts you have to wait 30 seconds.
+- **Which profile opens:** when you open the app, it enters the **first profile in the list without a PIN**. If every profile has a PIN, the lock screen appears and the PIN typed decides the profile. After 5 failed attempts you have to wait 30 seconds.
 - The lock screen also lets you **Sign in with another profile**.
 - **Lock profile** (in the profile menu) asks for the PIN again.
 - Cycle and intimacy no longer have a PIN of their own: who sees them depends on whether the profile has the **Intimate** module.

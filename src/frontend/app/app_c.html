@@ -36,7 +36,10 @@ const saveUI=()=>{try{localStorage.setItem('bascula:ui',JSON.stringify(UI))}catc
 const PROF_DEF=[{"id":"","name":"Jaime Tur","col":"#3f51e0","partner":"laura","pinH":"b306e613261e589c95f54353e7647436ad522b508d1a7ea41bccfd24741623bb","partnerSince":"2026-03-01"},{"id":"laura","name":"Laura Romero","col":"#d6457a","cycle":1,"partner":"","pinH":"4e68ba88e45912c2d4a386c50521c22abda50a12b692992e00851267670516a9","partnerSince":"2026-03-01"}];
 let PROFS=(()=>{try{const p=JSON.parse(localStorage.getItem('bascula:profs')||'null');return Array.isArray(p)&&p.length?p:PROF_DEF}catch(e){return PROF_DEF}})();
 // profiles are access levels over the same data: SEL is the profile in use (modules, PIN); PID, the data owner, is always the main one
-const SEL=UI.profile&&PROFS.some(p=>p.id===UI.profile)?UI.profile:'';const PID='';
+// the profile in use in this tab: the one entered in this session; otherwise the first one in the list without a PIN;
+// if they all have a PIN, the first one, and the PIN typed on the lock screen decides which profile opens
+const SEL=(()=>{let s=null;try{s=sessionStorage.getItem('bascula:sel')}catch(e){}if(s!=null&&PROFS.some(p=>p.id===s))return s;
+  const f=PROFS.find(p=>!p.pinH)||PROFS[0];return f?f.id:''})();const PID='';
 if(PID)LS='bascula:v3:'+PID;
 // al cambiar de perfil se vuelve a la misma sección (las pestañas de cada sección ya se recuerdan)
 if(UI.pfRet){const r=UI.pfRet;delete UI.pfRet;saveUI();if(location.hash.slice(1)!==r){try{history.replaceState(null,'','#'+r)}catch(e){location.hash='#'+r}}}
@@ -84,17 +87,18 @@ function showLock(p,then,mode){LOCK={p,buf:'',then,tries:0,until:0,mode:mode||''
 function hideLock(){$('lock').hidden=true;LOCK=null;document.body.classList.toggle('locked',!unlocked(PROF()))}
 function drawLock(){const L=LOCK,p=L.p,cur=p.id===SEL&&!unlocked(PROF());const others=PROFS.filter(q=>q.id!==p.id);
   $('lock').innerHTML=`<div class="lk"><div class="lk-logo">${(document.querySelector('.bl-ic')||{}).outerHTML||''}<span>Body<em>Lens</em></span></div><i class="lk-av" style="background:${p.col}">${esc(initials(p.name))}</i><h2>${esc(p.name)}</h2><p class="lk-msg" aria-live="polite">${L.msg||(L.mode==='priv'?'Introduce tu PIN privado para abrir Íntimo':'Introduce tu PIN')}</p>
-    <div class="lk-dots">${[0,1,2,3].map(i=>`<i class="${i<L.buf.length?'on':''}"></i>`).join('')}</div>
-    <div class="lk-pad">${['1','2','3','4','5','6','7','8','9','',  '0','⌫'].map(k=>k?`<button type="button" data-lk="${k}" aria-label="${k==='⌫'?'Borrar':k}">${k}</button>`:'<span></span>').join('')}</div>
+    <div class="lk-dots">${[...Array(Math.max(4,L.buf.length)).keys()].map(i=>`<i class="${i<L.buf.length?'on':''}"></i>`).join('')}</div>
+    <div class="lk-pad">${['1','2','3','4','5','6','7','8','9','⌫','0','✓'].map(k=>`<button type="button" data-lk="${k}" aria-label="${k==='⌫'?'Borrar':k==='✓'?'Entrar':k}">${k}</button>`).join('')}</div>
     ${cur&&L.mode!=='priv'?(others.length?`<div class="lk-o"><small>Entrar con otro perfil</small>${others.map(q=>`<button type="button" data-lkp="${esc(q.id)}"><i style="background:${q.col}">${esc(initials(q.name))}</i>${esc(q.name)}</button>`).join('')}</div>`:''):'<button type="button" class="lk-x" data-lkx>Cancelar</button>'}</div>`}
 async function lockKey(k){const L=LOCK;if(!L)return;if(Date.now()<L.until)return;
-  if(k==='⌫'){L.buf=L.buf.slice(0,-1);L.msg='';drawLock();return}if(L.buf.length>=4)return;L.buf+=k;drawLock();
-  if(L.buf.length<4)return;
+  if(k==='⌫'){L.buf=L.buf.slice(0,-1);L.msg='';drawLock();return}
+  if(k!=='✓'){if(L.buf.length<8){L.buf+=k;L.msg='';drawLock()}return}
+  if(L.buf.length<4){L.msg='El PIN tiene entre 4 y 8 cifras';drawLock();return}
   if(L.mode==='priv'){if(await privCheck(L.p,L.buf)){privSet(L.p,true);privAccSet(L.p,true);const t=L.then;hideLock();if(t)t();else renderView();return}}
   else{// the PIN decides the profile: every profile with this PIN opens, and their modules add up
     const hit=[];for(const q of PROFS)if(q.pinH&&(await pinHash(q.id,L.buf))===q.pinH)hit.push(q);
     if(hit.length){hit.forEach(setUnlocked);try{sessionStorage.setItem('bascula:grp',JSON.stringify(hit.map(q=>q.id)))}catch(e){}
-      const go=hit.find(q=>q.id===L.p.id)||hit[0];
+      const go=hit.find(q=>q.id===L.p.id)||hit[0];try{sessionStorage.setItem('bascula:sel',go.id)}catch(e){}
       if(go.id!==SEL){hideLock();switchProfile(go.id,true);return}
       const t=L.then;hideLock();if(t)t();else{applyModVis();route()}return}}
   L.tries++;L.buf='';if(L.tries>=5){L.until=Date.now()+30000;L.tries=0;L.msg='Demasiados intentos. Espera 30 segundos.';setTimeout(()=>{if(LOCK){LOCK.msg='';drawLock()}},30000)}else L.msg='PIN incorrecto';drawLock();
@@ -102,9 +106,9 @@ async function lockKey(k){const L=LOCK;if(!L)return;if(Date.now()<L.until)return
 document.addEventListener('click',e=>{const k=e.target.closest('[data-lk]');if(k){lockKey(k.dataset.lk);return}
   const q=e.target.closest('[data-lkp]');if(q){const p=PROFS.find(x=>x.id===q.dataset.lkp);if(!p)return;if(unlocked(p))return switchProfile(p.id,true);LOCK={p,buf:'',then:()=>switchProfile(p.id,true),tries:0,until:0};drawLock();return}
   if(e.target.closest('[data-lkx]'))hideLock()});
-document.addEventListener('keydown',e=>{if(!LOCK)return;if(/^\d$/.test(e.key))lockKey(e.key);else if(e.key==='Backspace')lockKey('⌫');else if(e.key==='Escape'&&(LOCK.mode==='priv'||!(LOCK.p.id===SEL&&!unlocked(PROF()))))hideLock()});
+document.addEventListener('keydown',e=>{if(!LOCK)return;if(/^\d$/.test(e.key))lockKey(e.key);else if(e.key==='Backspace')lockKey('⌫');else if(e.key==='Enter')lockKey('✓');else if(e.key==='Escape'&&(LOCK.mode==='priv'||!(LOCK.p.id===SEL&&!unlocked(PROF()))))hideLock()});
 function checkLock(){const p=PROF();if(!unlocked(p)){if(!LOCK)showLock(p,null)}else if(LOCK&&LOCK.p.id===SEL&&!LOCK.then)hideLock();document.body.classList.toggle('locked',!unlocked(p))}
-function switchProfile(id,ok){if(id===SEL){closeProfMenu();return}const p=PROFS.find(x=>x.id===id);if(!ok&&p&&!unlocked(p)){closeProfMenu();showLock(p,()=>switchProfile(id,true));return}try{saveLocal()}catch(e){}UI.profile=id;UI.pfRet=(location.hash||'#resumen').slice(1);UI.pfY=window.scrollY||0;saveUI();location.reload()}
+function switchProfile(id,ok){if(id===SEL){closeProfMenu();return}const p=PROFS.find(x=>x.id===id);if(!ok&&p&&!unlocked(p)){closeProfMenu();showLock(p,()=>switchProfile(id,true));return}try{saveLocal()}catch(e){}try{sessionStorage.setItem('bascula:sel',id)}catch(e){}UI.profile=id;UI.pfRet=(location.hash||'#resumen').slice(1);UI.pfY=window.scrollY||0;saveUI();location.reload()}
 (()=>{try{for(const l of document.querySelectorAll('body link[rel="icon"],body link[rel="apple-touch-icon"]'))document.head.appendChild(l.cloneNode(true))}catch(e){}})();
 function renderProfBtn(){const b=$('pfBtn');if(!b)return;try{$('brandSub').textContent='Salud y seguimiento · '+PROF().name.split(' ')[0]}catch(e){}try{checkLock()}catch(e){}const p=PROF();b.innerHTML=`<i style="background:${p.col}">${esc(initials(p.name))}</i><span>${esc(p.name.split(' ')[0])}</span>`;b.setAttribute('aria-label','Perfil: '+p.name+'. Cambiar de perfil')}
 function closeProfMenu(){const m=$('pfMenu');if(m)m.hidden=true;const b=$('pfBtn');if(b)b.setAttribute('aria-expanded','false')}
@@ -1612,7 +1616,7 @@ if(SRV_V.length){
   showAj(AJT);
 }
 function renderProfCard(){const h=$('pfList');if(!h)return;
-  h.innerHTML=PROFS.map((p,i)=>`<div class="pfrow" data-pfi="${i}"><i style="background:${p.col}">${esc(initials(p.name))}</i><input type="text" value="${esc(p.name)}" data-pfname aria-label="Nombre del perfil"><input type="color" value="${p.col}" data-pfcol aria-label="Color"><button type="button" class="btn ghost" data-pfpin>${p.pinH?'Cambiar PIN':'Poner PIN'}</button>${i?`<button type="button" class="btn ghost danger" data-pfdel>${PF_DEL===i?'¿Seguro?':'Borrar'}</button>`:'<span class="pfmain">Principal</span>'}${PF_PIN===i?`<span class="pfpin"><small class="pfpn">Con este PIN se entra en este perfil. Si varios perfiles tienen el mismo PIN, al entrar con él se ven los módulos de todos ellos.</small><input type="password" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="4 cifras" data-pfpinv aria-label="Nuevo PIN"><button type="button" class="btn" data-pfpinok>Guardar</button>${p.pinH?'<button type="button" class="btn ghost danger" data-pfpinoff>Quitar PIN</button>':''}</span>`:''}${true?`<span class="pfpin pfmods" role="group" aria-label="Módulos de ${esc(p.name)}"><small class="pfpn">Módulos</small>${MODS.map(([id,l])=>`<label class="pfmod"><input type="checkbox" data-pfmod="${id}"${!modsOf(p)||p.mods.includes(id)?' checked':''}><span>${l}</span></label>`).join('')}</span>`:''}</div>`).join('')}
+  h.innerHTML=PROFS.map((p,i)=>`<div class="pfrow" data-pfi="${i}"><span class="pfdrag" data-pfdrag title="Arrastra para cambiar el orden" aria-label="Arrastra para cambiar el orden">⋮⋮</span><i style="background:${p.col}">${esc(initials(p.name))}</i><input type="text" value="${esc(p.name)}" data-pfname aria-label="Nombre del perfil"><input type="color" value="${p.col}" data-pfcol aria-label="Color"><button type="button" class="btn ghost" data-pfpin>${p.pinH?'Cambiar PIN':'Poner PIN'}</button>${i?`<button type="button" class="btn ghost danger" data-pfdel>${PF_DEL===i?'¿Seguro?':'Borrar'}</button>`:'<span class="pfmain">Principal</span>'}${PF_PIN===i?`<span class="pfpin"><small class="pfpn">Con este PIN se entra en este perfil. Si varios perfiles tienen el mismo PIN, al entrar con él se ven los módulos de todos ellos.</small><input type="password" inputmode="numeric" maxlength="8" pattern="[0-9]*" placeholder="4 a 8 cifras" data-pfpinv aria-label="Nuevo PIN"><button type="button" class="btn" data-pfpinok>Guardar</button>${p.pinH?'<button type="button" class="btn ghost danger" data-pfpinoff>Quitar PIN</button>':''}</span>`:''}${true?`<span class="pfpin pfmods" role="group" aria-label="Módulos de ${esc(p.name)}"><small class="pfpn">Módulos</small>${MODS.map(([id,l])=>`<label class="pfmod"><input type="checkbox" data-pfmod="${id}"${!modsOf(p)||p.mods.includes(id)?' checked':''}><span>${l}</span></label>`).join('')}</span>`:''}</div>`).join('')}
 let PF_DEL=null,PF_PIN=null,PF_PPIN=null;
 document.addEventListener('change',e=>{const r=e.target.closest('.pfrow');if(!r)return;const i=+r.dataset.pfi,L=PROFS.map(p=>({...p}));
   if(e.target.matches('[data-pfname]')){const v=e.target.value.trim();if(!v)return renderProfCard();L[i].name=v}
@@ -1628,7 +1632,7 @@ document.addEventListener('change',e=>{const r=e.target.closest('.pfrow');if(!r)
   saveProfs(L);renderProfCard();$('pfMsg2').textContent='Guardado.'});
 document.addEventListener('click',async e=>{const r=e.target.closest('.pfrow');if(r){const i=+r.dataset.pfi;
     if(e.target.closest('[data-pfpin]')){PF_PIN=PF_PIN===i?null:i;PF_PPIN=null;renderProfCard();const v=document.querySelector('[data-pfpinv]');if(v)v.focus();return}
-    if(e.target.closest('[data-pfpinok]')){const v=r.querySelector('[data-pfpinv]').value;if(!/^\d{4}$/.test(v)){$('pfMsg2').textContent='El PIN tiene que tener 4 cifras.';return}
+    if(e.target.closest('[data-pfpinok]')){const v=r.querySelector('[data-pfpinv]').value;if(!/^\d{4,8}$/.test(v)){$('pfMsg2').textContent='El PIN tiene que tener entre 4 y 8 cifras.';return}
       const L=PROFS.map(p=>({...p}));L[i].pinH=await pinHash(L[i].id,v);PF_PIN=null;setUnlocked(L[i]);saveProfs(L);renderProfCard();
       const same=[];for(const q of L)if(q.id!==L[i].id&&q.pinH&&(await pinHash(q.id,v))===q.pinH)same.push(q.name);
       $('pfMsg2').textContent=same.length?`PIN de ${L[i].name} guardado. Es el mismo PIN que el de ${same.join(', ')}: quien entre con él verá los módulos de todos esos perfiles.`:`PIN de ${L[i].name} guardado.`;return}
@@ -1639,6 +1643,14 @@ document.addEventListener('click',e=>{if(e.target.id==='pfAdd'){const n=$('pfNew
   const d=e.target.closest('[data-pfdel]');if(d){const i=+d.closest('.pfrow').dataset.pfi;if(PF_DEL!==i){PF_DEL=i;renderProfCard();return}
     PF_DEL=null;const p=PROFS[i];saveProfs(PROFS.filter((_,j)=>j!==i));renderProfCard();$('pfMsg2').textContent=`Perfil «${p.name}» borrado.`;if(p.id===SEL)switchProfile('')}});
 {const f=renderProfBtn;renderProfBtn=function(){f.apply(this,arguments);try{applyModVis();if(typeof VIEW!=='undefined'&&!modAllowed(VIEW))route()}catch(e){}}}
+document.addEventListener('pointerdown',e=>{const h=e.target.closest('[data-pfdrag]');if(!h)return;const row=h.closest('.pfrow'),list=$('pfList');if(!row||!list)return;
+  e.preventDefault();row.classList.add('pfdragging');
+  const move=ev=>{const y=ev.clientY,rows=[...list.querySelectorAll('.pfrow')].filter(r=>r!==row);
+    const next=rows.find(r=>{const b=r.getBoundingClientRect();return y<b.top+b.height/2});if(next){if(row.nextSibling!==next)list.insertBefore(row,next)}else if(list.lastElementChild!==row)list.appendChild(row)};
+  const up=()=>{removeEventListener('pointermove',move);removeEventListener('pointerup',up);removeEventListener('pointercancel',up);row.classList.remove('pfdragging');
+    const order=[...list.querySelectorAll('.pfrow')].map(r=>PROFS[+r.dataset.pfi]);
+    if(order.some((p,i)=>p!==PROFS[i])){saveProfs(order.map(p=>({...p})));renderProfCard();$('pfMsg2').textContent='Orden guardado. El primero es el perfil principal.'}else renderProfCard()};
+  addEventListener('pointermove',move);addEventListener('pointerup',up);addEventListener('pointercancel',up)});
 function renderAjustes(){renderProfCard();renderFoodCfg();renderPlatos();
   const c={...DEFAULT_CFG,...((DOC&&DOC.cfg)||{})};const act=document.activeElement;const set=(id,v)=>{if(act&&act.id===id)return;$(id).value=v??''};
   set('cfHeight',c.height);set('cfSleepGoal',c.sleepGoal||7);for(const f of Object.keys(SCHED_DEF))set('cf_'+f,c[f]||SCHED_DEF[f]);set('cfStepGoal',c.stepGoal||8000);set('cfMinGoal',c.minGoal||30);set('cfKcalGoal',c.kcalGoal||400);set('cfSex',c.sex||'');set('cfBirth',c.birth||'');set('cfStart',c.start);set('cfGoal',c.goal);set('cfDate',c.startDate);set('cfR1',c.rates[0]);set('cfR2',c.rates[1]);set('cfR3',c.rates[2]);set('cfFile',c.fileId);
