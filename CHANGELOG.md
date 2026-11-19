@@ -59,6 +59,7 @@
 - **Help:** a Help section in the app with the help of every module, the README and the changelog, without leaving the tool.
   - The documents are written only in English and translated automatically into each account's language with LibreTranslate, a free translator running on the server next to BodyLens (the Claude API can be set as an optional, paid alternative in Administration → **Translator**); each translation is kept until the English text changes.
   - Spanish comes already translated with the app (`help/i18n/es/`), so it needs no translator.
+  - Every document is translated in advance into every language when the server starts, and checked again every 10 minutes: only documents whose English text changed (their fingerprint) are translated again, so the help opens already translated.
 - **Text size** per account (Small, Normal, Large, Extra large) in *Your account*, like the language; the new Normal is slightly bigger than before.
 
 #### 🚀 Enhancements:

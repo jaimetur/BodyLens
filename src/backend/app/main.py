@@ -48,20 +48,6 @@ class _HideSecrets(logging.Filter):
 logging.getLogger("uvicorn.access").addFilter(_HideSecrets())
 
 
-async def _prewarm_translations() -> None:
-    """Some time after start-up, translate the help into the languages the accounts use (only what changed)."""
-    from app.help import translate
-    await asyncio.sleep(90)
-    try:
-        with db.ro() as con:
-            langs = [r[0] for r in con.execute("SELECT DISTINCT lang FROM users WHERE active=1")]
-        n = await asyncio.to_thread(translate.prewarm, langs)
-        if n:
-            log.info("translating %d help documents", n)
-    except Exception:
-        log.exception("could not start translating the help")
-
-
 @contextlib.asynccontextmanager
 async def lifespan(app: FastAPI):
     db.init_db()
@@ -78,7 +64,8 @@ async def lifespan(app: FastAPI):
             log.warning("BODYLENS_ADMIN_EMAIL no es un correo válido.")
     tasks = [asyncio.create_task(sync_service.scheduler_loop()), asyncio.create_task(backup.loop())] if s.scheduler_enabled else []
     if s.scheduler_enabled:
-        tasks.append(asyncio.create_task(_prewarm_translations()))
+        from app.help import translate
+        tasks.append(asyncio.create_task(translate.prewarm_loop()))
     yield
     for t in tasks:
         t.cancel()

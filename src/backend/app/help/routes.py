@@ -82,6 +82,4 @@ def prewarm(u: User = Depends(admin_user)):
     """Translate now every document into the languages the accounts use."""
     if not translate.configured():
         bad("No translator is available: LibreTranslate is not reachable and there is no API key.")
-    with db.ro() as con:
-        langs = [r[0] for r in con.execute("SELECT DISTINCT lang FROM users WHERE active=1")]
-    return {"started": translate.prewarm(langs)}
+    return {"started": translate.prewarm(translate.prewarm_languages())}

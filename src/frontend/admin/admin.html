@@ -225,6 +225,7 @@ async function loadTranslator() {
     $('tDel').hidden = !t.configured || t.fromEnv; $('tNow').disabled = !t.configured;
     $('tLibre').textContent = t.libreOk ? `working (${t.libreLanguages.length} languages)` : (t.libreUrl ? 'not reachable yet (it downloads its language models the first time)' : 'not installed');
     $('tState').textContent = (t.provider === 'libre' ? 'Translating with LibreTranslate' : t.provider === 'claude' ? `Translating with the Claude API (${t.model})` : 'No translator available: the help is shown in English') +
+      (t.queued ? ` · ${t.queued} documents in the queue` : '') +
       (t.lastOk ? ` · last translation ${when(t.lastOk)}` : '') +
       (t.lastError ? ` · last error ${when(t.lastError.at)} (${t.lastError.doc}, ${t.lastError.lang}): ${t.lastError.error}` : '');
   } catch (e) { say($('tMsg'), e.message, 'err'); }

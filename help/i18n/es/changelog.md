@@ -1,4 +1,4 @@
-<!-- en: 28ba489bc5cae48d -->
+<!-- en: 9536293952202adf -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -60,6 +60,7 @@
 - **Ayuda:** una sección Ayuda en la app con la ayuda de cada módulo, el README y el registro de cambios, sin salir de la herramienta.
   - Los documentos están escritos solo en inglés y se traducen automáticamente al idioma de cada cuenta con LibreTranslate, un traductor gratuito que funciona en el propio servidor junto a BodyLens (la API de Claude se puede poner como alternativa opcional y de pago en Administración → **Traductor**); cada traducción se conserva hasta que cambia el texto en inglés.
   - El español viene ya traducido con la app (`help/i18n/es/`), así que no necesita traductor.
+  - Todos los documentos se traducen de antemano a todos los idiomas al arrancar el servidor y se revisan cada 10 minutos: solo se vuelven a traducir los documentos cuyo texto en inglés ha cambiado (su huella), así que la ayuda se abre ya traducida.
 - **Tamaño del texto** por cuenta (Pequeño, Normal, Grande, Muy grande) en *Tu cuenta*, igual que el idioma; el nuevo Normal es algo más grande que antes.
 
 #### 🚀 Mejoras:

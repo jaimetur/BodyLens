@@ -26,9 +26,9 @@ MODEL = "claude-opus-5-5"
 SETTING = "translator"
 CHUNK = 12000   # characters of Markdown per request (split at headings)
 
-_busy: set[tuple[str, str]] = set()
+_busy: set[tuple[str, str]] = set()   # queued or being translated
 _lock = threading.Lock()
-_slots = threading.Semaphore(2)   # at most two translations at a time
+LIBRE_PARALLEL = 4   # sections of a document sent to LibreTranslate at once (it runs 4 workers)
 
 
 # ---------- settings ----------
@@ -100,7 +100,7 @@ def status() -> dict:
     return {"configured": configured(), "provider": provider(), "libreUrl": libre_url(), "libreOk": codes is not None,
             "libreLanguages": sorted(codes or []), "claudeKey": bool(api_key()),
             "fromEnv": bool(os.environ.get("ANTHROPIC_API_KEY", "").strip()),
-            "model": MODEL, "lastError": s.get("lastError"), "lastOk": s.get("lastOk")}
+            "model": MODEL, "lastError": s.get("lastError"), "lastOk": s.get("lastOk"), "queued": len(_busy)}
 
 
 def _note(**kv) -> None:
@@ -257,16 +257,16 @@ def _translate_libre(lang: str, source: str) -> str:
     html = PROTECT.sub(lambda m: kept.append(m.group(0)) or f'<var data-k="{len(kept) - 1}"></var>', html)
     # one request per section, so a long document does not hit time limits
     parts = re.split(r"(?=<h[12]>)", html)
-    out = []
+    from concurrent.futures import ThreadPoolExecutor
     with httpx.Client(timeout=300) as c:
-        for part in parts:
+        def one(part: str) -> str:
             if not re.search(r"[A-Za-z]", re.sub(r"<[^>]+>", "", part)):
-                out.append(part)
-                continue
+                return part
             r = c.post(libre_url() + "/translate", json={"q": part, "source": "en", "target": code, "format": "html"})
             r.raise_for_status()
-            out.append(r.json()["translatedText"])
-    res = "".join(out)
+            return r.json()["translatedText"]
+        with ThreadPoolExecutor(LIBRE_PARALLEL) as pool:
+            res = "".join(pool.map(one, parts))
     return re.sub(r'<var data-k="(\d+)">\s*</var>', lambda m: kept[int(m.group(1))], res)
 
 
@@ -289,19 +289,21 @@ def translate(lang: str, doc: str, source: str) -> str:
     return out
 
 
-def request(lang: str, doc: str, source: str) -> bool:
-    """Start translating in the background (once). False when there is no translator configured."""
-    if lang == "en" or not provider(lang):
-        return False
-    with _lock:
-        if (lang, doc) in _busy:
-            return True
-        _busy.add((lang, doc))
+_queue: "queue.PriorityQueue[tuple[int, int, str, str]]" = None   # (priority, order, lang, doc)
+_order = iter(range(10 ** 12))
+_worker: threading.Thread | None = None
 
-    def run():
+
+def _work() -> None:
+    """One translation at a time (LibreTranslate already gets the sections of a document in parallel)."""
+    from app.help import docs
+    while True:
+        _, _, lang, doc = _queue.get()
         try:
-            with _slots:
-                translate(lang, doc, source)
+            src = docs.source(doc)
+            if src is None or bundled(lang, doc, src) is not None or cached(lang, doc, src) is not None:
+                continue   # nothing to do (e.g. queued twice, or translated meanwhile)
+            translate(lang, doc, src)
             _note(lastOk=db.now_iso(), lastError=None)
             log.info("translated %s into %s", doc, lang)
         except Exception as e:  # noqa: BLE001 — never break the Help page because of the translator
@@ -310,19 +312,62 @@ def request(lang: str, doc: str, source: str) -> bool:
         finally:
             with _lock:
                 _busy.discard((lang, doc))
+            _queue.task_done()
 
-    threading.Thread(target=run, name=f"bodylens-translate-{lang}-{doc}", daemon=True).start()
+
+def request(lang: str, doc: str, source: str, urgent: bool = True) -> bool:
+    """Queue ``doc`` for translation into ``lang``. A document someone is reading (urgent) goes before the ones
+    translated in advance. False when there is no translator for that language."""
+    global _queue, _worker
+    import queue
+    if lang == "en" or not provider(lang):
+        return False
+    with _lock:
+        if _queue is None:
+            _queue = queue.PriorityQueue()
+        if (lang, doc) in _busy and not urgent:
+            return True
+        _busy.add((lang, doc))
+        _queue.put((0 if urgent else 1, next(_order), lang, doc))
+        if _worker is None or not _worker.is_alive():
+            _worker = threading.Thread(target=_work, name="bodylens-translate", daemon=True)
+            _worker.start()
     return True
 
 
 def prewarm(langs: list[str]) -> int:
-    """Translate in the background every document into the given languages (those already done are skipped)."""
+    """Queue every document missing or out of date (its English fingerprint changed) in the given languages."""
     from app.help import docs
     n = 0
     for lang in sorted(set(langs) - {"en"}):
         for doc in docs.all_docs():
             src = docs.source(doc)
             if src is not None and bundled(lang, doc, src) is None and cached(lang, doc, src) is None \
-                    and request(lang, doc, src):
+                    and request(lang, doc, src, urgent=False):
                 n += 1
     return n
+
+
+def prewarm_languages() -> list[str]:
+    """With the free LibreTranslate, every language of the app; with the paid Claude API, only those in use."""
+    if provider() == "libre":
+        return [lang for lang in i18n.LANGS if lang != "en"]
+    with db.ro() as con:
+        return [r[0] for r in con.execute("SELECT DISTINCT lang FROM users WHERE active=1")]
+
+
+PREWARM_EVERY = 600   # seconds between checks of the English fingerprints
+
+
+async def prewarm_loop() -> None:
+    """At start-up and then every 10 minutes: translate in advance whatever is missing or changed."""
+    import asyncio
+    await asyncio.sleep(60)
+    while True:
+        try:
+            n = await asyncio.to_thread(lambda: prewarm(prewarm_languages()))
+            if n:
+                log.info("translating %d help documents in the background", n)
+        except Exception:  # noqa: BLE001
+            log.exception("could not check the help translations")
+        await asyncio.sleep(PREWARM_EVERY)

@@ -2306,6 +2306,7 @@
  "{0} days you made it": "你有 {0} 天达标",
  "{0} dishes": "{0} 道菜",
  "{0} dishes merged into “{1}” ({2} {3}).": "已将 {0} 道菜合并到“{1}”（{2} {3}）。",
+ "{0} documents in the queue": "队列中有 {0} 个文档",
  "{0} documents moved.": "已移动 {0} 份文档。",
  "{0} drinks": "{0} 杯饮品",
  "{0} drinks in 30 days": "30 天内 {0} 杯饮品",

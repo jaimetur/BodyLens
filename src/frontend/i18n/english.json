@@ -31,5 +31,6 @@
  "last translation {0}",
  "not installed",
  "not reachable yet (it downloads its language models the first time)",
- "working ({0} languages)"
+ "working ({0} languages)",
+ "{0} documents in the queue"
 ]
