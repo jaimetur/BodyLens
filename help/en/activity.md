@@ -4,9 +4,9 @@ Use it to see how much you move: steps, active calories, exercise minutes, heart
 
 ## Source of the data
 
-- Daily activity, workouts and heart rate come mainly from **Apple Health** (through Health Auto Export).
+- Daily activity, workouts and heart rate come mainly from **Apple Health** (iPhone, through Health Auto Export) or **Android** (Health Connect, through the BodyLens app). Android sends steps, distance, floors, active calories, workouts, heart rate and resting heart rate.
 - **Withings** (watch or scale) fills the gaps: days without Health data and fields that Health does not provide.
-- If a workout is in both sources, the Apple Health one is kept.
+- If a workout is in both sources, the Apple Health / Android one is kept.
 
 ## Tabs
 
@@ -50,4 +50,4 @@ Use it to see how much you move: steps, active calories, exercise minutes, heart
 
 ## Goals
 
-The goals for steps, exercise minutes and active calories are changed in Settings → Goals and plan. Defaults: 8,000 steps, 30 minutes and 400 active kcal per day.
+The goals for steps, exercise minutes and active calories are changed in Goals, plan and meals → Goals and plan. Defaults: 8,000 steps, 30 minutes and 400 active kcal per day.

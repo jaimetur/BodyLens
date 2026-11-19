@@ -9,7 +9,7 @@ A top bar lets you switch between **Scale**, **Measurements**, **Heart** and **W
 ## Source of the data
 
 - **Scale and Measurements**: composition comes from the **Withings** scale (bioimpedance). You log the tape measurements yourself.
-- **Heart and Wellbeing**: they come from **Apple Health** (through Health Auto Export), except for what you log by hand.
+- **Heart and Wellbeing**: they come from **Apple Health** (iPhone, through Health Auto Export) or **Android** (Health Connect, through the BodyLens app), except for what you log by hand. Android sends heart rate, resting heart rate, HRV, blood oxygen, respiratory rate and VO2 max; ECG, watch alerts, wrist temperature, symptoms and State of Mind are only sent by the iPhone (Apple Health) or logged by hand.
 
 ---
 
@@ -33,7 +33,7 @@ Body composition measured by the scale: fat, muscle, bone and water.
 - **New manual weigh-in**: date, weight and, if you want, fat, muscle, water and bone. If a scale weigh-in arrives for that day later, the scale's one takes precedence. Below, the manual weigh-ins are listed with **Edit** and **Remove**.
 
 ### Rules
-- You need to enter your **height**, **sex** and **date of birth** in Settings to see BMI, lean mass index and ranges adjusted to your age. Without them, generic values are used or you are asked to enter them.
+- You need to enter your **height**, **sex** and **date of birth** in Your account → Personal data to see BMI, lean mass index and ranges adjusted to your age. Without them, generic values are used or you are asked to enter them.
 - Zones and bell curves are approximate; bioimpedance measurements are not a diagnosis.
 
 ---
@@ -45,7 +45,7 @@ Tape measurements (waist, hips, chest, neck, arm and thigh), because the scale d
 ### What you will see
 - **Indicators** (calculated from your latest measurements):
   - **Waist / height**: Low, Healthy (0.4 to 0.5), Increased (0.5 to 0.6) or High.
-  - **Waist / hip**: WHO thresholds according to your sex. It needs your sex to be set in Settings.
+  - **Waist / hip**: WHO thresholds according to your sex. It needs your sex to be set in Your account → Personal data.
   - **Body fat % from tape**: estimate with the US Navy formula (waist, neck, height and, for women, hips). If your scale gives a fat %, it is compared with it.
 - **Latest measurements**: one card per zone with the latest value, its date and the change from the first measurement.
 - **Progress**: one chart per zone with at least two measurements.
@@ -57,7 +57,7 @@ Tape measurements (waist, hips, chest, neck, arm and thigh), because the scale d
 
 ## Heart
 
-Latest Apple Watch data and how it compares with your previous 30 days. If there is no Apple Health data yet, the screen says so.
+Latest Apple Watch data and how it compares with your previous 30 days. If there is no Apple Health / Android data yet, the screen says so.
 
 ### What you will see
 - **Heart and fitness**: cards for resting heart rate, overnight HRV, respiratory rate, wrist temperature (difference from your 30-night average), breathing disturbances, walking heart rate, 1-minute recovery and daylight. Each card shows the value, the difference from the previous 30 days and a mini chart; tapping it opens its detail.
@@ -74,9 +74,9 @@ Latest Apple Watch data and how it compares with your previous 30 days. If there
 
 ## Wellbeing
 
-Symptoms and habits that you log in Apple Health or here.
+Symptoms and habits that you log in Apple Health (iPhone) or here by hand; Android does not send symptoms.
 
 ### What you will see
 - **Wellbeing**: two groups, **Symptoms** (headache, back pain, pelvic pain, fatigue, appetite, night sweats, bloating, cramps, nausea and other symptoms) and **Habits** (mindfulness and alcohol; mood is in Intimate). Each row shows how many records there are in 30 days and in 12 months, a 52-week strip with the weeks that had any record, the date of the last one and, for alcohol, the drinks of the last 30 days.
 - **Log**: choose the type, the date and time and a detail (mild, moderate or severe; number of drinks for alcohol; minutes for mindfulness) and press **Log**. In the list of latest records you can edit or delete each one.
-- Records that came from Apple Health and that you remove here are hidden, and a new import does not show them again.
+- Records that came from Apple Health / Android and that you remove here are hidden, and a new import does not show them again.

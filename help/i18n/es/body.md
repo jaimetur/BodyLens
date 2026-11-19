@@ -1,4 +1,4 @@
-<!-- en: 4e88c76325a870ec -->
+<!-- en: 44c8de12dd01d48f -->
 # Cuerpo
 
 Reúne todo lo que describe tu cuerpo en cuatro secciones: la composición que mide la báscula, las medidas con cinta, el corazón y la forma física, y el bienestar (síntomas y hábitos).
@@ -10,7 +10,7 @@ Una barra superior te permite cambiar entre **Báscula**, **Medidas**, **Corazó
 ## Origen de los datos
 
 - **Báscula y Medidas**: la composición viene de la báscula **Withings** (bioimpedancia). Las medidas con cinta las apuntas tú.
-- **Corazón y Bienestar**: vienen de **Apple Salud** (a través de Health Auto Export), salvo lo que apuntes a mano.
+- **Corazón y Bienestar**: vienen de **Apple Salud** (iPhone, a través de Health Auto Export) o de **Android** (Health Connect, a través de la app de BodyLens), salvo lo que apuntes a mano. Android envía frecuencia cardiaca, frecuencia cardiaca en reposo, HRV, oxígeno en sangre, frecuencia respiratoria y VO2 máx; los ECG, los avisos del reloj, la temperatura de la muñeca, los síntomas y el Estado de ánimo solo los envía el iPhone (Apple Salud) o se apuntan a mano.
 
 ---
 
@@ -34,7 +34,7 @@ Composición corporal medida por la báscula: grasa, músculo, hueso y agua.
 - **Nueva pesada manual**: fecha, peso y, si quieres, grasa, músculo, agua y hueso. Si más tarde llega una pesada de la báscula para ese día, prevalece la de la báscula. Debajo se listan las pesadas manuales con **Editar** y **Quitar**.
 
 ### Reglas
-- Necesitas indicar tu **altura**, **sexo** y **fecha de nacimiento** en Ajustes para ver el IMC, el índice de masa magra y los rangos ajustados a tu edad. Sin ellos, se usan valores genéricos o se te pide que los indiques.
+- Necesitas indicar tu **altura**, **sexo** y **fecha de nacimiento** en Tu cuenta → Datos personales para ver el IMC, el índice de masa magra y los rangos ajustados a tu edad. Sin ellos, se usan valores genéricos o se te pide que los indiques.
 - Las zonas y las campanas son aproximadas; las mediciones de bioimpedancia no son un diagnóstico.
 
 ---
@@ -46,7 +46,7 @@ Medidas con cinta (cintura, cadera, pecho, cuello, brazo y muslo), porque la bá
 ### Qué verás
 - **Indicadores** (calculados con tus últimas medidas):
   - **Cintura / altura**: Bajo, Saludable (0,4 a 0,5), Aumentado (0,5 a 0,6) o Alto.
-  - **Cintura / cadera**: umbrales de la OMS según tu sexo. Necesita que hayas indicado tu sexo en Ajustes.
+  - **Cintura / cadera**: umbrales de la OMS según tu sexo. Necesita que hayas indicado tu sexo en Tu cuenta → Datos personales.
   - **% de grasa corporal con cinta**: estimación con la fórmula de la Marina de EE. UU. (cintura, cuello, altura y, en mujeres, cadera). Si tu báscula da un % de grasa, se compara con él.
 - **Últimas medidas**: una tarjeta por zona con el último valor, su fecha y el cambio desde la primera medida.
 - **Evolución**: un gráfico por zona con al menos dos medidas.
@@ -58,7 +58,7 @@ Medidas con cinta (cintura, cadera, pecho, cuello, brazo y muslo), porque la bá
 
 ## Corazón
 
-Últimos datos del Apple Watch y cómo se comparan con tus 30 días anteriores. Si aún no hay datos de Apple Salud, la pantalla lo indica.
+Últimos datos del Apple Watch y cómo se comparan con tus 30 días anteriores. Si aún no hay datos de Apple Salud / Android, la pantalla lo indica.
 
 ### Qué verás
 - **Corazón y forma física**: tarjetas de frecuencia cardiaca en reposo, HRV nocturna, frecuencia respiratoria, temperatura de la muñeca (diferencia respecto a tu media de 30 noches), alteraciones de la respiración, frecuencia cardiaca al caminar, recuperación a 1 minuto y luz del día. Cada tarjeta muestra el valor, la diferencia con los 30 días anteriores y un minigráfico; al tocarla se abre su detalle.
@@ -75,9 +75,9 @@ Medidas con cinta (cintura, cadera, pecho, cuello, brazo y muslo), porque la bá
 
 ## Bienestar
 
-Síntomas y hábitos que apuntas en Apple Salud o aquí.
+Síntomas y hábitos que apuntas en Apple Salud (iPhone) o aquí a mano; Android no envía síntomas.
 
 ### Qué verás
 - **Bienestar**: dos grupos, **Síntomas** (dolor de cabeza, dolor de espalda, dolor pélvico, fatiga, apetito, sudores nocturnos, hinchazón, calambres, náuseas y otros síntomas) y **Hábitos** (mindfulness y alcohol; el ánimo está en Íntimo). Cada fila muestra cuántos registros hay en 30 días y en 12 meses, una tira de 52 semanas con las semanas que tuvieron algún registro, la fecha del último y, en el alcohol, las bebidas de los últimos 30 días.
 - **Registrar**: elige el tipo, la fecha y la hora y un detalle (leve, moderado o intenso; número de bebidas para el alcohol; minutos para mindfulness) y pulsa **Registrar**. En la lista de últimos registros puedes editar o borrar cada uno.
-- Los registros que vinieron de Apple Salud y que quitas aquí quedan ocultos, y una nueva importación no los vuelve a mostrar.
+- Los registros que vinieron de Apple Salud / Android y que quitas aquí quedan ocultos, y una nueva importación no los vuelve a mostrar.

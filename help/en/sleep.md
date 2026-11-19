@@ -4,7 +4,7 @@ Use it to see how you sleep: last night, your sleep balance, progress, schedule 
 
 ## Source of the data and rules for nights
 
-- Sleep comes mainly from **Apple Health** (through Health Auto Export): nights from AutoSleep or the Apple Watch, and naps. **Withings** fills in the nights that Health does not have.
+- Sleep comes mainly from **Apple Health** (iPhone, through Health Auto Export) or **Android** (Health Connect, through the BodyLens app): nights from AutoSleep or the Apple Watch (iPhone) or from your Android health app, and naps. **Withings** fills in the nights that Health does not have.
 - **Night window**: the night of a given day is the one that ends between 17:00 the day before and 17:00 of that day. It must end after 03:00; anything that ends earlier is treated as a nap. Each night is assigned to the day you wake up.
 - **Episodes**: two bouts of sleep separated by more than 90 minutes are different episodes. Two night episodes separated by 4 hours or less are merged and the gap counts as a sleepless spell.
 - **Sleepless spells**: gaps of at least 10 minutes within the night.
@@ -32,8 +32,8 @@ Use it to see how you sleep: last night, your sleep balance, progress, schedule 
   - 15 for regularity of your bedtime compared with your median of the last 90 days (no penalty up to 45 minutes of difference).
   - Colour: green from 75, amber from 50, red below. In Hours mode: green if you reach the goal, amber if you are less than 1 hour short, red if more.
 - **Stages**: bar and legend with Deep, Light, REM and Awake for the night.
-- **Overnight Apple Health data** (if it arrived): overnight SpO2 with its minimum, overnight HRV and respiratory rate.
-- **Figures for the night**: sleeping heart rate (with its minimum), awakenings and time awake, and your bedtime and wake-up time compared with the goal in Settings (with how many minutes earlier or later).
+- **Overnight Apple Health / Android data** (if it arrived): overnight SpO2 with its minimum, overnight HRV and respiratory rate.
+- **Figures for the night**: sleeping heart rate (with its minimum), awakenings and time awake, and your bedtime and wake-up time compared with the goal in Goals, plan and meals (with how many minutes earlier or later).
 - **Sleep balance**: link to the Balance section with your current balance.
 - **Note for the day**: box to add a comment (up to 300 characters).
 - **Naps**: list of the day's naps with time, duration and heart rate, and a strip that places them next to the night. Naps add to the sleep balance.
@@ -76,4 +76,4 @@ Use it to see how you sleep: last night, your sleep balance, progress, schedule 
 
 ## Goals
 
-The goal for hours per night (7 h by default, between 4 and 12) and the target schedule for going to bed and waking up (weekdays and weekends; 00:00 and 07:00 by default) are changed in Settings → Goals and plan.
+The goal for hours per night (7 h by default, between 4 and 12) and the target schedule for going to bed and waking up (weekdays and weekends; 00:00 and 07:00 by default) are changed in Goals, plan and meals → Goals and plan.

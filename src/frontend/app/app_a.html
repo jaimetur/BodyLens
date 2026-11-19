@@ -799,7 +799,7 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
       <h1 id="viewTitle">Resumen</h1>
       <div class="pfwrap" style="order:-1"><button class="pfbtn" id="pfBtn" type="button" aria-haspopup="menu" aria-expanded="false"><i>JT</i><span>Jaime</span></button><div class="pfmenu" id="pfMenu" role="menu" hidden></div></div>
       <span class="pill" id="syncPill">Conectando…</span>
-      <a class="iconbtn owner-only" id="pullBtn" href="https://script.google.com/macros/s/AKfycbyq4X7M4IRxqFM7ez4BYQ9SelLUPo1Wauc9zm4YgCfD8wubBL-rVKe5rytquF4D-7Ac/exec?accion=sincronizar" target="_blank" rel="noopener" aria-label="Sincronizar: trae lo último de la báscula y de Apple Salud" title="Sincronizar"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5L4 8"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.6 4.5L20 16"/><path d="M20 20v-4h-4"/></svg></a>
+      <a class="iconbtn owner-only" id="pullBtn" href="https://script.google.com/macros/s/AKfycbyq4X7M4IRxqFM7ez4BYQ9SelLUPo1Wauc9zm4YgCfD8wubBL-rVKe5rytquF4D-7Ac/exec?accion=sincronizar" target="_blank" rel="noopener" aria-label="Sincronizar: trae lo último de tus fuentes de datos" title="Sincronizar"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5L4 8"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.6 4.5L20 16"/><path d="M20 20v-4h-4"/></svg></a>
       <button class="iconbtn" id="pdfBtn" type="button" aria-label="Exportar a PDF" title="Exportar a PDF"><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><text x="12" y="17.2" text-anchor="middle" style="font:700 5.6px system-ui,sans-serif;fill:currentColor;stroke:none">PDF</text></svg></button>
       <button class="iconbtn owner-only" id="syncBtn" hidden type="button" aria-label="Sincronizar ahora"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5L4 8"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.6 4.5L20 16"/><path d="M20 20v-4h-4"/></svg></button>
       <button class="iconbtn" id="ajClose" type="button" aria-label="Cerrar ajustes y volver" title="Cerrar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
@@ -1040,7 +1040,7 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
         <div class="ajtabs" id="ajTabs" role="tablist" aria-label="Categorías de ajustes"><button type="button" role="tab" data-ajt="perfiles" data-ajm="pf"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.6c2.6.1 4.6 1.8 5.4 4.9"/></svg><span>Perfiles</span></button><button type="button" role="tab" data-ajt="perfil" data-ajm="pf"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="9" cy="11" r="2.5"/><path d="M5.5 17c.6-2 1.9-3 3.5-3s2.9 1 3.5 3M14.5 10h4M14.5 13.5h3"/></svg><span>Datos personales</span></button><button type="button" role="tab" data-ajt="plan" data-ajm="aj"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".8"/></svg><span>Objetivos y plan</span></button><button type="button" role="tab" data-ajt="comidas" data-ajm="aj"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5.5"/><path d="M3 4v6.5a2 2 0 0 0 2 2V20M3 4v4M5 4v4M21 4c-1.8 1-2.5 3-2.5 6v2.5H21V20"/></svg><span>Comidas</span></button><button type="button" role="tab" data-ajt="datos" data-ajm="aj"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6" rx="7.5" ry="2.8"/><path d="M4.5 6v6c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8V6M4.5 12v6c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-6"/></svg><span>Datos y copias</span></button></div>
         <section data-ajc="perfiles" class="card owner-only" id="pfCard">
           <h2>Perfiles</h2>
-          <p class="lead">Cada persona tiene sus propios datos. Cambia de perfil con el botón que hay junto al título. El perfil marcado como «Ciclo» recibe los datos del ciclo menstrual que llegan de Apple Salud.</p>
+          <p class="lead">Cada persona tiene sus propios datos. Cambia de perfil con el botón que hay junto al título. El perfil marcado como «Ciclo» recibe los datos del ciclo menstrual que llegan de Apple Salud o de Android.</p>
           <div id="pfList"></div>
           <div class="row"><input type="text" id="pfNew" placeholder="Nombre del nuevo perfil" aria-label="Nombre del nuevo perfil" style="flex:1;min-width:0;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)"><button class="btn" type="button" id="pfAdd">Añadir perfil</button></div>
           <span class="msg" id="pfMsg2" aria-live="polite"></span>
@@ -1105,15 +1105,9 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
           </div>
         </section>
         <section data-ajc="datos" class="card">
-          <h2>Apple Salud</h2>
-          <p class="lead">El pulso en reposo, la VFC, la saturación de oxígeno, la frecuencia respiratoria, el VO2 máx, la temperatura de muñeca, los ECG y los avisos del Apple Watch llegan desde Apple Salud con la app <b>Health Auto Export</b>, directamente a tu cuenta de este servidor. Se ven en Cuerpo → Corazón y en Sueño.</p>
-          <ol class="lead" style="padding-left:20px;margin:0">
-            <li>En Health Auto Export: Exportar → Automatizado → Nueva automatización → tipo <b>API REST</b>.</li>
-            <li>URL: tu dirección de envío, que se crea y se copia en <a href="#cuenta">Tu cuenta → Fuentes de datos</a> (es personal: no la compartas).</li>
-            <li>Formato JSON, versión 2, «Resumir datos» activado y agrupación por <b>horas</b> (así se separan las medidas de la noche).</li>
-            <li>Datos: Métricas de salud (pulso en reposo, variabilidad, saturación de oxígeno, frecuencia respiratoria, VO2 máx, temperatura de muñeca, alteraciones respiratorias, luz del día, horas de pie, pisos, pulso al caminar, velocidad y estabilidad al caminar, recuperación cardiaca), ECG y Notificaciones de frecuencia cardiaca.</li>
-            <li>Intervalo: para el <b>sueño sin resumir</b>, los <b>últimos 2–7 días</b> (así llegan las noches que el reloj o AutoSleep cierran tarde); para lo demás, «Desde la última sincronización». Frecuencia: cada hora o menos. Para el historial, usa «Carga manual».</li>
-          </ol>
+          <h2>Apple Health / Android</h2>
+          <p class="lead">Sleep, activity, workouts, resting heart rate, HRV, blood oxygen, breathing rate, VO2 max, ECG and the watch alerts arrive on their own from your phone: from the iPhone (Apple Health, with the Health Auto Export app) or from an Android phone (Health Connect, with the BodyLens app). Both use the same sending address. You see them in Body → Heart, Sleep and Activity.</p>
+          <p class="lead"><a href="#cuenta" class="lnk" data-gosrc>Data sources ›</a> · <a href="#help" class="lnk" data-helpdoc="sync">Step-by-step guide ›</a></p>
         </section>
         <section data-ajc="datos" class="card">
           <h2>Origen de los datos</h2>
@@ -1126,7 +1120,7 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
         </section>
         <section data-ajc="datos" class="card">
           <h2>Copia de seguridad</h2>
-          <p class="lead">Una copia completa de todo (pesadas, composición, medidas, actividad, sueño, entrenamientos, comidas y ajustes) para guardarla y volver a importarla cuando quieras. «Importar una copia…» acepta esta copia y también el fichero snap.json de la versión anterior.</p>
+          <p class="lead">Una copia completa de todo (pesadas, composición, medidas, actividad, sueño, entrenamientos, comidas y ajustes) para guardarla y volver a importarla cuando quieras. «Importar una copia…» la vuelve a cargar.</p>
           <div class="row"><button class="btn" id="bkAll" type="button">Descargar copia completa</button><label class="btn ghost" for="bkFile" style="cursor:pointer">Importar una copia…</label><input type="file" id="bkFile" accept=".json,application/json" hidden></div>
           <div id="bkImp" class="bkimp" hidden></div>
           <p class="lead" style="margin-top:6px">Solo para hojas de cálculo: tu historial en CSV.</p>

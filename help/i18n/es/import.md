@@ -1,10 +1,10 @@
-<!-- en: 8e55b185050f09e8 -->
+<!-- en: c7a3cbe9ad40ea3d -->
 # Importar datos
 
 Para traer a tu cuenta una copia de BodyLens, por ejemplo una que te hayas descargado tú.
 
 ## Dónde
-**Ajustes → Datos y copias → Importar una copia…** (es el único sitio).
+**Tu cuenta → Datos y copias → Importar una copia…** (es el único sitio).
 
 ## Qué ficheros acepta
 - **Copia completa (JSON)**: la que descargas en esa misma sección con **Descargar copia completa**.

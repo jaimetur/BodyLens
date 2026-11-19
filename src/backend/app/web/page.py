@@ -35,7 +35,7 @@ REPLACEMENTS: list[tuple] = [
     ("const PROF_DEF=", "const PROF_DEF=window.BODYLENS_SERVER?BL.profDef():"),
     (f"fileId:'{LEGACY_SHEET}'}};", "fileId:null};"),
     ('<p class="src" id="railSrc">Datos de tu báscula Withings, guardados en tu cuenta de Claude.</p>',
-     '<p class="src" id="railSrc">Datos de tu báscula Withings y de Apple Salud, guardados en tu cuenta de BodyLens.</p>'),
+     '<p class="src" id="railSrc">Datos de tu báscula Withings y de tu móvil (Apple Salud o Android), guardados en tu cuenta de BodyLens.</p>'),
     # profile menu: profiles are managed inside «Tu cuenta», which is already in the menu
     ('<a class="owner-only" href="#ajustes" data-pfmanage>Gestionar perfiles</a>', ''),
     # profile button: full name instead of the first name
@@ -48,10 +48,10 @@ REPLACEMENTS: list[tuple] = [
      "<path d=\"M10 16l-4-4 4-4M6 12h10\"/></svg><span>Cerrar sesión</span></button>`;m.hidden=false"),
     # menú de perfiles: acceso a la cuenta
     ('<a class="owner-only" href="#ajustes">Ajustes</a>',
-     '<a class="owner-only" href="#ajustes">Ajustes</a><a href="#cuenta">Tu cuenta</a><a href="#admin" class="bl-admin">Administración</a><a href="#help">Help</a>'),
+     '<a class="owner-only" href="#ajustes">Objetivos, plan y comidas</a><a href="#cuenta">Tu cuenta</a><a href="#admin" class="bl-admin">Administración</a><a href="#help">Help</a>'),
     # textos que hablaban de claude.ai y de la hoja
     ("<p class=\"lead\">La app lee la pestaña «Withings» de tu hoja «Peso Jaime 2026», que el script de la hoja actualiza desde Withings cada 6 horas, o al momento con el botón de la nube de arriba.</p>",
-     "<p class=\"lead\">Los datos de la báscula y de Apple Salud llegan solos al servidor cada pocos minutos; con el botón de la nube de arriba se piden al momento. Las fuentes se ven en <a href=\"#cuenta\">Tu cuenta</a>.</p>"),
+     "<p class=\"lead\">Los datos de la báscula y del móvil (Apple Salud o Android) llegan solos al servidor cada pocos minutos; con el botón de la nube de arriba se piden al momento. Las fuentes se ven en <a href=\"#cuenta\">Tu cuenta</a>.</p>"),
     ("<p class=\"foot\">Tus datos se guardan en el espacio de datos de esta app en Claude y están disponibles en el iPhone y en el Mac. Quien abra el enlace con sesión iniciada en claude.ai los ve al momento; sin sesión, ve la copia que lleva la página. Solo tú puedes cambiarlos o sincronizarlos.</p>",
      "<p class=\"foot\">Tus datos se guardan en tu cuenta de este servidor y solo los ves tú (lo de Ciclo e intimidad, también tu pareja si habéis unido las cuentas).</p>"),
     # mensajes de descarga (aparecen dos veces)

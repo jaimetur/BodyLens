@@ -1,13 +1,13 @@
-<!-- en: fd86473cf7721d5e -->
+<!-- en: 3b6e1f3520d2aa1a -->
 # Actividad
 
 Sirve para ver cuánto te mueves: pasos, calorías activas, minutos de ejercicio, frecuencia cardiaca y entrenamientos, y cómo se relacionan con tu peso.
 
 ## Origen de los datos
 
-- La actividad diaria, los entrenamientos y la frecuencia cardiaca vienen sobre todo de **Apple Salud** (a través de Health Auto Export).
+- La actividad diaria, los entrenamientos y la frecuencia cardiaca vienen sobre todo de **Apple Salud** (iPhone, a través de Health Auto Export) o de **Android** (Health Connect, a través de la app de BodyLens). Android envía pasos, distancia, pisos, calorías activas, entrenamientos, frecuencia cardiaca y frecuencia cardiaca en reposo.
 - **Withings** (reloj o báscula) rellena los huecos: días sin datos de Salud y campos que Salud no ofrece.
-- Si un entrenamiento está en las dos fuentes, se queda el de Apple Salud.
+- Si un entrenamiento está en las dos fuentes, se queda el de Apple Salud / Android.
 
 ## Pestañas
 
@@ -51,4 +51,4 @@ Sirve para ver cuánto te mueves: pasos, calorías activas, minutos de ejercicio
 
 ## Objetivos
 
-Los objetivos de pasos, minutos de ejercicio y calorías activas se cambian en Ajustes → Objetivos y plan. Por defecto: 8.000 pasos, 30 minutos y 400 kcal activas al día.
+Los objetivos de pasos, minutos de ejercicio y calorías activas se cambian en Objetivos, plan y comidas → Objetivos y plan. Por defecto: 8.000 pasos, 30 minutos y 400 kcal activas al día.

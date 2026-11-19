@@ -1,4 +1,4 @@
-<!-- en: 8881dbb6a65ac5a2 -->
+<!-- en: ee349f249362f3c6 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -29,6 +29,7 @@
 - **Tu cuenta:**
   - **Cuenta:** perfil, correo, idioma y contraseña, pareja, fuentes de datos, sincronización e importación.
   - **Perfiles y Datos personales:** gestión de los perfiles de la app.
+  - **Datos y copias:** de dónde llegan los datos del móvil, origen de los datos, copia completa y exportación a CSV.
 - **Administración** (cuentas de administrador), con estas pestañas:
   - **Usuarios:** editar usuario, nombre, correo y contraseña; activar o desactivar con un interruptor; dar o quitar el rol de admin; restablecer la contraseña; borrar.
   - **Peticiones de acceso** e **Invitaciones**.
@@ -64,17 +65,19 @@
 - **Tamaño del texto** por cuenta (Pequeño, Normal, Grande, Muy grande) en *Tu cuenta*, igual que el idioma; el nuevo Normal es algo más grande que antes.
 
 #### 🚀 Mejoras:
-- **Un único importador** (Ajustes → Datos y copias) para la copia completa y para el `snap.json` de la versión anterior. Si la copia tiene varios perfiles, eliges cuál importar.
+- **Un único importador** (Tu cuenta → Datos y copias) para la copia completa y para el `snap.json` de la versión anterior. Si la copia tiene varios perfiles, eliges cuál importar.
 - **Comidas:**
   - Cada nota está en la fila de su comida, con botones grandes, y el Agua tiene su propia fila.
   - El registro del día va antes de la pérdida estimada.
   - El registro del día muestra arriba las últimas 4 semanas (de lunes a domingo) en lugar de una sola; las flechas saltan 4 semanas.
+- **Android al mismo nivel que el iPhone:** todas las pantallas, avisos y mensajes de «sin datos» que solo hablaban de Apple Salud / Health Auto Export explican también el camino de Android (Health Connect con la app de BodyLens), con la misma dirección de envío para los dos.
 - **Ánimo:** se pueden registrar ánimos pasados, con fecha y hora o tocando el día en el calendario.
 - **Historial** pasa a llamarse **Historial de pesos**.
 - **Pantallas anchas:** la app llega a 1600 px, y Tu cuenta y Administración aprovechan el ancho con columnas.
 - **Barra lateral:**
   - Tu cuenta y Administración (solo administradores) son secciones de la app, con la barra lateral.
   - «Gestionar perfiles» pasa a Tu cuenta.
+  - **Ajustes** pasa a llamarse **Objetivos, plan y comidas**; su pestaña **Datos y copias** pasa a Tu cuenta.
 - **Menú del avatar:** muestra el nombre completo e incluye Tu cuenta, Administración y **Cerrar sesión**, en rojo.
 - **Línea de comandos de administración** (`python -m app.accounts.cli`): crear cuentas con contraseña temporal, invitaciones, contraseñas, usuarios, fuentes y mover perfiles.
 

@@ -1,4 +1,4 @@
-<!-- en: b99e7597d600c3ea -->
+<!-- en: 76c2fb01b8c43c2a -->
 # Comidas
 
 Sirve para apuntar lo que comes cada día y puntuarlo, y para ver cuánto debería afectar a tu peso según una fórmula, comparado con lo que marca la báscula al día siguiente. Los pesos vienen de la báscula **Withings**; las comidas las escribes tú.
@@ -46,4 +46,4 @@ Sirve para apuntar lo que comes cada día y puntuarlo, y para ver cuánto deber�
 
 - **Nota del día**: media ponderada de las notas. Las comidas sin nota cuentan como la nota por defecto (3, ajustable); el agua, el deporte y los pecados sin nota cuentan como 0. Los pecados restan con su propia penalización. El resultado se expresa como % del máximo posible, redondeado.
 - **Pérdida estimada del día** = factor × (objetivo − peso) ÷ objetivo × nota del día. Con el modelo «neutro», un día normal (desayuno, almuerzo y cena con 3, sin agua, deporte ni pecados) mantiene tu peso: solo estima pérdida si lo haces mejor y ganancia si lo haces peor.
-- Los pesos de la fórmula, las penalizaciones, el factor y varias opciones (contar los días sin pesada, contar los días sin comidas apuntadas, usar el modelo de la hoja) se cambian en Ajustes → Comidas.
+- Los pesos de la fórmula, las penalizaciones, el factor y varias opciones (contar los días sin pesada, contar los días sin comidas apuntadas, usar el modelo clásico) se cambian en Objetivos, plan y comidas → Comidas.

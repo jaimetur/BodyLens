@@ -1,11 +1,11 @@
-<!-- en: 2104574973a5efbd -->
+<!-- en: 9deb6c2fd63c6ae7 -->
 # Sueño
 
 Sirve para ver cómo duermes: la última noche, tu saldo de sueño, la evolución, el horario y el análisis. Incluye siestas, fases del sueño y comparaciones con tu peso.
 
 ## Origen de los datos y reglas de las noches
 
-- El sueño viene sobre todo de **Apple Salud** (a través de Health Auto Export): noches de AutoSleep o del Apple Watch, y siestas. **Withings** rellena las noches que Salud no tiene.
+- El sueño viene sobre todo de **Apple Salud** (iPhone, a través de Health Auto Export) o de **Android** (Health Connect, a través de la app de BodyLens): noches de AutoSleep o del Apple Watch (iPhone) o de tu app de salud de Android, y siestas. **Withings** rellena las noches que Salud no tiene.
 - **Ventana de la noche**: la noche de un día es la que termina entre las 17:00 del día anterior y las 17:00 de ese día. Debe terminar después de las 03:00; lo que termine antes se trata como siesta. Cada noche se asigna al día en que te despiertas.
 - **Episodios**: dos tramos de sueño separados por más de 90 minutos son episodios distintos. Dos episodios de noche separados por 4 horas o menos se juntan y el hueco cuenta como un desvelo.
 - **Desvelos**: huecos de al menos 10 minutos dentro de la noche.
@@ -33,8 +33,8 @@ Sirve para ver cómo duermes: la última noche, tu saldo de sueño, la evolució
   - 15 por la regularidad de tu hora de acostarte frente a tu mediana de los últimos 90 días (sin penalización hasta 45 minutos de diferencia).
   - Color: verde desde 75, ámbar desde 50, rojo por debajo. En modo Horas: verde si llegas al objetivo, ámbar si te faltan menos de 1 hora, rojo si más.
 - **Fases**: barra y leyenda con Profundo, Ligero, REM y Despierto de la noche.
-- **Datos nocturnos de Apple Salud** (si llegaron): SpO2 nocturna con su mínimo, HRV nocturna y frecuencia respiratoria.
-- **Cifras de la noche**: pulso dormido (con su mínimo), despertares y tiempo despierto, y tu hora de acostarte y de levantarte frente al objetivo de Ajustes (con cuántos minutos antes o después).
+- **Datos nocturnos de Apple Salud / Android** (si llegaron): SpO2 nocturna con su mínimo, HRV nocturna y frecuencia respiratoria.
+- **Cifras de la noche**: pulso dormido (con su mínimo), despertares y tiempo despierto, y tu hora de acostarte y de levantarte frente al objetivo de Objetivos, plan y comidas (con cuántos minutos antes o después).
 - **Saldo de sueño**: enlace a la sección Saldo con tu saldo actual.
 - **Nota del día**: cuadro para añadir un comentario (hasta 300 caracteres).
 - **Siestas**: lista de las siestas del día con hora, duración y frecuencia cardiaca, y una tira que las sitúa junto a la noche. Las siestas suman al saldo de sueño.
@@ -77,4 +77,4 @@ Sirve para ver cómo duermes: la última noche, tu saldo de sueño, la evolució
 
 ## Objetivos
 
-El objetivo de horas por noche (7 h por defecto, entre 4 y 12) y el horario objetivo para acostarte y levantarte (entre semana y fines de semana; 00:00 y 07:00 por defecto) se cambian en Ajustes → Objetivos y plan.
+El objetivo de horas por noche (7 h por defecto, entre 4 y 12) y el horario objetivo para acostarte y levantarte (entre semana y fines de semana; 00:00 y 07:00 por defecto) se cambian en Objetivos, plan y comidas → Objetivos y plan.

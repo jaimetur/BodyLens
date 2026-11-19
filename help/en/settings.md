@@ -1,51 +1,19 @@
-# Settings
+# Goals, plan and meals
 
-Use it to configure the app: profiles and PIN, personal data, goals and weight-loss plan, Meals formula, backups and export to PDF.
+Use it to set your goals and weight-loss plan and the Meals formula. The same page of the app also holds the tabs of **Your account** that are described at the end of this document: profiles and PIN, personal data, backups and export to PDF.
 
 ## How to open it
 
-- On the computer, in the sidebar: **Settings** (general settings) and **Your account**, which brings together the account and profiles in tabs: **Account**, **Profiles** and **Personal data**.
+- On the computer, in the sidebar: **Goals, plan and meals** and **Your account**, which brings together the account, profiles and data in tabs: **Account**, **Profiles**, **Personal data** and **Data and backups**.
 - On mobile, with the settings icon in the top bar. You can also reach both from the profile button.
-- The **✕** button in the top bar closes Settings and returns you to the section and the point of the page where you were.
+- The **✕** button in the top bar closes the page and returns you to the section and the point of the page where you were.
 
 ## Tabs
 
-Settings has two groups of tabs. The last one opened in each group is remembered.
+- **Goals, plan and meals** has two tabs: **Goals and plan** and **Meals**.
+- **Your account** has four tabs: **Account**, **Profiles**, **Personal data** and **Data and backups**.
 
-- **Profiles**: Profiles and Personal data.
-- **General settings**: Goals and plan, Meals and Data and backups.
-
----
-
-## Profiles
-
-- Each person has their own data. You switch profile with the profile button (initials and name) next to the title in the top bar, which also offers **Settings**, **Your account** (where profiles are managed), **Administration** (if you are an administrator), **Lock profile** (if the profile has a PIN) and **Sign out**.
-- Each profile row lets you set:
-  - **Name** and **colour** (the colour and initials identify the profile).
-  - **Cycle**: marks which profile receives the menstrual cycle data that arrives from Apple Health. Only one can be marked.
-  - **Partner**: links two profiles to each other. When linked, "since" appears to indicate the start date of the relationship; sexual activity of the partner before that date is not counted.
-  - **Set PIN** / **Change PIN** / **Remove PIN**: 4-digit PIN for the profile.
-  - **Private PIN**: 4-digit PIN for Cycle and intimacy (see below).
-  - **Delete** (asks for confirmation with "Sure?"): removes the profile from the list. Its data stays saved in case you create it again with the same name. The main profile cannot be deleted.
-- **Add profile**: type a name and press **Add profile**. Switch to it with the profile button.
-
-### Profile PIN
-- It is a 4-digit screen lock with a numeric keypad. It **does not encrypt the data.**
-- When you open the app or switch to a profile with a PIN, it is asked for. After 5 failed attempts you have to wait 30 seconds.
-- The lock screen lets you **Sign in with another profile**.
-- **Lock profile** (in the profile menu) asks for the PIN again.
-- Signing in with the **normal PIN** opens the profile without Cycle and intimacy; signing in with the **private PIN** opens everything.
-
-### Private PIN
-- It protects the Cycle and intimacy section. Until you change it, it is **0000**.
-- To change it you must enter the current private PIN and a new 4-digit one other than 0000. **Back to 0000** resets it.
-- If the profile has a normal PIN and its own private PIN, when you sign in with the normal PIN the Cycle and intimacy section does not even appear.
-
-### Personal data
-- **Height (cm)**: between 120 and 230. It is used for BMI, lean mass index, reference zones and the tape measurement formulas.
-- **Sex for the formulas**: Not specified, Male or Female. It is used for fat zones, lean mass index, VO2 max and the tape measurement formulas.
-- **Date of birth**: refines the fat and VO2 max ranges to your age band.
-- Press **Save profile**.
+The last tab opened in each group is remembered.
 
 ---
 
@@ -81,21 +49,56 @@ They set the goal lines on the bars and count the days and nights on which you m
   - Checkboxes: a normal day keeps your weight (neutral model); count all days even if you do not weigh yourself (using your last weigh-in); and count days without meals logged with the default score.
   - Formula: estimated loss for the day = factor × (goal − weight) ÷ goal × score for the day.
   - A preview shows the breakdown in % of each item.
-  - **Save formula**, **Default values** (neutral model) and **Sheet model** (the reference values the formula was first tuned with).
+  - **Save formula**, **Default values** (neutral model) and **Classic model** (the reference values the formula was first tuned with).
 
 ---
 
-## Data and backups
+## Your account tabs
+The following three sections are tabs of **Your account**, not of Goals, plan and meals.
 
-### Apple Health
-- It explains how to set up the **Health Auto Export** app on the iPhone to send the app resting heart rate, HRV, oxygen saturation, respiratory rate, VO2 max, wrist temperature, ECGs and Apple Watch alerts. The data is shown in Body → Heart and in Sleep.
-- Summary of the steps: create an automation of type REST API with JSON format, and choose the data (health metrics, ECG and heart rate notifications) and the sending frequency. For history, use Health Auto Export's manual upload.
+### Profiles (Your account → Profiles)
 
-### Source of the data
+- Each person has their own data. You switch profile with the profile button (initials and name) next to the title in the top bar, which also offers **Goals, plan and meals**, **Your account** (where profiles are managed), **Administration** (if you are an administrator), **Lock profile** (if the profile has a PIN) and **Sign out**.
+- Each profile row lets you set:
+  - **Name** and **colour** (the colour and initials identify the profile).
+  - **Cycle**: marks which profile receives the menstrual cycle data that arrives from Apple Health or Android (Health Connect). Only one can be marked.
+  - **Partner**: links two profiles to each other. When linked, "since" appears to indicate the start date of the relationship; sexual activity of the partner before that date is not counted.
+  - **Set PIN** / **Change PIN** / **Remove PIN**: 4-digit PIN for the profile.
+  - **Private PIN**: 4-digit PIN for Cycle and intimacy (see below).
+  - **Delete** (asks for confirmation with "Sure?"): removes the profile from the list. Its data stays saved in case you create it again with the same name. The main profile cannot be deleted.
+- **Add profile**: type a name and press **Add profile**. Switch to it with the profile button.
+
+### Profile PIN
+- It is a 4-digit screen lock with a numeric keypad. It **does not encrypt the data.**
+- When you open the app or switch to a profile with a PIN, it is asked for. After 5 failed attempts you have to wait 30 seconds.
+- The lock screen lets you **Sign in with another profile**.
+- **Lock profile** (in the profile menu) asks for the PIN again.
+- Signing in with the **normal PIN** opens the profile without Cycle and intimacy; signing in with the **private PIN** opens everything.
+
+### Private PIN
+- It protects the Cycle and intimacy section. Until you change it, it is **0000**.
+- To change it you must enter the current private PIN and a new 4-digit one other than 0000. **Back to 0000** resets it.
+- If the profile has a normal PIN and its own private PIN, when you sign in with the normal PIN the Cycle and intimacy section does not even appear.
+
+### Personal data (Your account → Personal data)
+- **Height (cm)**: between 120 and 230. It is used for BMI, lean mass index, reference zones and the tape measurement formulas.
+- **Sex for the formulas**: Not specified, Male or Female. It is used for fat zones, lean mass index, VO2 max and the tape measurement formulas.
+- **Date of birth**: refines the fat and VO2 max ranges to your age band.
+- Press **Save profile**.
+
+### Data and backups (Your account → Data and backups)
+
+#### Apple Health / Android
+- The first card says that sleep, activity, workouts, resting heart rate, HRV, blood oxygen, breathing rate, VO2 max, ECG and watch alerts arrive on their own from the phone: from the iPhone (Apple Health, with the Health Auto Export app) or from Android (Health Connect, with the BodyLens app). Both use the same sending address.
+- It has two links: **Data sources ›** (goes to Your account → Data sources) and **Step-by-step guide ›** (opens the [Sync](sync.md) help).
+- ECG, heart alerts, wrist temperature, State of Mind, symptoms and medications are only sent by the iPhone (Apple Health); on Android, log them by hand in the app.
+
+#### Source of the data
 - Check figures: **days saved**, **last weigh-in** and when the data was last read.
-- Weigh-ins and composition come from the **Withings** scale; sleep, activity and workouts mainly from **Apple Health**.
+- Data from the scale and the phone (Apple Health or Android) arrives on its own at the server every few minutes; the cloud button at the top asks for it at once. You can see the sources in Your account.
+- Weigh-ins and composition come from the **Withings** scale; sleep, activity and workouts mainly from **Apple Health** or **Android**.
 
-### Backup
+#### Backup
 - **Download full copy**: saves a JSON file with everything (weigh-ins, composition, measurements, activity, sleep, workouts, meals, Health data and settings of the current profile). Its name includes the date.
 - **Import a backup…**: choose a backup file. A summary is shown (date of the backup and number of days of each type) and two options:
   - **Merge with the current data**: adds what is missing and, if a day is in both places, the backup's version is kept.
@@ -107,7 +110,7 @@ They set the goal lines on the bars and count the days and nights on which you m
 
 ## Export to PDF
 
-- It is opened with the **PDF** icon in the top bar (in Settings it offers to export everything).
+- It is opened with the **PDF** icon in the top bar (in Your account → Data and backups and in Goals, plan and meals it offers to export everything).
 - Options:
   - **Period**: 1 wk, 1 month, 3 months, 6 months, 1 year or All; it starts with the one of the section you are in.
   - **Orientation**: Portrait or Landscape.

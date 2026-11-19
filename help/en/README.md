@@ -13,15 +13,15 @@ One file per module. The sections of the app are those in the navigation bar; th
 | [Meals](meals.md) | Meal log and score, and their effect on your weight |
 | [Intimate](intimate.md) | Cycle, sexuality and mood, protected by the private PIN |
 | [History](history.md) | Your whole weight history by year and weight-loss attempts |
-| [Settings](settings.md) | Profiles, PIN, goals and plan, meals, data and backups, export to PDF |
+| [Goals, plan and meals](settings.md) | Goals and weight-loss plan, Meals formula; also profiles, PIN, personal data, backups and export to PDF (in "Your account") |
 
 ## Your account and the server
 | Module | What it is |
 |---|---|
 | [Accounts and access](accounts.md) | Signing in, requesting an account, invitations, first sign-in and "Your account" |
 | [Partner](couples.md) | Linking two accounts to share cycle and intimacy |
-| [Import data](import.md) | Bring in a full backup (Settings → Data and backups) |
-| [Sync](sync.md) | How Withings and Apple Health data arrive on their own |
+| [Import data](import.md) | Bring in a full backup (Your account → Data and backups) |
+| [Sync](sync.md) | How Withings, Apple Health and Android data arrive on their own |
 | [Administration](administration.md) | Access requests, invitations, each account's sources and email |
 
 Installation and deployment: [`docs/DEPLOYMENT.md`](../../docs/DEPLOYMENT.md).

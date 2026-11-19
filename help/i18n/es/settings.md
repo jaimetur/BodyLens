@@ -1,52 +1,20 @@
-<!-- en: 511ac05c8aa72086 -->
-# Ajustes
+<!-- en: d5a4c101f0ed95da -->
+# Objetivos, plan y comidas
 
-Sirve para configurar la app: perfiles y PIN, datos personales, objetivos y plan de pérdida, fórmula de Comidas, copias de seguridad y exportar a PDF.
+Sirve para fijar tus objetivos y el plan de pérdida y la fórmula de Comidas. La misma página de la app incluye también las pestañas de **Tu cuenta** que se describen al final de este documento: perfiles y PIN, datos personales, copias de seguridad y exportar a PDF.
 
 ## Cómo abrirlos
 
-- En el ordenador, en la barra lateral: **Ajustes** (ajustes generales) y **Tu cuenta**, que reúne la cuenta y los perfiles en pestañas: **Cuenta**, **Perfiles** y **Datos personales**.
+- En el ordenador, en la barra lateral: **Objetivos, plan y comidas** y **Tu cuenta**, que reúne la cuenta, los perfiles y los datos en pestañas: **Cuenta**, **Perfiles**, **Datos personales** y **Datos y copias**.
 - En el móvil, con el icono de ajustes de la barra superior. También puedes llegar a ambos desde el botón del perfil.
-- El botón **✕** de la barra superior cierra Ajustes y te devuelve a la sección y al punto de la página donde estabas.
+- El botón **✕** de la barra superior cierra la página y te devuelve a la sección y al punto de la página donde estabas.
 
 ## Pestañas
 
-Ajustes tiene dos grupos de pestañas. Se recuerda la última abierta de cada grupo.
+- **Objetivos, plan y comidas** tiene dos pestañas: **Objetivos y plan** y **Comidas**.
+- **Tu cuenta** tiene cuatro pestañas: **Cuenta**, **Perfiles**, **Datos personales** y **Datos y copias**.
 
-- **Perfiles**: Perfiles y Datos personales.
-- **Ajustes generales**: Objetivos y plan, Comidas y Datos y copias.
-
----
-
-## Perfiles
-
-- Cada persona tiene sus propios datos. Cambias de perfil con el botón del perfil (iniciales y nombre) junto al título de la barra superior, que también ofrece **Ajustes**, **Tu cuenta** (donde se gestionan los perfiles), **Administración** (si eres administrador), **Bloquear perfil** (si el perfil tiene PIN) y **Cerrar sesión**.
-- Cada fila de perfil te permite definir:
-  - **Nombre** y **color** (el color y las iniciales identifican el perfil).
-  - **Ciclo**: marca qué perfil recibe los datos del ciclo menstrual que llegan de Apple Salud. Solo se puede marcar uno.
-  - **Pareja**: une dos perfiles entre sí. Al unirlos, aparece «desde» para indicar la fecha de inicio de la relación; la actividad sexual de la pareja anterior a esa fecha no cuenta.
-  - **Poner PIN** / **Cambiar PIN** / **Quitar PIN**: PIN de 4 dígitos para el perfil.
-  - **PIN privado**: PIN de 4 dígitos para Ciclo e intimidad (mira más abajo).
-  - **Borrar** (pide confirmación con «¿Seguro?»): quita el perfil de la lista. Sus datos quedan guardados por si lo vuelves a crear con el mismo nombre. El perfil principal no se puede borrar.
-- **Añadir perfil**: escribe un nombre y pulsa **Añadir perfil**. Cambia a él con el botón del perfil.
-
-### PIN del perfil
-- Es un bloqueo de pantalla de 4 dígitos con teclado numérico. **No cifra los datos.**
-- Al abrir la app o cambiar a un perfil con PIN, se pide. Tras 5 intentos fallidos tienes que esperar 30 segundos.
-- La pantalla de bloqueo te permite **Entrar con otro perfil**.
-- **Bloquear perfil** (en el menú del perfil) vuelve a pedir el PIN.
-- Si entras con el **PIN normal**, el perfil se abre sin Ciclo e intimidad; si entras con el **PIN privado**, se abre todo.
-
-### PIN privado
-- Protege la sección Ciclo e intimidad. Hasta que lo cambies, es **0000**.
-- Para cambiarlo debes introducir el PIN privado actual y uno nuevo de 4 dígitos distinto de 0000. **Volver a 0000** lo restablece.
-- Si el perfil tiene un PIN normal y su propio PIN privado, cuando entras con el PIN normal la sección Ciclo e intimidad ni siquiera aparece.
-
-### Datos personales
-- **Altura (cm)**: entre 120 y 230. Se usa para el IMC, el índice de masa magra, las zonas de referencia y las fórmulas de las medidas con cinta.
-- **Sexo para las fórmulas**: No indicado, Hombre o Mujer. Se usa para las zonas de grasa, el índice de masa magra, el VO2 máx y las fórmulas de las medidas con cinta.
-- **Fecha de nacimiento**: ajusta los rangos de grasa y VO2 máx a tu franja de edad.
-- Pulsa **Guardar perfil**.
+Se recuerda la última pestaña abierta de cada grupo.
 
 ---
 
@@ -82,21 +50,56 @@ Fijan las líneas de objetivo de las barras y cuentan los días y las noches en 
   - Casillas: un día normal mantiene tu peso (modelo neutro); contar todos los días aunque no te peses (con tu última pesada); y contar los días sin comidas apuntadas con la nota por defecto.
   - Fórmula: pérdida estimada del día = factor × (objetivo − peso) ÷ objetivo × nota del día.
   - Una vista previa muestra el desglose en % de cada elemento.
-  - **Guardar fórmula**, **Valores por defecto** (modelo neutro) y **Modelo de la hoja** (los valores de referencia con los que se ajustó la fórmula al principio).
+  - **Guardar fórmula**, **Valores por defecto** (modelo neutro) y **Modelo clásico** (los valores de referencia con los que se ajustó la fórmula al principio).
 
 ---
 
-## Datos y copias
+## Pestañas de Tu cuenta
+Las tres secciones siguientes son pestañas de **Tu cuenta**, no de Objetivos, plan y comidas.
 
-### Apple Salud
-- Explica cómo configurar la app **Health Auto Export** en el iPhone para enviar a la app la frecuencia cardiaca en reposo, la HRV, la saturación de oxígeno, la frecuencia respiratoria, el VO2 máx, la temperatura de la muñeca, los ECG y los avisos del Apple Watch. Los datos se muestran en Cuerpo → Corazón y en Sueño.
-- Resumen de los pasos: crea una automatización de tipo REST API con formato JSON, y elige los datos (métricas de salud, ECG y notificaciones de frecuencia cardiaca) y la frecuencia de envío. Para el historial, usa la subida manual de Health Auto Export.
+### Perfiles (Tu cuenta → Perfiles)
 
-### Origen de los datos
+- Cada persona tiene sus propios datos. Cambias de perfil con el botón del perfil (iniciales y nombre) junto al título de la barra superior, que también ofrece **Objetivos, plan y comidas**, **Tu cuenta** (donde se gestionan los perfiles), **Administración** (si eres administrador), **Bloquear perfil** (si el perfil tiene PIN) y **Cerrar sesión**.
+- Cada fila de perfil te permite definir:
+  - **Nombre** y **color** (el color y las iniciales identifican el perfil).
+  - **Ciclo**: marca qué perfil recibe los datos del ciclo menstrual que llegan de Apple Salud o de Android (Health Connect). Solo se puede marcar uno.
+  - **Pareja**: une dos perfiles entre sí. Al unirlos, aparece «desde» para indicar la fecha de inicio de la relación; la actividad sexual de la pareja anterior a esa fecha no cuenta.
+  - **Poner PIN** / **Cambiar PIN** / **Quitar PIN**: PIN de 4 dígitos para el perfil.
+  - **PIN privado**: PIN de 4 dígitos para Ciclo e intimidad (mira más abajo).
+  - **Borrar** (pide confirmación con «¿Seguro?»): quita el perfil de la lista. Sus datos quedan guardados por si lo vuelves a crear con el mismo nombre. El perfil principal no se puede borrar.
+- **Añadir perfil**: escribe un nombre y pulsa **Añadir perfil**. Cambia a él con el botón del perfil.
+
+### PIN del perfil
+- Es un bloqueo de pantalla de 4 dígitos con teclado numérico. **No cifra los datos.**
+- Al abrir la app o cambiar a un perfil con PIN, se pide. Tras 5 intentos fallidos tienes que esperar 30 segundos.
+- La pantalla de bloqueo te permite **Entrar con otro perfil**.
+- **Bloquear perfil** (en el menú del perfil) vuelve a pedir el PIN.
+- Si entras con el **PIN normal**, el perfil se abre sin Ciclo e intimidad; si entras con el **PIN privado**, se abre todo.
+
+### PIN privado
+- Protege la sección Ciclo e intimidad. Hasta que lo cambies, es **0000**.
+- Para cambiarlo debes introducir el PIN privado actual y uno nuevo de 4 dígitos distinto de 0000. **Volver a 0000** lo restablece.
+- Si el perfil tiene un PIN normal y su propio PIN privado, cuando entras con el PIN normal la sección Ciclo e intimidad ni siquiera aparece.
+
+### Datos personales (Tu cuenta → Datos personales)
+- **Altura (cm)**: entre 120 y 230. Se usa para el IMC, el índice de masa magra, las zonas de referencia y las fórmulas de las medidas con cinta.
+- **Sexo para las fórmulas**: No indicado, Hombre o Mujer. Se usa para las zonas de grasa, el índice de masa magra, el VO2 máx y las fórmulas de las medidas con cinta.
+- **Fecha de nacimiento**: ajusta los rangos de grasa y VO2 máx a tu franja de edad.
+- Pulsa **Guardar perfil**.
+
+### Datos y copias (Tu cuenta → Datos y copias)
+
+#### Apple Salud / Android
+- La primera tarjeta explica que el sueño, la actividad, los entrenamientos, la frecuencia cardiaca en reposo, la HRV, el oxígeno en sangre, la frecuencia respiratoria, el VO2 máx, los ECG y los avisos del reloj llegan solos desde el teléfono: desde el iPhone (Apple Salud, con la app Health Auto Export) o desde Android (Health Connect, con la app de BodyLens). Ambos usan la misma dirección de envío.
+- Tiene dos enlaces: **Fuentes de datos ›** (lleva a Tu cuenta → Fuentes de datos) y **Guía paso a paso ›** (abre la ayuda de [Sincronización](sync.md)).
+- Los ECG, los avisos cardiacos, la temperatura de la muñeca, el Estado de ánimo, los síntomas y la medicación solo los envía el iPhone (Apple Salud); en Android, apúntalos a mano en la app.
+
+#### Origen de los datos
 - Cifras de comprobación: **días guardados**, **última pesada** y cuándo se leyeron los datos por última vez.
-- Las pesadas y la composición vienen de la báscula **Withings**; el sueño, la actividad y los entrenamientos, sobre todo de **Apple Salud**.
+- Los datos de la báscula y del teléfono (Apple Salud o Android) llegan solos al servidor cada pocos minutos; el botón de la nube de arriba los pide al instante. Las fuentes se ven en Tu cuenta.
+- Las pesadas y la composición vienen de la báscula **Withings**; el sueño, la actividad y los entrenamientos, sobre todo de **Apple Salud** o **Android**.
 
-### Copia de seguridad
+#### Copia de seguridad
 - **Descargar copia completa**: guarda un fichero JSON con todo (pesadas, composición, medidas, actividad, sueño, entrenamientos, comidas, datos de Salud y ajustes del perfil actual). Su nombre incluye la fecha.
 - **Importar una copia…**: elige un fichero de copia. Se muestra un resumen (fecha de la copia y número de días de cada tipo) y dos opciones:
   - **Combinar con lo actual**: añade lo que falta y, si un día está en los dos sitios, se queda la versión de la copia.
@@ -108,7 +111,7 @@ Fijan las líneas de objetivo de las barras y cuentan los días y las noches en 
 
 ## Exportar a PDF
 
-- Se abre con el icono **PDF** de la barra superior (en Ajustes ofrece exportar todo).
+- Se abre con el icono **PDF** de la barra superior (en Tu cuenta → Datos y copias y en Objetivos, plan y comidas ofrece exportar todo).
 - Opciones:
   - **Periodo**: 1 sem, 1 mes, 3 meses, 6 meses, 1 año o Todo; empieza con el de la sección en la que estás.
   - **Orientación**: Vertical o Apaisado.

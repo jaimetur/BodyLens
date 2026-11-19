@@ -50,7 +50,7 @@ Up to four highlighted sentences: weight pace, recovery and anything in red or o
 ## Day by day and health cards
 
 - Steps, exercise minutes, sleep and similar (Day by day) and HRV, overnight SpO2, breathing, VO2 max, cycle, alerts and ECG, and wellbeing (Health).
-- This data comes from **Apple Health** (through Health Auto Export); sleep and activity data can also come from Withings when Health does not have it.
+- This data comes from **Apple Health** (iPhone, through Health Auto Export) or **Android** (Health Connect, through the BodyLens app); sleep and activity data can also come from Withings when Health does not have it.
 - They show the average for the period and, if you have chosen a period, the difference from the previous period.
 
 ## What your data says

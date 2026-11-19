@@ -97,7 +97,7 @@
   async function fetchWorkbook() {
     const r = await fetch('/api/workbook.xlsx', { headers: HDR, credentials: 'same-origin', cache: 'no-store' });
     if (r.status === 401) { location.href = '/login'; throw err('unauthenticated'); }
-    if (r.status === 404) throw err('no_workbook', 'Todavía no hay datos de la báscula ni de Apple Salud en tu cuenta.');
+    if (r.status === 404) throw err('no_workbook', 'Todavía no hay datos de la báscula ni del móvil (Apple Salud o Android) en tu cuenta.');
     if (!r.ok) throw err('server_unavailable', 'El servidor no responde.');
     const buf = new Uint8Array(await r.arrayBuffer());
     let s = ''; for (let i = 0; i < buf.length; i += 0x8000) s += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000));
@@ -212,4 +212,42 @@ document.addEventListener('DOMContentLoaded', () => {
   b.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.7"/><circle cx="12" cy="17" r=".6"/></svg>';
   b.addEventListener('click', () => { location.hash = 'help'; });
   pdf.parentNode.insertBefore(b, pdf);
+});
+
+// «Connect data sources» links: open Your account and scroll to its Data sources box
+document.addEventListener('click', e => {
+  const a = e.target.closest && e.target.closest('[data-gosrc]');
+  if (!a) return;
+  e.preventDefault();
+  location.hash = 'cuenta';
+  let tries = 0;
+  const go = () => {
+    const f = document.getElementById('emb-cuenta');
+    const sec = f && f.contentDocument && f.contentDocument.getElementById('fuentes');
+    if (!sec || !sec.offsetHeight) { if (++tries < 40) setTimeout(go, 100); return; }
+    // the frame and the page may use different zooms (text size): measure again and correct a few times
+    for (let i = 0; i < 6; i++) {
+      const top = f.getBoundingClientRect().top + sec.getBoundingClientRect().top - 12;
+      if (Math.abs(top) < 3) break;
+      window.scrollTo(0, window.scrollY + top);
+    }
+  };
+  setTimeout(go, 50);
+});
+
+// Links to a given help document (data-helpdoc="sync"): open Help on that document
+document.addEventListener('click', e => {
+  const a = e.target.closest && e.target.closest('[data-helpdoc]');
+  if (!a) return;
+  e.preventDefault();
+  const doc = a.dataset.helpdoc;
+  location.hash = 'help';
+  let tries = 0;
+  const go = () => {
+    const f = document.getElementById('emb-help');
+    const w = f && f.contentWindow;
+    if (!w || !w.document.getElementById('doc')) { if (++tries < 40) setTimeout(go, 100); return; }
+    w.location.hash = doc;
+  };
+  setTimeout(go, 50);
 });

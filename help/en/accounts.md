@@ -25,7 +25,7 @@ Open it from the profile menu (top left) → **Your account**.
 - **Full name** and **email**: the email receives all notifications.
 - **Language**: the language of the whole app and of the emails you receive. Before signing in, choose it with the 🌐 selector on the sign-in screen. New accounts start in English (or in the language chosen when requesting the account).
 - **Password**: asks for the current one; changing it signs you out on your other devices.
-- **Partner** and **Sync**: see [partner](couples.md) and [sync](sync.md). Importing backups is in Settings → Data and backups ([import](import.md)).
+- **Partner** and **Sync**: see [partner](couples.md) and [sync](sync.md). Importing backups is in Your account → Data and backups ([import](import.md)).
 - **Administration**: only for administrator accounts; see [administration](administration.md).
 
 ## Privacy

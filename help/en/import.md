@@ -3,7 +3,7 @@
 To bring a BodyLens backup into your account, for example one you downloaded yourself.
 
 ## Where
-**Settings → Data and backups → Import a backup…** (it is the only place).
+**Your account → Data and backups → Import a backup…** (it is the only place).
 
 ## Which files it accepts
 - **Full backup (JSON)**: the one you download in that same section with **Download full copy**.

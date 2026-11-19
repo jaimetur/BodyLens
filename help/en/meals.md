@@ -45,4 +45,4 @@ Use it to record what you eat each day and score it, and to see how much it shou
 
 - **Score for the day**: weighted average of the scores. Unscored meals count as the default score (3, adjustable); water, sport and unscored indulgences count as 0. Indulgences subtract with their own penalty. The result is expressed as a % of the maximum possible, rounded.
 - **Estimated loss for the day** = factor × (goal − weight) ÷ goal × score for the day. With the "neutral" model, a normal day (breakfast, lunch and dinner at 3, with no water, sport or indulgences) keeps your weight: it only estimates loss if you do better and gain if you do worse.
-- The formula weights, the penalties, the factor and several options (count days without a weigh-in, count days without meals logged, use the sheet model) are changed in Settings → Meals.
+- The formula weights, the penalties, the factor and several options (count days without a weigh-in, count days without meals logged, use the classic model) are changed in Goals, plan and meals → Meals.

@@ -1,4 +1,4 @@
-<!-- en: 85c19f384a697f4f -->
+<!-- en: 8a46e69e75e6ce8c -->
 # Cuentas y acceso
 
 Cada persona tiene su propia cuenta de BodyLens, con sus datos separados de los de los demás. Entras con tu nombre de usuario (o tu correo) y tu contraseña.
@@ -26,7 +26,7 @@ Cada persona tiene su propia cuenta de BodyLens, con sus datos separados de los 
 - **Nombre y apellidos** y **correo**: el correo recibe todas las notificaciones.
 - **Idioma**: el idioma de toda la app y de los correos que recibes. Antes de entrar, elígelo con el selector 🌐 de la pantalla de acceso. Las cuentas nuevas empiezan en inglés (o en el idioma elegido al pedir la cuenta).
 - **Contraseña**: pide la actual; al cambiarla se cierra tu sesión en los demás dispositivos.
-- **Pareja** y **Sincronización**: mira [pareja](couples.md) y [sincronización](sync.md). Importar copias está en Ajustes → Datos y copias ([importar](import.md)).
+- **Pareja** y **Sincronización**: mira [pareja](couples.md) y [sincronización](sync.md). Importar copias está en Tu cuenta → Datos y copias ([importar](import.md)).
 - **Administración**: solo para cuentas de administrador; mira [administración](administration.md).
 
 ## Privacidad

@@ -4,13 +4,13 @@ A private section for tracking the menstrual cycle, sexual activity and mood. It
 
 ## Source of the data
 
-- Cycle, sexual activity and mood records come from **Apple Health** (through Health Auto Export) or you log them here by hand.
-- Cycle data that arrives from Apple Health for the main profile is automatically passed to the profile marked as "Cycle" (see Settings → Profiles).
+- Cycle, sexual activity and mood records come from **Apple Health** (iPhone, through Health Auto Export) or **Android** (Health Connect, through the BodyLens app), or you log them here by hand. Android sends menstruation and sexual activity; **mood (State of Mind) is only sent by the iPhone, so on Android log it by hand in the app.** Imported records are labelled "Apple Health / Android".
+- Cycle data that arrives from Apple Health or Android for the main profile is automatically passed to the profile marked as "Cycle" (see Your account → Profiles).
 
 ## Private PIN
 
 - When you enter the section you are asked for the profile's **privacy PIN** (4 digits). If it is locked, "Cycle and intimacy" appears with the **Unlock** button.
-- Until you change it, the private PIN is **0000**. It is changed in Settings → Profiles (**Private PIN**), and it cannot be 0000. To change or remove it you need the current private PIN.
+- Until you change it, the private PIN is **0000**. It is changed in Your account → Profiles (**Private PIN**), and it cannot be 0000. To change or remove it you need the current private PIN.
 - If the profile has a normal PIN and its own private PIN, when you sign in with the normal PIN the section **does not appear**; it is only visible when you sign in with the private PIN.
 - After 5 failed attempts you have to wait 30 seconds.
 - The PIN locks the screen: it does not encrypt the data.
@@ -48,7 +48,7 @@ A private section for tracking the menstrual cycle, sexual activity and mood. It
 
 - **Mood**: your latest record (face, description, emotions and what influences it) and the **How are you feeling now?** row, with seven faces from "Very unpleasant" to "Very pleasant" to log your mood with one tap.
 - **Scale**: from −3 (very unpleasant) to +3 (very pleasant).
-- If there are no records yet, it explains how to import them from Apple Health (Health app → Mindfulness → State of mind) with the Health Auto Export automation, or you can log them here.
+- If there are no records yet, it explains how to import them from Apple Health on the iPhone (Health app → Mindfulness → State of mind) with the Health Auto Export automation, or you can log them here; on Android, log them here by hand.
 - **Period**: the floating selector (1 wk to All) appears only on this tab.
 - **In numbers**: average mood, pleasant and unpleasant days and comparison with the previous period.
 - **Progress**: mood for each day and its 7-day average.

@@ -1,17 +1,17 @@
-<!-- en: c4024984b1b89d5b -->
+<!-- en: ef0e70ea2a7e9f70 -->
 # Ciclo e intimidad
 
 Una sección privada para seguir el ciclo menstrual, la actividad sexual y el ánimo. Está protegida por su propio PIN de privacidad y se puede ocultar por completo.
 
 ## Origen de los datos
 
-- Los registros de ciclo, actividad sexual y ánimo vienen de **Apple Salud** (a través de Health Auto Export) o los apuntas aquí a mano.
-- Los datos del ciclo que llegan de Apple Salud para el perfil principal pasan automáticamente al perfil marcado como «Ciclo» (mira Ajustes → Perfiles).
+- Los registros de ciclo, actividad sexual y ánimo vienen de **Apple Salud** (iPhone, a través de Health Auto Export) o de **Android** (Health Connect, a través de la app de BodyLens), o los apuntas aquí a mano. Android envía la menstruación y la actividad sexual; **el ánimo (Estado de ánimo) solo lo envía el iPhone, así que en Android apúntalo a mano en la app.** Los registros importados se etiquetan «Apple Salud / Android».
+- Los datos del ciclo que llegan de Apple Salud o de Android para el perfil principal pasan automáticamente al perfil marcado como «Ciclo» (mira Tu cuenta → Perfiles).
 
 ## PIN privado
 
 - Al entrar en la sección se te pide el **PIN de privacidad** del perfil (4 dígitos). Si está bloqueada, «Ciclo e intimidad» aparece con el botón **Desbloquear**.
-- Hasta que lo cambies, el PIN privado es **0000**. Se cambia en Ajustes → Perfiles (**PIN privado**) y no puede ser 0000. Para cambiarlo o quitarlo necesitas el PIN privado actual.
+- Hasta que lo cambies, el PIN privado es **0000**. Se cambia en Tu cuenta → Perfiles (**PIN privado**) y no puede ser 0000. Para cambiarlo o quitarlo necesitas el PIN privado actual.
 - Si el perfil tiene un PIN normal y su propio PIN privado, cuando entras con el PIN normal la sección **no aparece**; solo se ve al entrar con el PIN privado.
 - Tras 5 intentos fallidos tienes que esperar 30 segundos.
 - El PIN bloquea la pantalla: no cifra los datos.
@@ -49,7 +49,7 @@ Una sección privada para seguir el ciclo menstrual, la actividad sexual y el á
 
 - **Ánimo**: tu último registro (cara, descripción, emociones y qué influye) y la fila **¿Cómo te sientes ahora?**, con siete caras desde «Muy desagradable» hasta «Muy agradable» para apuntar tu ánimo con un toque.
 - **Escala**: de −3 (muy desagradable) a +3 (muy agradable).
-- Si aún no hay registros, explica cómo importarlos desde Apple Salud (app Salud → Mindfulness → Estado de ánimo) con la automatización de Health Auto Export, o puedes apuntarlos aquí.
+- Si aún no hay registros, explica cómo importarlos desde Apple Salud en el iPhone (app Salud → Mindfulness → Estado de ánimo) con la automatización de Health Auto Export, o puedes apuntarlos aquí; en Android, apúntalos aquí a mano.
 - **Periodo**: el selector flotante (de 1 sem a Todo) aparece solo en esta pestaña.
 - **En cifras**: ánimo medio, días agradables y desagradables y comparación con el periodo anterior.
 - **Evolución**: el ánimo de cada día y su media de 7 días.

@@ -1,4 +1,4 @@
-<!-- en: ecc21df6aaa1d1d1 -->
+<!-- en: fdcba17e84ad8092 -->
 # Resumen
 
 Es la pantalla de inicio: reúne de un vistazo tu peso de tendencia, la composición corporal, los datos del día a día, la salud y los análisis más relevantes del resto de secciones.
@@ -51,7 +51,7 @@ Hasta cuatro frases destacadas: ritmo de peso, recuperación y todo lo que esté
 ## Tarjetas de día a día y de salud
 
 - Pasos, minutos de ejercicio, sueño y similares (Día a día) y HRV, SpO2 nocturna, respiración, VO2 máx, ciclo, avisos y ECG, y bienestar (Salud).
-- Estos datos vienen de **Apple Salud** (a través de Health Auto Export); los de sueño y actividad también pueden venir de Withings cuando Salud no los tiene.
+- Estos datos vienen de **Apple Salud** (iPhone, a través de Health Auto Export) o de **Android** (Health Connect, a través de la app de BodyLens); los de sueño y actividad también pueden venir de Withings cuando Salud no los tiene.
 - Muestran la media del periodo y, si has elegido un periodo, la diferencia respecto al periodo anterior.
 
 ## Lo que dicen tus datos

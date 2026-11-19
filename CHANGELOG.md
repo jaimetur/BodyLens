@@ -28,6 +28,7 @@
 - **Your account:**
   - **Account:** profile, email, language and password, partner, data sources, synchronisation and import.
   - **Profiles and Personal data:** management of the app's profiles.
+  - **Data and backups:** where your phone data comes from, data source, full backup and CSV export.
 - **Administration** (administrator accounts), with these tabs:
   - **Users:** edit username, name, email and password; activate or deactivate with a switch; grant or remove admin; reset the password; delete.
   - **Access requests** and **Invitations**.
@@ -63,17 +64,19 @@
 - **Text size** per account (Small, Normal, Large, Extra large) in *Your account*, like the language; the new Normal is slightly bigger than before.
 
 #### 🚀 Enhancements:
-- **A single importer** (Settings → Data and backups) for the full backup and for the previous version's `snap.json`. If the backup has several profiles, you choose which one to import.
+- **A single importer** (Your account → Data and backups) for the full backup and for the previous version's `snap.json`. If the backup has several profiles, you choose which one to import.
 - **Meals:**
   - Each score sits on its meal's row, with large buttons, and Water has its own row.
   - The day's log comes before the estimated loss.
   - The day's log shows the last 4 weeks (Monday to Sunday) at the top instead of just one; the arrows jump 4 weeks.
+- **Android at the same level as the iPhone:** every screen, empty state and notice that spoke only of Apple Health / Health Auto Export now also explains the Android path (Health Connect with the BodyLens app), with the same sending address for both.
 - **Mood:** past moods can be recorded, with date and time or by tapping the day in the calendar.
 - **History** is now called **Weight history**.
 - **Wide screens:** the app reaches 1600 px, and Your account and Administration use the width with columns.
 - **Sidebar:**
   - Your account and Administration (administrators only) are sections of the app, with the sidebar.
   - "Manage profiles" moves to Your account.
+  - **Settings** is now called **Goals, plan and meals**; its **Data and backups** tab moves to Your account.
 - **Avatar menu:** shows the full name and includes Your account, Administration and **Sign out**, in red.
 - **Administration command line** (`python -m app.accounts.cli`): create accounts with a temporary password, invitations, passwords, users, sources and move profiles.
 

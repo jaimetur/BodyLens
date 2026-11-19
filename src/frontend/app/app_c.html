@@ -214,7 +214,7 @@ let unwatch=null,wantWatch=false;
 function startWatch(){if(!OWNER||PID)return;wantWatch=true;if(!mcp||unwatch)return;
   unwatch=mcp.watchTool('Google Drive','download_file_content',{fileId:fileId(),exportMimeType:XLSX_MIME},ev=>{if(ev.type==='data')handleResult(ev.result);else handleError(ev.error)},{cache:{staleTime:3600e3,gcTime:7*24*3600e3},refetchInterval:2*3600e3})}
 async function syncNow(){
-  if(!OWNER)return;if(PID){showNotice('','La sincronización con la báscula y Apple Salud es del perfil de '+PROFS[0].name+'.');return}
+  if(!OWNER)return;if(PID){showNotice('','La sincronización con tus fuentes de datos es del perfil de '+PROFS[0].name+'.');return}
   if(!mcp){showNotice('err','Abre la app en claude.ai con el conector de Google Drive para sincronizar.');return}
   setPill('','Sincronizando…');$('syncBtn').classList.add('spin');
   try{handleResult(await mcp.callTool('Google Drive','download_file_content',{fileId:fileId(),exportMimeType:XLSX_MIME},{cache:{staleTime:3600e3,gcTime:7*24*3600e3,refresh:true}}))}catch(e){handleError(e)}
@@ -243,6 +243,7 @@ const ICON={
 const VIEWS=[['resumen','Resumen'],['peso','Peso'],['composicion','Composición'],['medidas','Medidas'],['corazon','Corazón'],['bienestar','Bienestar'],['actividad','Actividad'],['sueno','Sueño'],['comidas','Comidas'],['intimo','Íntimo'],['historial','Historial de pesos'],['ajustes','Ajustes']];
 // en el servidor: «Tu cuenta» y, para administradores, «Administración» son secciones de la app con su página dentro
 const SRV_V=window.BODYLENS_SERVER?[['cuenta','Tu cuenta'],...(window.BODYLENS_USER&&BODYLENS_USER.isAdmin?[['admin','Administración']]:[]),['help','Help']]:[];
+if(SRV_V.length){const v=VIEWS.find(x=>x[0]==='ajustes');if(v)v[1]='Objetivos, plan y comidas';const s=document.getElementById('v-ajustes');if(s)s.dataset.title=v?v[1]:s.dataset.title}
 if(SRV_V.length){VIEWS.push(...SRV_V);
   Object.assign(ICON,{cuenta:'<circle cx="12" cy="8" r="3.6"/><path d="M5 20a7 7 0 0 1 14 0"/>',admin:'<path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6z"/><path d="M9 12l2 2 4-4"/>',help:'<circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.7"/><circle cx="12" cy="17" r=".6"/>'});
   $('v-ajustes').insertAdjacentHTML('afterend',SRV_V.map(([id,l])=>`<section class="view srvview" id="v-${id}" data-title="${l}" hidden><iframe class="srvframe" id="emb-${id}" title="${l}"></iframe></section>`).join(''))}
@@ -1560,7 +1561,7 @@ g.fillStyle=getComputedStyle(document.body).backgroundColor;g.fillRect(0,0,W,H);
 let AJT=UI.ajTab&&UI.ajTab!=='perfil'&&UI.ajTab!=='perfiles'?UI.ajTab:'plan';if(AJT==='perfil')AJT='plan';
 const AJ_PF=['perfiles','perfil'];
 function showAj(cat){if(!document.querySelector(`#ajTabs [data-ajt="${cat}"]`))cat='plan';AJT=cat;const pf=AJ_PF.includes(cat);if(pf)UI.ajTabPf=cat;else UI.ajTab=cat;saveUI();document.querySelectorAll('#ajTabs [data-ajt]').forEach(b=>{const on=b.dataset.ajt===cat;b.hidden=(b.dataset.ajm==='pf')!==pf;b.classList.toggle('on',on);b.setAttribute('aria-selected',on)});
-  if(VIEW==='ajustes')$('viewTitle').textContent=pf?'Perfiles':'Ajustes';
+  if(VIEW==='ajustes')$('viewTitle').textContent=pf?'Perfiles':$('v-ajustes').dataset.title;
   document.querySelectorAll('#v-ajustes [data-ajc]').forEach(s=>{s.hidden=s.dataset.ajc!==cat});ajNavMark()}
 $('ajTabs').addEventListener('click',e=>{const b=e.target.closest('[data-ajt]');if(b){showAj(b.dataset.ajt);scrollTo({top:0})}});
 showAj(AJT);
@@ -1569,6 +1570,8 @@ addEventListener('hashchange',()=>{if(VIEW==='ajustes'){if(PFNAV){PFNAV=false;sh
 // Server: profile management lives inside «Tu cuenta» as tabs (Cuenta · Perfiles · Datos personales)
 if(SRV_V.length){
   const accIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>';
+  // «Datos y copias» belongs to «Tu cuenta»; the rest of Ajustes is «Objetivos, plan y comidas»
+  {const d=document.querySelector('#ajTabs [data-ajt="datos"]');if(d){d.dataset.ajm='pf';AJ_PF.push('datos')}}
   const pfBtns=[...document.querySelectorAll('#ajTabs [data-ajm="pf"]')];
   // the «Cuenta» tab in the profiles part of Ajustes
   $('ajTabs').insertAdjacentHTML('afterbegin',`<button type="button" role="tab" data-acct>${accIcon}<span>Cuenta</span></button>`);
@@ -1869,7 +1872,7 @@ const TROPHY_SVG='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="t
 document.addEventListener('click',e=>{const b=e.target.closest('[data-schw]');if(!b)return;UI.schWin=b.dataset.schw==='auto'?'':b.dataset.schw;SCH_SEL=null;saveUI();renderView()});
 
 /* ---------- vista Actividad ---------- */
-const lifeEmpty=(ids,t)=>{for(const id of ids)$(id).innerHTML=emptyBox(t)};
+const lifeEmpty=(ids,t)=>{for(const id of ids)$(id).innerHTML=emptyBox(t+'<br><a href="#cuenta" class="lnk" data-gosrc>Conectar fuentes de datos ›</a>')};
 function renderActividad(){
   const L=LIFE;const ids=['chSteps','chMin','chStepsDow','chActW','woTypes','chHr','woList','dayCard','actWeek','chWoWk','chWoDow','actRec','actGoals','chStepsHist','actMonths'];
   if(!L||!L.hasAct){$('actKv').innerHTML='';$('stepsLead').textContent='';lifeEmpty(ids,'Aún no hay datos de actividad. Llegan solos de Apple Salud, Android o Withings: conéctalos en Tu cuenta → Fuentes de datos.');return}
@@ -2395,7 +2398,7 @@ function renderNaps(s){const host=$('napCard');if(!host)return;if(!s){host.hidde
   host.innerHTML=`<div class="naph"><h2>Siestas</h2><span>${dn[0].toUpperCase()+dn.slice(1)} ${fmtK(k,true)}</span></div>
     ${ns.length?`<div class="napsum"><b>${fmtDur(tot)}</b><small>${ns.length===1?'1 siesta':ns.length+' siestas'} · suman al saldo de sueño</small></div>${strip}
       <div class="naplist">${ns.map(v=>`<div><span class="napt">${v.sh?'<small>víspera </small>':''}${fmtClock(v[1])}<em>–</em>${fmtClock(v[2])}</span><b>${fmtDur(v[3])}</b>${v[6]?`<small>${fmtInt(v[6])} lpm</small>`:'<small></small>'}</div>`).join('')}</div>`
-    :`${strip}<p class="napnone">Ninguna siesta registrada este día (de las 20:00 de la víspera a las 20:00).</p><p class="bc-note">Llegan desde Salud: AutoSleep las detecta en el iPhone y Health Auto Export las envía.</p>`}`}
+    :`${strip}<p class="napnone">Ninguna siesta registrada este día (de las 20:00 de la víspera a las 20:00).</p><p class="bc-note">Llegan del móvil: en el iPhone, AutoSleep o el Apple Watch las detectan y Health Auto Export las envía; en Android, la app de BodyLens las lee de Health Connect.</p>`}`}
 function renderNight(L){const host=$('nightCard');const all=L.slp;if(!all.length){host.innerHTML=emptyBox('Aún no hay noches registradas.');return}
   const recent=all.filter(s=>s.k>addK(all[all.length-1].k,-90));const usual={bed:median(recent.map(s=>s.bed).filter(x=>x!=null)),wake:median(recent.map(s=>s.wake).filter(x=>x!=null))};
   const s=(NIGHT&&all.find(x=>x.k===NIGHT))||all[all.length-1];renderNaps(s);
@@ -2884,7 +2887,7 @@ function renderLogs(){const host=$('hrtLogs');if(!host)return;const E=(HKLOG.e||
     <small>Último periodo: ${fmtK(cy.per[cy.per.length-1].start,true)}${cy.per[cy.per.length-1].end!==cy.per[cy.per.length-1].start?' – '+fmtK(cy.per[cy.per.length-1].end,true):''}${cy.avg?` · ciclo medio de ${cy.avg} días · próximo previsto hacia el <b>${fmtK(cy.next,true)}</b>`:' · hacen falta más periodos para calcular el ciclo'}</small></div>`:'';
   const opts=Object.entries(LOGT).filter(([k])=>!['symptom','ovulation','bbt','cervical','pregnancy','contraceptive'].includes(k)).map(([k,[l]])=>`<option value="${k}">${l}</option>`).join('');
   const now=new Date(),nowS=`${d2k(now)}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
-  host.innerHTML=`<h2>Registros personales</h2><p class="lead">Lo que apuntas en Apple Salud (llega con Health Auto Export) y lo que registres aquí. Solo lo ves tú y quien tenga el enlace de la app.</p>
+  host.innerHTML=`<h2>Registros personales</h2><p class="lead">Lo que apuntas en Apple Salud (llega con Health Auto Export) o en Health Connect (llega con la app de BodyLens para Android) y lo que registres aquí. Solo lo ves tú y quien tenga el enlace de la app.</p>
     <div class="form owner-only lgf"><label for="lgType">Registro<select id="lgType">${opts}</select></label><label for="lgWhen">Fecha y hora<input id="lgWhen" type="datetime-local" value="${nowS}"></label>
       <label for="lgVal">Detalle (opcional)<input id="lgVal" type="text" maxlength="60" placeholder="p. ej. leve, 2 bebidas, con protección"></label>
       <div class="row full"><button class="btn" type="button" id="lgAdd">Registrar</button><span class="msg" id="lgMsg" aria-live="polite"></span></div></div>
@@ -2941,7 +2944,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-lgadd]');i
   if(e.target.closest('[data-lgmvx]')){LG_MV=null;renderView();return}
   const mt=e.target.closest('[data-lgmvto]');if(mt&&LG_MV){const [t,s]=LG_MV.split('|');LG_MV=null;if(lgMoveTo(t,s,mt.dataset.lgmvto)){saveLocal();if(col)enqueue('hklog',HKLOG)}renderView();return}
   const d=e.target.closest('[data-lgdel]');if(d){const [t,s]=d.dataset.lgdel.split('|');if(LG_EDIT&&LG_EDIT.t===t&&LG_EDIT.s===s)LG_EDIT=null;lgRemove(t,s);saveLocal();if(col)enqueue('hklog',HKLOG);renderView()}});
-function logList(E,n,pre){return E.length?`<div class="alrt">${E.slice(0,n).map(e=>{const k=esc(e.slice(0,2).join('|')),on=LG_EDIT&&LG_EDIT.t===e[0]&&LG_EDIT.s===e[1];return `<div${on?' class="lgon"':''}><i style="background:${logCol(e[0])}"></i><span><b>${logName(e[0])}</b><small>${fmtK(e[1].slice(0,10),true)}${e[1].slice(11,16)!=='00:00'&&e[1].slice(11,16)!=='12:00'?', '+e[1].slice(11,16):''}${logVal(e[0],e[3])?' · '+esc(logVal(e[0],e[3])):''}${e[4]==='app'?'':' · Apple Salud'}</small></span><em>${true?`<span class="lgbtns owner-only">${PROFS.length>1?`<button type="button" class="lgdel" data-lgmv="${k}" aria-label="Pasar a otro perfil" title="Pasar a otro perfil">${ICB.move}</button>`:''}<button type="button" class="lgdel" data-lged="${pre}|${k}" aria-label="Editar">${ICB.edit}</button><button type="button" class="lgdel" data-lgdel="${k}" aria-label="Borrar">${ICB.x}</button></span>`:''}</em></div>${LG_MV===e[0]+'|'+e[1]?`<div class="lgmv owner-only"><span>Pasar a:</span>${PROFS.filter(p=>p.id!==PID).map(p=>`<button type="button" class="btn ghost" data-lgmvto="${esc(p.id)}"><i style="background:${p.col}">${esc(initials(p.name))}</i>${esc(p.name.split(' ')[0])}</button>`).join('')}<button type="button" class="btn ghost" data-lgmvx>Cancelar</button></div>`:''}`}).join('')}</div>`:emptyBox('Sin registros todavía.')}
+function logList(E,n,pre){return E.length?`<div class="alrt">${E.slice(0,n).map(e=>{const k=esc(e.slice(0,2).join('|')),on=LG_EDIT&&LG_EDIT.t===e[0]&&LG_EDIT.s===e[1];return `<div${on?' class="lgon"':''}><i style="background:${logCol(e[0])}"></i><span><b>${logName(e[0])}</b><small>${fmtK(e[1].slice(0,10),true)}${e[1].slice(11,16)!=='00:00'&&e[1].slice(11,16)!=='12:00'?', '+e[1].slice(11,16):''}${logVal(e[0],e[3])?' · '+esc(logVal(e[0],e[3])):''}${e[4]==='app'?'':' · Apple Salud / Android'}</small></span><em>${true?`<span class="lgbtns owner-only">${PROFS.length>1?`<button type="button" class="lgdel" data-lgmv="${k}" aria-label="Pasar a otro perfil" title="Pasar a otro perfil">${ICB.move}</button>`:''}<button type="button" class="lgdel" data-lged="${pre}|${k}" aria-label="Editar">${ICB.edit}</button><button type="button" class="lgdel" data-lgdel="${k}" aria-label="Borrar">${ICB.x}</button></span>`:''}</em></div>${LG_MV===e[0]+'|'+e[1]?`<div class="lgmv owner-only"><span>Pasar a:</span>${PROFS.filter(p=>p.id!==PID).map(p=>`<button type="button" class="btn ghost" data-lgmvto="${esc(p.id)}"><i style="background:${p.col}">${esc(initials(p.name))}</i>${esc(p.name.split(' ')[0])}</button>`).join('')}<button type="button" class="btn ghost" data-lgmvx>Cancelar</button></div>`:''}`}).join('')}</div>`:emptyBox('Sin registros todavía.')}
 // registros de Apple Salud corregidos o quitados aquí: se ocultan con una marca ['_hide', inicio, inicio, tipo, 'app'] (la siguiente importación no los vuelve a mostrar)
 const hidSet=L=>new Set((L.e||[]).filter(x=>x[0]==='_hide').map(x=>x[3]+'|'+x[1]));
 const visLog=L=>{const h=hidSet(L);return {v:1,e:(L.e||[]).filter(x=>x[0]!=='_hide'&&(x[4]==='app'||!h.has(x[0]+'|'+x[1])))}};
@@ -3010,7 +3013,7 @@ function renderMood(){const host=$('intMood');if(!host)return;const today=d2k(ne
   let h=`<h2>Estado de ánimo</h2>`;
   if(last){h+=`<div class="fdh mdnow"><div class="mdface">${moodFace(last.v,84)}</div><div class="fdbig"><div class="nlbl">${last.day?'Tu día':'Último momento'} · ${fK(last.k)}${last.t.slice(11,16)!=='00:00'?', '+last.t.slice(11,16):''}</div><div class="nbig" style="font-size:1.6rem">${moodWord(last.v,last.c)}</div>
       ${last.l.length?`<div class="mdchips">${last.l.map(x=>`<span>${esc(moodEs(x))}</span>`).join('')}</div>`:''}${last.a.length?`<div class="nsub">Por: ${last.a.map(x=>esc(moodEs(x).toLowerCase())).join(', ')}</div>`:''}</div></div>`}
-  else h+=emptyBox('Aún no hay estados de ánimo. Regístralos en el iPhone (app Salud → Mindfulness → Estado de ánimo, o desde el Apple Watch) y llegarán con la automatización «Estado de Ánimo» de Health Auto Export. También puedes apuntarlos aquí abajo.');
+  else h+=emptyBox('Aún no hay estados de ánimo. Regístralos en el iPhone (app Salud → Mindfulness → Estado de ánimo, o desde el Apple Watch) y llegarán con la automatización «Estado de Ánimo» de Health Auto Export. Android (Health Connect) no comparte el estado de ánimo: apúntalo aquí abajo.');
   host.innerHTML=h+quick;
   const boxes=['intMoodKv','intMoodEvo','intMoodCal','intMoodWhat','intMoodRel','intMoodProf','intMoodBad','intMoodList'];for(const id of boxes)$(id).hidden=!all.length;if(!all.length)return;
   // 2. cifras del periodo
@@ -3289,11 +3292,11 @@ function renderBienestar(){const today=d2k(new Date()),E=logsOf(BIEN_T),types=[.
     const tot=t==='alcohol'?es.filter(e=>e[1].slice(0,10)>addK(today,-30)).reduce((s,e)=>s+(+e[3]||0),0):t==='mindful'?null:null;
     return `<div class="lgs"><div class="lgs-h"><b><i style="background:${logCol(t)}"></i>${logName(t)}</b><span>${m30} en 30 días · ${m365} en 12 meses${tot?` · ${tot} bebidas en 30 días`:''}</span></div><div class="lgs-w" title="Últimas 52 semanas">${dots}</div><small>Último: ${fmtK(es[0][1].slice(0,10),true)}${logVal(t,es[0][3])?' · '+esc(logVal(t,es[0][3])):''}</small></div>`};
   const grp=[['Síntomas',types.filter(t=>!['mindful','alcohol','mood'].includes(t))],['Hábitos',types.filter(t=>['mindful','alcohol','mood'].includes(t))]];
-  $('bienSum').innerHTML=`<h2>Bienestar</h2><p class="lead">Síntomas y hábitos que apuntas en Apple Salud o aquí. Cada fila marca las semanas del último año en que hubo algún registro.</p>${E.length?grp.filter(g=>g[1].length).map(([l,ts])=>`<h3 class="lgs-t">${l}</h3>${ts.map(card).join('')}`).join(''):emptyBox('Sin registros todavía.')}`;
+  $('bienSum').innerHTML=`<h2>Bienestar</h2><p class="lead">Síntomas y hábitos que apuntas en Apple Salud (iPhone) o aquí. Cada fila marca las semanas del último año en que hubo algún registro.</p>${E.length?grp.filter(g=>g[1].length).map(([l,ts])=>`<h3 class="lgs-t">${l}</h3>${ts.map(card).join('')}`).join(''):emptyBox('Sin registros todavía.')}`;
   $('bienLog').innerHTML=`<h2>Registrar</h2>${logForm('bien',BIEN_T.filter(t=>!['symptom','mood'].includes(t)))}<h3 class="lgs-t">Últimos registros</h3>${logList(E,20,'bien')}`}
 function renderCorazon(){
   const L=LIFE,hk=(L&&L.hk)||[];const has=hk.length>0,dash=$('hrtDash');
-  if(!has&&!ecgList().length){dash.innerHTML=`<h2>Corazón</h2>${emptyBox('Todavía no hay datos de Apple Salud. Llegan con Health Auto Export (ver Ajustes → Apple Salud) o importando la exportación de Salud.')}`;for(const id of ['hrtSpo','hrtVo2','hrtAlerts'])$(id).innerHTML='';$('hrtEcg').innerHTML='';$('hrtCharts').innerHTML='';return}
+  if(!has&&!ecgList().length){dash.innerHTML=`<h2>Corazón</h2>${emptyBox('Todavía no hay datos del corazón. Llegan solos del iPhone (Apple Salud, con Health Auto Export) o de Android (Health Connect, con la app de BodyLens): conéctalos en Tu cuenta → Fuentes de datos.')}`;for(const id of ['hrtSpo','hrtVo2','hrtAlerts'])$(id).innerHTML='';$('hrtEcg').innerHTML='';$('hrtCharts').innerHTML='';return}
   const lastOf=c=>{for(let i=hk.length-1;i>=0;i--)if(hk[i][c]!=null)return hk[i];return null};
   const win=(c,days,end)=>hk.filter(x=>x[c]!=null&&x.k>addK(end,-days)&&x.k<=end).map(x=>x[c]);
   const tile=(lab,c,unit,dec,base,goodUp,note,stCol)=>{const r=lastOf(c);if(!r)return '';const v=r[c],b=mean(win(c,30,addK(r.k,-1)));const d=b!=null?v-b:null;
