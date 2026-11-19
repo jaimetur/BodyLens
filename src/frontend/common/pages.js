@@ -1,4 +1,8 @@
 /* utilidades comunes de las páginas del servidor */
+// dentro de la app (sección «Tu cuenta» o «Administración») la página va sin cabecera y a todo el ancho
+const EMBED = window.top !== window || new URLSearchParams(location.search).has('embed');
+if (EMBED) document.documentElement.classList.add('embed');
+const TOP = EMBED ? window.top : window;
 const $ = id => document.getElementById(id);
 async function api(method, url, body) {
   const opt = { method, headers: { 'X-BodyLens': '1' }, credentials: 'same-origin' };

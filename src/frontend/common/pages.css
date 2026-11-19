@@ -10,6 +10,10 @@ main.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,46
 main.grid>.top,main.grid>.row,main.grid>.wide{grid-column:1/-1}
 main.grid>.card{margin:0}
 select{min-height:42px;appearance:auto}
+/* dentro de la app */
+.embed body{padding:0;background:transparent}
+.embed main{max-width:none;padding:0 0 8px}
+.embed .top{display:none}
 .brand{display:flex;align-items:center;gap:10px;margin-bottom:22px;text-decoration:none;color:inherit}
 .brand img{width:40px;height:40px;border-radius:10px}
 .brand b{font-size:22px;letter-spacing:.2px}

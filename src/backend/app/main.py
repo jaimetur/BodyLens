@@ -57,7 +57,7 @@ async def guard(request: Request, call_next):
     resp = await call_next(request)
     resp.headers.setdefault("X-Content-Type-Options", "nosniff")
     resp.headers.setdefault("Referrer-Policy", "same-origin")
-    resp.headers.setdefault("X-Frame-Options", "DENY")
+    resp.headers.setdefault("X-Frame-Options", "SAMEORIGIN")  # solo la propia app puede incrustar sus páginas
     if path.startswith("/api/"):
         resp.headers.setdefault("Cache-Control", "no-store")
     return resp

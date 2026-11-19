@@ -12,6 +12,7 @@
     <label>Usuario para entrar<input id="mUser" autocapitalize="none" spellcheck="false"></label>
     <label>Nombre y apellidos<input id="mName" maxlength="80"></label>
     <label>Contraseña nueva (al menos 4 caracteres)<input id="mPw" type="password" autocomplete="new-password"></label>
+    <label>Repite la contraseña<input id="mPw2" type="password" autocomplete="new-password"></label>
     <div class="row"><button id="mGo" type="button">Guardar y entrar</button><span class="msg" id="mMsg"></span></div>
   </section>
 
@@ -73,6 +74,7 @@
     <h2>Contraseña</h2>
     <label>Contraseña actual<input id="pw0" type="password" autocomplete="current-password"></label>
     <label>Nueva (al menos 4 caracteres)<input id="pw1" type="password" autocomplete="new-password"></label>
+    <label>Repite la nueva<input id="pw2" type="password" autocomplete="new-password"></label>
     <div class="row"><button class="ghost" id="pwGo" type="button">Cambiar contraseña</button><span class="msg" id="pwMsg"></span></div>
     <p class="small">Al cambiarla se cierra la sesión en los demás dispositivos.</p>
   </section>
@@ -80,7 +82,7 @@
   <section class="card" id="admin" hidden>
     <h2>Administración</h2>
     <p>Usuarios, peticiones de acceso, invitaciones, correo y fuentes de datos.<span id="admReq"></span></p>
-    <a class="btn" href="/admin">Abrir el panel de Administración</a>
+    <a class="btn" href="/#admin" target="_top">Abrir el panel de Administración</a>
   </section>
 
   <div class="row"><button class="ghost" id="out" type="button">Cerrar sesión</button></div>
@@ -89,11 +91,11 @@
 <script>
 let ME = null;
 async function load() {
-  ME = await api('GET', '/api/me').catch(e => { if (/Inicia sesión/.test(e.message)) location.href = '/login?next=/cuenta'; throw e });
+  ME = await api('GET', '/api/me').catch(e => { if (/Inicia sesión/.test(e.message)) TOP.location.href = '/login?next=/cuenta'; throw e });
   const must = ME.user.mustChange;
   $('mustBox').hidden = !must;
   $('defBox').hidden = must || !ME.defaultPassword;
-  for (const s of document.querySelectorAll('main > section.card:not(#mustBox), main > .row')) s.hidden = must;
+  for (const s of document.querySelectorAll('main > section.card:not(#mustBox):not(#defBox):not(#admin), main > .row')) s.hidden = must;
   if (must) { $('mUser').value = ME.user.username; $('mName').value = ME.user.name; }
   else if (new URLSearchParams(location.search).has('cambiar')) history.replaceState(null, '', '/cuenta');
   $('kUser').textContent = ME.user.username; $('kName').textContent = ME.user.name; $('name').value = ME.user.name; $('email').value = ME.user.email || ''; $('kMail').textContent = ME.user.email || 'sin correo: añádelo abajo';
@@ -121,14 +123,15 @@ act($('nameGo'), $('nameMsg'), () => api('POST', '/api/me/name', { name: $('name
 act($('emailGo'), $('emailMsg'), () => api('POST', '/api/me/email', { email: $('email').value }), 'Correo guardado.');
 act($('pAsk'), $('pMsg'), async () => { const r = await api('POST', '/api/partner/request', { username: $('pUser').value, since: $('pDate').value || null }); if (r.linked) alert('Cuentas unidas.'); }, 'Petición enviada.');
 act($('pUnlink'), $('pMsg2'), async () => { if (!confirm('¿Separar las cuentas? Cada uno se queda con una copia de lo compartido.')) throw new Error('Cancelado.'); await api('POST', '/api/partner/unlink'); }, 'Cuentas separadas.');
-act($('pwGo'), $('pwMsg'), async () => { await api('POST', '/api/me/password', { current: $('pw0').value, new: $('pw1').value }); $('pw0').value = $('pw1').value = ''; }, 'Contraseña cambiada.');
+act($('pwGo'), $('pwMsg'), async () => { if ($('pw1').value !== $('pw2').value) throw new Error('Las dos contraseñas nuevas no coinciden.'); await api('POST', '/api/me/password', { current: $('pw0').value, new: $('pw1').value }); $('pw0').value = $('pw1').value = $('pw2').value = ''; }, 'Contraseña cambiada.');
 act($('sGo'), $('sMsg'), async () => { const r = await api('POST', '/api/sync'); if (!r.ok) throw new Error(r.message); }, 'Sincronizado.');
 // primera entrada con la contraseña provisional
 $('mGo').addEventListener('click', async () => {
+  if ($('mPw').value !== $('mPw2').value) { say($('mMsg'), 'Las contraseñas no coinciden.', 'err'); return; }
   $('mGo').disabled = true; say($('mMsg'), 'Guardando…');
   try {
     await api('POST', '/api/me/first', { username: $('mUser').value, name: $('mName').value, password: $('mPw').value });
-    location.replace('/');
+    TOP.location.replace('/');
   } catch (e) { say($('mMsg'), e.message, 'err'); $('mGo').disabled = false; }
 });
 // importar una copia del artefacto
@@ -165,7 +168,7 @@ $('out').addEventListener('click', async () => {
   await api('POST', '/api/logout').catch(() => { });
   // los datos guardados en este navegador también se van
   try { for (const k of Object.keys(localStorage)) if (k.startsWith('bascula:') || k === 'bodylens:user') localStorage.removeItem(k); sessionStorage.clear(); } catch (e) { }
-  location.href = '/login';
+  TOP.location.href = '/login';
 });
 load();
 </script>

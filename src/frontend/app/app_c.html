@@ -241,11 +241,17 @@ const ICON={
   sueno:'<path d="M19.5 14.6A8 8 0 1 1 9.4 4.5a6.4 6.4 0 0 0 10.1 10.1z"/>',
   intimo:'<path d="M20 12a8 8 0 1 1-3-6.2"/><path d="M17 3v3h-3"/><path d="M12 8.5c1.8 2.2 2.8 3.6 2.8 4.9a2.8 2.8 0 0 1-5.6 0c0-1.3 1-2.7 2.8-4.9z"/>'};
 const VIEWS=[['resumen','Resumen'],['peso','Peso'],['composicion','Composición'],['medidas','Medidas'],['corazon','Corazón'],['bienestar','Bienestar'],['actividad','Actividad'],['sueno','Sueño'],['comidas','Comidas'],['intimo','Íntimo'],['historial','Historial de pesos'],['ajustes','Ajustes']];
+// en el servidor: «Tu cuenta» y, para administradores, «Administración» son secciones de la app con su página dentro
+const SRV_V=window.BODYLENS_SERVER?[['cuenta','Tu cuenta'],...(window.BODYLENS_USER&&BODYLENS_USER.isAdmin?[['admin','Administración']]:[])]:[];
+if(SRV_V.length){VIEWS.push(...SRV_V);
+  Object.assign(ICON,{cuenta:'<circle cx="12" cy="8" r="3.6"/><path d="M5 20a7 7 0 0 1 14 0"/>',admin:'<path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6z"/><path d="M9 12l2 2 4-4"/>'});
+  $('v-ajustes').insertAdjacentHTML('afterend',SRV_V.map(([id,l])=>`<section class="view srvview" id="v-${id}" data-title="${l}" hidden><iframe class="srvframe" id="emb-${id}" title="${l}"></iframe></section>`).join(''))}
+function srvShow(v){const f=$('emb-'+v);if(!f)return;
+  if(!f.dataset.on){f.dataset.on='1';f.addEventListener('load',()=>{try{const d=f.contentDocument;const fit=()=>{f.style.height=Math.max(480,d.documentElement.scrollHeight)+'px'};fit();new ResizeObserver(fit).observe(d.body)}catch(e){}});
+    f.src='/'+v+'?embed=1'+(v==='admin'&&location.hash.includes(':')?'#'+location.hash.split(':')[1]:'')}}
 const link=(id,label,cls)=>`<a class="${cls}${id==='ajustes'?' owner-only':''}" href="#${id}" data-v="${id}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[id]}</svg><span>${label}</span></a>`;
 const SUBV={medidas:'composicion',corazon:'composicion',bienestar:'composicion'};
 $('railNav').innerHTML=VIEWS.filter(([id])=>!SUBV[id]).map(([id,l])=>(id==='ajustes'?`<a class="nav owner-only" href="#ajustes" data-pfnav><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2a4.5 4.5 0 0 1 5 4.8"/></svg><span>Gestionar perfiles</span></a>`:'')+link(id,id==='composicion'?'Cuerpo':l,'nav')).join('');
-// en el servidor: «Tu cuenta» y, para administradores, «Administración» (páginas propias del servidor)
-if(window.BODYLENS_SERVER)$('railNav').insertAdjacentHTML('beforeend',`<a class="nav" href="/cuenta"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20a7 7 0 0 1 14 0"/></svg><span>Tu cuenta</span></a>`+(window.BODYLENS_USER&&BODYLENS_USER.isAdmin?`<a class="nav" href="/admin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><span>Administración</span></a>`:''));
 // «Gestionar perfiles» en la barra lateral: abre Ajustes en la parte de perfiles
 document.addEventListener('click',e=>{const a=e.target.closest('a[data-v="intimo"]');if(!a||VIEW!=='intimo')return;e.preventDefault();
   if(privOK()){privSet(PROF(),false);renderView();scrollTo(0,0)}else showLock(PROF(),null,'priv')});
@@ -254,7 +260,7 @@ $('railNav').addEventListener('click',e=>{const a=e.target.closest('[data-v="aju
 let PFNAV=false;$('railNav').addEventListener('click',e=>{if(!e.target.closest('[data-pfnav]'))return;PFNAV=true;if(VIEW==='ajustes'){e.preventDefault();PFNAV=false;showAj(UI.ajTabPf||'perfiles');scrollTo(0,0)}});
 function ajNavMark(){const pf=VIEW==='ajustes'&&AJ_PF.includes(AJT);const a=document.querySelector('#railNav [data-pfnav]');if(a){if(pf)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')}
   document.querySelectorAll('[data-v="ajustes"]').forEach(x=>{if(VIEW==='ajustes'&&!pf)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')})}
-$('tabNav').innerHTML=VIEWS.filter(([id])=>id!=='ajustes'&&!SUBV[id]).map(([id,l])=>link(id,id==='composicion'?'Cuerpo':id==='actividad'?'Activ.':id==='historial'?'Historial':l,'tab')).join('');
+$('tabNav').innerHTML=VIEWS.filter(([id])=>id!=='ajustes'&&!SUBV[id]&&!SRV_V.some(([v])=>v===id)).map(([id,l])=>link(id,id==='composicion'?'Cuerpo':id==='actividad'?'Activ.':id==='historial'?'Historial':l,'tab')).join('');
 let VIEW='resumen';
 let BACK=null,BACK_Y=0,CUR_Y=0;addEventListener('scroll',()=>{if(VIEW!=='ajustes')CUR_Y=scrollY},{passive:true});
 function route(){const h=(location.hash||'').slice(1);const prevV=VIEW;VIEW=VIEWS.some(([id])=>id===h)&&(h!=='ajustes'||!document.body.classList.contains('viewer'))&&(h!=='intimo'||applyIntimoVis())?h:'resumen';
@@ -1408,7 +1414,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&pullAt&&D
 const LIBS={h2c:'https://cdn.jsdelivr.net/npm/html2canvas-pro@1.5.8/dist/html2canvas-pro.min.js',pdf:'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'};
 const loadJs=src=>new Promise((ok,ko)=>{if(document.querySelector(`script[src="${src}"]`)){ok();return}const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=()=>ko(new Error('No se pudo cargar '+src));document.head.append(s)});
 const EXP={scope:'view',range:30,pages:null,blob:null,name:'',orient:UI.pdfOrient||'p'};
-const EXP_VIEWS=VIEWS.filter(([id])=>id!=='ajustes');
+const EXP_VIEWS=VIEWS.filter(([id])=>id!=='ajustes'&&id!=='cuenta'&&id!=='admin');
 const viewName=id=>(EXP_VIEWS.find(([v])=>v===id)||[])[1]||id;
 // qué se puede exportar: módulos → apartados (pestañas de la sección o subsecciones de Cuerpo y Actividad)
 const EXP_MODS=[['resumen',['resumen']],['peso',['peso']],['composicion',['composicion','medidas','corazon','bienestar']],['actividad',['actividad']],['sueno',['sueno']],['comidas',['comidas']],['intimo',['intimo']],['historial',['historial']]];
@@ -3311,6 +3317,7 @@ document.addEventListener('click',e=>{const m=e.target.closest('[data-vt]');if(m
   if(curTab(v)===a.dataset.tab){goY(0);return}SCR[posKey()]=scrollY;UI.vt={...(UI.vt||{}),[v]:a.dataset.tab};saveUI();applyVTabs();renderView();goY(SCR[posKey()]||0)});
 function renderView(){applyVTabs();if(VIEW==='sueno')try{renderBankTab()}catch(e){console.warn(e)}
   try{
+    if(VIEW==='cuenta'||VIEW==='admin'){srvShow(VIEW);return}
     syncGoals();
     if(VIEW==='ajustes'){renderAjustes();return}
     if(VIEW==='medidas'){renderMedidas();return}
