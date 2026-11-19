@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BodyLens · Entrar</title><meta name="theme-color" content="#3B7BF2">
+<link rel="manifest" href="/manifest.webmanifest"><link rel="icon" type="image/svg+xml" href="/icon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/pages.css"></head>
+<body><main>
+  <div class="brand"><img src="/icon.svg" alt=""><b>BodyLens</b></div>
+  <form class="card" id="f">
+    <h1>Entrar</h1>
+    <p>Tus datos de salud, solo para ti.</p>
+    <label>Usuario<input id="u" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
+    <label>Contraseña<input id="p" name="password" type="password" autocomplete="current-password" required></label>
+    <div class="row"><button id="go" type="submit">Entrar</button><span class="msg" id="m" aria-live="polite"></span></div>
+  </form>
+  <p class="small">¿No tienes cuenta? Pide una invitación a quien administra este servidor.</p>
+</main>
+<script src="/pages.js"></script>
+<script>
+$('f').addEventListener('submit', async e => {
+  e.preventDefault(); $('go').disabled = true; say($('m'), 'Entrando…');
+  try { await api('POST', '/api/login', { username: $('u').value, password: $('p').value }); location.replace(safeNext()); }
+  catch (err) { say($('m'), err.message, 'err'); $('go').disabled = false; }
+});
+</script>
+</body></html>

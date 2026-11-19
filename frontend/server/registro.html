@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BodyLens · Crear cuenta</title><meta name="theme-color" content="#3B7BF2">
+<link rel="icon" type="image/svg+xml" href="/icon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/pages.css"></head>
+<body><main>
+  <div class="brand"><img src="/icon.svg" alt=""><b>BodyLens</b></div>
+  <div class="card" id="bad" hidden><h1>Invitación no válida</h1><p>Esta invitación no existe, ya se ha usado o ha caducado. Pide otra a quien administra el servidor.</p><a class="btn ghost" href="/login">Ir a entrar</a></div>
+  <form class="card" id="f" hidden>
+    <h1>Crear tu cuenta</h1>
+    <p>Te han invitado a BodyLens. Tus datos solo los verás tú.</p>
+    <label>Tu nombre<input id="n" autocomplete="name" maxlength="80" required></label>
+    <label>Usuario (para entrar)<input id="u" autocomplete="username" autocapitalize="none" spellcheck="false" pattern="[a-z0-9][a-z0-9._\-]{1,31}" required></label>
+    <label>Contraseña (al menos 10 caracteres)<input id="p" type="password" autocomplete="new-password" minlength="10" required></label>
+    <label>Repite la contraseña<input id="p2" type="password" autocomplete="new-password" minlength="10" required></label>
+    <div class="row"><button id="go" type="submit">Crear cuenta</button><span class="msg" id="m" aria-live="polite"></span></div>
+  </form>
+</main>
+<script src="/pages.js"></script>
+<script>
+const code = new URLSearchParams(location.search).get('c') || '';
+(async () => {
+  let ok = false; try { ok = code && (await api('GET', '/api/invite/' + encodeURIComponent(code))).valid } catch (e) { }
+  $(ok ? 'f' : 'bad').hidden = false;
+})();
+$('u').addEventListener('input', () => { $('u').value = $('u').value.toLowerCase() });
+$('f').addEventListener('submit', async e => {
+  e.preventDefault();
+  if ($('p').value !== $('p2').value) { say($('m'), 'Las contraseñas no coinciden.', 'err'); return }
+  $('go').disabled = true; say($('m'), 'Creando…');
+  try { await api('POST', '/api/register', { code, username: $('u').value, name: $('n').value, password: $('p').value }); location.replace('/'); }
+  catch (err) { say($('m'), err.message, 'err'); $('go').disabled = false; }
+});
+</script>
+</body></html>

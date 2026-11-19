@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BodyLens · Tu cuenta</title><meta name="theme-color" content="#3B7BF2">
+<link rel="icon" type="image/svg+xml" href="/icon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/pages.css"></head>
+<body><main>
+  <div class="top"><a class="brand" href="/"><img src="/icon.svg" alt=""><b>BodyLens</b></a><a class="btn ghost" href="/">Volver a la app</a></div>
+
+  <section class="card">
+    <h1>Tu cuenta</h1>
+    <dl class="kv"><dt>Usuario</dt><dd id="kUser">—</dd><dt>Nombre</dt><dd id="kName">—</dd></dl>
+    <label>Cambiar nombre<input id="name" maxlength="80"></label>
+    <div class="row"><button class="ghost" id="nameGo" type="button">Guardar nombre</button><span class="msg" id="nameMsg"></span></div>
+  </section>
+
+  <section class="card">
+    <h2>Pareja</h2>
+    <p>Si unís vuestras cuentas, los registros de <b>Ciclo</b> e <b>intimidad</b> se comparten: los veis y los editáis los dos. El resto de datos sigue siendo de cada uno.</p>
+    <div id="pLinked" hidden>
+      <dl class="kv"><dt>Unida con</dt><dd id="pName"></dd><dt>Desde</dt><dd id="pSince"></dd></dl>
+      <div class="row"><button class="danger" id="pUnlink" type="button">Separar las cuentas</button><span class="msg" id="pMsg2"></span></div>
+      <p class="small">Al separarlas, cada uno se queda con una copia de lo que habíais compartido.</p>
+    </div>
+    <div id="pFree" hidden>
+      <ul class="list" id="pIn"></ul>
+      <ul class="list" id="pOut"></ul>
+      <label>Usuario de tu pareja<input id="pUser" autocapitalize="none" spellcheck="false"></label>
+      <label>Juntos desde (opcional)<input id="pDate" type="date"></label>
+      <div class="row"><button id="pAsk" type="button">Pedir unir las cuentas</button><span class="msg" id="pMsg"></span></div>
+      <p class="small">Tu pareja tiene que aceptarlo desde su cuenta.</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Datos</h2>
+    <dl class="kv">
+      <dt>Fuentes</dt><dd id="sSrc">—</dd>
+      <dt>Última sincronización</dt><dd id="sLast">—</dd>
+      <dt>Resultado</dt><dd id="sRes">—</dd>
+      <dt>Datos actualizados</dt><dd id="sWb">—</dd>
+    </dl>
+    <div class="row"><button class="ghost" id="sGo" type="button">Sincronizar ahora</button><span class="msg" id="sMsg"></span></div>
+  </section>
+
+  <section class="card">
+    <h2>Contraseña</h2>
+    <label>Contraseña actual<input id="pw0" type="password" autocomplete="current-password"></label>
+    <label>Nueva (al menos 10 caracteres)<input id="pw1" type="password" autocomplete="new-password"></label>
+    <div class="row"><button class="ghost" id="pwGo" type="button">Cambiar contraseña</button><span class="msg" id="pwMsg"></span></div>
+    <p class="small">Al cambiarla se cierra la sesión en los demás dispositivos.</p>
+  </section>
+
+  <section class="card" id="admin" hidden>
+    <h2>Administración</h2>
+    <p>Las cuentas nuevas solo se crean con una invitación. El enlace vale para una cuenta y caduca en unos días.</p>
+    <label>Para quién (nota opcional)<input id="iNote" maxlength="120"></label>
+    <div class="row"><button id="iGo" type="button">Crear invitación</button><span class="msg" id="iMsg"></span></div>
+    <p id="iLink" hidden><span class="code" id="iUrl"></span> <button class="ghost" id="iCopy" type="button">Copiar</button></p>
+    <ul class="list" id="iList"></ul>
+    <h2 style="margin-top:18px">Cuentas y fuentes (fase 1: hoja de Google)</h2>
+    <p class="small">ID de la hoja (compartida como lector con la cuenta de servicio) y URL de la aplicación web del Apps Script de cada cuenta.</p>
+    <ul class="list" id="uList"></ul>
+  </section>
+
+  <div class="row"><button class="ghost" id="out" type="button">Cerrar sesión</button></div>
+</main>
+<script src="/pages.js"></script>
+<script>
+let ME = null;
+async function load() {
+  ME = await api('GET', '/api/me').catch(e => { if (/Inicia sesión/.test(e.message)) location.href = '/login?next=/cuenta'; throw e });
+  $('kUser').textContent = ME.user.username; $('kName').textContent = ME.user.name; $('name').value = ME.user.name;
+  const p = ME.partner;
+  $('pLinked').hidden = !p; $('pFree').hidden = !!p;
+  if (p) { $('pName').textContent = `${p.name} (${p.username})`; $('pSince').textContent = p.since || '—'; }
+  $('pIn').innerHTML = ME.requests.incoming.map(r => `<li><span><b>${esc(r.name)}</b> (${esc(r.username)}) quiere unir su cuenta con la tuya</span><span><button data-acc="${esc(r.username)}" type="button">Aceptar</button> <button class="ghost" data-rej="${esc(r.username)}" type="button">Rechazar</button></span></li>`).join('');
+  $('pOut').innerHTML = ME.requests.outgoing.map(r => `<li><span>Esperando a que <b>${esc(r.name)}</b> acepte</span><button class="ghost" data-rej="${esc(r.username)}" type="button">Cancelar</button></li>`).join('');
+  const s = ME.sources, src = [s.sheet && 'hoja de Google', s.appsScript && 'Apps Script'].filter(Boolean);
+  $('sSrc').textContent = src.length ? src.join(' + ') : 'ninguna todavía (la configura quien administra el servidor)';
+  $('sLast').textContent = when(ME.sync.lastSync) + ` · cada ${ME.syncIntervalMin} min`;
+  $('sRes').textContent = ME.sync.lastSyncResult ? ME.sync.lastSyncResult.message || '—' : '—';
+  $('sWb').textContent = when(ME.sync.updatedAt);
+  $('admin').hidden = !ME.user.isAdmin;
+  if (ME.user.isAdmin) loadAdmin();
+}
+async function loadAdmin() {
+  const [{ invites }, { users }] = await Promise.all([api('GET', '/api/admin/invites'), api('GET', '/api/admin/users')]);
+  $('iList').innerHTML = invites.map(i => `<li><span>${esc(i.note || 'Invitación')} · ${i.used_at ? 'usada por ' + esc(i.used_by_name) : (i.expires_at < new Date().toISOString() ? 'caducada' : 'pendiente, caduca ' + when(i.expires_at))}</span></li>`).join('');
+  $('uList').innerHTML = users.map(u => `<li data-uid="${u.id}" style="display:block">
+    <b>${esc(u.name)}</b> <span class="small">(${esc(u.username)}${u.isAdmin ? ', admin' : ''}) · última sincronización ${when(u.sync.lastSync)}</span>
+    <label>ID de la hoja<input data-f="sheetId" value="${esc(u.sheetId)}" spellcheck="false"></label>
+    <label>URL del Apps Script<input data-f="appsScriptUrl" value="${esc(u.appsScriptUrl)}" spellcheck="false"></label>
+    <div class="row"><button class="ghost" data-save="${u.id}" type="button">Guardar fuentes</button><span class="msg"></span></div></li>`).join('');
+}
+const act = (btn, msg, fn, okText) => btn.addEventListener('click', async () => {
+  btn.disabled = true; say(msg, '…');
+  try { await fn(); say(msg, okText || 'Hecho.', 'ok'); await load(); } catch (e) { say(msg, e.message, 'err'); } finally { btn.disabled = false; }
+});
+act($('nameGo'), $('nameMsg'), () => api('POST', '/api/me/name', { name: $('name').value }), 'Nombre guardado.');
+act($('pAsk'), $('pMsg'), async () => { const r = await api('POST', '/api/partner/request', { username: $('pUser').value, since: $('pDate').value || null }); if (r.linked) alert('Cuentas unidas.'); }, 'Petición enviada.');
+act($('pUnlink'), $('pMsg2'), async () => { if (!confirm('¿Separar las cuentas? Cada uno se queda con una copia de lo compartido.')) throw new Error('Cancelado.'); await api('POST', '/api/partner/unlink'); }, 'Cuentas separadas.');
+act($('pwGo'), $('pwMsg'), async () => { await api('POST', '/api/me/password', { current: $('pw0').value, new: $('pw1').value }); $('pw0').value = $('pw1').value = ''; }, 'Contraseña cambiada.');
+act($('sGo'), $('sMsg'), async () => { const r = await api('POST', '/api/sync'); if (!r.ok) throw new Error(r.message); }, 'Sincronizado.');
+act($('iGo'), $('iMsg'), async () => { const r = await api('POST', '/api/admin/invites', { note: $('iNote').value }); $('iUrl').textContent = r.url; $('iLink').hidden = false; $('iNote').value = ''; }, 'Invitación creada: cópiala ahora, no se vuelve a mostrar.');
+$('iCopy').addEventListener('click', () => navigator.clipboard && navigator.clipboard.writeText($('iUrl').textContent));
+document.addEventListener('click', async e => {
+  const a = e.target.closest('[data-acc]'), r = e.target.closest('[data-rej]'), s = e.target.closest('[data-save]');
+  try {
+    if (a) { await api('POST', '/api/partner/accept', { username: a.dataset.acc }); await load(); }
+    if (r) { await api('POST', '/api/partner/reject', { username: r.dataset.rej }); await load(); }
+    if (s) { const li = s.closest('li'), m = li.querySelector('.msg'), v = f => li.querySelector(`[data-f="${f}"]`).value;
+      try { await api('PUT', `/api/admin/users/${s.dataset.save}/bridge`, { sheetId: v('sheetId'), appsScriptUrl: v('appsScriptUrl') }); say(m, 'Guardado.', 'ok'); } catch (err) { say(m, err.message, 'err'); } }
+  } catch (err) { alert(err.message); }
+});
+$('out').addEventListener('click', async () => {
+  await api('POST', '/api/logout').catch(() => { });
+  // los datos guardados en este navegador también se van
+  try { for (const k of Object.keys(localStorage)) if (k.startsWith('bascula:') || k === 'bodylens:user') localStorage.removeItem(k); sessionStorage.clear(); } catch (e) { }
+  location.href = '/login';
+});
+load();
+</script>
+</body></html>
