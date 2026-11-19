@@ -48,7 +48,6 @@ class _HideSecrets(logging.Filter):
 logging.getLogger("uvicorn.access").addFilter(_HideSecrets())
 
 
-@contextlib.asynccontextmanager
 async def _prewarm_translations() -> None:
     """Some time after start-up, translate the help into the languages the accounts use (only what changed)."""
     from app.help import translate
@@ -63,6 +62,7 @@ async def _prewarm_translations() -> None:
         log.exception("could not start translating the help")
 
 
+@contextlib.asynccontextmanager
 async def lifespan(app: FastAPI):
     db.init_db()
     s = config.settings

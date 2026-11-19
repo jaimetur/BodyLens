@@ -137,3 +137,14 @@ def test_default_admin_added_to_existing_deployment(env, make_user):
     from app.main import app
     with TestClient(app) as c:
         assert c.get("/api/login-hint").json()["accounts"][0]["username"] == "admin"
+
+
+def test_app_starts_with_scheduler(env, monkeypatch):
+    """Start-up with the background tasks on (the production setting) must not fail."""
+    monkeypatch.setenv("SCHEDULER_ENABLED", "1")
+    from app.core import config
+    config.reload_settings()
+    from fastapi.testclient import TestClient
+    from app.main import app
+    with TestClient(app) as c:
+        assert c.get("/healthz").json() == {"ok": True}
