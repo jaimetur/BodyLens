@@ -194,3 +194,10 @@ document.addEventListener('click', async e => {
   try { await fetch('/api/logout', { method: 'POST', headers: { 'X-BodyLens': '1' }, credentials: 'same-origin' }); } catch (_) { }
   location.replace('/login');
 });
+
+// Any link of the profile menu (Your account, Administration, Help…) closes the menu when it is followed
+document.addEventListener('click', e => {
+  if (e.target.closest && e.target.closest('#pfMenu a') && typeof window.closeProfMenu === 'function') {
+    setTimeout(() => window.closeProfMenu(), 0);
+  }
+});

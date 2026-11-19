@@ -48,7 +48,7 @@ REPLACEMENTS: list[tuple] = [
      "<path d=\"M10 16l-4-4 4-4M6 12h10\"/></svg><span>Cerrar sesión</span></button>`;m.hidden=false"),
     # menú de perfiles: acceso a la cuenta
     ('<a class="owner-only" href="#ajustes">Ajustes</a>',
-     '<a class="owner-only" href="#ajustes">Ajustes</a><a href="#cuenta">Tu cuenta</a><a href="#admin" class="bl-admin">Administración</a>'),
+     '<a class="owner-only" href="#ajustes">Ajustes</a><a href="#cuenta">Tu cuenta</a><a href="#admin" class="bl-admin">Administración</a><a href="#help">Help</a>'),
     # textos que hablaban de claude.ai y de la hoja
     ("<p class=\"lead\">La app lee la pestaña «Withings» de tu hoja «Peso Jaime 2026», que el script de la hoja actualiza desde Withings cada 6 horas, o al momento con el botón de la nube de arriba.</p>",
      "<p class=\"lead\">Los datos de la báscula y de Apple Salud llegan solos al servidor cada pocos minutos; con el botón de la nube de arriba se piden al momento. Las fuentes se ven en <a href=\"#cuenta\">Tu cuenta</a>.</p>"),
