@@ -4,6 +4,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import logging
+import re
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
@@ -23,6 +24,27 @@ from app.sync import service as sync_service
 from app.web import routes as web_routes
 
 log = logging.getLogger("bodylens")
+
+
+class _HideSecrets(logging.Filter):
+    """El registro de accesos nunca muestra secretos: la dirección de envío de Apple Salud (lleva el token) ni los
+    códigos y tokens de las URL (OAuth de Withings, invitaciones)."""
+    _RX = [(re.compile(r"(/api/ingest/hae/)[^\s?\"]+"), r"\1***"),
+           (re.compile(r"([?&](?:code|token|state|c)=)[^&\s\"]+"), r"\1***")]
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        if isinstance(record.args, tuple):
+            args = []
+            for a in record.args:
+                if isinstance(a, str):
+                    for rx, rep in self._RX:
+                        a = rx.sub(rep, a)
+                args.append(a)
+            record.args = tuple(args)
+        return True
+
+
+logging.getLogger("uvicorn.access").addFilter(_HideSecrets())
 
 
 @contextlib.asynccontextmanager

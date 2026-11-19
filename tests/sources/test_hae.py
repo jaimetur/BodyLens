@@ -147,3 +147,16 @@ def test_endpoint_pasa_la_cuenta_al_servidor(client, make_user, login):
     # cambiar la dirección invalida la anterior
     c.post("/api/sources/hae/token")
     assert anon.post(f"/api/ingest/hae/{token}", json={}).json()["error"] == "token"
+
+
+def test_el_registro_no_muestra_secretos():
+    import logging
+    from app.main import _HideSecrets
+    rec = logging.LogRecord("uvicorn.access", logging.INFO, "", 0, '%s - "%s %s HTTP/%s" %d', (
+        "1.2.3.4:0", "POST", "/api/ingest/hae/SECRETO123?x=1", "1.1", 200), None)
+    rec2 = logging.LogRecord("uvicorn.access", logging.INFO, "", 0, '%s - "%s %s HTTP/%s" %d', (
+        "1.2.3.4:0", "GET", "/oauth/withings/callback?code=ABC&state=XYZ", "1.1", 303), None)
+    f = _HideSecrets()
+    f.filter(rec); f.filter(rec2)
+    assert "SECRETO123" not in rec.getMessage() and "/api/ingest/hae/***" in rec.getMessage()
+    assert "ABC" not in rec2.getMessage() and "XYZ" not in rec2.getMessage()
