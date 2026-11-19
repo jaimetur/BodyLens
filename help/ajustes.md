@@ -19,7 +19,7 @@ Ajustes tiene dos grupos de pestañas. Se recuerda la última abierta de cada gr
 
 ## Perfiles
 
-- Cada persona tiene sus propios datos. Se cambia de perfil con el botón de perfil (iniciales y nombre) junto al título de la barra superior, que también ofrece **Gestionar perfiles**, **Ajustes** y **Bloquear perfil** (si el perfil tiene PIN).
+- Cada persona tiene sus propios datos. Se cambia de perfil con el botón de perfil (iniciales y nombre) junto al título de la barra superior, que también ofrece **Ajustes**, **Tu cuenta** (donde se gestionan los perfiles), **Administración** (si eres administrador), **Bloquear perfil** (si el perfil tiene PIN) y **Cerrar sesión**.
 - Cada fila de perfil permite:
   - **Nombre** y **color** (el color y las iniciales identifican el perfil).
   - **Ciclo**: marca qué perfil recibe los datos del ciclo menstrual que llegan de Apple Salud. Solo uno puede estar marcado.

@@ -36,6 +36,8 @@ REPLACEMENTS: list[tuple] = [
     (f"fileId:'{LEGACY_SHEET}'}};", "fileId:null};"),
     ('<p class="src" id="railSrc">Datos de tu báscula Withings, guardados en tu cuenta de Claude.</p>',
      '<p class="src" id="railSrc">Datos de tu báscula Withings y de Apple Salud, guardados en tu cuenta de BodyLens.</p>'),
+    # profile menu: profiles are managed inside «Tu cuenta», which is already in the menu
+    ('<a class="owner-only" href="#ajustes" data-pfmanage>Gestionar perfiles</a>', ''),
     # profile button: full name instead of the first name
     ("<span>${esc(p.name.split(' ')[0])}</span>`;b.setAttribute('aria-label'",
      "<span>${esc(p.name)}</span>`;b.setAttribute('aria-label'"),
