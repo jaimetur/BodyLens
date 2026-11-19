@@ -52,6 +52,12 @@ def test_without_translator_english(client, make_user, login, docs_dir, monkeypa
     assert r["shown"] == "en" and r["pending"] is False and r["translator"] is False
 
 
+def _wait(translate, seconds=10.0):
+    end = time.time() + seconds
+    while translate.pending("fr", "weight") and time.time() < end:
+        time.sleep(0.02)
+
+
 def test_automatic_translation_and_cache(client, make_user, login, docs_dir, monkeypatch):
     from app.help import translate
     monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-test")
@@ -65,10 +71,7 @@ def test_automatic_translation_and_cache(client, make_user, login, docs_dir, mon
     c = login("ana")
     r = c.get("/api/help/weight?lang=fr").json()
     assert r["shown"] == "en" and r["pending"] is True               # English while it is translated
-    for _ in range(50):
-        if not translate.pending("fr", "weight"):
-            break
-        time.sleep(0.02)
+    _wait(translate)
     r = c.get("/api/help/weight?lang=fr").json()
     assert r["shown"] == "fr" and r["title"] == "Poids" and "Ton" in r["html"]
     n = len(calls)
@@ -76,10 +79,7 @@ def test_automatic_translation_and_cache(client, make_user, login, docs_dir, mon
     assert len(calls) == n                                             # kept: not translated again
     (docs_dir / "help" / "en" / "weight.md").write_text("# Weight\n\nChanged.\n")
     assert c.get("/api/help/weight?lang=fr").json()["pending"] is True  # English changed: translated again
-    for _ in range(50):
-        if not translate.pending("fr", "weight"):
-            break
-        time.sleep(0.02)
+    _wait(translate)
     assert c.get("/api/help/weight?lang=fr").json()["html"].count("Changed") == 1
     assert len(list((translate.config.settings.data_dir / "translations" / "fr").glob("weight-*.md"))) == 1
 
