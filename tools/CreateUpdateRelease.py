@@ -10,7 +10,7 @@ Adapted from DriveTest Analyzer's tool of the same name. A BodyLens release is:
   - the major.minor of the Android app's versionName (android/app/build.gradle.kts).
 
 Usage:
-  python3 tools/CreateUpdateRelease.py                                # window (Tk)
+  python3 tools/CreateUpdateRelease.py                                # window (Tk); questions in the terminal without Tk
   python3 tools/CreateUpdateRelease.py --update 0.1.0 2026-11-19      # rewrite the current release header
   python3 tools/CreateUpdateRelease.py --create 0.2.0 2026-12-01      # new release branch, committed and pushed
           [--dirty commit|carry|discard]                              # what to do with uncommitted work (default: stop)
@@ -353,6 +353,49 @@ def window() -> None:
     root.mainloop()
 
 
+def terminal() -> int:
+    """The same as the window, asked in the terminal (for a Python without Tk, e.g. Homebrew's without python-tk)."""
+    current_version, current_date = read_release_metadata()
+    print(f'Current version: {current_version}  ·  current release date: {current_date}')
+    print('  1) Create New Release   2) Update Current Release   3) Cancel')
+    choice = input('Choose [1/2/3]: ').strip()
+    if choice not in ('1', '2'):
+        print('Cancelled.')
+        return 0
+    version = input(f'New version (X.Y.Z) [{current_version}]: ').strip() or current_version
+    release_date = input(f'New release date (YYYY-MM-DD) [{date.today().isoformat()}]: ').strip() or date.today().isoformat()
+    error = validate_inputs(version, release_date)
+    if error:
+        print(error, file=sys.stderr)
+        return 2
+    try:
+        if choice == '2':
+            update_release_metadata(version, release_date)
+            print(f'Current release is now v{version} ({release_date}).')
+            return 0
+        action = DirtyTreeAction.CARRY_TO_NEW_BRANCH
+        changes = working_tree_changes()
+        if changes:
+            print('Uncommitted changes found:\n' + changes)
+            print('  1) Commit and push them to the current branch   2) Carry them to the new branch   '
+                  '3) Discard them (permanently)   4) Cancel')
+            action = {'1': DirtyTreeAction.COMMIT_AND_PUSH, '2': DirtyTreeAction.CARRY_TO_NEW_BRANCH,
+                      '3': DirtyTreeAction.DISCARD}.get(input('Choose [1/2/3/4]: ').strip(), DirtyTreeAction.CANCEL)
+            if action is DirtyTreeAction.CANCEL:
+                print('Cancelled.')
+                return 0
+        if input(f'Create branch {version}, commit and push it to GitHub? [y/N]: ').strip().lower() not in ('y', 'yes', 's', 'si', 'sí'):
+            print('Cancelled.')
+            return 0
+        create_release(version, release_date, action)
+        print(f'Release v{version} created and pushed to origin/{version}. '
+              'GitHub Actions builds the image; then deploy with tools/deploy.sh.')
+    except Exception as exc:
+        print(exc, file=sys.stderr)
+        return 1
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description='Create a new BodyLens release or update the current one. '
                                                  'Without arguments, opens a window.')
@@ -363,6 +406,12 @@ def main(argv: list[str] | None = None) -> int:
                         help='with --create: commit and push, carry or discard uncommitted work (default: stop)')
     args = parser.parse_args(argv)
     if not args.update and not args.create:
+        try:
+            import tkinter  # noqa: F401
+        except ImportError:
+            print('(This Python has no Tk, so no window: answering in the terminal. For the window on macOS with '
+                  'Homebrew: brew install python-tk@3.12)\n')
+            return terminal()
         window()
         return 0
     version, release_date = args.update or args.create

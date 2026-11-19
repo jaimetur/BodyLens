@@ -83,6 +83,8 @@ python3 tools/CreateUpdateRelease.py --update 0.1.0 2026-11-20
   one, or discard it (from the command line, `--dirty`; without it, it stops).
 - **Update Current Release** only rewrites the version and date of the current release (no branch, no commit).
 - After pushing, GitHub Actions builds the image; deploy it as usual with `tools/deploy.sh`.
+- If the Python has no Tk (Homebrew's, without `brew install python-tk@3.12`), it asks the same questions in the
+  terminal instead of opening the window.
 
 ## Data sources: Withings, Apple Health and Android
 
