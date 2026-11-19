@@ -42,6 +42,9 @@ COPYFILE_DISABLE=1 tar --no-xattrs -c -C "$TMP" . | ssh -o BatchMode=yes "$HOST"
 
 if [ "$IMAGE" = 1 ]; then
   ssh -o BatchMode=yes "$HOST" "cd $STACK && $DOCKER compose -p bodylens pull -q && $DOCKER compose -p bodylens up -d"
+elif [ "$(ssh -o BatchMode=yes "$HOST" "$DOCKER inspect --format '{{.State.Running}}' bodylens" 2>/dev/null || true)" != true ]; then
+  # the container is down (e.g. a failed start): bring the stack up again whatever changed
+  ssh -o BatchMode=yes "$HOST" "cd $STACK && $DOCKER compose -p bodylens up -d"
 elif [ "$BACKEND" = 1 ]; then
   ssh -o BatchMode=yes "$HOST" "$DOCKER restart bodylens >/dev/null"
 fi
