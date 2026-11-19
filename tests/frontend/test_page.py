@@ -23,3 +23,16 @@ def test_assembly_detects_changes(env, monkeypatch):
     monkeypatch.setattr(frontend, "REPLACEMENTS", frontend.REPLACEMENTS + [("no existe en la app", "x")])
     with pytest.raises(frontend.AssemblyError):
         frontend.assemble_fragment()
+
+
+def test_version_and_update_notice(client, make_user, login, tmp_path, monkeypatch):
+    from app.core import version
+    f = tmp_path / "REVISION"
+    monkeypatch.setattr(version, "REVISION_FILE", f)
+    monkeypatch.setenv("BODYLENS_REVISION", "imagen123")
+    assert client.get("/api/version").json()["build"] == "imagen123"
+    f.write_text("abc1234 2026-11-19T15:00:00Z\n")
+    assert client.get("/api/version").json() == {"build": "abc1234", "deployedAt": "2026-11-19T15:00:00Z"}
+    make_user("jaimetur")
+    html = login("jaimetur").get("/").text
+    assert 'window.BODYLENS_BUILD="abc1234"' in html

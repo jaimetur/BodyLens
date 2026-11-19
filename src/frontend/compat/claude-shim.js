@@ -138,6 +138,34 @@
   const caps = { user, downloads, mcp, db: { collection }, artifact: null, permissions: { manage: async () => { } } };
   window.claude = { use: async name => (name in caps ? caps[name] : null) };
 
+  /* ---------- aviso de servidor actualizado (como en DriveTest Analyzer) ----------
+     La página sabe con qué versión del servidor se cargó; si el servidor responde con otra, avisa para recargar.
+     No recarga sola: lo que se esté escribiendo se guarda igualmente (cada cambio se manda al momento). */
+  (function updates() {
+    const mine = window.BODYLENS_BUILD || '';
+    let shown = null, dismissed = '';
+    const css = document.createElement('style');
+    css.textContent = '.bl-update{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9999;display:flex;align-items:center;gap:10px;max-width:min(560px,calc(100vw - 24px));padding:10px 12px 10px 14px;border-radius:14px;background:#121a26;color:#fff;box-shadow:0 8px 28px rgba(0,0,0,.28);font:14px/1.35 "Instrument Sans",-apple-system,sans-serif}' +
+      '.bl-update b{display:block}.bl-update span{opacity:.85}.bl-update button{font:inherit;font-weight:600;border:0;border-radius:10px;padding:8px 12px;cursor:pointer}' +
+      '.bl-update .go{background:#3B7BF2;color:#fff;white-space:nowrap}.bl-update .x{background:transparent;color:#fff;opacity:.7;padding:6px 8px;font-size:18px;line-height:1}';
+    document.head.appendChild(css);
+    function show(build) {
+      if (!mine || !build || build === mine || build === dismissed || shown) return;
+      shown = document.createElement('div'); shown.className = 'bl-update'; shown.setAttribute('role', 'alert');
+      shown.innerHTML = '<div><b>BodyLens se ha actualizado.</b><span>Recarga la página para ver los últimos cambios.</span></div>';
+      const go = document.createElement('button'); go.className = 'go'; go.type = 'button'; go.textContent = 'Recargar';
+      go.onclick = () => location.reload();
+      const x = document.createElement('button'); x.className = 'x'; x.type = 'button'; x.setAttribute('aria-label', 'Cerrar'); x.title = 'Recordármelo luego'; x.textContent = '×';
+      x.onclick = () => { dismissed = build; shown.remove(); shown = null; };
+      shown.append(go, x); document.body.appendChild(shown);
+    }
+    async function check() {
+      try { const r = await fetch('/api/version', { cache: 'no-store' }); if (r.ok) show((await r.json()).build); } catch (e) { }
+    }
+    setInterval(() => { if (!document.hidden) check(); }, 60e3);
+    onWake(check);
+  })();
+
   /* ---------- enganches que usa la página en modo servidor ---------- */
   window.BL = {
     // perfil principal con el nombre de la cuenta

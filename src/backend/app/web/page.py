@@ -11,7 +11,7 @@ import json
 import threading
 from pathlib import Path
 
-from app.core import config
+from app.core import config, version
 
 APPS_SCRIPT_EXEC = "https://script.google.com/macros/s/AKfycbyq4X7M4IRxqFM7ez4BYQ9SelLUPo1Wauc9zm4YgCfD8wubBL-rVKe5rytquF4D-7Ac/exec"
 LEGACY_SHEET = "1aUMgruI3VycOCjbqH4_UvL8nS8i-mt1QFNiz6xaQx2Q"
@@ -104,7 +104,8 @@ def page(user_public: dict) -> str:
         '<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">'
         '<link rel="apple-touch-icon" href="/apple-touch-icon.png">'
         f"<style>{SERVER_CSS}</style>"
-        f"<script>window.BODYLENS_SERVER=true;window.BODYLENS_USER={boot};</script>"
+        f"<script>window.BODYLENS_SERVER=true;window.BODYLENS_USER={boot};"
+        f"window.BODYLENS_BUILD={json.dumps(version.current()['build'])};</script>"
         '<script src="/claude-shim.js"></script>'
         "</head><body>"
     )

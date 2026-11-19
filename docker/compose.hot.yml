@@ -1,0 +1,14 @@
+# Despliegue en caliente (NAS): el contenedor usa el código de la carpeta ./code del stack en vez del de la imagen.
+# tools/deploy.sh copia ahí cada commit con rsync y reinicia el contenedor (o ni eso, si solo cambia la página).
+# La imagen solo hace falta cuando cambian dependencias, el Dockerfile o las librerías de la página.
+# En el NAS se usa junto a compose.yml (el compose.yml del stack ya lleva estos montajes).
+services:
+  bodylens:
+    volumes:
+      - ./code/src/backend/app:/app/backend/app:ro
+      - ./code/src/frontend/app:/app/frontend/app:ro
+      - ./code/src/frontend/accounts:/app/frontend/accounts:ro
+      - ./code/src/frontend/common:/app/frontend/common:ro
+      - ./code/src/frontend/compat:/app/frontend/compat:ro
+      - ./code/assets/branding:/app/branding:ro
+      - ./code/REVISION:/app/REVISION:ro

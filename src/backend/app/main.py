@@ -11,7 +11,7 @@ from fastapi.responses import JSONResponse
 from app.accounts import access_requests, users
 from app.accounts import routes as accounts_routes
 from app.accounts.users import UserError
-from app.core import config, db
+from app.core import config, db, version
 from app.core.deps import CSRF_HEADER
 from app.couples import routes as couples_routes
 from app.data import routes as data_routes
@@ -60,6 +60,12 @@ async def guard(request: Request, call_next):
     if path.startswith("/api/"):
         resp.headers.setdefault("Cache-Control", "no-store")
     return resp
+
+
+@app.get("/api/version")
+def api_version():
+    """Versión del código servido: la página la compara con la suya para avisar de que hay una nueva."""
+    return version.current()
 
 
 @app.get("/healthz")
