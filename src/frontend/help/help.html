@@ -109,6 +109,7 @@ async function load(doc, quiet) {
     $('doc').setAttribute('lang', r.shown);
     $('doc').innerHTML = r.html;
     prevNext(doc);
+    if (window.blFitFrame) blFitFrame();   // inside the app: the frame follows the length of this document
     const n = $('note');
     if (r.lang !== 'en' && r.shown === 'en') {
       n.hidden = false;

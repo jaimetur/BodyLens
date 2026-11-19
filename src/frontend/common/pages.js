@@ -46,3 +46,14 @@ function langField(sel, keep) {
     setLangCookie(l); location.reload();
   });
 }
+// inside the app, the page fits its frame to the height of its content (also when it gets shorter)
+function blFitFrame() {
+  const f = window.frameElement, m = document.querySelector('main');
+  if (!f || !m) return;
+  f.style.height = Math.max(480, Math.ceil(m.getBoundingClientRect().bottom + (window.scrollY || 0) + 24)) + 'px';
+}
+if (EMBED && window.frameElement) {
+  const m = document.querySelector('main');
+  if (m) new ResizeObserver(blFitFrame).observe(m);
+  addEventListener('load', blFitFrame);
+}
