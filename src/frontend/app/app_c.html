@@ -659,8 +659,9 @@ function renderMain(){
 }
 REDRAW.main=()=>{if(M&&!M.empty&&VIEW==='peso')renderMain()};
 // o: c colour of the tile, s values for a mini chart (oldest first), p share (0–1) for a small bar
-function kvCell(label,val,unit,note,cls,o){o=o||{};let vs=(o.s||[]).filter(v=>v!=null&&isFinite(v));if(vs.length>60){const n=Math.ceil(vs.length/60);vs=vs.filter((_,i)=>i%n===0)}
-  const viz=vs.length>=3?sparkSvg(vs.map(v=>({v})),o.c||'var(--muted)'):o.p!=null?`<i class="kvp"><i style="width:${Math.max(0,Math.min(1,o.p))*100}%"></i></i>`:'';
+function kvViz(o){let vs=(o.s||[]).filter(v=>v!=null&&isFinite(v));if(vs.length>60){const n=Math.ceil(vs.length/60);vs=vs.filter((_,i)=>i%n===0)}
+  return vs.length>=3?sparkSvg(vs.map(v=>({v})),o.c||'var(--muted)'):o.p!=null?`<i class="kvp"><i style="width:${Math.max(0,Math.min(1,o.p))*100}%"></i></i>`:''}
+function kvCell(label,val,unit,note,cls,o){o=o||{};const viz=kvViz(o);
   return `<div${o.c?` class="kvc" style="--kc:${o.c}"`:''}><small>${label}</small><b class="${cls||''}">${val}${unit?`<span style="font-size:.55em;color:var(--muted);font-weight:600"> ${unit}</span>`:''}</b><em>${note||''}</em>${viz}</div>`}
 /* ---------- peso por semana: rango de la semana (mín–máx), mediana y cambio frente a la anterior ---------- */
 let wkRange=pesoRange?Math.max(4,Math.ceil(pesoRange/7)):0;
@@ -2056,7 +2057,12 @@ function renderActExtra(L,W,rows,wos){const today=d2k(new Date()),am=x=>(x.mod||
     const T=[['Día con más pasos',fmtInt(best.steps),fmtK(best.k,true)],['Mejor semana',bw?fmtInt(bw.v)+' /día':'—',bw?'semana del '+fmtK(bw.k,true):''],['Mejor mes',bm?fmtInt(bm.v)+' /día':'—',bm?MSL[+bm.k.slice(5,7)-1]+' '+bm.k.slice(0,4):''],
       ['Distancia máxima',bestD?fmtN(bestD.dist/1000,1)+' km':'—',bestD?fmtK(bestD.k,true):''],['Racha actual',now+' '+(now===1?'día':'días'),`con ${fmtInt(STEP_GOAL)} pasos o más`],['Racha más larga',longest+' '+(longest===1?'día':'días'),lk?'acabó el '+fmtK(lk,true):''],
       ['Días de 10 mil',fmtInt(tenK),`de ${fmtInt(A.length)} días con datos`],['Distancia total',fmtInt(km)+' km',`desde ${fmtK(A[0].k,true)}`]];
-    $('actRec').innerHTML=`<div class="hc-grid">${T.map(([l,v,s])=>`<div class="htile"><small>${l}</small><b>${v}</b><small>${s}</small></div>`).join('')}</div>`}
+    // colour and a small chart or bar for each record: recent days, weekly and monthly averages, accumulated km, streak share
+    const last90=A.filter(a=>a.k>addK(today,-90)),wkS=Object.keys(wkm).sort().slice(-52).map(k=>mean(wkm[k])),moS=Object.keys(mm).sort().map(k=>mean(mm[k]));
+    let acc=0;const kmS=Object.keys(mm).sort().map(m=>acc+=sum(A.filter(a=>a.k.slice(0,7)===m),a=>a.dist)/1000);
+    const V=[{c:'var(--act)',s:last90.map(a=>a.steps)},{c:'var(--act-2)',s:wkS},{c:'var(--mus)',s:moS},{c:'var(--wat)',s:last90.map(a=>a.dist)},
+      {c:'var(--a3)',p:longest?now/longest:0},{c:'var(--good)'},{c:'var(--ph-awake)',p:A.length?tenK/A.length:0},{c:'var(--wat)',s:kmS}];
+    $('actRec').innerHTML=`<div class="hc-grid">${T.map(([l,v,s],i)=>`<div class="htile kvc" style="--kc:${V[i].c}"><small>${l}</small><b>${v}</b><small>${s}</small>${kvViz(V[i])}</div>`).join('')}</div>`}
   // --- objetivos cumplidos en el periodo ---
   const R=rows;$('actGoalLead').textContent=`Porcentaje de días del periodo (${R.length} con datos) en que llegaste a cada objetivo.`;
   if(!R.length)$('actGoals').innerHTML=emptyBox('Sin datos en este periodo.');
