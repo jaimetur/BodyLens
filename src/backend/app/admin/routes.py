@@ -34,7 +34,9 @@ def accounts(u: User = Depends(admin_user)):
 
 
 class AccountIn(BaseModel):
+    username: str | None = None
     name: str | None = None
+    password: str | None = None   # vacío o ausente = no se cambia
     email: str | None = None
     isAdmin: bool | None = None
     active: bool | None = None
@@ -49,11 +51,11 @@ def edit_account(user_id: int, body: AccountIn, u: User = Depends(admin_user)):
                 raise HTTPException(404, "No existe esa cuenta.")
             if user_id == u.id and (body.isAdmin is False or body.active is False):
                 raise UserError("No puedes quitarte a ti mismo la administración ni desactivar tu cuenta.")
-            if body.name is not None:
-                name = body.name.strip()
-                if not name or len(name) > 80:
-                    raise UserError("El nombre tiene que tener de 1 a 80 caracteres.")
-                con.execute("UPDATE users SET name=? WHERE id=?", (name, user_id))
+            if body.username is not None or body.name is not None:
+                users.rename(con, user_id, x.username if body.username is None else body.username,
+                             x.name if body.name is None else body.name)
+            if body.password:
+                users.set_password(con, user_id, body.password)   # cierra sus sesiones abiertas
             if body.email is not None:
                 users.set_email(con, user_id, body.email)
             if body.isAdmin is not None:

@@ -119,6 +119,13 @@ def test_admin_panel_accounts(client, make_user, login, sent):
     assert r["emailed"] is True and sent[-1]["to"] == ["l@example.test"] and r["password"] in sent[-1]["html"]
     l2 = login("laura", r["password"])
     assert l2.get("/api/me").json()["user"]["mustChange"] is True
+    # el admin cambia el usuario y la contraseña: se cierran sus sesiones y entra con los nuevos
+    assert a.patch(f"/api/admin/accounts/{lau.id}", json={"username": "admin"}).status_code == 400   # ya existe
+    assert a.patch(f"/api/admin/accounts/{lau.id}", json={"password": "abc"}).status_code == 400     # muy corta
+    assert a.patch(f"/api/admin/accounts/{lau.id}", json={"username": "Laura.R", "password": "nueva1"}).status_code == 200
+    assert l2.get("/api/me").status_code == 401
+    l3 = login("laura.r", "nueva1")
+    assert l3.get("/api/me").json()["user"]["mustChange"] is False
     assert a.delete(f"/api/admin/accounts/{me}").status_code == 400
     assert a.delete(f"/api/admin/accounts/{lau.id}").status_code == 200
     assert "laura" not in {u["username"] for u in a.get("/api/admin/accounts").json()["users"]}

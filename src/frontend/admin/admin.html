@@ -16,6 +16,13 @@ td.act{white-space:nowrap;text-align:right}
 td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
 .tag{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:8px;background:var(--raised);border:1px solid var(--line);margin-left:4px}
 .tag.adm{background:#3B7BF2;color:#fff;border-color:#3B7BF2}.tag.off{background:var(--bad);color:#fff;border-color:var(--bad)}
+.sw{position:relative;display:inline-block;width:42px;height:24px;vertical-align:middle;cursor:pointer}
+.sw input{opacity:0;width:0;height:0;position:absolute}
+.sw span{position:absolute;inset:0;border-radius:12px;background:var(--line);transition:background .2s}
+.sw span::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
+.sw input:checked+span{background:#22A06B}.sw input:checked+span::before{transform:translateX(18px)}
+.sw input:disabled+span{opacity:.5;cursor:not-allowed}.sw input:focus-visible+span{outline:2px solid #3B7BF2;outline-offset:2px}
+.swl{margin-left:8px;vertical-align:middle}
 .edit{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:0 14px}
 @media (max-width:640px){table thead{display:none}table,tbody,tr,td{display:block}tr{border-bottom:1px solid var(--line);padding:6px 0}td{border:0;padding:3px 0}td.act{text-align:left}}
 .secret{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:15px;background:var(--raised);padding:6px 10px;border-radius:8px;display:inline-block}
@@ -40,8 +47,11 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
     <div id="uEdit" hidden style="margin-top:16px">
       <h2 id="uEditT"></h2>
       <div class="edit">
+        <label>Usuario<input id="eUser" maxlength="32" autocapitalize="none" autocomplete="off"></label>
         <label>Nombre y apellidos<input id="eName" maxlength="80"></label>
         <label>Correo<input id="eMail" type="email"></label>
+        <label>Nueva contraseña <span class="small">(vacía = no se cambia)</span><input id="ePw" type="password" autocomplete="new-password"></label>
+        <label>Repite la contraseña<input id="ePw2" type="password" autocomplete="new-password"></label>
       </div>
       <div class="row"><button id="eSave" type="button">Guardar</button><button class="ghost" id="eCancel" type="button">Cerrar</button><span class="msg" id="eMsg"></span></div>
     </div>
@@ -122,8 +132,8 @@ async function load() {
   // usuarios
   $('uBody').innerHTML = acc.users.map(u => `<tr><td><b>${esc(u.name)}</b> <span class="small">${esc(u.username)}</span>${u.isAdmin ? '<span class="tag adm">admin</span>' : ''}${u.partner ? `<span class="tag">pareja: ${esc(u.partner)}</span>` : ''}<br><span class="small">desde ${when(u.createdAt)}${u.sync && u.sync.lastSync ? ' · sincronizado ' + when(u.sync.lastSync) : ''}</span></td>
     <td>${esc(u.email) || '<span class="small">—</span>'}</td>
-    <td>${u.active ? 'Activa' : (u.requestedAt ? '<span class="tag off">pendiente</span>' : '<span class="tag off">desactivada</span>')}${u.mustChange ? '<br><span class="small">contraseña provisional</span>' : ''}</td>
-    <td class="act"><button class="ghost" data-ed="${u.id}" type="button">Editar</button>${u.id === acc.me ? '' : `<button class="ghost" data-adm="${u.id}" type="button">${u.isAdmin ? 'Quitar admin' : 'Hacer admin'}</button><button class="ghost" data-act="${u.id}" type="button">${u.active ? 'Desactivar' : 'Activar'}</button>`}<button class="ghost" data-pw="${u.id}" type="button">Restablecer contraseña</button>${u.id === acc.me ? '' : `<button class="danger" data-del="${u.id}" type="button">Borrar</button>`}</td></tr>`).join('');
+    <td>${!u.active && u.requestedAt ? '<span class="tag off">pendiente</span>' : `<label class="sw" title="${u.id === acc.me ? 'No puedes desactivar tu propia cuenta' : (u.active ? 'Desactivar la cuenta' : 'Activar la cuenta')}"><input type="checkbox" data-sw="${u.id}" ${u.active ? 'checked' : ''} ${u.id === acc.me ? 'disabled' : ''}><span></span></label><span class="swl">${u.active ? 'Activa' : 'Desactivada'}</span>`}${u.mustChange ? '<br><span class="small">contraseña provisional</span>' : ''}</td>
+    <td class="act"><button class="ghost" data-ed="${u.id}" type="button">Editar</button>${u.id === acc.me ? '' : `<button class="ghost" data-adm="${u.id}" type="button">${u.isAdmin ? 'Quitar admin' : 'Hacer admin'}</button>`}<button class="ghost" data-pw="${u.id}" type="button">Restablecer contraseña</button>${u.id === acc.me ? '' : `<button class="danger" data-del="${u.id}" type="button">Borrar</button>`}</td></tr>`).join('');
   // peticiones
   $('nReq').hidden = !rq.requests.length; $('nReq').textContent = rq.requests.length;
   $('rqList').innerHTML = rq.requests.length ? rq.requests.map(r => `<li><span><b>${esc(r.name)}</b> · ${esc(r.username)} · ${esc(r.email)} · ${when(r.requestedAt)}${r.note ? `<br><span class="small">${esc(r.note)}</span>` : ''}</span><span><button data-rqok="${r.id}" type="button">Aprobar</button> <button class="ghost" data-rqno="${r.id}" data-rqname="${esc(r.name)}" type="button">Rechazar</button></span></li>`).join('') : '<li><span class="small">No hay peticiones pendientes.</span></li>';
@@ -143,9 +153,8 @@ const byId = id => D.users.find(u => u.id === +id);
 document.addEventListener('click', async e => {
   const t = e.target.closest('button'); if (!t) return;
   try {
-    if (t.dataset.ed) { EDIT = byId(t.dataset.ed); $('uEditT').textContent = 'Editar ' + EDIT.username; $('eName').value = EDIT.name; $('eMail').value = EDIT.email || ''; say($('eMsg'), ''); $('uEdit').hidden = false; $('eName').focus(); }
+    if (t.dataset.ed) { EDIT = byId(t.dataset.ed); $('uEditT').textContent = 'Editar ' + EDIT.username; $('eUser').value = EDIT.username; $('eName').value = EDIT.name; $('ePw').value = $('ePw2').value = ''; $('eMail').value = EDIT.email || ''; say($('eMsg'), ''); $('uEdit').hidden = false; $('eName').focus(); }
     if (t.dataset.adm) { const u = byId(t.dataset.adm); await api('PATCH', `/api/admin/accounts/${u.id}`, { isAdmin: !u.isAdmin }); await load(); }
-    if (t.dataset.act) { const u = byId(t.dataset.act); await api('PATCH', `/api/admin/accounts/${u.id}`, { active: !u.active }); await load(); }
     if (t.dataset.pw) {
       const u = byId(t.dataset.pw);
       if (!confirm(`¿Restablecer la contraseña de ${u.name}? Se le pone una provisional y tendrá que cambiarla al entrar.`)) return;
@@ -165,7 +174,19 @@ document.addEventListener('click', async e => {
   } catch (err) { alert(err.message); }
 });
 $('eSave').addEventListener('click', async () => {
-  try { await api('PATCH', `/api/admin/accounts/${EDIT.id}`, { name: $('eName').value, email: $('eMail').value }); say($('eMsg'), 'Guardado.', 'ok'); await load(); } catch (e) { say($('eMsg'), e.message, 'err'); }
+  const pw = $('ePw').value;
+  if (pw !== $('ePw2').value) return say($('eMsg'), 'Las dos contraseñas no coinciden.', 'err');
+  try {
+    await api('PATCH', `/api/admin/accounts/${EDIT.id}`, { username: $('eUser').value, name: $('eName').value, email: $('eMail').value, password: pw || null });
+    if (pw && EDIT.id === D.me) return location.reload();   // al cambiar tu propia contraseña se cierra tu sesión
+    $('ePw').value = $('ePw2').value = ''; say($('eMsg'), pw ? 'Guardado. Sus sesiones abiertas se han cerrado.' : 'Guardado.', 'ok'); await load();
+    EDIT = byId(EDIT.id); if (EDIT) $('uEditT').textContent = 'Editar ' + EDIT.username;
+  } catch (e) { say($('eMsg'), e.message, 'err'); }
+});
+document.addEventListener('change', async e => {
+  const c = e.target.closest('[data-sw]'); if (!c) return;
+  try { await api('PATCH', `/api/admin/accounts/${c.dataset.sw}`, { active: c.checked }); } catch (err) { alert(err.message); }
+  await load();
 });
 $('eCancel').addEventListener('click', () => { $('uEdit').hidden = true; });
 $('iGo').addEventListener('click', async () => {
