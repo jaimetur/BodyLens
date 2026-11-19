@@ -252,6 +252,11 @@ function srvShow(v){const f=$('emb-'+v);if(!f)return;
     f.src='/'+v+'?embed=1'+(v==='admin'&&location.hash.includes(':')?'#'+location.hash.split(':')[1]:'')}}
 const link=(id,label,cls)=>`<a class="${cls}${id==='ajustes'?' owner-only':''}" href="#${id}" data-v="${id}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[id]}</svg><span>${label}</span></a>`;
 const SUBV={medidas:'composicion',corazon:'composicion',bienestar:'composicion'};
+// modules a profile can be given access to (a profile without «mods» sees all of them)
+const MODS=[['resumen','Resumen'],['peso','Peso'],['composicion','Cuerpo'],['actividad','Actividad'],['sueno','Sueño'],['comidas','Comidas'],['intimo','Íntimo'],['historial','Historial de pesos']];
+const modsOf=p=>p&&Array.isArray(p.mods)&&p.mods.length?p.mods:null;
+function modAllowed(v){const m=modsOf(PROF()),b=SUBV[v]||v;return !m||!MODS.some(([id])=>id===b)||m.includes(b)}
+function applyModVis(){document.querySelectorAll('[data-v]').forEach(a=>a.classList.toggle('nomod',!modAllowed(a.dataset.v)))}
 $('railNav').innerHTML=VIEWS.filter(([id])=>!SUBV[id]).map(([id,l])=>(id==='ajustes'&&!SRV_V.length?`<a class="nav owner-only" href="#ajustes" data-pfnav><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2a4.5 4.5 0 0 1 5 4.8"/></svg><span>Gestionar perfiles</span></a>`:'')+link(id,id==='composicion'?'Cuerpo':l,'nav')).join('');
 // «Gestionar perfiles» en la barra lateral: abre Ajustes en la parte de perfiles
 document.addEventListener('click',e=>{const a=e.target.closest('a[data-v="intimo"]');if(!a||VIEW!=='intimo')return;e.preventDefault();
@@ -265,6 +270,7 @@ $('tabNav').innerHTML=VIEWS.filter(([id])=>id!=='ajustes'&&!SUBV[id]&&!SRV_V.som
 let VIEW='resumen';
 let BACK=null,BACK_Y=0,CUR_Y=0;addEventListener('scroll',()=>{if(VIEW!=='ajustes')CUR_Y=scrollY},{passive:true});
 function route(){const h=(location.hash||'').slice(1);const prevV=VIEW;VIEW=VIEWS.some(([id])=>id===h)&&(h!=='ajustes'||!document.body.classList.contains('viewer'))&&(h!=='intimo'||applyIntimoVis())?h:'resumen';
+  if(!modAllowed(VIEW)){const f=MODS.find(([id])=>modAllowed(id));VIEW=f?f[0]:'ajustes'}applyModVis();
   if(VIEW==='intimo'&&prevV!=='intimo'&&!privOK())setTimeout(()=>{if(VIEW==='intimo'&&!privOK()&&!LOCK&&unlocked(PROF()))showLock(PROF(),null,'priv')},60);
   for(const [id] of VIEWS){$('v-'+id).hidden=id!==VIEW}
   // Medidas cuelga de Cuerpo en la barra del móvil
@@ -1572,6 +1578,11 @@ if(SRV_V.length){
   const accIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>';
   // «Datos y copias» belongs to «Tu cuenta»; the rest of Ajustes is «Objetivos, plan y comidas»
   {const d=document.querySelector('#ajTabs [data-ajt="datos"]');if(d){d.dataset.ajm='pf';AJ_PF.push('datos')}}
+  // «Datos personales» is a panel of the «Cuenta» tab, under the account page
+  {const s=document.querySelector('#v-ajustes [data-ajc="perfil"]'),tb=document.querySelector('#ajTabs [data-ajt="perfil"]');
+    if(s&&tb){tb.remove();AJ_PF.splice(AJ_PF.indexOf('perfil'),1);s.removeAttribute('data-ajc');s.hidden=false;s.classList.add('owner-only','acpd');
+      s.querySelector('h2').textContent='Datos personales';$('v-cuenta').appendChild(s)}}
+  if(UI.ajTabPf==='perfil')UI.ajTabPf='perfiles';
   const pfBtns=[...document.querySelectorAll('#ajTabs [data-ajm="pf"]')];
   // the «Cuenta» tab in the profiles part of Ajustes
   $('ajTabs').insertAdjacentHTML('afterbegin',`<button type="button" role="tab" data-acct>${accIcon}<span>Cuenta</span></button>`);
@@ -1587,11 +1598,14 @@ if(SRV_V.length){
   showAj(AJT);
 }
 function renderProfCard(){const h=$('pfList');if(!h)return;
-  h.innerHTML=PROFS.map((p,i)=>`<div class="pfrow" data-pfi="${i}"><i style="background:${p.col}">${esc(initials(p.name))}</i><input type="text" value="${esc(p.name)}" data-pfname aria-label="Nombre del perfil"><input type="color" value="${p.col}" data-pfcol aria-label="Color"><label class="pfcy"><input type="radio" name="pfcy" data-pfcy${p.cycle?' checked':''}>Ciclo</label><label class="pfcy">Pareja<select data-pfpar><option value="">—</option>${PROFS.filter(q=>q.id!==p.id).map(q=>`<option value="${esc(q.id)}"${hasPartner(p)&&p.partner===q.id?' selected':''}>${esc(q.name.split(' ')[0])}</option>`).join('')}</select></label>${hasPartner(p)?`<label class="pfcy">desde<input type="date" data-pfsince value="${p.partnerSince||''}"></label>`:'<span></span>'}<button type="button" class="btn ghost" data-pfpin>${p.pinH?'Cambiar PIN':'Poner PIN'}</button><button type="button" class="btn ghost" data-pfppin title="PIN para ver Ciclo e intimidad">PIN privado</button>${i?`<button type="button" class="btn ghost danger" data-pfdel>${PF_DEL===i?'¿Seguro?':'Borrar'}</button>`:'<span class="pfmain">Principal</span>'}${PF_PIN===i?`<span class="pfpin"><input type="password" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="4 cifras" data-pfpinv aria-label="Nuevo PIN"><button type="button" class="btn" data-pfpinok>Guardar</button>${p.pinH?'<button type="button" class="btn ghost danger" data-pfpinoff>Quitar PIN</button>':''}</span>`:''}${PF_PPIN===i?`<span class="pfpin"><small class="pfpn">PIN privado (Ciclo e intimidad)${p.privH?'':' · ahora 0000'}</small><input type="password" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="Actual" data-pfppcur aria-label="PIN privado actual"><input type="password" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="Nuevo" data-pfppv aria-label="Nuevo PIN privado"><button type="button" class="btn" data-pfppok>Guardar</button>${p.privH?'<button type="button" class="btn ghost" data-pfppoff>Volver a 0000</button>':''}</span>`:''}</div>`).join('')}
+  h.innerHTML=PROFS.map((p,i)=>`<div class="pfrow" data-pfi="${i}"><i style="background:${p.col}">${esc(initials(p.name))}</i><input type="text" value="${esc(p.name)}" data-pfname aria-label="Nombre del perfil"><input type="color" value="${p.col}" data-pfcol aria-label="Color"><label class="pfcy"><input type="radio" name="pfcy" data-pfcy${p.cycle?' checked':''}>Ciclo</label><label class="pfcy">Pareja<select data-pfpar><option value="">—</option>${PROFS.filter(q=>q.id!==p.id).map(q=>`<option value="${esc(q.id)}"${hasPartner(p)&&p.partner===q.id?' selected':''}>${esc(q.name.split(' ')[0])}</option>`).join('')}</select></label>${hasPartner(p)?`<label class="pfcy">desde<input type="date" data-pfsince value="${p.partnerSince||''}"></label>`:'<span></span>'}<button type="button" class="btn ghost" data-pfpin>${p.pinH?'Cambiar PIN':'Poner PIN'}</button><button type="button" class="btn ghost" data-pfppin title="PIN para ver Ciclo e intimidad">PIN privado</button>${i?`<button type="button" class="btn ghost danger" data-pfdel>${PF_DEL===i?'¿Seguro?':'Borrar'}</button>`:'<span class="pfmain">Principal</span>'}${PF_PIN===i?`<span class="pfpin"><input type="password" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="4 cifras" data-pfpinv aria-label="Nuevo PIN"><button type="button" class="btn" data-pfpinok>Guardar</button>${p.pinH?'<button type="button" class="btn ghost danger" data-pfpinoff>Quitar PIN</button>':''}</span>`:''}${PF_PPIN===i?`<span class="pfpin"><small class="pfpn">PIN privado (Ciclo e intimidad)${p.privH?'':' · ahora 0000'}</small><input type="password" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="Actual" data-pfppcur aria-label="PIN privado actual"><input type="password" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="Nuevo" data-pfppv aria-label="Nuevo PIN privado"><button type="button" class="btn" data-pfppok>Guardar</button>${p.privH?'<button type="button" class="btn ghost" data-pfppoff>Volver a 0000</button>':''}</span>`:''}${i?`<span class="pfpin pfmods" role="group" aria-label="Módulos de ${esc(p.name)}"><small class="pfpn">Módulos</small>${MODS.map(([id,l])=>`<label class="pfmod"><input type="checkbox" data-pfmod="${id}"${!modsOf(p)||p.mods.includes(id)?' checked':''}><span>${l}</span></label>`).join('')}</span>`:''}</div>`).join('')}
 let PF_DEL=null,PF_PIN=null,PF_PPIN=null;
 document.addEventListener('change',e=>{const r=e.target.closest('.pfrow');if(!r)return;const i=+r.dataset.pfi,L=PROFS.map(p=>({...p}));
   if(e.target.matches('[data-pfname]')){const v=e.target.value.trim();if(!v)return renderProfCard();L[i].name=v}
   else if(e.target.matches('[data-pfcol]'))L[i].col=e.target.value;
+  else if(e.target.matches('[data-pfmod]')){const m=[...r.querySelectorAll('[data-pfmod]:checked')].map(x=>x.dataset.pfmod);
+    if(!m.length){renderProfCard();$('pfMsg2').textContent='Cada perfil necesita al menos un módulo.';return}
+    if(m.length===MODS.length)delete L[i].mods;else L[i].mods=m}
   else if(e.target.matches('[data-pfcy]'))L.forEach((p,j)=>{if(j===i)p.cycle=1;else delete p.cycle});
   else if(e.target.matches('[data-pfsince]')){const v=e.target.value||'';L[i].partnerSince=v;const t=L.find(p=>p.id===L[i].partner);if(t)t.partnerSince=v}
   else if(e.target.matches('[data-pfpar]')){const me=L[i].id,sel=e.target.selectedIndex>0?e.target.value:null;for(const p of L)if(p.id===me||p.partner===me||(sel!=null&&(p.id===sel||p.partner===sel))){delete p.partner;delete p.partnerSince}if(sel!=null){const t=L.find(p=>p.id===sel);if(t){L[i].partner=sel;t.partner=me}}}
@@ -1615,6 +1629,7 @@ document.addEventListener('click',e=>{if(e.target.id==='pfAdd'){const n=$('pfNew
     const cols=['#0f9d8a','#e08a1e','#7c4ddb','#2b8be0','#c2410c'];saveProfs([...PROFS,{id,name:n,col:cols[PROFS.length%cols.length]}]);$('pfNew').value='';renderProfCard();$('pfMsg2').textContent=`Perfil «${n}» creado. Cámbiate a él desde el botón de perfil de arriba.`;return}
   const d=e.target.closest('[data-pfdel]');if(d){const i=+d.closest('.pfrow').dataset.pfi;if(PF_DEL!==i){PF_DEL=i;renderProfCard();return}
     PF_DEL=null;const p=PROFS[i];saveProfs(PROFS.filter((_,j)=>j!==i));renderProfCard();$('pfMsg2').textContent=`Perfil «${p.name}» quitado de la lista. Sus datos siguen guardados por si lo vuelves a crear con el mismo nombre.`;if(p.id===PID)switchProfile('')}});
+{const f=renderProfBtn;renderProfBtn=function(){f.apply(this,arguments);try{applyModVis();if(typeof VIEW!=='undefined'&&!modAllowed(VIEW))route()}catch(e){}}}
 function renderAjustes(){renderProfCard();renderFoodCfg();renderPlatos();
   const c={...DEFAULT_CFG,...((DOC&&DOC.cfg)||{})};const act=document.activeElement;const set=(id,v)=>{if(act&&act.id===id)return;$(id).value=v??''};
   set('cfHeight',c.height);set('cfSleepGoal',c.sleepGoal||7);for(const f of Object.keys(SCHED_DEF))set('cf_'+f,c[f]||SCHED_DEF[f]);set('cfStepGoal',c.stepGoal||8000);set('cfMinGoal',c.minGoal||30);set('cfKcalGoal',c.kcalGoal||400);set('cfSex',c.sex||'');set('cfBirth',c.birth||'');set('cfStart',c.start);set('cfGoal',c.goal);set('cfDate',c.startDate);set('cfR1',c.rates[0]);set('cfR2',c.rates[1]);set('cfR3',c.rates[2]);set('cfFile',c.fileId);
@@ -3351,7 +3366,7 @@ document.addEventListener('click',e=>{const m=e.target.closest('[data-vt]');if(m
   if(curTab(v)===a.dataset.tab){goY(0);return}SCR[posKey()]=scrollY;UI.vt={...(UI.vt||{}),[v]:a.dataset.tab};saveUI();applyVTabs();renderView();goY(SCR[posKey()]||0)});
 function renderView(){applyVTabs();if(VIEW==='sueno')try{renderBankTab()}catch(e){console.warn(e)}
   try{
-    if(VIEW==='cuenta'||VIEW==='admin'||VIEW==='help'){srvShow(VIEW);return}
+    if(VIEW==='cuenta'||VIEW==='admin'||VIEW==='help'){srvShow(VIEW);if(VIEW==='cuenta'&&$('cfHeight'))renderAjustes();return}
     syncGoals();
     if(VIEW==='ajustes'){renderAjustes();return}
     if(VIEW==='medidas'){renderMedidas();return}

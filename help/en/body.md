@@ -33,7 +33,7 @@ Body composition measured by the scale: fat, muscle, bone and water.
 - **New manual weigh-in**: date, weight and, if you want, fat, muscle, water and bone. If a scale weigh-in arrives for that day later, the scale's one takes precedence. Below, the manual weigh-ins are listed with **Edit** and **Remove**.
 
 ### Rules
-- You need to enter your **height**, **sex** and **date of birth** in Your account → Personal data to see BMI, lean mass index and ranges adjusted to your age. Without them, generic values are used or you are asked to enter them.
+- You need to enter your **height**, **sex** and **date of birth** in Your account → Account → Personal data to see BMI, lean mass index and ranges adjusted to your age. Without them, generic values are used or you are asked to enter them.
 - Zones and bell curves are approximate; bioimpedance measurements are not a diagnosis.
 
 ---
@@ -45,7 +45,7 @@ Tape measurements (waist, hips, chest, neck, arm and thigh), because the scale d
 ### What you will see
 - **Indicators** (calculated from your latest measurements):
   - **Waist / height**: Low, Healthy (0.4 to 0.5), Increased (0.5 to 0.6) or High.
-  - **Waist / hip**: WHO thresholds according to your sex. It needs your sex to be set in Your account → Personal data.
+  - **Waist / hip**: WHO thresholds according to your sex. It needs your sex to be set in Your account → Account → Personal data.
   - **Body fat % from tape**: estimate with the US Navy formula (waist, neck, height and, for women, hips). If your scale gives a fat %, it is compared with it.
 - **Latest measurements**: one card per zone with the latest value, its date and the change from the first measurement.
 - **Progress**: one chart per zone with at least two measurements.

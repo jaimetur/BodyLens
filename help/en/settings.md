@@ -4,14 +4,14 @@ Use it to set your goals and weight-loss plan and the Meals formula. The same pa
 
 ## How to open it
 
-- On the computer, in the sidebar: **Goals, plan and meals** and **Your account**, which brings together the account, profiles and data in tabs: **Account**, **Profiles**, **Personal data** and **Data and backups**.
+- On the computer, in the sidebar: **Goals, plan and meals** and **Your account**, which brings together the account, profiles and data in tabs: **Account** (with the **Personal data** panel at the end), **Profiles** and **Data and backups**.
 - On mobile, with the settings icon in the top bar. You can also reach both from the profile button.
 - The **✕** button in the top bar closes the page and returns you to the section and the point of the page where you were.
 
 ## Tabs
 
 - **Goals, plan and meals** has two tabs: **Goals and plan** and **Meals**.
-- **Your account** has four tabs: **Account**, **Profiles**, **Personal data** and **Data and backups**.
+- **Your account** has three tabs: **Account** (with the **Personal data** panel at the end), **Profiles** and **Data and backups**.
 
 The last tab opened in each group is remembered.
 
@@ -58,13 +58,14 @@ The following three sections are tabs of **Your account**, not of Goals, plan an
 
 ### Profiles (Your account → Profiles)
 
-- Each person has their own data. You switch profile with the profile button (initials and name) next to the title in the top bar, which also offers **Goals, plan and meals**, **Your account** (where profiles are managed), **Administration** (if you are an administrator), **Lock profile** (if the profile has a PIN) and **Sign out**.
+- Profiles let you keep other people's data in your account, for example someone in your family who uses your scale. Each profile has its own data and, if you want, its own PIN and its own modules. You switch profile with the profile button (initials and name) next to the title in the top bar, which also offers **Goals, plan and meals**, **Your account** (where profiles are managed), **Administration** (if you are an administrator), **Lock profile** (if the profile has a PIN) and **Sign out**.
 - Each profile row lets you set:
   - **Name** and **colour** (the colour and initials identify the profile).
   - **Cycle**: marks which profile receives the menstrual cycle data that arrives from Apple Health or Android (Health Connect). Only one can be marked.
   - **Partner**: links two profiles to each other. When linked, "since" appears to indicate the start date of the relationship; sexual activity of the partner before that date is not counted.
   - **Set PIN** / **Change PIN** / **Remove PIN**: 4-digit PIN for the profile.
   - **Private PIN**: 4-digit PIN for Cycle and intimacy (see below).
+  - **Modules** (every profile except the main one): tap each module to give the profile access to it or take it away: Summary, Weight, Body, Activity, Sleep, Meals, Intimate and Weight history. A profile only sees its modules in the menu, and opening another one takes it to the first module it has. At least one module stays on. For example, a profile for someone who only logs Meals and Weight. The main profile always sees every module; Goals, plan and meals, Your account and Help are always available.
   - **Delete** (asks for confirmation with "Sure?"): removes the profile from the list. Its data stays saved in case you create it again with the same name. The main profile cannot be deleted.
 - **Add profile**: type a name and press **Add profile**. Switch to it with the profile button.
 
@@ -80,7 +81,7 @@ The following three sections are tabs of **Your account**, not of Goals, plan an
 - To change it you must enter the current private PIN and a new 4-digit one other than 0000. **Back to 0000** resets it.
 - If the profile has a normal PIN and its own private PIN, when you sign in with the normal PIN the Cycle and intimacy section does not even appear.
 
-### Personal data (Your account → Personal data)
+### Personal data (Your account → Account, at the end)
 - **Height (cm)**: between 120 and 230. It is used for BMI, lean mass index, reference zones and the tape measurement formulas.
 - **Sex for the formulas**: Not specified, Male or Female. It is used for fat zones, lean mass index, VO2 max and the tape measurement formulas.
 - **Date of birth**: refines the fat and VO2 max ranges to your age band.

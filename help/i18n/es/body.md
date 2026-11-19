@@ -1,4 +1,4 @@
-<!-- en: 44c8de12dd01d48f -->
+<!-- en: 54530c5dfcea6c1d -->
 # Cuerpo
 
 Reúne todo lo que describe tu cuerpo en cuatro secciones: la composición que mide la báscula, las medidas con cinta, el corazón y la forma física, y el bienestar (síntomas y hábitos).
@@ -34,7 +34,7 @@ Composición corporal medida por la báscula: grasa, músculo, hueso y agua.
 - **Nueva pesada manual**: fecha, peso y, si quieres, grasa, músculo, agua y hueso. Si más tarde llega una pesada de la báscula para ese día, prevalece la de la báscula. Debajo se listan las pesadas manuales con **Editar** y **Quitar**.
 
 ### Reglas
-- Necesitas indicar tu **altura**, **sexo** y **fecha de nacimiento** en Tu cuenta → Datos personales para ver el IMC, el índice de masa magra y los rangos ajustados a tu edad. Sin ellos, se usan valores genéricos o se te pide que los indiques.
+- Necesitas indicar tu **altura**, **sexo** y **fecha de nacimiento** en Tu cuenta → Cuenta → Datos personales para ver el IMC, el índice de masa magra y los rangos ajustados a tu edad. Sin ellos, se usan valores genéricos o se te pide que los indiques.
 - Las zonas y las campanas son aproximadas; las mediciones de bioimpedancia no son un diagnóstico.
 
 ---
@@ -46,7 +46,7 @@ Medidas con cinta (cintura, cadera, pecho, cuello, brazo y muslo), porque la bá
 ### Qué verás
 - **Indicadores** (calculados con tus últimas medidas):
   - **Cintura / altura**: Bajo, Saludable (0,4 a 0,5), Aumentado (0,5 a 0,6) o Alto.
-  - **Cintura / cadera**: umbrales de la OMS según tu sexo. Necesita que hayas indicado tu sexo en Tu cuenta → Datos personales.
+  - **Cintura / cadera**: umbrales de la OMS según tu sexo. Necesita que hayas indicado tu sexo en Tu cuenta → Cuenta → Datos personales.
   - **% de grasa corporal con cinta**: estimación con la fórmula de la Marina de EE. UU. (cintura, cuello, altura y, en mujeres, cadera). Si tu báscula da un % de grasa, se compara con él.
 - **Últimas medidas**: una tarjeta por zona con el último valor, su fecha y el cambio desde la primera medida.
 - **Evolución**: un gráfico por zona con al menos dos medidas.

@@ -27,7 +27,8 @@
 - **Couples:** two accounts can be linked to share and edit the cycle and intimacy records together. An app profile can be moved to that person's own account.
 - **Your account:**
   - **Account:** profile, email, language and password, partner, data sources, synchronisation and import.
-  - **Profiles and Personal data:** management of the app's profiles.
+  - **Profiles:** management of the app's profiles, explained on the panel itself. Each profile (except the main one) can be given access to only the modules you choose, with chips like in DriveTest Analyzer; it only sees those in the menu.
+  - **Personal data** (height, sex, date of birth) is a panel of the **Account** tab.
   - **Data and backups:** where your phone data comes from, data source, full backup and CSV export.
 - **Administration** (administrator accounts), with these tabs:
   - **Users:** edit username, name, email and password; activate or deactivate with a switch; grant or remove admin; reset the password; delete.
@@ -69,6 +70,8 @@
   - Each score sits on its meal's row, with large buttons, and Water has its own row.
   - The day's log comes before the estimated loss.
   - The day's log shows the last 4 weeks (Monday to Sunday) at the top instead of just one; the arrows jump 4 weeks.
+- **Email:** the server greets the mail server with its public name instead of the container's private address, which spam filters penalise.
+- **Profiles panel:** each row adapts to the width of the panel, so the PIN buttons no longer end up out of view.
 - **Android at the same level as the iPhone:** every screen, empty state and notice that spoke only of Apple Health / Health Auto Export now also explains the Android path (Health Connect with the BodyLens app), with the same sending address for both.
 - **Mood:** past moods can be recorded, with date and time or by tapping the day in the calendar.
 - **History** is now called **Weight history**.

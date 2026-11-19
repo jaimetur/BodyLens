@@ -11,6 +11,7 @@ import ssl
 import threading
 from email.message import EmailMessage
 from email.utils import formataddr, formatdate, make_msgid
+from urllib.parse import urlsplit
 
 log = logging.getLogger("bodylens.mail")
 TIMEOUT = 60
@@ -124,12 +125,21 @@ def _by_lang(to: list[str]) -> dict[str, list[str]]:
     return out
 
 
+def _helo_name(s: dict) -> str:
+    """Public name to greet the mail server with, instead of the container's private address (spam filters
+    penalise a HELO like [10.x.x.x]): the host of PUBLIC_URL, else the domain of the sender."""
+    from app.core import config
+    host = urlsplit(config.settings.public_url).hostname if config.settings.public_url else None
+    return host or s["from_address"].split("@")[-1] or "localhost"
+
+
 def _deliver(s: dict, to: list[str], subject: str, html_body: str, reply_to: str | None) -> None:
     msg = build(s, to, subject, html_body, reply_to)
     ctx = ssl.create_default_context()
+    helo = _helo_name(s)
     try:
-        server = smtplib.SMTP_SSL(s["host"], s["port"], timeout=TIMEOUT, context=ctx) if s["security"] == "ssl" \
-            else smtplib.SMTP(s["host"], s["port"], timeout=TIMEOUT)
+        server = smtplib.SMTP_SSL(s["host"], s["port"], local_hostname=helo, timeout=TIMEOUT, context=ctx) \
+            if s["security"] == "ssl" else smtplib.SMTP(s["host"], s["port"], local_hostname=helo, timeout=TIMEOUT)
         with server:
             server.ehlo()
             if s["security"] == "starttls":

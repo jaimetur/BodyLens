@@ -73,8 +73,9 @@ def test_mailer_smtp_ssl(monkeypatch):
     calls = {}
 
     class FakeSMTP:
-        def __init__(self, host, port, timeout=None, context=None):
+        def __init__(self, host, port, local_hostname=None, timeout=None, context=None):
             calls["conn"] = (host, port)
+            calls["helo"] = local_hostname
         def __enter__(self): return self
         def __exit__(self, *a): return False
         def ehlo(self): pass
@@ -86,6 +87,7 @@ def test_mailer_smtp_ssl(monkeypatch):
         monkeypatch.setenv(k, v)
     mailer.send(["a@example.test"], "Hola", mailer.page("Hola", ["texto <b>x</b>"], link=("Entrar", "https://x/login")))
     assert calls["conn"] == ("jaimetur.cloud", 465) and calls["login"] == ("bodylens@jaimetur.cloud", "secreto")
+    assert calls["helo"] and not calls["helo"].startswith("[")  # a public name, never the container address
     m = calls["msg"]
     assert m["Subject"] == "BodyLens - Hola" and "bodylens@jaimetur.cloud" in m["From"]
     assert "https://x/login" in m.get_body(("plain",)).get_content()   # el texto va en el idioma del destinatario

@@ -1,18 +1,18 @@
-<!-- en: d5a4c101f0ed95da -->
+<!-- en: f534e52212056cac -->
 # Objetivos, plan y comidas
 
 Sirve para fijar tus objetivos y el plan de pérdida y la fórmula de Comidas. La misma página de la app incluye también las pestañas de **Tu cuenta** que se describen al final de este documento: perfiles y PIN, datos personales, copias de seguridad y exportar a PDF.
 
 ## Cómo abrirlos
 
-- En el ordenador, en la barra lateral: **Objetivos, plan y comidas** y **Tu cuenta**, que reúne la cuenta, los perfiles y los datos en pestañas: **Cuenta**, **Perfiles**, **Datos personales** y **Datos y copias**.
+- En el ordenador, en la barra lateral: **Objetivos, plan y comidas** y **Tu cuenta**, que reúne la cuenta, los perfiles y los datos en pestañas: **Cuenta** (con el panel **Datos personales** al final), **Perfiles** y **Datos y copias**.
 - En el móvil, con el icono de ajustes de la barra superior. También puedes llegar a ambos desde el botón del perfil.
 - El botón **✕** de la barra superior cierra la página y te devuelve a la sección y al punto de la página donde estabas.
 
 ## Pestañas
 
 - **Objetivos, plan y comidas** tiene dos pestañas: **Objetivos y plan** y **Comidas**.
-- **Tu cuenta** tiene cuatro pestañas: **Cuenta**, **Perfiles**, **Datos personales** y **Datos y copias**.
+- **Tu cuenta** tiene tres pestañas: **Cuenta** (con el panel **Datos personales** al final), **Perfiles** y **Datos y copias**.
 
 Se recuerda la última pestaña abierta de cada grupo.
 
@@ -59,13 +59,14 @@ Las tres secciones siguientes son pestañas de **Tu cuenta**, no de Objetivos, p
 
 ### Perfiles (Tu cuenta → Perfiles)
 
-- Cada persona tiene sus propios datos. Cambias de perfil con el botón del perfil (iniciales y nombre) junto al título de la barra superior, que también ofrece **Objetivos, plan y comidas**, **Tu cuenta** (donde se gestionan los perfiles), **Administración** (si eres administrador), **Bloquear perfil** (si el perfil tiene PIN) y **Cerrar sesión**.
+- Los perfiles sirven para llevar en tu cuenta los datos de otras personas, por ejemplo alguien de tu familia que usa tu báscula. Cada perfil tiene sus propios datos y, si quieres, su PIN y sus módulos. Cambias de perfil con el botón del perfil (iniciales y nombre) junto al título de la barra superior, que también ofrece **Objetivos, plan y comidas**, **Tu cuenta** (donde se gestionan los perfiles), **Administración** (si eres administrador), **Bloquear perfil** (si el perfil tiene PIN) y **Cerrar sesión**.
 - Cada fila de perfil te permite definir:
   - **Nombre** y **color** (el color y las iniciales identifican el perfil).
   - **Ciclo**: marca qué perfil recibe los datos del ciclo menstrual que llegan de Apple Salud o de Android (Health Connect). Solo se puede marcar uno.
   - **Pareja**: une dos perfiles entre sí. Al unirlos, aparece «desde» para indicar la fecha de inicio de la relación; la actividad sexual de la pareja anterior a esa fecha no cuenta.
   - **Poner PIN** / **Cambiar PIN** / **Quitar PIN**: PIN de 4 dígitos para el perfil.
   - **PIN privado**: PIN de 4 dígitos para Ciclo e intimidad (mira más abajo).
+  - **Módulos** (todos los perfiles menos el principal): toca cada módulo para darle acceso al perfil o quitárselo: Resumen, Peso, Cuerpo, Actividad, Sueño, Comidas, Íntimo e Historial de pesos. Un perfil solo ve sus módulos en el menú, y si abre otro va al primero que tiene. Siempre queda al menos uno. Por ejemplo, un perfil para alguien que solo apunta Comidas y Peso. El perfil principal ve siempre todos; Objetivos, plan y comidas, Tu cuenta y la Ayuda están siempre disponibles.
   - **Borrar** (pide confirmación con «¿Seguro?»): quita el perfil de la lista. Sus datos quedan guardados por si lo vuelves a crear con el mismo nombre. El perfil principal no se puede borrar.
 - **Añadir perfil**: escribe un nombre y pulsa **Añadir perfil**. Cambia a él con el botón del perfil.
 
@@ -81,7 +82,7 @@ Las tres secciones siguientes son pestañas de **Tu cuenta**, no de Objetivos, p
 - Para cambiarlo debes introducir el PIN privado actual y uno nuevo de 4 dígitos distinto de 0000. **Volver a 0000** lo restablece.
 - Si el perfil tiene un PIN normal y su propio PIN privado, cuando entras con el PIN normal la sección Ciclo e intimidad ni siquiera aparece.
 
-### Datos personales (Tu cuenta → Datos personales)
+### Datos personales (Tu cuenta → Cuenta, al final)
 - **Altura (cm)**: entre 120 y 230. Se usa para el IMC, el índice de masa magra, las zonas de referencia y las fórmulas de las medidas con cinta.
 - **Sexo para las fórmulas**: No indicado, Hombre o Mujer. Se usa para las zonas de grasa, el índice de masa magra, el VO2 máx y las fórmulas de las medidas con cinta.
 - **Fecha de nacimiento**: ajusta los rangos de grasa y VO2 máx a tu franja de edad.

@@ -1,4 +1,4 @@
-<!-- en: ee349f249362f3c6 -->
+<!-- en: 9c485369cc482b1b -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -28,7 +28,8 @@
 - **Parejas:** dos cuentas se pueden unir para compartir y editar juntas los registros de ciclo e intimidad. Un perfil de la app se puede mover a la cuenta propia de esa persona.
 - **Tu cuenta:**
   - **Cuenta:** perfil, correo, idioma y contraseña, pareja, fuentes de datos, sincronización e importación.
-  - **Perfiles y Datos personales:** gestión de los perfiles de la app.
+  - **Perfiles:** gestión de los perfiles de la app, explicada en el propio panel. A cada perfil (menos el principal) se le pueden dar solo los módulos que elijas, con fichas como en DriveTest Analyzer; en el menú solo ve esos.
+  - **Datos personales** (altura, sexo, fecha de nacimiento) es un panel de la pestaña **Cuenta**.
   - **Datos y copias:** de dónde llegan los datos del móvil, origen de los datos, copia completa y exportación a CSV.
 - **Administración** (cuentas de administrador), con estas pestañas:
   - **Usuarios:** editar usuario, nombre, correo y contraseña; activar o desactivar con un interruptor; dar o quitar el rol de admin; restablecer la contraseña; borrar.
@@ -70,6 +71,8 @@
   - Cada nota está en la fila de su comida, con botones grandes, y el Agua tiene su propia fila.
   - El registro del día va antes de la pérdida estimada.
   - El registro del día muestra arriba las últimas 4 semanas (de lunes a domingo) en lugar de una sola; las flechas saltan 4 semanas.
+- **Correo:** el servidor saluda al servidor de correo con su nombre público en vez de con la dirección privada del contenedor, que los filtros de spam penalizan.
+- **Panel de perfiles:** cada fila se adapta al ancho del panel, así que los botones de PIN ya no quedan fuera de la vista.
 - **Android al mismo nivel que el iPhone:** todas las pantallas, avisos y mensajes de «sin datos» que solo hablaban de Apple Salud / Health Auto Export explican también el camino de Android (Health Connect con la app de BodyLens), con la misma dirección de envío para los dos.
 - **Ánimo:** se pueden registrar ánimos pasados, con fecha y hora o tocando el día en el calendario.
 - **Historial** pasa a llamarse **Historial de pesos**.
