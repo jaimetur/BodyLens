@@ -3,7 +3,7 @@
 # 1) librerías de la página (sin CDN), con versiones fijadas en frontend/package-lock.json
 FROM node:22-slim AS vendor
 WORKDIR /w
-COPY frontend/package.json frontend/package-lock.json ./
+COPY src/frontend/package.json src/frontend/package-lock.json ./
 RUN npm ci --omit=dev --ignore-scripts --no-audit --no-fund \
  && mkdir /vendor \
  && cp node_modules/xlsx/dist/xlsx.full.min.js node_modules/jspdf/dist/jspdf.umd.min.js \
@@ -19,13 +19,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 \
 RUN apt-get update && apt-get install -y --no-install-recommends tzdata && rm -rf /var/lib/apt/lists/* \
  && groupadd -g 1000 bodylens && useradd -u 1000 -g 1000 -M -d /app -s /usr/sbin/nologin bodylens
 WORKDIR /app/backend
-COPY backend/pyproject.toml ./
 RUN pip install --no-cache-dir "fastapi==0.115.6" "uvicorn[standard]==0.34.0" "httpx==0.28.1" \
       "argon2-cffi==23.1.0" "google-auth==2.37.0" "requests==2.32.3"
-COPY backend/app ./app
-COPY frontend/src /app/frontend/src
-COPY frontend/server /app/frontend/server
-COPY branding /app/branding
+COPY src/backend/app ./app
+COPY src/frontend /app/frontend
+COPY assets/branding /app/branding
 COPY --from=vendor /vendor /app/frontend/vendor
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod 0755 /entrypoint.sh && python -c "import app.main"

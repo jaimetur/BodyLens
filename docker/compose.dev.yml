@@ -1,5 +1,5 @@
 # Desarrollo con recarga automática: docker compose -f docker/compose.dev.yml up --build
-# La página se sirve directamente desde frontend/src (sin compilar) y el backend se recarga al guardar.
+# La página se sirve directamente desde src/frontend (sin compilar) y el backend se recarga al guardar.
 services:
   bodylens:
     build:
@@ -14,8 +14,10 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ../backend/app:/app/backend/app
-      - ../frontend/src:/app/frontend/src
-      - ../frontend/server:/app/frontend/server
+      - ../src/backend/app:/app/backend/app
+      - ../src/frontend/app:/app/frontend/app
+      - ../src/frontend/accounts:/app/frontend/accounts
+      - ../src/frontend/common:/app/frontend/common
+      - ../src/frontend/compat:/app/frontend/compat
       - ../data-dev:/data
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--reload-dir", "/app/backend/app"]

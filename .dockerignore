@@ -4,6 +4,7 @@
 **/*.pyc
 **/.pytest_cache
 **/node_modules
+src/frontend/vendor
 **/.venv
 **/.env
 **/*.db
@@ -15,5 +16,7 @@ data
 datos
 docs
 legacy
+help
+tests
 .github
 .idea

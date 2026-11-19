@@ -14,12 +14,12 @@ __pycache__/
 *.pyc
 .venv/
 node_modules/
-frontend/peso.html
-frontend/app.html
+src/frontend/peso.html
+src/frontend/app.html
 bodylens-datos-privados/
 .DS_Store
 .idea/
 .pytest_cache/
-frontend/vendor/
+src/frontend/vendor/
 data-dev/
 *.egg-info/

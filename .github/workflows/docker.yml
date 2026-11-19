@@ -23,14 +23,13 @@ jobs:
         with:
           node-version: "22"
       - name: Tests del backend
-        working-directory: backend
         run: |
           pip install -e ".[test]"
           python -m pytest -q
       - name: Prueba de arranque de la página
         run: |
-          cd frontend && npm ci --no-audit --no-fund --ignore-scripts && cd ..
-          node frontend/tests/smoke.mjs
+          (cd src/frontend && npm ci --no-audit --no-fund --ignore-scripts)
+          node tests/frontend/smoke.mjs
 
   docker:
     needs: tests
