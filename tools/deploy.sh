@@ -38,7 +38,7 @@ tar -xf "$TMP/code.tar" -C "$TMP" && rm "$TMP/code.tar"
 [ -d "$TMP/src/backend/app" ] || { echo "The code export is empty: nothing deployed." >&2; exit 1; }
 echo "$SHA $(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$TMP/REVISION"
 COPYFILE_DISABLE=1 tar --no-xattrs -c -C "$TMP" . | ssh -o BatchMode=yes "$HOST" \
-  "mkdir -p $STACK/code && find $STACK/code -type f -delete && tar -x -C $STACK/code && find $STACK/code -depth -type d -empty -delete; mkdir -p $STACK/code"
+  "mkdir -p $STACK/code && find $STACK/code -type f -delete && tar -x -C $STACK/code && find $STACK/code -depth -type d -empty -delete; mkdir -p $STACK/code; chmod 755 $STACK/code"
 
 if [ "$IMAGE" = 1 ]; then
   ssh -o BatchMode=yes "$HOST" "cd $STACK && $DOCKER compose -p bodylens pull -q && $DOCKER compose -p bodylens up -d"
