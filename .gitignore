@@ -20,3 +20,6 @@ bodylens-datos-privados/
 .DS_Store
 .idea/
 .pytest_cache/
+frontend/vendor/
+data-dev/
+*.egg-info/

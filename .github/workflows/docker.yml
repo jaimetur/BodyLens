@@ -1,0 +1,82 @@
+name: 🐳 Tests y build Docker
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: bodylens-docker-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Tests del backend
+        working-directory: backend
+        run: |
+          pip install -e ".[test]"
+          python -m pytest -q
+      - name: Prueba de arranque de la página
+        run: |
+          cd frontend && npm ci --no-audit --no-fund --ignore-scripts && cd ..
+          node frontend/tests/smoke.mjs
+
+  docker:
+    needs: tests
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Nombre y etiquetas de la imagen
+        id: image
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        shell: bash
+        run: |
+          USERNAME_VALUE="${DOCKERHUB_USERNAME:-${{ github.repository_owner }}}"
+          IMAGE="${USERNAME_VALUE}/bodylens"
+          {
+            echo "username=${USERNAME_VALUE}"
+            echo "tags<<EOF"
+            echo "${IMAGE}:sha-${GITHUB_SHA::7}"
+            if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then echo "${IMAGE}:${GITHUB_REF_NAME#v}"; fi
+            if [[ "${GITHUB_REF}" == refs/heads/main || "${GITHUB_REF}" == refs/tags/v* ]]; then echo "${IMAGE}:latest"; fi
+            echo "EOF"
+          } >> "${GITHUB_OUTPUT}"
+
+      - name: Entrar en Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ steps.image.outputs.username }}
+          password: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
+
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Construir y publicar (amd64 + arm64)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.image.outputs.tags }}
+          build-args: |
+            SOURCE_REVISION=${{ github.sha }}
+          labels: |
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          cache-from: type=registry,ref=${{ steps.image.outputs.username }}/bodylens:buildcache
+          cache-to: type=registry,ref=${{ steps.image.outputs.username }}/bodylens:buildcache,mode=max

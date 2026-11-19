@@ -1,0 +1,13 @@
+# Producción (NAS). Copia este fichero y docker/.env.example (como .env) a la carpeta del stack.
+services:
+  bodylens:
+    image: ${IMAGE_REPOSITORY:-jaimetur/bodylens}:${IMAGE_TAG:-latest}
+    pull_policy: always
+    container_name: ${CONTAINER_NAME:-bodylens}
+    env_file:
+      - .env
+    ports:
+      - "${APP_PORT:-7280}:8000"
+    volumes:
+      - ${HOST_DATA_DIR:-./data}:/data
+    restart: unless-stopped

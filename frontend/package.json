@@ -1,0 +1,18 @@
+{
+  "name": "bodylens-frontend",
+  "private": true,
+  "description": "Librerías que la app sirve desde el propio servidor (sin CDN) y prueba de arranque",
+  "type": "module",
+  "scripts": {
+    "vendor": "node tests/vendor.mjs",
+    "smoke": "node tests/smoke.mjs"
+  },
+  "dependencies": {
+    "html2canvas-pro": "1.5.8",
+    "jspdf": "2.5.1",
+    "xlsx": "0.18.5"
+  },
+  "devDependencies": {
+    "jsdom": "25.0.1"
+  }
+}
