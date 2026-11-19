@@ -1,0 +1,28 @@
+<!-- en: fc3d6cedbfade5a9 -->
+# Ayuda de BodyLens
+
+Un fichero por módulo. Las secciones de la app son las de la barra de navegación; las de la cuenta están en «Tu cuenta».
+
+## La app
+| Módulo | Qué es |
+|---|---|
+| [Resumen](summary.md) | Vista general: peso de tendencia, «Hoy de un vistazo», cuerpo, salud y análisis |
+| [Peso](weight.md) | Evolución del peso, plan, semanas y calendario |
+| [Cuerpo](body.md) | Báscula (composición), medidas con cinta, corazón y bienestar |
+| [Actividad](activity.md) | Pasos, calorías, ejercicio, entrenamientos y análisis |
+| [Sueño](sleep.md) | Última noche, saldo de sueño, evolución, horario, siestas y las reglas de las noches |
+| [Comidas](meals.md) | Registro y nota de las comidas, y su efecto en tu peso |
+| [Íntimo](intimate.md) | Ciclo, sexualidad y ánimo, protegidos por el PIN privado |
+| [Historial](history.md) | Todo tu historial de pesos por años e intentos de pérdida |
+| [Ajustes](settings.md) | Perfiles, PIN, objetivos y plan, comidas, datos y copias, exportar a PDF |
+
+## Tu cuenta y el servidor
+| Módulo | Qué es |
+|---|---|
+| [Cuentas y acceso](accounts.md) | Entrar, pedir una cuenta, invitaciones, primera entrada y «Tu cuenta» |
+| [Pareja](couples.md) | Unir dos cuentas para compartir ciclo e intimidad |
+| [Importar datos](import.md) | Traer `snap.json` o una copia completa (Ajustes → Datos y copias) |
+| [Sincronización](sync.md) | Cómo llegan solos los datos de Withings y Apple Salud |
+| [Administración](administration.md) | Peticiones de acceso, invitaciones, fuentes y correo de cada cuenta |
+
+Instalación y despliegue: [`docs/DEPLOYMENT.md`](../../docs/DEPLOYMENT.md).

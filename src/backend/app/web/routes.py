@@ -23,12 +23,16 @@ def i18n_tags(lang: str) -> str:
 
 
 def display_css(user) -> str:
-    """Text size of the account (CSS zoom of the whole page); phones get half the increase so nothing overflows."""
+    """Text size of the account (CSS zoom of the whole page); phones get half the increase so nothing overflows.
+    Embedded pages (Your account, Administration, Help) cancel the zoom of their frame and apply it inside, so their
+    content is laid out at the real width of the frame."""
     from app.accounts.users import FONT_SIZES
     z = FONT_SIZES.get(getattr(user, "font_size", None) or "md", FONT_SIZES["md"])
     if z == 1:
         return ""
-    return f"<style>html{{zoom:{z}}}@media (max-width:700px){{html{{zoom:{round(1 + (z - 1) / 2, 3)}}}}}</style>"
+    zp = round(1 + (z - 1) / 2, 3)
+    rule = lambda k: f"html{{zoom:{k}}}.srvframe{{zoom:{round(1 / k, 5)}}}"   # noqa: E731
+    return f"<style>{rule(z)}@media (max-width:700px){{{rule(zp)}}}</style>"
 
 
 def _page(*parts: str, request: Request | None = None) -> HTMLResponse:
@@ -40,9 +44,7 @@ def _page(*parts: str, request: Request | None = None) -> HTMLResponse:
     html = html.replace('href="/pages.css"', f'href="/pages.css?v={v}"').replace('src="/pages.js"', f'src="/pages.js?v={v}"')
     u = optional_user(request) if request is not None else None
     lang = i18n.request_lang(request, u) if request is not None else i18n.DEFAULT
-    # inside the app (?embed=1) the app page already applies the text size to the frame
-    embed = request is not None and "embed" in request.query_params
-    css = "" if embed else display_css(u)
+    css = display_css(u)
     html = html.replace("<meta charset=\"utf-8\">", "<meta charset=\"utf-8\">" + i18n_tags(lang) + css, 1)
     return HTMLResponse(html, headers={"Cache-Control": "no-cache"})
 

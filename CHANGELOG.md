@@ -57,7 +57,9 @@
   - The base catalog is in English (`src/frontend/i18n/`), with a guide for contributing translations.
   - The language is chosen in the access request and invitation forms too.
 - **Help:** a Help section in the app with the help of every module, the README and the changelog, without leaving the tool.
-  - The documents are written only in English and translated automatically into each account's language with the Claude API (Administration → **Translator**, with the Anthropic API key stored encrypted); each translation is kept until the English text changes, and the languages the accounts use are prepared in advance.
+  - The documents are written only in English and translated automatically into each account's language with LibreTranslate, a free translator running on the server next to BodyLens (the Claude API can be set as an optional, paid alternative in Administration → **Translator**); each translation is kept until the English text changes.
+  - Spanish comes already translated with the app (`help/i18n/es/`), so it needs no translator.
+- **Text size** per account (Small, Normal, Large, Extra large) in *Your account*, like the language; the new Normal is slightly bigger than before.
 
 #### 🚀 Enhancements:
 - **A single importer** (Settings → Data and backups) for the full backup and for the previous version's `snap.json`. If the backup has several profiles, you choose which one to import.
