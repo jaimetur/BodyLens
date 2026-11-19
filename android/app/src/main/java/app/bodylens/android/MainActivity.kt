@@ -46,18 +46,40 @@ import java.text.DateFormat
 import java.util.Date
 
 class MainActivity : ComponentActivity() {
+    /** Bumped when a setup link (bodylens://setup?url=…) brings the sending address, so the screen asks for the
+     *  permissions and sends at once. */
+    private val setupTick = mutableStateOf(0)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        applySetup(intent)
         setContent {
             MaterialTheme(colorScheme = lightColorScheme(primary = Color(0xFF3B7BF2))) {
-                Surface(Modifier.fillMaxSize()) { Screen() }
+                Surface(Modifier.fillMaxSize()) { Screen(setupTick.value) }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        applySetup(intent)
+    }
+
+    /** "Set up the app" link from Your account → Data sources: it carries the account's sending address. */
+    private fun applySetup(intent: Intent?) {
+        val data = intent?.data ?: return
+        if (data.scheme != "bodylens" || data.host != "setup") return
+        val url = data.getQueryParameter("url")?.trim() ?: return
+        if (!url.startsWith("https://") || "/api/ingest/hae/" !in url) return
+        val prefs = Prefs(this)
+        prefs.url = url
+        prefs.auto = true
+        setupTick.value += 1
     }
 }
 
 @Composable
-private fun Screen() {
+private fun Screen(setupTick: Int) {
     val context = LocalContext.current
     val prefs = remember { Prefs(context) }
     val scope = rememberCoroutineScope()
@@ -72,12 +94,32 @@ private fun Screen() {
     suspend fun refreshGranted() {
         if (available) granted = HealthConnectClient.getOrCreate(context).permissionController.getGrantedPermissions()
     }
+    // first sending as soon as there is an address and some permission: nothing else for the user to do
+    fun sendNow() {
+        busy = true
+        scope.launch {
+            try { Sync.run(context) } catch (_: Exception) { }
+            Sync.schedule(context, prefs.auto && prefs.url.isNotEmpty())
+            status = statusText(context, prefs)
+            busy = false
+        }
+    }
     val askPermissions = rememberLauncherForActivityResult(PermissionController.createRequestPermissionResultContract()) {
         granted = it
+        if (it.intersect(HealthReader.PERMISSIONS).isNotEmpty() && prefs.url.isNotEmpty() && prefs.lastRun == 0L) sendNow()
     }
     LaunchedEffect(Unit) {
         refreshGranted()
         Sync.schedule(context, prefs.auto && prefs.url.isNotEmpty())
+    }
+    // opened from the setup link: address saved, so ask for every permission (or send, if they are already granted)
+    LaunchedEffect(setupTick) {
+        if (setupTick == 0) return@LaunchedEffect
+        url = prefs.url; auto = prefs.auto
+        refreshGranted()
+        if (!available) return@LaunchedEffect
+        if (!granted.containsAll(HealthReader.PERMISSIONS)) askPermissions.launch(HealthReader.PERMISSIONS + HealthReader.BACKGROUND)
+        else sendNow()
     }
 
     Column(
@@ -95,6 +137,7 @@ private fun Screen() {
             }) { Text(stringResource(R.string.hc_install)) }
         }
 
+        if (url.isNotBlank()) Text(stringResource(R.string.configured), color = Color(0xFF1F9D6B), fontWeight = FontWeight.Bold)
         Text(stringResource(R.string.step1), fontWeight = FontWeight.Bold)
         OutlinedTextField(
             value = url, onValueChange = { url = it; prefs.url = it },
@@ -120,15 +163,7 @@ private fun Screen() {
                 auto = it; prefs.auto = it; Sync.schedule(context, it && prefs.url.isNotEmpty())
             })
         }
-        Button(enabled = !busy && available && url.isNotBlank(), onClick = {
-            busy = true
-            scope.launch {
-                try { Sync.run(context) } catch (_: Exception) { }
-                Sync.schedule(context, prefs.auto)
-                status = statusText(context, prefs)
-                busy = false
-            }
-        }, modifier = Modifier.fillMaxWidth()) {
+        Button(enabled = !busy && available && url.isNotBlank(), onClick = { sendNow() }, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(if (busy) R.string.sending else R.string.send_now))
         }
         Spacer(Modifier.padding(2.dp))

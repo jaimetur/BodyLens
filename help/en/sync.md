@@ -113,8 +113,10 @@ AutoSleep (for example, if AutoSleep missed part of the night), the watch wins. 
 
 ## Android (Health Connect), step by step
 
-On Android, health apps (Samsung Health, Google Fit, Fitbit, a Wear OS watch…) can share their data through
-**Health Connect**. The BodyLens Android app reads it there and sends it to your account every hour.
+On Android, health apps (Samsung Health, Google Fit, Fitbit, a Wear OS watch…) keep their data in **Health
+Connect**, Android's health data store (the equivalent of Apple Health on the iPhone). Health Connect only keeps the
+data on the phone; the **BodyLens Android app** is what reads it there and sends it to your account every hour (the
+equivalent of Health Auto Export on the iPhone, but already set up for BodyLens: no automations to create).
 
 ### 1. Make sure your data reaches Health Connect
 
@@ -132,13 +134,16 @@ On Android, health apps (Samsung Health, Google Fit, Fitbit, a Wear OS watch…)
 3. Tap the link to download **the BodyLens app** (`/android.apk`) and open the downloaded file.
 4. Android warns that it comes from outside Google Play: allow installing apps from your browser and install it.
 
-### 3. Set it up
+### 3. Set it up (one tap)
 
-1. In BodyLens (the web), press **Copy the address**.
-2. Open the BodyLens app and paste it in **Sending address**.
-3. Press **Grant Health Connect permissions** and allow all the data types. Also allow **read data in the
-   background**, so it can send with the app closed.
-4. Leave **Send automatically every hour** on and press **Send now**.
+1. On the same phone, in BodyLens (the browser), go to **Your account → Data sources**, box **Apple Health /
+   Android**, and press **Set up the Android app**.
+2. The BodyLens app opens already linked to your account and asks for the Health Connect permissions: allow all the
+   data types, and also **read data in the background**, so it can send with the app closed.
+3. That's all: it sends your data at once, and then every hour on its own.
+
+If the button does not open the app (for example, on an older Android), copy the address with **Copy the address**,
+paste it in the app's **Sending address**, press **Grant Health Connect permissions** and then **Send now**.
 
 The first time it sends the last 30 days; then, every hour, whatever is new. The app shows the time and the result of
 the last submission, and in BodyLens the box changes to **receiving**.

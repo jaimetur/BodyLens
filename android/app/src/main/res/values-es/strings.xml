@@ -5,7 +5,7 @@
     <string name="hc_install">Abrir Health Connect en Google Play</string>
     <string name="step1">1 · Dirección de envío</string>
     <string name="url_label">Dirección</string>
-    <string name="url_help">Cópiala en BodyLens → Tu cuenta → Fuentes de datos → Apple Salud / Health Connect. Lleva una clave secreta: no la compartas.</string>
+    <string name="url_help">Lo más fácil: en este móvil, abre BodyLens → Tu cuenta → Fuentes de datos y pulsa «Configurar la app de Android»; la rellena sola. O copia la dirección desde allí. Lleva una clave secreta: no la compartas.</string>
     <string name="step2">2 · Permisos</string>
     <string name="perm_count">Tipos de datos permitidos: %1$d de %2$d</string>
     <string name="perm_button">Dar permisos de Health Connect</string>
@@ -18,4 +18,5 @@
     <string name="last_run">Último intento: %1$s · %2$s</string>
     <string name="sent_ok">Enviado (%1$d valores).</string>
     <string name="err_no_url">Pega antes la dirección de envío.</string>
+    <string name="configured">✓ Unida a tu cuenta de BodyLens. Permite los permisos y la app enviará tus datos cada hora ella sola.</string>
 </resources>

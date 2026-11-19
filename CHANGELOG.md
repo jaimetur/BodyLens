@@ -51,6 +51,7 @@
 - **Android app (Health Connect):**
   - Sends hourly steps, distance, floors, energy, heart rate, HRV, SpO2, respiration, VO2 max, sleep with stages, workouts, cycle and sexual activity, to the same sending address as Health Auto Export and in the same format.
   - The APK is built by GitHub Actions and downloaded from Your account (`/android.apk`).
+  - One-tap setup: Your account → Data sources → **Set up the Android app**, on the phone, opens the app already linked to the account; it only asks for the Health Connect permissions and sends at once, then every hour.
   - Every screen, empty state and help page explains the Android path at the same level as the iPhone's.
 - **Data on the server:**
   - The sheet's tabs become tables on the server, and the workbook the page reads is generated from them.

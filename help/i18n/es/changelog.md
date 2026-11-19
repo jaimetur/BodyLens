@@ -1,4 +1,4 @@
-<!-- en: 357500900470799b -->
+<!-- en: 75aebe74f1d39f6c -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -52,6 +52,7 @@
 - **App para Android (Health Connect):**
   - Envía por horas pasos, distancia, pisos, energía, frecuencia cardiaca, HRV, SpO2, respiración, VO2 máx, sueño con fases, entrenamientos, ciclo y actividad sexual, a la misma dirección de envío que Health Auto Export y en el mismo formato.
   - El APK lo construye GitHub Actions y se descarga desde Tu cuenta (`/android.apk`).
+  - Configuración de un toque: Tu cuenta → Fuentes de datos → **Configurar la app de Android**, en el móvil, abre la app ya unida a la cuenta; solo pide los permisos de Health Connect y envía al momento y después cada hora.
   - Todas las pantallas, los mensajes de «sin datos» y la ayuda explican el camino de Android al mismo nivel que el del iPhone.
 - **Datos en el servidor:**
   - Las pestañas de la hoja pasan a ser tablas del servidor, y el libro que lee la página se genera a partir de ellas.

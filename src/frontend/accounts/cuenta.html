@@ -96,7 +96,11 @@
           <p class="small" id="hInfo"></p>
           <p id="hUrlBox" hidden><span class="code" id="hUrl"></span></p>
           <p class="small applinks">iPhone: <a href="https://apps.apple.com/app/id1115567069" target="_blank" rel="noopener">Health Auto Export</a> (App Store) · Android: <a href="/android.apk" target="_top">BodyLens app</a> + <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata" target="_blank" rel="noopener">Health Connect</a> (Google Play) · <a href="/help#sync" target="_top">Step-by-step guide</a></p>
-          <p class="small" id="hAndroid" hidden>En Android: instala <a href="/android.apk" target="_top">la app de BodyLens</a>, pega esta misma dirección, da los permisos de Health Connect y pulsa «Enviar ahora». Después envía sola cada hora.</p>
+          <div id="hAndroidSetup" hidden>
+            <p class="small"><b>Android:</b> instala <a href="/android.apk" target="_top">la app de BodyLens</a> y pulsa este botón en el mismo móvil: la app se abre ya configurada con tu dirección y solo te pide los permisos de Health Connect. Después envía tus datos cada hora ella sola.</p>
+            <div class="row"><a class="btn" id="hSetup" href="#" target="_top">Configurar la app de Android</a></div>
+          </div>
+          <p class="small" id="hAndroidHint" hidden>¿Tienes un móvil Android? Abre esta página en él para configurar la app de BodyLens con un solo toque.</p>
           <div class="row"><button class="ghost" id="hCopy" type="button" hidden>Copiar la dirección</button><button class="ghost" id="hNew" type="button">Crear mi dirección de envío</button><span class="msg" id="hMsg"></span></div>
         </div>
         <dl class="kv" style="margin-top:12px">
@@ -147,7 +151,12 @@ async function loadSources() {
     : 'Pesadas y composición, actividad, entrenos, sueño, SpO2, VO2 máx y ECG, directamente de tu cuenta de Withings.';
   $('hSt').textContent = h.last ? 'recibiendo' : (h.url ? 'esperando datos' : 'sin configurar'); $('hSt').dataset.on = h.last ? '1' : '';
   $('hUrlBox').hidden = !h.url; $('hUrl').textContent = h.url || ''; $('hCopy').hidden = !h.url;
-  $('hAndroid').hidden = !(h.url && S.androidApk);
+  // one-tap setup of the Android app: the link opens it with the address (or downloads the app if it is missing)
+  const android = /Android/i.test(navigator.userAgent);
+  const apk = !!(h.url && S.androidApk);   // the server has the app to download
+  $('hAndroidSetup').hidden = !apk || !android; $('hAndroidHint').hidden = !apk || android;
+  if (h.url) $('hSetup').href = 'intent://setup?url=' + encodeURIComponent(h.url) + '#Intent;scheme=bodylens;package=app.bodylens.android;S.browser_fallback_url='
+    + encodeURIComponent(location.origin + '/android.apk') + ';end';
   $('hNew').textContent = h.url ? 'Cambiar la dirección' : 'Crear mi dirección de envío';
   $('hInfo').innerHTML = h.url
     ? 'Use this same address on the iPhone, as the URL of each Health Auto Export automation (REST API, JSON v2), and on Android, in the BodyLens app.' + (h.last ? ` Último envío ${when(h.last.at)}${h.last.noches ? ` · ${h.last.noches} noches` : ''}${h.last.metricas ? ` · ${h.last.metricas} métricas` : ''}.` : ' Todavía no ha llegado ningún envío.')
