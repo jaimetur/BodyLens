@@ -78,6 +78,16 @@ def test_phases_of_the_night_from_the_watch(env, make_user):
     assert n[15] == "-30~30~d;30~120~l;120~140~w;140~180~r"
 
 
+def test_watch_sleep_without_a_known_phase_is_light(env, make_user):
+    from app.sheets.tabs import SUENO
+    uid = _uid(make_user)
+    _ingest(uid, sleep(seg("2026-11-19 00:00:00", "2026-11-19 01:00:00", "Deep", AW),
+                       seg("2026-11-19 01:00:00", "2026-11-19 03:00:00", "Básico", AW),
+                       seg("2026-11-19 03:00:00", "2026-11-19 07:00:00", "Asleep", AW)))
+    n = _rows(uid, SUENO)["2026-11-19"]
+    assert n[4] == 420 and n[6] == 60 and n[15] == "0~60~d;60~420~l"
+
+
 def test_no_phases_without_a_source_that_has_them(env, make_user):
     from app.sheets.tabs import SUENO
     uid = _uid(make_user)

@@ -656,6 +656,8 @@ body.pdfx .g2{grid-template-columns:repeat(2,minmax(0,1fr))!important}body.pdfx 
 .shbox{position:relative;background:var(--surface);max-height:100%;min-height:0;flex:0 1 auto;overflow:auto;border-radius:22px 22px 0 0;padding:18px max(18px,env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px;box-shadow:0 -10px 40px rgba(0,0,0,.3)}
 @media (min-width:700px){.shbox{border-radius:22px;max-height:92vh;align-self:center;width:560px}}
 #sheetBody{display:flex;flex-direction:column;gap:12px}
+.shside{display:none}
+@media (hover:hover) and (pointer:fine) and (min-width:700px){.shside:not([hidden]){display:grid;place-items:center;position:fixed;top:50%;transform:translateY(-50%);z-index:41;width:52px;height:52px;border-radius:50%;border:0;background:var(--surface);color:var(--ink);font-size:2rem;line-height:1;box-shadow:0 4px 18px rgba(0,0,0,.3);cursor:pointer}.shside.l{left:max(16px,calc(50% - 280px - 76px))}.shside.r{right:max(16px,calc(50% - 280px - 76px))}.shside:disabled{opacity:.35;cursor:default}}
 .shclose{position:sticky;top:0;z-index:3;align-self:flex-end;flex:none;margin:-6px -6px -40px 0;width:34px;height:34px;border-radius:50%;border:0;background:var(--raised);color:var(--muted);font-size:.95rem;box-shadow:0 1px 6px rgba(0,0,0,.18)}
 .shnav{display:flex;align-items:center;justify-content:center;gap:12px;padding-right:36px}.shnav b{font-size:.9rem;text-align:center}
 .shnav button{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:1.3rem;color:var(--ink);flex:none}.shnav button:disabled{opacity:.3}
@@ -1198,7 +1200,7 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
     </div>
   </main>
 
-  <div class="sheet" id="sheet" hidden role="dialog" aria-modal="true"><div class="shbox"><button type="button" class="shclose" data-close aria-label="Cerrar">✕</button><div id="sheetBody"></div></div></div>
+  <div class="sheet" id="sheet" hidden role="dialog" aria-modal="true"><button type="button" class="shside l" data-side="0" aria-label="Anterior" hidden>‹</button><button type="button" class="shside r" data-side="1" aria-label="Siguiente" hidden>›</button><div class="shbox"><button type="button" class="shclose" data-close aria-label="Cerrar">✕</button><div id="sheetBody"></div></div></div>
   <div class="rangefloat" id="rangeFloat" hidden><div class="seg" role="group" aria-label="Periodo" id="rngFloat"></div></div>
   <div class="sheet" id="plDlg" hidden role="dialog" aria-modal="true"><div class="shbox"><button type="button" class="shclose" data-plcancel aria-label="Cerrar">✕</button><div id="plDlgBody" class="pldlg"></div></div></div>
   <div class="sheet" id="expDlg" hidden role="dialog" aria-modal="true" aria-label="Exportar a PDF"><div class="shbox"><button type="button" class="shclose" data-xclose aria-label="Cerrar">✕</button><h2 style="margin:0">Exportar a PDF</h2><div id="expBody"></div></div></div>

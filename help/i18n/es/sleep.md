@@ -1,4 +1,4 @@
-<!-- en: 6a4ed9f970a8fdc5 -->
+<!-- en: 419f554e6b6badaa -->
 # Sueño
 
 Sirve para ver cómo duermes: la última noche, tu saldo de sueño, la evolución, el horario y el análisis. Incluye siestas, fases del sueño y comparaciones con tu peso.
@@ -31,7 +31,7 @@ Sirve para ver cómo duermes: la última noche, tu saldo de sueño, la evolució
 - **Anoche** (o la elegida en la tira de la semana, o en las barras o el calendario del periodo): tiempo dormido en grande, eficiencia (porcentaje del tiempo en la cama que duermes) y tiempo en la cama.
 - Interruptor de **vista**: colorea las noches por **Nota** (por defecto) o por **Horas**.
 - **Reloj de sueño**: arco con tu hora de acostarte y de levantarte, tu horario habitual discontinuo y los desvelos. Al tocarlo se agranda.
-  - **Ampliado**, muestra la noche elegida como un anillo coloreado por fases (profundo, ligero, REM y despierto, cuando tu reloj registra fases), la media de las 14 noches anteriores como una barra gris por dentro (se puede ocultar), tu horario objetivo de ese día (entre semana o fin de semana) discontinuo por fuera y el tiempo dormido en el centro. Las barras de arriba eligen otra noche.
+  - **Ampliado**, muestra la noche elegida como un anillo coloreado por fases (profundo, ligero, REM y despierto, cuando tu reloj registra fases), la media de las 14 noches anteriores como una barra gris por dentro (se puede ocultar), tu horario objetivo de ese día (entre semana o fin de semana) discontinuo por fuera y el tiempo dormido en el centro. Las barras de arriba eligen otra noche; también puedes deslizar el dedo a un lado (en el ordenador, con las flechas de cada lado).
 - **Nota** (0 a 100): suma de cuatro partes.
   - 50 puntos por la duración frente a tu objetivo de horas.
   - 20 por la eficiencia (0 si es del 70 % o menos, completo con el 95 %).

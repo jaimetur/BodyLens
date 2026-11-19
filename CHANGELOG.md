@@ -87,6 +87,7 @@
 - **Avatar menu:** shows the full name and includes Your account, Administration, Help and **Sign out**, in red.
 - **Administration command line** (`python -m app.accounts.cli`): create accounts with a temporary password, invitations, passwords, users, sources and move profiles.
 - **Sleep clock (enlarged):** shows only the chosen night, as a thick ring coloured by phase (deep, light, REM, awake) when the watch records phases, with the average of the 14 earlier nights as a grey bar inside, the target schedule for that day (weekday or weekend) dashed outside and a larger time asleep in the centre.
+- **Enlarged cards:** a sideways swipe on phones and tablets, or the arrows at each side on a computer, goes to the previous or next day.
 #### 🐛 Bug fixes:
 - **Security:** the access log no longer stores the Apple Health upload address, OAuth codes or invitations.
 - **Withings:** the callback address accepts Withings' tests and notices (POST and HEAD).

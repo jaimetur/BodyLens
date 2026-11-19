@@ -6,6 +6,7 @@ Salud es la fuente principal: sueño, siestas, actividad diaria y entrenos; With
 from __future__ import annotations
 
 import json
+import logging
 import math
 import re
 from datetime import datetime, timedelta, timezone
@@ -13,6 +14,8 @@ from datetime import datetime, timedelta, timezone
 from app.sheets import rules, store
 from app.sheets import values as V
 from app.sheets.tabs import ACTIVIDAD, AVISOS, ECG, ENTRENOS, FASES, ORIGEN_SALUD, REGISTROS, SALUD, SIESTAS, SUENO
+
+log = logging.getLogger("bodylens")
 
 LOG_RE = re.compile(r"sexual|menstrua|intermenstrual|ovulation|cervical|contracept|pregnan|lactation|basal_body|mindful|"
                     r"alcohol|headache|fatigue|pain|bloating|cramps|nausea|sweats|appetite|mood|symptom|toothbrush|handwashing")
@@ -168,6 +171,9 @@ def ingest(con, user_id: int, body) -> dict:
         nombre = str(mt.get("name") or "").lower()
         clave = next((c for rx, c in HK_MAP if rx.search(nombre)), nombre)
         if nombre == "sleep_analysis":
+            sd = mt.get("data") or []
+            log.info("Sleep post: %d phase segments, %d night summaries", sum(1 for x in sd if x.get("value") or x.get("stage")),
+                     sum(1 for x in sd if not (x.get("value") or x.get("stage"))))
             sueno_mts.append(mt)
             continue
         es_log, horaria = bool(LOG_RE.search(nombre)), bool(HK_HORARIAS.search(nombre))
@@ -330,7 +336,7 @@ def sueno_desde_salud(con, user_id: int, mt: dict) -> dict:
         ini, fin = fecha(x.get("startDate") or x.get("start")), fecha(x.get("endDate") or x.get("end"))
         if fase and ini and fin:   # sin resumir: un tramo por fase
             f = ("deep" if re.search(r"deep|profund", fase) else "rem" if "rem" in fase else
-                 "core" if re.search(r"core|light|ligero", fase) else "awake" if re.search(r"awake|despiert", fase) else
+                 "core" if re.search(r"core|light|ligero|b.sico|principal", fase) else "awake" if re.search(r"awake|despiert", fase) else
                  "inbed" if re.search(r"in ?bed|en cama", fase) else "asleep")
             src = x.get("source") or ""
             k = f"{src}|{f}|{ini.ms}"
@@ -432,7 +438,8 @@ def hipnograma(tramos: list, ini: int, fin: int, k: str) -> str:
     base = ms_at(k, "00:00")
     out: list = []
     for a, b, f in sorted(por[src]):
-        a0, b0, c = jr((a - base) / MIN), jr((b - base) / MIN), FASE_CODE[f]
+        # a watch that tells deep and REM apart does not leave sleep without a phase: the rest is light (core) sleep
+        a0, b0, c = jr((a - base) / MIN), jr((b - base) / MIN), "l" if f == "asleep" else FASE_CODE[f]
         if out and out[-1][2] == c and a0 - out[-1][1] <= 1:
             out[-1][1] = max(out[-1][1], b0)
         elif out and a0 < out[-1][1]:   # overlapping phases of the same app: the later one starts where the earlier ends
@@ -444,11 +451,11 @@ def hipnograma(tramos: list, ini: int, fin: int, k: str) -> str:
 
 
 def rellenar_fases(con, user_id: int) -> int:
-    """Fills the «Fases» column of the Apple Health nights that do not have it yet, with the stored phases."""
+    """Fills in (or brings up to date) the «Fases» column of the Apple Health nights with the stored phases."""
     from bisect import bisect_left
     rows = store.read_rows(con, user_id, SUENO)
     falta = {k: r for k, r in rows.items() if len(r) > 2 and isinstance(r[1], datetime) and isinstance(r[2], datetime)
-             and V.js_str(r[13] if len(r) > 13 else "") == ORIGEN_SALUD and V.empty(r[15] if len(r) > 15 else None)}
+             and V.js_str(r[13] if len(r) > 13 else "") == ORIGEN_SALUD}
     if not falta:
         return 0
     todos = sorted((ms_of(r[0]), ms_of(r[1]), V.js_str(r[2]), V.js_str(r[3]))
@@ -462,7 +469,7 @@ def rellenar_fases(con, user_id: int) -> int:
         i = bisect_left(starts, ini - 12 * 3600000)
         cerca = [t for t in todos[i:bisect_left(starts, fin)] if t[1] > ini]
         h = hipnograma(cerca, ini, fin, V.day_key(r[0]))
-        if h:
+        if h and h != V.js_str(r[15] if len(r) > 15 else ""):
             nuevas[key] = list(r[:15]) + [""] * (15 - len(r[:15])) + [h]
     if nuevas:
         store.save_rows(con, user_id, SUENO, nuevas)

@@ -2510,6 +2510,16 @@ $('sheet').addEventListener('click',e=>{if(e.target.id==='sheet'||e.target.close
   const t=e.target.closest('[data-opt]');if(t){SHEET.opt[t.dataset.opt]=!SHEET.opt[t.dataset.opt];drawSheet()}});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&SHEET)closeSheet()});
 document.addEventListener('click',e=>{const c=e.target.closest('[data-sheet]');if(c){if(c.tagName==='A')e.preventDefault();openSheet(c.dataset.sheet,c.dataset.k)}},true);
+// change day from the sides of the sheet: arrows on computers, a sideways swipe on phones and tablets
+function sheetSide(){const b=$('sheetBody').querySelectorAll('.shnav [data-nav]');document.querySelectorAll('.shside').forEach(s=>{const n=b.length===2?b[+s.dataset.side]:null;s.hidden=!n;if(n)s.disabled=n.disabled})}
+new MutationObserver(sheetSide).observe($('sheetBody'),{childList:true});
+document.addEventListener('click',e=>{const s=e.target.closest('.shside');if(!s)return;const b=$('sheetBody').querySelectorAll('.shnav [data-nav]')[+s.dataset.side];if(b&&!b.disabled)b.click()});
+(()=>{let t0=null;const box=document.querySelector('#sheet .shbox');
+  // not where the finger already drags sideways: the charts that follow the finger and anything that scrolls sideways
+  const own=el=>{for(let n=el;n&&n!==box;n=n.parentElement){if(n.matches&&n.matches('.kpich,input,textarea,select'))return true;const cs=getComputedStyle(n);if(/(auto|scroll)/.test(cs.overflowX)&&n.scrollWidth>n.clientWidth+2)return true}return false};
+  box.addEventListener('touchstart',e=>{const p=e.touches[0];t0=e.touches.length===1&&!own(e.target)?{x:p.clientX,y:p.clientY,t:Date.now()}:null},{passive:true});
+  box.addEventListener('touchend',e=>{if(!t0)return;const p=e.changedTouches[0],dx=p.clientX-t0.x,dy=p.clientY-t0.y;const ok=Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5&&Date.now()-t0.t<800;t0=null;if(!ok)return;
+    const b=$('sheetBody').querySelectorAll('.shnav [data-nav]')[dx<0?1:0];if(b&&!b.disabled)b.click()},{passive:true})})();
 function sheetNav(keys,k,label){const i=keys.indexOf(k);return `<div class="shnav"><button type="button" data-nav="${keys[i-1]||''}" ${i>0?'':'disabled'} aria-label="Anterior">‹</button><b>${label}</b><button type="button" data-nav="${keys[i+1]||''}" ${i<keys.length-1?'':'disabled'} aria-label="Siguiente">›</button></div>`}
 function sheetWin(keys,k,n){const i=keys.indexOf(k);let end=SHEET.win!=null?keys.indexOf(SHEET.win):-1;if(end<0)end=keys.length-1;
   if(i>end)end=i;if(i<=end-n)end=Math.min(keys.length-1,i+n-1);SHEET.win=keys[end];return keys.slice(Math.max(0,end-n+1),end+1)}
