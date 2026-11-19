@@ -39,6 +39,22 @@ def index(request: Request):
     return HTMLResponse(page.page(u.public()), headers={"Cache-Control": "no-store"})
 
 
+def android_apk_path():
+    return config.settings.data_dir / "downloads" / "bodylens-android.apk"
+
+
+@router.get("/android.apk")
+def android_apk(request: Request):
+    """La app de Android (Health Connect). La deja ahí el despliegue (tools/deploy-android.sh); solo con sesión."""
+    if not optional_user(request):
+        return RedirectResponse("/login?next=/android.apk", status_code=303)
+    p = android_apk_path()
+    if not p.exists():
+        raise HTTPException(404, "La app de Android todavía no está disponible en este servidor.")
+    return FileResponse(p, media_type="application/vnd.android.package-archive", filename="BodyLens.apk",
+                        headers={"Cache-Control": "no-cache"})
+
+
 @router.get("/login", response_class=HTMLResponse)
 def login_page():
     return _page("accounts", "login.html")

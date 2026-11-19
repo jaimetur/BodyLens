@@ -76,9 +76,10 @@
           <div class="row"><a class="btn" id="wGo" href="/oauth/withings/start" target="_top" hidden>Conectar Withings</a><button class="ghost danger-t" id="wOff" type="button" hidden>Desconectar</button><span class="msg" id="wMsg"></span></div>
         </div>
         <div class="src">
-          <div class="src-h"><b>Apple Salud</b> <span class="small">(Health Auto Export)</span><span class="pill" id="hSt">—</span></div>
+          <div class="src-h"><b>Apple Salud / Android</b> <span class="small">(Health Auto Export o Health Connect)</span><span class="pill" id="hSt">—</span></div>
           <p class="small" id="hInfo"></p>
           <p id="hUrlBox" hidden><span class="code" id="hUrl"></span></p>
+          <p class="small" id="hAndroid" hidden>En Android: instala <a href="/android.apk" target="_top">la app de BodyLens</a>, pega esta misma dirección, da los permisos de Health Connect y pulsa «Enviar ahora». Después envía sola cada hora.</p>
           <div class="row"><button class="ghost" id="hCopy" type="button" hidden>Copiar la dirección</button><button class="ghost" id="hNew" type="button">Crear mi dirección de envío</button><span class="msg" id="hMsg"></span></div>
         </div>
         <dl class="kv" style="margin-top:12px">
@@ -126,9 +127,10 @@ async function loadSources() {
     : 'Pesadas y composición, actividad, entrenos, sueño, SpO2, VO2 máx y ECG, directamente de tu cuenta de Withings.';
   $('hSt').textContent = h.last ? 'recibiendo' : (h.url ? 'esperando datos' : 'sin configurar'); $('hSt').dataset.on = h.last ? '1' : '';
   $('hUrlBox').hidden = !h.url; $('hUrl').textContent = h.url || ''; $('hCopy').hidden = !h.url;
+  $('hAndroid').hidden = !(h.url && S.androidApk);
   $('hNew').textContent = h.url ? 'Cambiar la dirección' : 'Crear mi dirección de envío';
   $('hInfo').innerHTML = h.url
-    ? 'En Health Auto Export, en cada automatización (API REST, JSON v2) pon esta dirección como URL.' + (h.last ? ` Último envío ${when(h.last.at)}${h.last.noches ? ` · ${h.last.noches} noches` : ''}${h.last.metricas ? ` · ${h.last.metricas} métricas` : ''}.` : ' Todavía no ha llegado ningún envío.')
+    ? 'En iPhone, en Health Auto Export, pon esta dirección como URL en cada automatización (API REST, JSON v2).' + (h.last ? ` Último envío ${when(h.last.at)}${h.last.noches ? ` · ${h.last.noches} noches` : ''}${h.last.metricas ? ` · ${h.last.metricas} métricas` : ''}.` : ' Todavía no ha llegado ningún envío.')
     : 'Crea tu dirección de envío y ponla en las automatizaciones de Health Auto Export: el sueño, la actividad, el pulso y lo demás llegarán directos al servidor.';
 }
 const act = (btn, msg, fn, okText) => btn.addEventListener('click', async () => {

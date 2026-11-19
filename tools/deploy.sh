@@ -25,7 +25,7 @@ if [ -n "$PREV" ] && git cat-file -e "$PREV^{commit}" 2>/dev/null && [ -z "$(git
 if [ "$IMAGE" = 1 ]; then
   echo "Cambian dependencias o la imagen: espero al build de GitHub Actions del commit $SHA…"
   RID=""
-  for i in $(seq 1 30); do RID=$(gh run list --commit "$(git rev-parse HEAD)" --limit 1 --json databaseId --jq '.[0].databaseId' 2>/dev/null || true); [ -n "$RID" ] && break; sleep 5; done
+  for i in $(seq 1 30); do RID=$(gh run list --workflow docker.yml --commit "$(git rev-parse HEAD)" --limit 1 --json databaseId --jq '.[0].databaseId' 2>/dev/null || true); [ -n "$RID" ] && break; sleep 5; done
   [ -n "$RID" ] || { echo "No encuentro el build del commit $SHA (¿has hecho push?)." >&2; exit 1; }
   gh run watch "$RID" --exit-status >/dev/null || { echo "El build $RID ha fallado." >&2; exit 1; }
 fi

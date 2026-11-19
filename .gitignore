@@ -23,3 +23,13 @@ bodylens-datos-privados/
 src/frontend/vendor/
 data-dev/
 *.egg-info/
+
+# app de Android
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+*.jks
+*.keystore
+*.apk

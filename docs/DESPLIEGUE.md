@@ -81,6 +81,19 @@ Necesita, una vez, una regla de sudo en el NAS para que el usuario de SSH pueda 
 4. Cuando todo llegue bien unos días, se pueden borrar los activadores del Apps Script, la cuenta de servicio de Google
    y la hoja (queda como copia).
 
+## App de Android (Health Connect)
+
+El código está en `android/` (Kotlin + Jetpack Compose). Lee Health Connect y envía a la misma dirección de Health Auto
+Export (`/api/ingest/hae/<token>`) con el mismo formato JSON, así que el servidor no distingue de dónde viene.
+
+- Cada push que cambia `android/` lo compila GitHub Actions (`.github/workflows/android.yml`) y deja el APK en la release
+  `android-latest` del repositorio.
+- `tools/deploy-android.sh` espera a ese build, baja el APK y lo deja en el NAS en
+  `/volume1/docker/data/bodylens/downloads/bodylens-android.apk`; la app lo sirve en `/android.apk` (con sesión iniciada).
+- Firma: sin secretos se firma con una clave de depuración (vale para instalarla, pero cada build de CI tiene una clave distinta y
+  habría que desinstalar para actualizar). Para firmar siempre igual, guarda en los secretos del repositorio
+  `ANDROID_KEYSTORE_B64` (el `.jks` en base64), `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` y `ANDROID_KEY_PASSWORD`.
+
 ## Copia de seguridad
 
 Todo lo de la app está en `/volume1/docker/data/bodylens` (incluye `bodylens.db`): basta con incluir esa carpeta en

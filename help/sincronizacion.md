@@ -14,6 +14,12 @@ Los datos de la báscula y del reloj llegan solos a tu cuenta. Se configuran en 
 - Reglas del sueño: noche de 17:00 a 17:00, AutoSleep manda en el horario si lo hay (salvo que el reloj registre claramente más), profundo y REM del reloj, desvelos de 10 min o más, siestas de 10 min o más. Un envío nuevo corrige lo que esa app ya no tenga en el periodo que cubre.
 - **Cambiar la dirección** invalida la anterior.
 
+## Android (Health Connect)
+- Instala la app de BodyLens para Android: en **Tu cuenta → Fuentes de datos** hay un enlace para descargarla (`/android.apk`). Android pedirá permiso para instalar apps de fuera de Google Play.
+- En la app: pega la misma **dirección de envío** de arriba, pulsa **Dar permisos de Health Connect** (y acepta también «leer datos en segundo plano») y **Enviar ahora**.
+- La primera vez envía los últimos 30 días; después, cada hora, lo nuevo (el sueño de los últimos 3 días se reenvía siempre, por si una noche llega tarde).
+- Envía: pasos, distancia, pisos, energía activa y pulso por horas; pulso en reposo, VFC, SpO2, respiración y VO2 máx; sueño con fases; entrenamientos; ciclo y actividad sexual. El servidor los trata igual que lo que llega del iPhone.
+
 ## Cómo te enteras
 - La página abierta se actualiza sola cuando llegan datos (comprueba cada minuto y al volver a la pestaña).
 - **Sincronizar ahora** (o el botón de la nube arriba) pide a Withings lo último al momento.

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="intro">Envía tus datos de Health Connect (actividad, corazón, sueño, entrenamientos, ciclo…) a tu servidor de BodyLens cada hora.</string>
+    <string name="hc_missing">Health Connect no está disponible en este teléfono. Instálalo o actualízalo desde Google Play.</string>
+    <string name="hc_install">Abrir Health Connect en Google Play</string>
+    <string name="step1">1 · Dirección de envío</string>
+    <string name="url_label">Dirección</string>
+    <string name="url_help">Cópiala en BodyLens → Tu cuenta → Fuentes de datos → Apple Salud / Health Connect. Lleva una clave secreta: no la compartas.</string>
+    <string name="step2">2 · Permisos</string>
+    <string name="perm_count">Tipos de datos permitidos: %1$d de %2$d</string>
+    <string name="perm_button">Dar permisos de Health Connect</string>
+    <string name="perm_background">Permite también «leer datos en segundo plano», para que el envío de cada hora funcione con la app cerrada.</string>
+    <string name="step3">3 · Envío</string>
+    <string name="auto_label">Enviar automáticamente cada hora</string>
+    <string name="send_now">Enviar ahora</string>
+    <string name="sending">Enviando…</string>
+    <string name="never">Todavía no se ha enviado nada.</string>
+    <string name="last_run">Último intento: %1$s · %2$s</string>
+    <string name="sent_ok">Enviado (%1$d valores).</string>
+    <string name="err_no_url">Pega antes la dirección de envío.</string>
+</resources>

@@ -175,4 +175,10 @@ def sources(request: Request, u: User = Depends(current_user)):
                      "callback": withings.redirect_uri()},
         "hae": {"url": f"{base_url(request)}/api/ingest/hae/{hae_tok['token']}" if hae_tok else None,
                 "last": db.get_setting(f"hae_last:{u.id}")},
+        "androidApk": _apk_exists(),
     }
+
+
+def _apk_exists() -> bool:
+    from app.web.routes import android_apk_path
+    return android_apk_path().exists()
