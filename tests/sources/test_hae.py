@@ -65,6 +65,44 @@ def test_autosleep_completo_con_fases_del_reloj(env, make_user):
     assert n[4] == 480 and n[6] == 60   # horario de AutoSleep, profundo del reloj
 
 
+def test_phases_of_the_night_from_the_watch(env, make_user):
+    from app.sheets.tabs import SUENO
+    uid = _uid(make_user)
+    _ingest(uid, sleep(seg("2026-11-18 23:00:00", "2026-11-19 07:00:00", "Asleep", AS),
+                       seg("2026-11-18 23:30:00", "2026-11-19 00:30:00", "Deep", AW),
+                       seg("2026-11-19 00:30:00", "2026-11-19 02:00:00", "Core", AW),
+                       seg("2026-11-19 02:00:00", "2026-11-19 02:20:00", "Awake", AW),
+                       seg("2026-11-19 02:20:00", "2026-11-19 03:00:00", "REM", AW)))
+    n = _rows(uid, SUENO)["2026-11-19"]
+    # AutoSleep rules the schedule, the phases come from the watch (minutes from midnight of the wake-up day)
+    assert n[15] == "-30~30~d;30~120~l;120~140~w;140~180~r"
+
+
+def test_no_phases_without_a_source_that_has_them(env, make_user):
+    from app.sheets.tabs import SUENO
+    uid = _uid(make_user)
+    _ingest(uid, sleep(seg("2026-11-18 23:00:00", "2026-11-19 07:00:00", "Asleep", AS)))
+    assert _rows(uid, SUENO)["2026-11-19"][15] in ("", None)
+
+
+def test_old_nights_get_their_phases(env, make_user):
+    from app.core import db
+    from app.sheets import store
+    from app.sheets.tabs import SUENO
+    from app.sources import hae
+    uid = _uid(make_user)
+    _ingest(uid, sleep(seg("2026-11-18 23:00:00", "2026-11-19 01:00:00", "Deep", AW),
+                       seg("2026-11-19 01:00:00", "2026-11-19 07:00:00", "Core", AW)))
+    with db.tx() as con:   # a night saved before the column existed
+        r = store.read_rows(con, uid, SUENO)["2026-11-19"]
+        store.save_rows(con, uid, SUENO, {"2026-11-19": r[:15]})
+    assert _rows(uid, SUENO)["2026-11-19"][15] in ("", None)
+    with db.tx() as con:
+        assert hae.rellenar_fases(con, uid) == 1
+        assert hae.rellenar_fases(con, uid) == 0
+    assert _rows(uid, SUENO)["2026-11-19"][15] == "-60~60~d;60~420~l"
+
+
 def test_siesta_de_la_tarde(env, make_user):
     from app.sheets.tabs import SIESTAS, SUENO
     uid = _uid(make_user)

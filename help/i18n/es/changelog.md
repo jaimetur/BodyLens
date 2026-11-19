@@ -1,4 +1,4 @@
-<!-- en: 75aebe74f1d39f6c -->
+<!-- en: 34c034c065dbcefc -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -87,12 +87,14 @@
   - **Ajustes** pasa a llamarse **Objetivos, plan y comidas**; su pestaña **Datos y copias** pasa a Tu cuenta.
 - **Menú del avatar:** muestra el nombre completo e incluye Tu cuenta, Administración, Ayuda y **Cerrar sesión**, en rojo.
 - **Línea de comandos de administración** (`python -m app.accounts.cli`): crear cuentas con contraseña temporal, invitaciones, contraseñas, usuarios, fuentes y mover perfiles.
+- **Reloj de sueño (ampliado):** muestra solo la noche elegida, como un anillo grueso coloreado por fases (profundo, ligero, REM, despierto) cuando el reloj registra fases, con la media de las 14 noches anteriores como una barra gris por dentro, el horario objetivo de ese día (entre semana o fin de semana) discontinuo por fuera y el tiempo dormido más grande en el centro.
 #### 🐛 Correcciones:
 - **Seguridad:** el registro de accesos ya no guarda la dirección de subida de Apple Salud, los códigos OAuth ni las invitaciones.
 - **Withings:** la dirección de retorno acepta las pruebas y los avisos de Withings (POST y HEAD).
 - **Navegador:**
   - Las páginas y sus estilos se revalidan en cada despliegue, así que no quedan copias obsoletas en la caché.
   - Tu cuenta y Administración se pueden mostrar dentro de la app.
+  - Las tarjetas ampliadas caben en la pantalla y su botón de cerrar sigue visible al desplazarte, también con el texto más grande en el móvil.
 
 #### 📚 Documentación:
 - **El inglés es el idioma oficial del proyecto:** código, documentación y mensajes de commit. `README.md` completo; el README, la ayuda y el registro de cambios se escriben solo en inglés y se muestran traducidos en la app.

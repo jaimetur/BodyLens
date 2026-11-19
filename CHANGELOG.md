@@ -86,12 +86,14 @@
   - **Settings** is now called **Goals, plan and meals**; its **Data and backups** tab moves to Your account.
 - **Avatar menu:** shows the full name and includes Your account, Administration, Help and **Sign out**, in red.
 - **Administration command line** (`python -m app.accounts.cli`): create accounts with a temporary password, invitations, passwords, users, sources and move profiles.
+- **Sleep clock (enlarged):** shows only the chosen night, as a thick ring coloured by phase (deep, light, REM, awake) when the watch records phases, with the average of the 14 earlier nights as a grey bar inside, the target schedule for that day (weekday or weekend) dashed outside and a larger time asleep in the centre.
 #### 🐛 Bug fixes:
 - **Security:** the access log no longer stores the Apple Health upload address, OAuth codes or invitations.
 - **Withings:** the callback address accepts Withings' tests and notices (POST and HEAD).
 - **Browser:**
   - Pages and their styles are revalidated on every deployment, so no stale copies stay in the cache.
   - Your account and Administration can be shown inside the app.
+  - The enlarged cards fit the screen and their close button stays visible while scrolling, also with a larger text size on phones.
 
 #### 📚 Documentation:
 - **English is the official language of the project:** code, documentation and commit messages. Complete `README.md`; the README, the help and the changelog are written only in English and shown translated in the app.

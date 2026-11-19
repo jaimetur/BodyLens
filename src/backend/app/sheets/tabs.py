@@ -22,7 +22,7 @@ ENTRENOS = Tab("Entrenamientos", ("ID", "Fecha", "Inicio", "Fin", "Duración (mi
                                   "Distancia (m)", "FC media", "FC mínima", "FC máxima", "Intensidad"), key=0, sort=2)
 SUENO = Tab("Sueño", ("Fecha", "Acostarse", "Levantarse", "En cama (min)", "Dormido (min)", "Ligero (min)",
                       "Profundo (min)", "REM (min)", "Despierto (min)", "Despertares", "Eficiencia (%)", "FC media",
-                      "FC mínima", "Origen", "Desvelos"), key=0, sort=0)
+                      "FC mínima", "Origen", "Desvelos", "Fases"), key=0, sort=0)
 SIESTAS = Tab("Siestas", ("ID", "Fecha", "Inicio", "Fin", "Dormido (min)", "Profundo (min)", "REM (min)", "FC media",
                           "Origen"), key=0, sort=2)
 SPO2_VO2 = Tab("SpO2 y VO2", ("Fecha y hora", "Timestamp", "SpO2 (%)", "VO2 máx", "Grupo"), key=4, sort=1)

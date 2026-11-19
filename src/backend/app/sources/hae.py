@@ -413,6 +413,62 @@ def desvelos(dormidos: list, e: dict, k: str) -> str:
     return ";".join(out)
 
 
+FASE_CODE = {"core": "l", "deep": "d", "rem": "r", "awake": "w", "asleep": "s"}
+
+
+def hipnograma(tramos: list, ini: int, fin: int, k: str) -> str:
+    """Phases of the night, in order: «a~b~x;…» with minutes from midnight of the wake-up day and x = d (deep),
+    l (light/core), r (REM), w (awake) or s (asleep, no phase). Taken from the source that tells the phases apart
+    (the Apple Watch when AutoSleep rules the night); empty when no source does."""
+    por: dict = {}
+    for r in tramos:
+        a, b = max(r[0], ini), min(r[1], fin)
+        if b > a and r[2] in FASE_CODE:
+            por.setdefault(r[3], []).append((a, b, r[2]))
+    staged = lambda rs: sum(b - a for a, b, f in rs if f in ("core", "deep", "rem"))   # noqa: E731
+    src = max(por, key=lambda s: staged(por[s]), default=None)
+    if src is None or staged(por[src]) <= 0:
+        return ""
+    base = ms_at(k, "00:00")
+    out: list = []
+    for a, b, f in sorted(por[src]):
+        a0, b0, c = jr((a - base) / MIN), jr((b - base) / MIN), FASE_CODE[f]
+        if out and out[-1][2] == c and a0 - out[-1][1] <= 1:
+            out[-1][1] = max(out[-1][1], b0)
+        elif out and a0 < out[-1][1]:   # overlapping phases of the same app: the later one starts where the earlier ends
+            if b0 > out[-1][1]:
+                out.append([out[-1][1], b0, c])
+        elif b0 > a0:
+            out.append([a0, b0, c])
+    return ";".join(f"{a}~{b}~{c}" for a, b, c in out)
+
+
+def rellenar_fases(con, user_id: int) -> int:
+    """Fills the «Fases» column of the Apple Health nights that do not have it yet, with the stored phases."""
+    from bisect import bisect_left
+    rows = store.read_rows(con, user_id, SUENO)
+    falta = {k: r for k, r in rows.items() if len(r) > 2 and isinstance(r[1], datetime) and isinstance(r[2], datetime)
+             and V.js_str(r[13] if len(r) > 13 else "") == ORIGEN_SALUD and V.empty(r[15] if len(r) > 15 else None)}
+    if not falta:
+        return 0
+    todos = sorted((ms_of(r[0]), ms_of(r[1]), V.js_str(r[2]), V.js_str(r[3]))
+                   for r in store.sorted_rows(con, user_id, FASES) if isinstance(r[0], datetime) and isinstance(r[1], datetime))
+    if not todos:
+        return 0
+    starts = [t[0] for t in todos]
+    nuevas = {}
+    for key, r in falta.items():
+        ini, fin = ms_of(r[1]), ms_of(r[2])
+        i = bisect_left(starts, ini - 12 * 3600000)
+        cerca = [t for t in todos[i:bisect_left(starts, fin)] if t[1] > ini]
+        h = hipnograma(cerca, ini, fin, V.day_key(r[0]))
+        if h:
+            nuevas[key] = list(r[:15]) + [""] * (15 - len(r[:15])) + [h]
+    if nuevas:
+        store.save_rows(con, user_id, SUENO, nuevas)
+    return len(nuevas)
+
+
 def guardar_noches_salud(con, user_id: int, dias: list) -> dict:
     """guardarNochesSalud_: rehace las noches y siestas de los días indicados con los tramos guardados."""
     if not dias:
@@ -503,7 +559,8 @@ def guardar_noches_salud(con, user_id: int, dias: list) -> dict:
             noches[k] = [V.day_as_date(k), V.from_epoch(principal["ini"] / 1000), V.from_epoch(principal["fin"] / 1000),
                          jr(en_cama), jr(dormido), jr(max(0, dormido - f_deep - f_rem)), jr(f_deep), jr(f_rem),
                          jr(en_cama - dormido), f["desp"] + principal.get("cortes", 0), jr(dormido / en_cama * 100),
-                         fc["media"], fc["min"], ORIGEN_SALUD, desvelos(dormidos, principal, k)]
+                         fc["media"], fc["min"], ORIGEN_SALUD, desvelos(dormidos, principal, k),
+                         hipnograma(dentro, principal["ini"], principal["fin"], k)]
         for e in eps:
             if (k in noches and e is principal) or e["sueno"] < 10 * MIN:
                 continue

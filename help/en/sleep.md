@@ -30,6 +30,7 @@ Use it to see how you sleep: last night, your sleep balance, progress, schedule 
 - **Last night** (or the one chosen in the week strip, or in the period's bars or calendar): time asleep in large type, efficiency (percentage of time in bed that you sleep) and time in bed.
 - **View** switch: colours the nights by **Score** (default) or by **Hours**.
 - **Sleep clock**: arc with your bedtime and wake-up time, your usual schedule dashed and the sleepless spells. Tapping it enlarges it.
+  - **Enlarged**, it shows the chosen night as a ring coloured by phase (deep, light, REM and awake, when your watch records phases), the average of the 14 earlier nights as a grey bar inside (it can be hidden), your target schedule for that day (weekday or weekend) dashed outside and the time asleep in the centre. The bars above pick another night.
 - **Score** (0 to 100): sum of four parts.
   - 50 points for duration compared with your hours goal.
   - 20 for efficiency (0 if it is 70 % or less, full at 95 %).

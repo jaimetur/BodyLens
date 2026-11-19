@@ -62,6 +62,13 @@ async def lifespan(app: FastAPI):
             users.bootstrap_email(con, s.admin_username, s.admin_email)
         except UserError:
             log.warning("BODYLENS_ADMIN_EMAIL no es un correo válido.")
+    try:   # phases of the Apple Health nights saved before the «Fases» column existed
+        from app.sources import hae
+        with db.tx() as con:
+            for (uid,) in con.execute("SELECT id FROM users").fetchall():
+                hae.rellenar_fases(con, uid)
+    except Exception:   # noqa: BLE001 — never block the start-up
+        log.exception("Could not fill in the sleep phases")
     tasks = [asyncio.create_task(sync_service.scheduler_loop()), asyncio.create_task(backup.loop())] if s.scheduler_enabled else []
     if s.scheduler_enabled:
         from app.help import translate

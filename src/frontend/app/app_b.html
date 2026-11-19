@@ -121,13 +121,15 @@ function parseLife(wb){
         // un día sin pasos ni minutos de actividad es un día sin reloj ni móvil: no cuenta
         if(!v[0]&&!(v[3]||v[4]||v[5]))continue;out.act[serialToK(r[0])]=v}}
     else if(h[0]==='fecha'&&col(/^dormido/)>=0){out.hasSlp=true;const ib=col(/^acostarse/),iw=col(/^levantarse/);
-      const C=[/^en cama/,/^dormido/,/^ligero/,/^profundo/,/^rem/,/^despierto/,/^despertares/,/^eficiencia/,/^fc media/,/^fc m[ií]nima/].map(col),idv=col(/^desvelos/);
+      const C=[/^en cama/,/^dormido/,/^ligero/,/^profundo/,/^rem/,/^despierto/,/^despertares/,/^eficiencia/,/^fc media/,/^fc m[ií]nima/].map(col),idv=col(/^desvelos/),iph=col(/^fases$/);
       for(let i=1;i<rows.length;i++){const r=rows[i]||[];if(typeof r[0]!=='number')continue;const base=Math.floor(r[0]);
         // hora de acostarse y de levantarse en minutos desde la medianoche del día en que te levantas (23:30 = −30)
         const t=c=>c>=0&&typeof r[c]==='number'?Math.round((r[c]-base)*1440):null;const v=C.map(c=>c>=0?num(r[c]):null);
         if(!v[1])continue;const row=[t(ib),t(iw),...v];
         // ratos despierto dentro de la noche («108~319;400~412», minutos desde la medianoche del día en que te levantas)
-        const gs=idv>=0&&r[idv]!=null?String(r[idv]).trim():'';if(gs){row[12]=null;row[13]=gs}out.slp[serialToK(r[0])]=row}}
+        const gs=idv>=0&&r[idv]!=null?String(r[idv]).trim():'';if(gs){row[12]=null;row[13]=gs}
+        // phases of the night («-30~30~d;30~120~l», same minutes; d deep, l light, r REM, w awake, s asleep)
+        const ps=iph>=0&&r[iph]!=null?String(r[iph]).trim():'';if(ps){row[12]=null;row[13]=row[13]??null;row[14]=ps}out.slp[serialToK(r[0])]=row}}
     else if(h[0]==='id'&&col(/^dormido/)>=0&&col(/^inicio$/)>=0){out.hasNap=true;const ik=col(/^fecha$/),is=col(/^inicio$/),ie=col(/^fin$/),C=[/^dormido/,/^profundo/,/^rem/,/^fc media/].map(col);
       const mn=x=>typeof x==='number'?Math.round((x-Math.floor(x))*1440):null;
       for(let i=1;i<rows.length;i++){const r=rows[i]||[];if(typeof r[ik]!=='number')continue;const nid=(r[0]!=null&&r[0]!=='')?String(r[0]):'s'+serialToK(r[ik])+'-'+mn(r[is]);const a0=mn(r[is]);let a1=mn(r[ie]);if(a0!=null&&a1!=null&&a1<a0)a1+=1440;out.nap[nid]=[serialToK(r[ik]),a0,a1,...C.map(c=>c>=0?num(r[c]):null)]}}
@@ -182,7 +184,7 @@ function mergeYearly(stored,parsed,keyOf){const out={};
   for(const y of Object.keys(stored||{}))out[y]={y:+y,d:{...((stored[y]||{}).d||{})}};
   for(const [id,v] of Object.entries(parsed||{})){const y=keyOf(id,v).slice(0,4);(out[y]||(out[y]={y:+y,d:{}})).d[id]=v}
   return out}
-function lifeSeries(byYear,cols){const out=[];for(const y of Object.keys(byYear||{}).sort())for(const [k,v] of Object.entries((byYear[y]||{}).d||{})){const o={k};cols.forEach((c,i)=>o[c]=v[i]??null);if(v[cols.length]==='m')o.man=1;if(cols===SLP_COLS&&typeof v[13]==='string')o.gaps=v[13].split(';').map(x=>x.split('~').map(Number)).filter(g=>g.length===2&&isFinite(g[0])&&isFinite(g[1])&&g[1]>g[0]);out.push(o)}
+function lifeSeries(byYear,cols){const out=[];for(const y of Object.keys(byYear||{}).sort())for(const [k,v] of Object.entries((byYear[y]||{}).d||{})){const o={k};cols.forEach((c,i)=>o[c]=v[i]??null);if(v[cols.length]==='m')o.man=1;if(cols===SLP_COLS&&typeof v[13]==='string')o.gaps=v[13].split(';').map(x=>x.split('~').map(Number)).filter(g=>g.length===2&&isFinite(g[0])&&isFinite(g[1])&&g[1]>g[0]);if(cols===SLP_COLS&&typeof v[14]==='string')o.ph=v[14].split(';').map(x=>x.split('~')).map(([a,b,c])=>[+a,+b,c]).filter(g=>isFinite(g[0])&&isFinite(g[1])&&g[1]>g[0]&&'dlrws'.includes(g[2]));out.push(o)}
   return out.sort((a,b)=>a.k<b.k?-1:a.k>b.k?1:0)}
 function woSeries(byYear){let out=[];for(const y of Object.keys(byYear||{}))for(const [id,v] of Object.entries((byYear[y]||{}).d||{})){const o={id};WO_COLS.forEach((c,i)=>o[c]=v[i]??null);out.push(o)}
   // el mismo entreno de Withings y de Apple Salud («hk-…»): se queda el de Salud
