@@ -203,6 +203,20 @@ def change_lang(body: LangIn, response: Response, u: User = Depends(current_user
     return {"ok": True, "lang": lang}
 
 
+class FontIn(BaseModel):
+    size: str
+
+
+@router.post("/api/me/font")
+def change_font_size(body: FontIn, u: User = Depends(current_user)):
+    try:
+        with db.tx() as con:
+            size = users.set_font_size(con, u.id, body.size)
+    except UserError as e:
+        bad(e)
+    return {"ok": True, "size": size}
+
+
 # ---------- administración de cuentas ----------
 
 class InviteIn(BaseModel):

@@ -1,4 +1,4 @@
-# Producción (NAS). Copia este fichero y docker/.env.example (como .env) a la carpeta del stack.
+# Production (NAS). Copy this file and docker/.env.example (as .env) to the stack folder.
 services:
   bodylens:
     image: ${IMAGE_REPOSITORY:-jaimetur/bodylens}:${IMAGE_TAG:-latest}
@@ -8,6 +8,23 @@ services:
       - .env
     ports:
       - "${APP_PORT:-7280}:8000"
+    environment:
+      LIBRETRANSLATE_URL: http://libretranslate:5000
     volumes:
       - ${HOST_DATA_DIR:-./data}:/data
     restart: unless-stopped
+
+  # free automatic translation of the help (self-hosted; downloads its language models the first time)
+  libretranslate:
+    image: libretranslate/libretranslate:latest
+    container_name: ${CONTAINER_NAME:-bodylens}-libretranslate
+    environment:
+      LT_LOAD_ONLY: "en,es,ca,fr,it,de,pt,nl,zh,ja"
+      LT_UPDATE_MODELS: "true"
+    volumes:
+      - libretranslate-models:/home/libretranslate/.local
+    mem_limit: 3g
+    restart: unless-stopped
+
+volumes:
+  libretranslate-models:

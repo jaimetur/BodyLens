@@ -22,6 +22,15 @@ def i18n_tags(lang: str) -> str:
     return f'<script src="/i18n/{lang}.js?v={v}-{d}"></script><script src="/i18n.js?v={v}"></script>'
 
 
+def display_css(user) -> str:
+    """Text size of the account (CSS zoom of the whole page); phones get half the increase so nothing overflows."""
+    from app.accounts.users import FONT_SIZES
+    z = FONT_SIZES.get(getattr(user, "font_size", None) or "md", FONT_SIZES["md"])
+    if z == 1:
+        return ""
+    return f"<style>html{{zoom:{z}}}@media (max-width:700px){{html{{zoom:{round(1 + (z - 1) / 2, 3)}}}}}</style>"
+
+
 def _page(*parts: str, request: Request | None = None) -> HTMLResponse:
     """Página del servidor con sus estilos y scripts marcados con la versión (el navegador no usa copias viejas)
     y con el idioma de quien la ve."""
@@ -29,8 +38,12 @@ def _page(*parts: str, request: Request | None = None) -> HTMLResponse:
     v = version.current()["build"]
     html = config.settings.frontend_dir.joinpath(*parts).read_text(encoding="utf-8")
     html = html.replace('href="/pages.css"', f'href="/pages.css?v={v}"').replace('src="/pages.js"', f'src="/pages.js?v={v}"')
-    lang = i18n.request_lang(request, optional_user(request)) if request is not None else i18n.DEFAULT
-    html = html.replace("<meta charset=\"utf-8\">", "<meta charset=\"utf-8\">" + i18n_tags(lang), 1)
+    u = optional_user(request) if request is not None else None
+    lang = i18n.request_lang(request, u) if request is not None else i18n.DEFAULT
+    # inside the app (?embed=1) the app page already applies the text size to the frame
+    embed = request is not None and "embed" in request.query_params
+    css = "" if embed else display_css(u)
+    html = html.replace("<meta charset=\"utf-8\">", "<meta charset=\"utf-8\">" + i18n_tags(lang) + css, 1)
     return HTMLResponse(html, headers={"Cache-Control": "no-cache"})
 
 
@@ -62,7 +75,7 @@ def index(request: Request):
         return RedirectResponse("/login", status_code=303)
     if u.must_change:
         return RedirectResponse("/cuenta?cambiar=1", status_code=303)
-    return HTMLResponse(page.page(u.public(), i18n_tags(u.lang)), headers={"Cache-Control": "no-store"})
+    return HTMLResponse(page.page(u.public(), i18n_tags(u.lang) + display_css(u)), headers={"Cache-Control": "no-store"})
 
 
 def android_apk_path():

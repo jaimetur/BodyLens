@@ -33,6 +33,7 @@
           <label>Nombre y apellidos<input id="name" maxlength="80" autocomplete="name"></label>
           <label>Correo (te llegan aquí los avisos)<input id="email" type="email" autocomplete="email"></label>
           <label>Idioma<select id="lang"></select></label>
+          <label>Tamaño del texto<select id="fsize"><option value="sm">Pequeño</option><option value="md">Normal</option><option value="lg">Grande</option><option value="xl">Muy grande</option></select></label>
         </div>
         <div class="row"><button id="profGo" type="button">Guardar cambios</button><span class="msg" id="profMsg"></span></div>
       </section>
@@ -107,6 +108,7 @@ async function load() {
   else if (new URLSearchParams(location.search).has('cambiar')) history.replaceState(null, '', '/cuenta');
   $('kUser').textContent = ME.user.username + (ME.user.isAdmin ? ' · administración' : '');
   $('kName').textContent = ME.user.name; $('name').value = ME.user.name; $('email').value = ME.user.email || '';
+  $('fsize').value = ME.user.fontSize || 'md';
   $('avatar').textContent = ME.user.name.split(/\s+/).slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
   const p = ME.partner;
   $('pLinked').hidden = !p; $('pFree').hidden = !!p;
@@ -170,6 +172,9 @@ $('out').addEventListener('click', async () => {
   // los datos guardados en este navegador también se van
   try { for (const k of Object.keys(localStorage)) if (k.startsWith('bascula:') || k === 'bodylens:user') localStorage.removeItem(k); sessionStorage.clear(); } catch (e) { }
   TOP.location.href = '/login';
+});
+$('fsize').addEventListener('change', async () => {
+  try { await api('POST', '/api/me/font', { size: $('fsize').value }); TOP.location.reload(); } catch (e) { say($('profMsg'), e.message, 'err'); }
 });
 langPicker($('lang'), async l => {
   try { await api('POST', '/api/me/lang', { lang: l }); TOP.location.reload(); } catch (e) { say($('profMsg'), e.message, 'err'); }

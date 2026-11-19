@@ -1,11 +1,13 @@
 """Automatic translation of the English documents (help, README, changelog) into the reader's language.
 
-English is the only source. A translation is made with the Claude API the first time a document is asked for in a
-language, and kept in <DATA_DIR>/translations/<lang>/<doc>-<hash>.md, where the hash is the one of the English
-text: when the English changes, a new translation is made. Until it is ready, and when no API key is configured,
-the English document is shown.
+English is the only source. A translation is made the first time a document is asked for in a language and kept in
+<DATA_DIR>/translations/<lang>/<doc>-<hash>.html, where the hash is the one of the English text: when the English
+changes, a new translation is made. Until it is ready, and when no translator is available, the English is shown.
 
-The API key comes from ANTHROPIC_API_KEY or from Administration (stored encrypted in the server database).
+Translators, in order:
+  1. LibreTranslate (free, self-hosted next to BodyLens): LIBRETRANSLATE_URL, e.g. http://libretranslate:5000.
+  2. The Claude API (paid, better quality), only if an Anthropic API key is set (ANTHROPIC_API_KEY or
+     Administration, stored encrypted).
 """
 from __future__ import annotations
 
@@ -39,8 +41,50 @@ def api_key() -> str:
     return crypto.decrypt(s.get("key")) or "" if s.get("key") else ""
 
 
+LIBRE_TTL = 60.0
+_libre: dict = {"at": 0.0, "codes": None}
+
+
+def libre_url() -> str:
+    return os.environ.get("LIBRETRANSLATE_URL", "").strip().rstrip("/")
+
+
+def libre_codes() -> set[str] | None:
+    """Languages LibreTranslate can translate into (None when it is not reachable); checked at most once a minute."""
+    import time
+    if not libre_url():
+        return None
+    if time.time() - _libre["at"] < LIBRE_TTL:
+        return _libre["codes"]
+    import httpx
+    try:
+        r = httpx.get(libre_url() + "/languages", timeout=4)
+        r.raise_for_status()
+        codes = {x["code"] for x in r.json()}
+    except Exception:  # noqa: BLE001 — not reachable yet (e.g. still downloading its models)
+        codes = None
+    _libre.update(at=time.time(), codes=codes)
+    return codes
+
+
+def libre_code(lang: str) -> str | None:
+    codes = libre_codes() or set()
+    if lang in codes:
+        return lang
+    return next((c for c in sorted(codes) if c.startswith(lang + "-") or (lang == "zh" and c in ("zh-Hans", "zh"))), None)
+
+
+def provider(lang: str | None = None) -> str | None:
+    """'libre', 'claude' or None (no translator for ``lang``)."""
+    if libre_codes() is not None and (lang is None or libre_code(lang)):
+        return "libre"
+    if api_key():
+        return "claude"
+    return None
+
+
 def configured() -> bool:
-    return bool(api_key())
+    return provider() is not None
 
 
 def save_key(con, key: str | None) -> None:
@@ -52,7 +96,10 @@ def save_key(con, key: str | None) -> None:
 
 def status() -> dict:
     s = db.get_setting(SETTING) or {}
-    return {"configured": configured(), "fromEnv": bool(os.environ.get("ANTHROPIC_API_KEY", "").strip()),
+    codes = libre_codes()
+    return {"configured": configured(), "provider": provider(), "libreUrl": libre_url(), "libreOk": codes is not None,
+            "libreLanguages": sorted(codes or []), "claudeKey": bool(api_key()),
+            "fromEnv": bool(os.environ.get("ANTHROPIC_API_KEY", "").strip()),
             "model": MODEL, "lastError": s.get("lastError"), "lastOk": s.get("lastOk")}
 
 
@@ -70,7 +117,7 @@ def _hash(text: str) -> str:
 
 
 def cache_path(lang: str, doc: str, source: str) -> Path:
-    return config.settings.data_dir / "translations" / lang / f"{doc}-{_hash(source)}.md"
+    return config.settings.data_dir / "translations" / lang / f"{doc}-{_hash(source)}.html"
 
 
 def cached(lang: str, doc: str, source: str) -> str | None:
@@ -79,6 +126,33 @@ def cached(lang: str, doc: str, source: str) -> str | None:
         return p.read_text(encoding="utf-8")
     except OSError:
         return None
+
+
+# translations kept in the repository (help/i18n/<lang>/<doc>.md), made carefully for the most used languages; the
+# first line records the English they were made from: <!-- en: <hash> -->. A stale one (the English changed since)
+# is not used, and the automatic translator takes over until it is updated (tools/help_i18n.py lists them).
+BUNDLE_HEAD = re.compile(r"^<!--\s*en:\s*([0-9a-f]{16})\s*-->[ \t]*\n?")
+
+
+def bundle_path(lang: str, doc: str) -> Path:
+    return config.settings.docs_dir / "help" / "i18n" / lang / f"{doc}.md"
+
+
+def source_hash(source: str) -> str:
+    return _hash(source)
+
+
+def bundled(lang: str, doc: str, source: str) -> str | None:
+    """The HTML of the bundled translation of ``doc``, if there is one made from the current English."""
+    try:
+        text = bundle_path(lang, doc).read_text(encoding="utf-8")
+    except OSError:
+        return None
+    m = BUNDLE_HEAD.match(text)
+    if not m or m.group(1) != _hash(source):
+        return None
+    from app.help import docs
+    return docs.render(text[m.end():])
 
 
 def pending(lang: str, doc: str) -> bool:
@@ -155,14 +229,54 @@ def _translate_chunk(client, lang: str, text: str) -> str:
     return "".join(b.text for b in msg.content if b.type == "text").strip("\n")
 
 
-def translate(lang: str, doc: str, source: str) -> str:
-    """Translate ``source`` (English Markdown) into ``lang`` and keep it in the cache."""
+def _translate_claude(lang: str, source: str) -> str:
     import anthropic
+    from app.help import docs
     client = anthropic.Anthropic(api_key=api_key(), max_retries=3)
-    out = "\n\n".join(_translate_chunk(client, lang, c) for c in chunks(source)) + "\n"
+    md = "\n\n".join(_translate_chunk(client, lang, c) for c in chunks(source)) + "\n"
+    return docs.render(md)
+
+
+PROTECT = re.compile(r"<pre>.*?</pre>|<code>.*?</code>", re.S)
+
+
+def _translate_libre(lang: str, source: str) -> str:
+    """Translate the rendered HTML; code blocks and inline code are replaced by empty markers and put back after."""
+    import httpx
+    from app.help import docs
+    code = libre_code(lang)
+    if not code:
+        raise RuntimeError(f"LibreTranslate cannot translate into {lang}")
+    html = docs.render(source)
+    kept: list[str] = []
+    html = PROTECT.sub(lambda m: kept.append(m.group(0)) or f'<var data-k="{len(kept) - 1}"></var>', html)
+    # one request per section, so a long document does not hit time limits
+    parts = re.split(r"(?=<h[12]>)", html)
+    out = []
+    with httpx.Client(timeout=300) as c:
+        for part in parts:
+            if not re.search(r"[A-Za-z]", re.sub(r"<[^>]+>", "", part)):
+                out.append(part)
+                continue
+            r = c.post(libre_url() + "/translate", json={"q": part, "source": "en", "target": code, "format": "html"})
+            r.raise_for_status()
+            out.append(r.json()["translatedText"])
+    res = "".join(out)
+    return re.sub(r'<var data-k="(\d+)">\s*</var>', lambda m: kept[int(m.group(1))], res)
+
+
+def translate(lang: str, doc: str, source: str) -> str:
+    """Translate ``source`` (English Markdown) into ``lang`` and keep the HTML in the cache."""
+    prov = provider(lang)
+    if prov == "libre":
+        out = _translate_libre(lang, source)
+    elif prov == "claude":
+        out = _translate_claude(lang, source)
+    else:
+        raise RuntimeError("no translator available")
     p = cache_path(lang, doc, source)
     p.parent.mkdir(parents=True, exist_ok=True)
-    for old in p.parent.glob(f"{doc}-*.md"):   # translations of older English versions
+    for old in p.parent.glob(f"{doc}-*.*"):   # translations of older English versions
         old.unlink(missing_ok=True)
     tmp = p.with_suffix(".tmp")
     tmp.write_text(out, encoding="utf-8")
@@ -172,7 +286,7 @@ def translate(lang: str, doc: str, source: str) -> str:
 
 def request(lang: str, doc: str, source: str) -> bool:
     """Start translating in the background (once). False when there is no translator configured."""
-    if lang == "en" or not configured():
+    if lang == "en" or not provider(lang):
         return False
     with _lock:
         if (lang, doc) in _busy:
@@ -203,6 +317,7 @@ def prewarm(langs: list[str]) -> int:
     for lang in sorted(set(langs) - {"en"}):
         for doc in docs.all_docs():
             src = docs.source(doc)
-            if src is not None and cached(lang, doc, src) is None and request(lang, doc, src):
+            if src is not None and bundled(lang, doc, src) is None and cached(lang, doc, src) is None \
+                    and request(lang, doc, src):
                 n += 1
     return n

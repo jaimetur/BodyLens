@@ -60,6 +60,7 @@ def _wait(translate, seconds=10.0):
 
 def test_automatic_translation_and_cache(client, make_user, login, docs_dir, monkeypatch):
     from app.help import translate
+    monkeypatch.delenv("LIBRETRANSLATE_URL", raising=False)
     monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-test")
     calls = []
 
@@ -81,7 +82,7 @@ def test_automatic_translation_and_cache(client, make_user, login, docs_dir, mon
     assert c.get("/api/help/weight?lang=fr").json()["pending"] is True  # English changed: translated again
     _wait(translate)
     assert c.get("/api/help/weight?lang=fr").json()["html"].count("Changed") == 1
-    assert len(list((translate.config.settings.data_dir / "translations" / "fr").glob("weight-*.md"))) == 1
+    assert len(list((translate.config.settings.data_dir / "translations" / "fr").glob("weight-*.html"))) == 1
 
 
 def test_chunks_split_long_documents():
@@ -112,3 +113,52 @@ def test_help_page(client, make_user, login):
     c = login("ana")
     assert "/i18n.js" in c.get("/help").text
     assert client.get("/help", follow_redirects=False).headers["location"] == "/login?next=/help"
+
+
+def test_libretranslate(client, make_user, login, docs_dir, monkeypatch):
+    """LibreTranslate (free, self-hosted) translates the rendered HTML; code is never sent to it."""
+    import httpx
+    import respx
+    from app.help import translate
+    monkeypatch.setenv("LIBRETRANSLATE_URL", "http://lt.test")
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    translate._libre.update(at=0.0, codes=None)
+    (docs_dir / "help" / "en" / "weight.md").write_text("# Weight\n\nUse `tools/x.sh` here.\n\n```\nWeight raw\n```\n")
+    sent = []
+
+    def fake(request):
+        import json
+        q = json.loads(request.content)["q"]
+        sent.append(q)
+        return httpx.Response(200, json={"translatedText": q.replace("Weight", "Poids").replace("Use", "Utilise")})
+    with respx.mock:
+        respx.get("http://lt.test/languages").mock(return_value=httpx.Response(200, json=[{"code": "en"}, {"code": "fr"}]))
+        respx.post("http://lt.test/translate").mock(side_effect=fake)
+        make_user("ana")
+        c = login("ana")
+        assert c.get("/api/help/weight?lang=fr").json()["pending"] is True
+        _wait(translate)
+        r = c.get("/api/help/weight?lang=fr").json()
+    assert r["shown"] == "fr" and r["title"] == "Poids"
+    assert "<code>tools/x.sh</code>" in r["html"] and "Weight raw" in r["html"]      # code kept as it was
+    assert all("tools/x.sh" not in q and "Weight raw" not in q for q in sent)
+    translate._libre.update(at=0.0, codes=None)
+
+
+def test_bundled_translation(client, make_user, login, docs_dir, monkeypatch):
+    """A translation kept in the repository is used while it matches the current English; then the translator."""
+    from app.help import docs, translate
+    monkeypatch.delenv("LIBRETRANSLATE_URL", raising=False)
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    d = docs_dir / "help" / "i18n" / "es"
+    d.mkdir(parents=True)
+    h = translate.source_hash(docs.source("weight"))
+    (d / "weight.md").write_text(f"<!-- en: {h} -->\n# Peso\n\nTu peso de **tendencia**.\n")
+    make_user("ana")
+    c = login("ana")
+    r = c.get("/api/help/weight?lang=es").json()
+    assert r["shown"] == "es" and r["title"] == "Peso" and "<!--" not in r["html"]
+    assert {m["id"]: m["title"] for m in c.get("/api/help?lang=es").json()["modules"]}["weight"] == "Peso"
+    (docs_dir / "help" / "en" / "weight.md").write_text("# Weight\n\nChanged.\n")
+    r = c.get("/api/help/weight?lang=es").json()
+    assert r["shown"] == "en" and "Changed" in r["html"]               # stale: not used any more

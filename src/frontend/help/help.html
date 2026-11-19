@@ -5,35 +5,45 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Instrument+Sans:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="/pages.css">
 <style>
-.hlp{display:grid;grid-template-columns:minmax(200px,260px) minmax(0,1fr);gap:16px;align-items:start}
-.hnav{position:sticky;top:12px;padding:12px!important}
-.hnav h3{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:12px 8px 6px}
+.hlp{display:grid;grid-template-columns:minmax(220px,280px) minmax(0,1fr);gap:18px;align-items:start}
+.hnav{position:sticky;top:12px;padding:14px!important}
+.hnav h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:14px 10px 6px;color:var(--accent2)}
 .hnav h3:first-child{margin-top:4px}
-.hnav a{display:block;padding:7px 10px;border-radius:10px;color:var(--ink);text-decoration:none;font-weight:500;font-size:14px}
+.hnav a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;color:var(--ink);text-decoration:none;font-weight:600;font-size:15.5px}
+.hnav a i{font-style:normal;width:30px;height:30px;flex:none;display:grid;place-items:center;border-radius:9px;font-size:16px;background:var(--hc,var(--raised))}
 .hnav a:hover{background:var(--raised)}
-.hnav a.on{background:var(--ink);color:var(--surface)}
-.hpick{display:none;width:100%;margin-bottom:12px}
-.hdoc{min-width:0}
-.hnote{font-size:13px;border-radius:12px;padding:9px 12px;margin:0 0 14px;background:var(--raised);border:1px solid var(--line);color:var(--muted)}
-.md{line-height:1.6;font-size:15px;overflow-wrap:anywhere}
-.md h1{font-family:"Big Shoulders Display","Instrument Sans",sans-serif;font-weight:800;font-size:30px;text-transform:uppercase;letter-spacing:.02em;margin:0 0 14px}
-.md h2{font-size:20px;margin:26px 0 8px;padding-top:12px;border-top:1px solid var(--line)}
-.md h3{font-size:16px;margin:20px 0 6px}
-.md h4{font-size:14px;margin:16px 0 6px;color:var(--muted)}
-.md p{margin:0 0 10px}
-.md ul,.md ol{margin:0 0 12px;padding-left:22px}
-.md li{margin:3px 0}
-.md code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.88em;background:var(--raised);border:1px solid var(--line);border-radius:6px;padding:1px 5px}
-.md pre{background:var(--raised);border:1px solid var(--line);border-radius:12px;padding:12px 14px;overflow:auto;font-size:13px;line-height:1.45}
+.hnav a.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 6px 18px rgba(59,123,242,.28)}
+.hnav a.on i{background:rgba(255,255,255,.22)}
+.hpick{display:none;width:100%;margin-bottom:12px;font-size:16px}
+.hdoc{min-width:0;padding:26px 30px 30px!important}
+.hnote{font-size:14px;border-radius:12px;padding:10px 14px;margin:0 0 18px;background:color-mix(in srgb,var(--accent) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));color:var(--ink)}
+.md{line-height:1.7;font-size:17px;overflow-wrap:anywhere}
+.md h1{font-family:"Big Shoulders Display","Instrument Sans",sans-serif;font-weight:800;font-size:38px;text-transform:uppercase;letter-spacing:.02em;margin:0 0 18px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.md h2{font-size:23px;margin:34px 0 12px;padding:4px 0 4px 14px;border-left:5px solid var(--accent);border-radius:2px}
+.md h2:nth-of-type(3n+2){border-left-color:var(--accent2)}
+.md h2:nth-of-type(3n){border-left-color:var(--ok)}
+.md h3{font-size:19px;margin:24px 0 8px;color:var(--accent2)}
+.md h4{font-size:16px;margin:20px 0 8px;color:var(--accent)}
+.md p{margin:0 0 12px}
+.md ul,.md ol{margin:0 0 14px;padding-left:24px}
+.md li{margin:5px 0}
+.md li::marker{color:var(--accent)}
+.md strong{color:var(--ink);font-weight:700}
+.md li>strong:first-child{color:var(--accent2)}
+.md code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.86em;background:color-mix(in srgb,var(--accent2) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--accent2) 22%,var(--line));border-radius:6px;padding:1px 6px}
+.md pre{background:var(--raised);border:1px solid var(--line);border-left:4px solid var(--accent2);border-radius:12px;padding:14px 16px;overflow:auto;font-size:14px;line-height:1.5}
 .md pre code{background:none;border:0;padding:0}
-.md .tbl{overflow-x:auto;margin:0 0 14px}
-.md table{border-collapse:collapse;font-size:14px;min-width:60%}
-.md th,.md td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
-.md th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
-.md blockquote{margin:0 0 12px;padding:4px 14px;border-left:3px solid var(--accent);color:var(--muted)}
-.md hr{border:0;border-top:1px solid var(--line);margin:22px 0}
-.md a{color:var(--accent)}
-@media (max-width:760px){.hlp{grid-template-columns:1fr}.hnav{display:none}.hpick{display:block}}
+.md .tbl{overflow-x:auto;margin:0 0 16px;border:1px solid var(--line);border-radius:12px}
+.md table{border-collapse:collapse;font-size:15.5px;width:100%}
+.md th,.md td{border-bottom:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+.md tr:last-child td{border-bottom:0}
+.md th{background:color-mix(in srgb,var(--accent) 12%,var(--surface));color:var(--ink);font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+.md tbody tr:nth-child(even){background:color-mix(in srgb,var(--accent) 4%,transparent)}
+.md blockquote{margin:0 0 14px;padding:8px 16px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--surface));border-radius:0 10px 10px 0}
+.md hr{border:0;border-top:2px dashed var(--line);margin:26px 0}
+.md a{color:var(--accent);font-weight:600}
+@media (max-width:760px){.hlp{grid-template-columns:1fr}.hnav{display:none}.hpick{display:block}.hdoc{padding:18px 16px!important}.md{font-size:16px}.md h1{font-size:30px}}
 </style></head>
 <body><main class="acct">
   <div class="top"><a class="brand" href="/"><img src="/icon.svg" alt=""><b>BodyLens · Help</b></a><a class="btn ghost" href="/">Back to the app</a></div>
@@ -42,7 +52,7 @@
     <nav class="card hnav" id="nav" aria-label="Help"></nav>
     <section class="card hdoc">
       <p class="hnote" id="note" hidden></p>
-      <article class="md" id="doc"><p class="small">…</p></article>
+      <article class="md" id="doc" data-noi18n><p class="small">…</p></article>
     </section>
   </div>
 </main>
@@ -50,9 +60,16 @@
 <script>
 let IDX = null, CUR = null, POLL = null;
 const docOf = () => decodeURIComponent((location.hash || '#home').slice(1)) || 'home';
+// an emoji and a colour per document, so the index is easy to scan
+const ICONS = { home: ['🏠', 'rgba(59,123,242,.16)'], summary: ['📊', 'rgba(59,123,242,.16)'], weight: ['⚖️', 'rgba(124,92,240,.16)'], body: ['🧍', 'rgba(20,160,140,.16)'],
+  activity: ['🏃', 'rgba(31,157,107,.16)'], sleep: ['🌙', 'rgba(91,91,240,.16)'], meals: ['🍽️', 'rgba(240,140,40,.18)'], intimate: ['💗', 'rgba(230,70,130,.16)'],
+  history: ['📈', 'rgba(120,130,145,.16)'], settings: ['⚙️', 'rgba(120,130,145,.16)'], accounts: ['👤', 'rgba(59,123,242,.16)'], couples: ['👥', 'rgba(230,70,130,.16)'],
+  import: ['📥', 'rgba(30,150,200,.16)'], sync: ['🔄', 'rgba(31,157,107,.16)'], administration: ['🛡️', 'rgba(214,69,69,.16)'], readme: ['📘', 'rgba(59,123,242,.16)'],
+  changelog: ['🆕', 'rgba(240,190,30,.2)'] };
 function navHtml() {
-  const item = (id, t) => `<a href="#${id}" data-id="${id}">${esc(t)}</a>`;
-  return `<h3>Help</h3>${item('home', 'Home')}${IDX.modules.map(m => item(m.id, m.title)).join('')}
+  const item = (id, t, own) => { const [e, c] = ICONS[id] || ['📄', 'var(--raised)'];
+    return `<a href="#${id}" data-id="${id}" style="--hc:${c}"><i aria-hidden="true">${e}</i><span${own ? ' data-noi18n' : ''}>${esc(t)}</span></a>`; };
+  return `<h3>Help</h3>${item('home', 'Home')}${IDX.modules.map(m => item(m.id, m.title, true)).join('')}
     <h3>BodyLens</h3>${item('readme', 'About BodyLens')}${item('changelog', "What's new")}`;
 }
 function mark() {
@@ -87,7 +104,7 @@ $('pick').addEventListener('change', () => { location.hash = $('pick').value; })
   try {
     IDX = await api('GET', '/api/help');
     $('nav').innerHTML = navHtml();
-    $('pick').innerHTML = [...$('nav').querySelectorAll('a')].map(a => `<option value="${a.dataset.id}">${esc(a.textContent)}</option>`).join('');
+    $('pick').innerHTML = [...$('nav').querySelectorAll('a')].map(a => `<option value="${a.dataset.id}">${esc(a.querySelector('i').textContent + '  ' + a.querySelector('span').textContent)}</option>`).join('');
   } catch (e) { $('nav').innerHTML = `<p class="msg err">${esc(e.message)}</p>`; }
   load(docOf());
 })();

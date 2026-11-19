@@ -16,17 +16,23 @@ def _lang(request: Request, u: User) -> str:
     return i18n.clean(request.query_params.get("lang")) or i18n.request_lang(request, u)
 
 
-def _text(lang: str, doc: str) -> tuple[str, str, bool]:
-    """(markdown, language actually shown, translation pending)."""
+def _doc(lang: str, doc: str) -> tuple[str, str, bool]:
+    """(html, language actually shown, translation pending)."""
     src = docs.source(doc)
     if src is None:
         raise HTTPException(404, "That help document does not exist.")
-    if lang == "en":
-        return src, "en", False
-    done = translate.cached(lang, doc, src)
-    if done is not None:
-        return done, lang, False
-    return src, "en", translate.request(lang, doc, src)
+    if lang != "en":
+        done = translate.bundled(lang, doc, src) or translate.cached(lang, doc, src)
+        if done is not None:
+            return done, lang, False
+        return docs.render(src), "en", translate.request(lang, doc, src)
+    return docs.render(src), "en", False
+
+
+def _title(html: str, doc: str) -> str:
+    import re
+    m = re.search(r"<h1>(.*?)</h1>", html, re.S)
+    return re.sub(r"<[^>]+>", "", m.group(1)).strip() if m else doc
 
 
 @router.get("/api/help")
@@ -34,17 +40,17 @@ def help_index(request: Request, u: User = Depends(current_user)):
     lang = _lang(request, u)
     mods = []
     for n in docs.module_names():
-        md, _, _ = _text(lang, n)
-        mods.append({"id": n, "title": docs.title_of(md) or n})
+        html, _, _ = _doc(lang, n)
+        mods.append({"id": n, "title": _title(html, n)})
     return {"lang": lang, "modules": mods, "translator": translate.configured()}
 
 
 @router.get("/api/help/{doc}")
 def help_doc(doc: str, request: Request, u: User = Depends(current_user)):
     lang = _lang(request, u)
-    md, shown, pending = _text(lang, doc)
+    html, shown, pending = _doc(lang, doc)
     return {"doc": doc, "lang": lang, "shown": shown, "pending": pending, "translator": translate.configured(),
-            "title": docs.title_of(md) or doc, "html": docs.render(md)}
+            "title": _title(html, doc), "html": html}
 
 
 # ---------- Administration: the translator ----------
@@ -75,7 +81,7 @@ def put_translator(body: TranslatorIn, u: User = Depends(admin_user)):
 def prewarm(u: User = Depends(admin_user)):
     """Translate now every document into the languages the accounts use."""
     if not translate.configured():
-        bad("Set the API key first.")
+        bad("No translator is available: LibreTranslate is not reachable and there is no API key.")
     with db.ro() as con:
         langs = [r[0] for r in con.execute("SELECT DISTINCT lang FROM users WHERE active=1")]
     return {"started": translate.prewarm(langs)}

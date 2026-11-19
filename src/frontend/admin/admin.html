@@ -104,7 +104,9 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
 
   <section class="card" data-panel="translator" hidden>
     <h2>Translator</h2>
-    <p>The help, the README and the changelog are written in English and translated automatically into the language of each account with the Claude API (Anthropic). Each translation is made once and kept; it is made again only when the English text changes. Without a key, the help is shown in English.</p>
+    <p>The help, the README and the changelog are written in English and translated automatically into the language of each account. Each translation is made once and kept; it is made again only when the English text changes.</p>
+    <p><b>LibreTranslate</b> (free, runs on this server): <span id="tLibre">…</span></p>
+    <p class="small">Optional, better quality but paid per use: an Anthropic API key for the Claude API. It is used only when LibreTranslate is not available.</p>
     <div class="edit">
       <label>Anthropic API key<input id="tKey" type="password" autocomplete="new-password" spellcheck="false" placeholder="sk-ant-…"></label>
     </div>
@@ -221,7 +223,8 @@ async function loadTranslator() {
     $('tKey').value = '';
     $('tKey').placeholder = t.configured ? (t.fromEnv ? '(set in the server environment)' : '(saved; type another to change it)') : 'sk-ant-…';
     $('tDel').hidden = !t.configured || t.fromEnv; $('tNow').disabled = !t.configured;
-    $('tState').textContent = (t.configured ? `Configured · model ${t.model}` : 'Not configured') +
+    $('tLibre').textContent = t.libreOk ? `working (${t.libreLanguages.length} languages)` : (t.libreUrl ? 'not reachable yet (it downloads its language models the first time)' : 'not installed');
+    $('tState').textContent = (t.provider === 'libre' ? 'Translating with LibreTranslate' : t.provider === 'claude' ? `Translating with the Claude API (${t.model})` : 'No translator available: the help is shown in English') +
       (t.lastOk ? ` · last translation ${when(t.lastOk)}` : '') +
       (t.lastError ? ` · last error ${when(t.lastError.at)} (${t.lastError.doc}, ${t.lastError.lang}): ${t.lastError.error}` : '');
   } catch (e) { say($('tMsg'), e.message, 'err'); }
@@ -230,7 +233,7 @@ $('tSave').addEventListener('click', async () => {
   try { await api('PUT', '/api/admin/translator', { apiKey: $('tKey').value }); say($('tMsg'), 'Saved.', 'ok'); await loadTranslator(); } catch (e) { say($('tMsg'), e.message, 'err'); }
 });
 $('tDel').addEventListener('click', async () => {
-  if (!confirm('Remove the API key? The help will be shown in English until another key is set.')) return;
+  if (!confirm('Remove the API key?')) return;
   try { await api('PUT', '/api/admin/translator', { remove: true }); say($('tMsg'), 'Removed.', 'ok'); await loadTranslator(); } catch (e) { say($('tMsg'), e.message, 'err'); }
 });
 $('tNow').addEventListener('click', async () => {

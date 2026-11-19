@@ -44,16 +44,19 @@ class User:
     requested_at: str | None = None
     request_note: str | None = None
     lang: str = "en"
+    font_size: str = "md"
 
     @classmethod
     def from_row(cls, r: sqlite3.Row) -> "User":
         return cls(r["id"], r["username"], r["name"], bool(r["is_admin"]), r["partner_id"], r["partner_since"],
                    r["sheet_id"], r["apps_script_url"], bool(r["must_change"]), r["email"], bool(r["active"]),
-                   r["requested_at"], r["request_note"], r["lang"] if "lang" in r.keys() else "en")
+                   r["requested_at"], r["request_note"], r["lang"] if "lang" in r.keys() else "en",
+                   r["font_size"] if "font_size" in r.keys() else "md")
 
     def public(self) -> dict:
         return {"id": self.id, "username": self.username, "name": self.name, "isAdmin": self.is_admin,
-                "mustChange": self.must_change, "email": self.email or "", "lang": self.lang}
+                "mustChange": self.must_change, "email": self.email or "", "lang": self.lang,
+                "fontSize": self.font_size}
 
 
 def _utcnow() -> datetime:
@@ -136,6 +139,17 @@ def set_lang(con: sqlite3.Connection, user_id: int, lang: str | None) -> str:
         raise UserError("Ese idioma no está disponible.")
     con.execute("UPDATE users SET lang=? WHERE id=?", (lang, user_id))
     return lang
+
+
+# text size of the interface: CSS zoom of the page (phones get half the increase, see app.web.routes.display_css)
+FONT_SIZES = {"sm": 1.0, "md": 1.1, "lg": 1.22, "xl": 1.36}
+
+
+def set_font_size(con: sqlite3.Connection, user_id: int, size: str | None) -> str:
+    if size not in FONT_SIZES:
+        raise UserError("Ese tamaño de texto no está disponible.")
+    con.execute("UPDATE users SET font_size=? WHERE id=?", (size, user_id))
+    return size
 
 
 def set_email(con: sqlite3.Connection, user_id: int, email: str | None) -> None:
