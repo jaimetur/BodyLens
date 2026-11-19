@@ -1,0 +1,375 @@
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script id="core">
+/* ---------- fechas y formato ---------- */
+const DAY=864e5,ALPHA=0.2;
+const pad=n=>String(n).padStart(2,'0');
+const d2k=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const k2d=k=>{const[a,b,c]=k.split('-').map(Number);return new Date(a,b-1,c,12)};
+const addK=(k,n)=>{const d=k2d(k);d.setDate(d.getDate()+n);return d2k(d)};
+const diffK=(a,b)=>Math.round((k2d(b)-k2d(a))/DAY);
+const serialToK=s=>{const d=new Date(Math.round((s-25569)*DAY));return `${d.getUTCFullYear()}-${pad(d.getUTCMonth()+1)}-${pad(d.getUTCDate())}`};
+const r1=x=>Math.round(x*10)/10;
+const MS=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const MSL=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const DS=['L','M','X','J','V','S','D'];
+const DSL=['lunes','martes','miércoles','jueves','viernes','sábados','domingos'];
+const DSN=['lunes','martes','miércoles','jueves','viernes','sábado','domingo'];
+const fmtK=(k,y)=>{const d=k2d(k);return `${d.getDate()} ${MS[d.getMonth()]}`+(y?` ${d.getFullYear()}`:'')};
+const fmtMY=k=>{const d=k2d(k);return `${MS[d.getMonth()]} ${d.getFullYear()}`};
+const fmtMYs=k=>{const d=k2d(k);return `${MS[d.getMonth()]} '${String(d.getFullYear()).slice(2)}`};
+// nombre de un intento por su rango: «dic 2021 – abr 2022» (el actual acaba «hoy»)
+const attName=a=>`${fmtMY(a.startK)} – ${a.current?'hoy':fmtMY(a.lowK||a.endK)}`;
+// etiqueta corta al final de cada línea: los años del intento («'21–'22»); el rango completo va en la leyenda y en la tabla
+const yy=k=>"'"+k.slice(2,4);
+const attShort=a=>{if(a.current)return 'ahora';const e=a.lowK||a.endK;return a.startK.slice(0,4)===e.slice(0,4)?yy(a.startK):`${yy(a.startK)}–${yy(e)}`};
+const fmtN=(x,dec=1)=>x==null||isNaN(x)?'—':Number(x).toLocaleString('es-ES',{minimumFractionDigits:dec,maximumFractionDigits:dec});
+const sgn=(x,dec=1)=>{if(x==null||isNaN(x))return'—';const r=Math.round(Math.abs(x)*10**dec)/10**dec;return (r===0?'±':x>0?'+':'−')+fmtN(r,dec)};
+const dowIdx=k=>(k2d(k).getDay()+6)%7; // 0 = lunes
+const monday=k=>addK(k,-dowIdx(k));
+const median=a=>{if(!a.length)return null;const s=[...a].sort((x,y)=>x-y),m=s.length>>1;return s.length%2?s[m]:(s[m-1]+s[m])/2};
+const SRC_RANK={w:3,c:2,h:1};
+
+/* ---------- lectura de la hoja ---------- */
+const DEFAULT_CFG={start:115,goal:80,startDate:'2026-08-28',rates:[1,0.75,0.5],height:null,sex:'',fileId:'1aUMgruI3VycOCjbqH4_UvL8nS8i-mt1QFNiz6xaQx2Q'};
+function findHeader(rows,re,dateRe){dateRe=dateRe||/^\s*fecha\s*$/i;for(let i=0;i<Math.min(rows.length,60);i++){const r=rows[i]||[];const f=r.findIndex(c=>typeof c==='string'&&dateRe.test(c));const p=r.findIndex(c=>typeof c==='string'&&re.test(c));if(f>=0&&p>=0)return {i,f,p,r,c:r.findIndex(c=>typeof c==='string'&&/^coment/i.test(c))}}return null}
+function parseWorkbook(wb){
+  const out={w:{},notes:{},milestones:[],h2013:{},raw:{},cfg:{},hasRaw:false,rawCount:0};
+  const rowsOf=n=>XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true,defval:null});
+  let main=null,old=null,raw=null;
+  for(const n of wb.SheetNames){const rows=rowsOf(n);
+    const rw=findHeader(rows,/^peso\s*\(kg\)/i,/^fecha y hora/i);if(rw&&rw.r.some(c=>/^timestamp$/i.test(String(c)))&&!raw){raw={rows,h:rw};continue}
+    const h=findHeader(rows,/^peso\s*\(kg\)/i);if(h&&!main){main={rows,h};continue}
+    const o=findHeader(rows,/^peso ma/i);if(o&&!old)old={rows,h:o}}
+  if(!main&&!raw)throw new Error('No encuentro ni la pestaña «Withings» ni «Control Diario» en la hoja.');
+  if(main){const {rows,h}=main;
+    for(let i=0;i<h.i;i++){const r=rows[i]||[];
+      r.forEach((c,j)=>{if(typeof c!=='string')return;const v=r[j+1];
+        if(/^inicial:?$/i.test(c.trim())&&typeof v==='number')out.cfg.start=v;
+        if(/^objetivo:?$/i.test(c.trim())&&typeof v==='number')out.cfg.goal=v;
+        if(/^ritmo de p[ée]rdida/i.test(c)){const n=r.slice(j+1).find(x=>typeof x==='number');if(n!=null)(out.cfg.rates=out.cfg.rates||[]).push(n)}})}
+    let first=null;
+    for(let i=h.i+1;i<rows.length;i++){const r=rows[i]||[];const s=r[h.f];if(typeof s!=='number'||s<30000)continue;
+      const k=serialToK(s);if(!first)first=k;
+      const kg=r[h.p];if(typeof kg==='number'&&kg>30&&kg<300)out.w[k]=r1(kg);
+      const note=h.c>=0?r[h.c]:null;
+      if(typeof note==='string'&&note.trim()){const m=/objetivo\s*:?\s*([\d.,]+)/i.exec(note);
+        if(m)out.milestones.push({date:k,kg:parseFloat(m[1].replace(',','.'))});else out.notes[k]=note.trim()}}
+    if(first)out.cfg.startDate=first}
+  if(old){const {rows:o,h:oh}=old;for(let i=oh.i+1;i<o.length;i++){const r=o[i]||[];const s=r[oh.f];if(typeof s!=='number')continue;const kg=r[oh.p];if(typeof kg==='number'&&kg>30&&kg<300)out.h2013[serialToK(s)]=r1(kg)}}
+  if(raw){out.hasRaw=true;const {rows:rr,h:rh}=raw;const col=re=>rh.r.findIndex(c=>typeof c==='string'&&re.test(c));
+    const ts=col(/^timestamp$/i),cols=[rh.p,col(/^grasa\s*\(%\)/i),col(/^masa grasa/i),col(/^m[úu]sculo/i),col(/^agua/i),col(/^hueso/i)];
+    const recs=[];for(let i=rh.i+1;i<rr.length;i++){const r=rr[i]||[];const s=r[rh.f];if(typeof s!=='number')continue;recs.push({k:serialToK(s),t:typeof r[ts]==='number'?r[ts]:s*DAY,v:cols.map(c=>c>=0&&typeof r[c]==='number'?r[c]:null)})}
+    out.rawCount=recs.length;recs.sort((a,b)=>a.t-b.t);
+    // primera medición de cada día; la composición, de la primera medición del día que la tenga
+    for(const x of recs){const d=out.raw[x.k]||(out.raw[x.k]=[null,null,null,null,null,null]);
+      const okComp=x.v[1]!=null&&x.v[1]>=3&&x.v[1]<=70;
+      x.v.forEach((v,j)=>{if(v==null||d[j]!=null)return;if(j===0&&(v<30||v>300))return;if(j>0&&!okComp)return;d[j]=Math.round(v*100)/100})}
+    for(const k of Object.keys(out.raw))if(out.raw[k][0]==null)delete out.raw[k]}
+  return out;
+}
+/* ---------- actividad, entrenamientos y sueño (pestañas que rellena el script de la hoja) ---------- */
+// Se guardan por años: act-AAAA y slp-AAAA con un array por día, wo-AAAA con un array por sesión (clave: id de Withings).
+const ACT_COLS=['steps','dist','elev','soft','mod','int','calA','calT','hrAvg','hrMin','hrMax'];
+const SLP_COLS=['bed','wake','inBed','asleep','light','deep','rem','awake','wakeups','eff','hrAvg','hrMin'];
+const WO_COLS=['k','start','dur','type','cal','steps','dist','hrAvg','hrMin','hrMax','int'];
+// Datos de Apple Salud (exportación o Health Auto Export vía el script de la hoja): una fila por día
+const HK_COLS=['rhr','hrv','hrvN','spo2','spo2min','spo2N','rr','rrmin','rrmax','vo2','temp','bdist','day','stand','flights','whr','wspeed','steady','hrr'];
+// pestañas «Salud» (Fecha y hora, Métrica, Valor, Mín, Máx), «ECG» y «Avisos de salud» del script de la hoja
+// tipo de registro a partir del nombre que manda Health Auto Export
+function logType(n){n=n.toLowerCase();const M=[[/sexual/,'sexual'],[/intermenstrual/,'intermenstrual'],[/menstrua/,'menstrual'],[/ovulation/,'ovulation'],[/basal_body/,'bbt'],[/cervical/,'cervical'],[/contracept/,'contraceptive'],[/pregnan/,'pregnancy'],[/mindful/,'mindful'],[/alcohol/,'alcohol'],[/headache/,'headache'],[/back.?pain/,'backpain'],[/pelvic/,'pelvicpain'],[/fatigue/,'fatigue'],[/appetite/,'appetite'],[/sweats/,'nightsweats'],[/bloating/,'bloating'],[/cramps/,'cramps'],[/nausea/,'nausea'],[/mood|state_?of_?mind|statesofmind/,'mood'],[/symptom/,'symptom']];
+  for(const [re,t] of M)if(re.test(n))return t;return n.split(':').pop().replace(/[^a-z_]/g,'').slice(0,30)||null}
+function parseHealth(wb){
+  const out={hk:{},ecg:{},ev:[],logs:[],has:false};const D={};
+  const add=(dk,k,v)=>{((D[dk]||(D[dk]={}))[k]||(D[dk][k]=[])).push(v)};
+  const nextDay=dk=>{const d=new Date(dk+'T12:00:00');d.setDate(d.getDate()+1);return d2k(d)};
+  for(const n of wb.SheetNames){const rows=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true,defval:null});
+    const h=(rows[0]||[]).map(c=>typeof c==='string'?c.trim().toLowerCase():'');
+    if(h[0]==='fecha y hora'&&h[1]==='métrica'){out.has=true;
+      for(let i=1;i<rows.length;i++){const r=rows[i]||[];if(typeof r[0]!=='number'||!r[1])continue;
+        const t=r[0],dk0=serialToK(t),hr=Math.floor((t-Math.floor(t))*24+1e-6),k=String(r[1]);let v=typeof r[2]==='number'?r[2]:null;
+        const mn=typeof r[3]==='number'?r[3]:null,mx=typeof r[4]==='number'?r[4]:null;if(v==null&&mn==null)continue;
+        const night=['spo2','rr','temp','bdist','hrv'].includes(k);const dk=night&&hr>=18?nextDay(dk0):dk0;
+        if(k==='spo2'){if(v!=null&&v<=1)v*=100;add(dk,'spo2',v);add(dk,'spo2min',mn!=null?(mn<=1?mn*100:mn):v);if(hr<9||hr>=22)add(dk,'spo2N',v)}
+        else if(k==='hrv'){add(dk,'hrv',v);if(hr<9||hr>=22)add(dk,'hrvN',v)}
+        else if(k==='rr'){add(dk,'rr',v);add(dk,'rrmin',mn!=null?mn:v);add(dk,'rrmax',mx!=null?mx:v)}
+        else if(k==='stand'){add(dk,'stand',v)}
+        else if(HK_COLS.includes(k))add(dk,k,v)}}
+    else if(h[0]==='fecha y hora'&&h.some(c=>/^señal/.test(c))){const ic=h.findIndex(c=>/^clasif/.test(c)),ih=h.findIndex(c=>/^fc/.test(c)),is=h.findIndex(c=>/^señal \(/.test(c)),if_=h.findIndex(c=>/^muestreo/.test(c));
+      for(let i=1;i<rows.length;i++){const r=rows[i]||[];if(typeof r[0]!=='number')continue;const sig=String(r[is]||'').split(',').map(Number).filter(x=>isFinite(x));if(sig.length<100)continue;
+        const t=serialToK(r[0])+' '+(()=>{const m=Math.round((r[0]-Math.floor(r[0]))*1440);return pad(Math.floor(m/60))+':'+pad(m%60)})();
+        out.ecg[t]={t,cls:r[ic]||'',hr:typeof r[ih]==='number'?r[ih]:null,fs:+r[if_]||128,sig:sig.map(Math.round)}}}
+    else if(h[0]==='inicio'&&h[2]==='registro'){const f=x=>typeof x==='number'?serialToK(x)+' '+(()=>{const m=Math.round((x-Math.floor(x))*1440);return pad(Math.floor(m/60))+':'+pad(m%60)})():null;
+      for(let i=1;i<rows.length;i++){const r=rows[i]||[];if(typeof r[0]!=='number'||!r[2])continue;const t=logType(String(r[2]));if(t)out.logs.push([t,f(r[0]),f(r[1])||f(r[0]),r[3]==null?'':String(r[3])])}}
+    else if(h[0]==='inicio'&&h[2]==='tipo'){for(let i=1;i<rows.length;i++){const r=rows[i]||[];if(typeof r[0]!=='number'||!r[2])continue;
+      const f=x=>typeof x==='number'?serialToK(x)+' '+(()=>{const m=Math.round((x-Math.floor(x))*1440);return pad(Math.floor(m/60))+':'+pad(m%60)})():null;out.ev.push([String(r[2]),f(r[0]),f(r[1])||f(r[0])])}}}
+  const mean=a=>a&&a.length?a.reduce((s,x)=>s+x,0)/a.length:null,r1=(x,d=1)=>x==null?null:Math.round(x*10**d)/10**d,last=a=>a&&a.length?a[a.length-1]:null;
+  for(const [dk,m] of Object.entries(D)){
+    const row=[r1(last(m.rhr),0),r1(mean(m.hrv)),r1(mean(m.hrvN)),r1(mean(m.spo2)),m.spo2min?r1(Math.min(...m.spo2min)):null,r1(mean(m.spo2N)),r1(mean(m.rr)),m.rrmin?r1(Math.min(...m.rrmin)):null,m.rrmax?r1(Math.max(...m.rrmax)):null,
+      r1(last(m.vo2)),r1(last(m.temp),2),r1(last(m.bdist)),m.day?r1(m.day.reduce((s,x)=>s+x,0),0):null,m.stand?m.stand.reduce((s,x)=>s+x,0):null,m.flights?r1(m.flights.reduce((s,x)=>s+x,0),0):null,
+      r1(mean(m.whr),0),r1(mean(m.wspeed),2),r1(last(m.steady)),m.hrr?r1(Math.max(...m.hrr)):null];
+    out.hk[dk]=row}
+  return out}
+function parseLife(wb){
+  const out={act:{},slp:{},wo:{},nap:{},hasAct:false,hasSlp:false,hasWo:false,hasNap:false};
+  const num=v=>typeof v==='number'&&isFinite(v)?Math.round(v*10)/10:null;
+  for(const n of wb.SheetNames){const rows=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true,defval:null});
+    const h=(rows[0]||[]).map(c=>typeof c==='string'?c.trim().toLowerCase():'');const col=re=>h.findIndex(c=>re.test(c));
+    if(h[0]==='fecha'&&col(/^pasos$/)>=0){out.hasAct=true;
+      const C=[/^pasos$/,/^distancia/,/^desnivel/,/^actividad suave/,/^actividad moderada/,/^actividad intensa/,/^calor[ií]as activas/,/^calor[ií]as totales/,/^fc media/,/^fc m[ií]nima/,/^fc m[áa]xima/].map(col);
+      for(let i=1;i<rows.length;i++){const r=rows[i]||[];if(typeof r[0]!=='number')continue;const v=C.map(c=>c>=0?num(r[c]):null);
+        // un día sin pasos ni minutos de actividad es un día sin reloj ni móvil: no cuenta
+        if(!v[0]&&!(v[3]||v[4]||v[5]))continue;out.act[serialToK(r[0])]=v}}
+    else if(h[0]==='fecha'&&col(/^dormido/)>=0){out.hasSlp=true;const ib=col(/^acostarse/),iw=col(/^levantarse/);
+      const C=[/^en cama/,/^dormido/,/^ligero/,/^profundo/,/^rem/,/^despierto/,/^despertares/,/^eficiencia/,/^fc media/,/^fc m[ií]nima/].map(col),idv=col(/^desvelos/);
+      for(let i=1;i<rows.length;i++){const r=rows[i]||[];if(typeof r[0]!=='number')continue;const base=Math.floor(r[0]);
+        // hora de acostarse y de levantarse en minutos desde la medianoche del día en que te levantas (23:30 = −30)
+        const t=c=>c>=0&&typeof r[c]==='number'?Math.round((r[c]-base)*1440):null;const v=C.map(c=>c>=0?num(r[c]):null);
+        if(!v[1])continue;const row=[t(ib),t(iw),...v];
+        // ratos despierto dentro de la noche («108~319;400~412», minutos desde la medianoche del día en que te levantas)
+        const gs=idv>=0&&r[idv]!=null?String(r[idv]).trim():'';if(gs){row[12]=null;row[13]=gs}out.slp[serialToK(r[0])]=row}}
+    else if(h[0]==='id'&&col(/^dormido/)>=0&&col(/^inicio$/)>=0){out.hasNap=true;const ik=col(/^fecha$/),is=col(/^inicio$/),ie=col(/^fin$/),C=[/^dormido/,/^profundo/,/^rem/,/^fc media/].map(col);
+      const mn=x=>typeof x==='number'?Math.round((x-Math.floor(x))*1440):null;
+      for(let i=1;i<rows.length;i++){const r=rows[i]||[];if(typeof r[ik]!=='number')continue;const nid=(r[0]!=null&&r[0]!=='')?String(r[0]):'s'+serialToK(r[ik])+'-'+mn(r[is]);const a0=mn(r[is]);let a1=mn(r[ie]);if(a0!=null&&a1!=null&&a1<a0)a1+=1440;out.nap[nid]=[serialToK(r[ik]),a0,a1,...C.map(c=>c>=0?num(r[c]):null)]}}
+    else if(h[0]==='id'&&col(/^tipo$/)>=0){out.hasWo=true;const ik=col(/^fecha$/),is=col(/^inicio$/);
+      const C=[/^duraci/,/^tipo$/,/^calor/,/^pasos/,/^distancia/,/^fc media/,/^fc m[ií]nima/,/^fc m[áa]xima/,/^intensidad/].map(col);
+      for(let i=1;i<rows.length;i++){const r=rows[i]||[];if(r[0]==null||typeof r[ik]!=='number')continue;
+        const st=is>=0&&typeof r[is]==='number'?Math.round((r[is]-Math.floor(r[is]))*1440):null;
+        out.wo[String(r[0])]=[serialToK(r[ik]),st,...C.map((c,j)=>c<0?null:j===1?(typeof r[c]==='string'?r[c]:null):num(r[c]))]}}}
+  return out}
+// Une por años lo guardado con lo que trae la hoja (la hoja manda en los días que trae; nada se borra)
+/* ---------- comidas: pestañas de la hoja con columnas Desayuno / Almuerzo / Cena (texto o nota de 0 a 5) ----------
+   Cada día: t = [desayuno, almuerzo, cena, pecados, deporte, nota] (texto) y s = [desayuno, almuerzo, cena, agua, deporte,
+   pecados comida, pecados bebida] (notas: 0..5 y −5..0). Se guarda por años en com-AAAA. */
+const FOOD_T=['Desayuno','Almuerzo','Cena','Pecados comida','Deporte','Nota','Pecados bebida'];
+const FOOD_S=[['Desayuno',0.2,0,5],['Almuerzo',0.4,0,5],['Cena',0.4,0,5],['Agua',0.5,0,5],['Deporte',0.5,0,5],['Pecados comida',2,-5,0],['Pecados bebida',2,-5,0]];
+function parseFood(wb){const out={};
+  for(const n of wb.SheetNames){const rows=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true,defval:null});
+    for(let i=0;i<Math.min(rows.length,40);i++){const r=(rows[i]||[]).map(c=>typeof c==='string'?c.trim().toLowerCase():'');
+      const f=r.findIndex(c=>c==='fecha');if(f<0||!r.some(c=>/^desayuno/.test(c)))continue;
+      const col=re=>r.findIndex(c=>re.test(c));
+      const T=[/^desayuno$/,/^(almuerzo|comida)$/,/^cena$/,/^(pecados|picoteo)$/,/^deporte$/,/^__nunca__$/].map(col);
+      const S=[/^desayuno\s*\[/,/^almuerzo\s*\[/,/^cena\s*\[/,/^agua\s*\[/,/^deporte\s*\[/,/^pecados.*comida/,/^pecados.*bebida/].map(col);
+      for(let j=i+1;j<rows.length;j++){const rr=rows[j]||[];const d=rr[f];let k=null;
+        if(typeof d==='number'&&d>20000)k=serialToK(d);else if(d instanceof Date)k=d2k(d);if(!k)continue;
+        const t=T.map(c=>c>=0&&rr[c]!=null&&String(rr[c]).trim()&&String(rr[c]).trim()!=='---'?String(rr[c]).trim().slice(0,300):null);
+        const s=S.map((c,x)=>c>=0&&typeof rr[c]==='number'?Math.max(FOOD_S[x][2],Math.min(FOOD_S[x][3],Math.round(rr[c]))):null);
+        if(t.some(v=>v!=null)||s.some(v=>v!=null))out[k]={t,s}}
+      break}}
+  return out}
+// nota del día como en la hoja: comidas/agua/deporte = 50/25/25 y cada pecado resta hasta el doble; sin nota, las comidas cuentan 5
+// la fórmula se puede ajustar en Ajustes; por defecto, la de tu hoja
+// Pesos por punto en proporción a las kcal de cada cosa: desayuno 60, almuerzo 120, cena 120, agua 20 y deporte 160 kcal por punto;
+// cada pecado de comida 250 kcal y cada bebida 180 (en las mismas unidades: 300 kcal = 1). Con un decimal; el agua pesa más porque a Jaime le ayuda a bajar. Factor 0,5: un día perfecto ≈ 1,3 kg/semana a 110 kg.
+const FOOD_CFG={w:[0.2,0.4,0.4,0.3,0.5],pw:[2,1.5],blank:3,k:0.5,unlogged:true,v:6};
+function foodCfg(){let c=(typeof DOC!=='undefined'&&DOC&&DOC.cfg&&DOC.cfg.food)||{};
+  // una fórmula guardada con los pesos de antes (sin «v: 2») pasa a los pesos nuevos; se conservan tus otras opciones
+  if(c.v!==6){const {w,pw,k,...rest}=c;c=rest}
+  const w=Array.isArray(c.w)&&c.w.length===5?c.w.map(Number):FOOD_CFG.w;const sw=w.reduce((a,x)=>a+x,0)||1;
+  const pw=[0,1].map(i=>c.pw&&c.pw[i]!=null&&!isNaN(c.pw[i])?+c.pw[i]:FOOD_CFG.pw[i]);return {w,sw,pw,blank:c.blank0!=null?+c.blank0:FOOD_CFG.blank,k:c.k!=null?+c.k:FOOD_CFG.k,unlogged:c.unlogged!=null?!!c.unlogged:FOOD_CFG.unlogged,allDays:c.allDays!=null?!!c.allDays:true,neutral:c.neutral!=null?!!c.neutral:true}}
+function foodScoreOf(s,C){C=C||foodCfg();const bonus=C.w.reduce((t,w,i)=>t+w*(s[i]!=null?s[i]:i<3?C.blank:0),0);const pen=Math.abs(s[5]||0)*C.pw[0]+Math.abs(s[6]||0)*C.pw[1];return Math.round((bonus-pen)/(5*C.sw)*100)}
+// un día que has anotado en la app cuenta aunque no lo puntúes (lo que no puntúas vale lo de por defecto, 0); lo traído de la hoja sin notas, no
+/* Pérdida estimada de un día. F = factor × (objetivo − peso) ÷ objetivo (negativo mientras estés por encima del objetivo).
+   Modelo «neutro»: un día con la nota por defecto (desayuno, almuerzo y cena a 3; agua, deporte y pecados a 0) mantiene el peso.
+   Cada punto por encima o por debajo de esa nota cuenta lo mismo: un día perfecto (100 %) estima F y los días peores, aumento.
+   Modelo «hoja»: F × nota, como en la hoja de cálculo (cualquier nota positiva estima pérdida). */
+function foodEstQ(F,sc,C){C=C||foodCfg();if(F==null||sc==null)return null;if(!C.neutral)return F*sc/100;
+  const s0=foodScoreOf([null,null,null,null,null,null,null],C),sMin=foodScoreOf([0,0,0,0,0,-5,-5],C);
+  return s0>=100?0:F*(sc-s0)/(100-s0)}
+function foodScore(e,C){if(!e)return null;const s=e.s||[];if(s.every(v=>v==null)&&!e.app)return null;return foodScoreOf(s,C)}
+function foodSeries(F){const out=[];for(const y of Object.keys(F||{}).sort())for(const [k,v] of Object.entries((F[y]||{}).d||{}))out.push({k,...v,sc:foodScore(v)});return out.sort((a,b)=>a.k<b.k?-1:1)}
+function mergeYearly(stored,parsed,keyOf){const out={};
+  for(const y of Object.keys(stored||{}))out[y]={y:+y,d:{...((stored[y]||{}).d||{})}};
+  for(const [id,v] of Object.entries(parsed||{})){const y=keyOf(id,v).slice(0,4);(out[y]||(out[y]={y:+y,d:{}})).d[id]=v}
+  return out}
+function lifeSeries(byYear,cols){const out=[];for(const y of Object.keys(byYear||{}).sort())for(const [k,v] of Object.entries((byYear[y]||{}).d||{})){const o={k};cols.forEach((c,i)=>o[c]=v[i]??null);if(v[cols.length]==='m')o.man=1;if(cols===SLP_COLS&&typeof v[13]==='string')o.gaps=v[13].split(';').map(x=>x.split('~').map(Number)).filter(g=>g.length===2&&isFinite(g[0])&&isFinite(g[1])&&g[1]>g[0]);out.push(o)}
+  return out.sort((a,b)=>a.k<b.k?-1:a.k>b.k?1:0)}
+function woSeries(byYear){let out=[];for(const y of Object.keys(byYear||{}))for(const [id,v] of Object.entries((byYear[y]||{}).d||{})){const o={id};WO_COLS.forEach((c,i)=>o[c]=v[i]??null);out.push(o)}
+  // el mismo entreno de Withings y de Apple Salud («hk-…»): se queda el de Salud
+  const hk=out.filter(w=>/^hk-/.test(w.id));if(hk.length)out=out.filter(w=>/^hk-/.test(w.id)||!hk.some(h=>h.k===w.k&&h.start!=null&&w.start!=null&&Math.abs(h.start-w.start)<=10));
+  return out.sort((a,b)=>a.k<b.k?-1:a.k>b.k?1:(a.start||0)-(b.start||0))}
+const mean=a=>{const v=a.filter(x=>x!=null&&!isNaN(x));return v.length?v.reduce((s,x)=>s+x,0)/v.length:null};
+function pearson(xs,ys){const n=xs.length;if(n<6)return null;const mx=mean(xs),my=mean(ys);let a=0,b=0,c=0;for(let i=0;i<n;i++){a+=(xs[i]-mx)*(ys[i]-my);b+=(xs[i]-mx)**2;c+=(ys[i]-my)**2}return b&&c?a/Math.sqrt(b*c):null}
+// Modelo de actividad y sueño, con los cruces con el peso
+function buildLife(ACT,SLP,WO,M){
+  const act=lifeSeries(ACT,ACT_COLS),slp=lifeSeries(SLP,SLP_COLS),wo=woSeries(WO);
+  const hk=typeof HK!=='undefined'?lifeSeries(HK,HK_COLS):[];
+  const L={act,slp,wo,hk,hasAct:act.length>0,hasSlp:slp.length>0,hasWo:wo.length>0,hasHk:hk.length>0};
+  if(!M||M.empty)return L;
+  // semanas (lunes a domingo): pasos medios y cambio de la tendencia del peso
+  const wk={};for(const a of act){if(!a.steps)continue;const m=monday(a.k);(wk[m]||(wk[m]=[])).push(a.steps)}
+  L.stepWeeks=Object.keys(wk).sort().filter(m=>wk[m].length>=4).map(m=>{const t0=M.trendAt(addK(m,-1)),t1=M.trendAt(addK(m,6));const ok=t0!=null&&t1!=null&&M.all.some(p=>p.k>=m&&p.k<=addK(m,6));return {k:m,steps:mean(wk[m]),n:wk[m].length,dW:ok?t1-t0:null}}).filter(w=>w.dW!=null&&diffK(w.k,M.lastK)>=0);
+  // noche → peso de esa mañana frente a los días cercanos (el residuo quita la tendencia)
+  const byK={};for(const p of M.all)byK[p.k]=p;
+  L.slpRes=slp.filter(s=>s.asleep&&byK[s.k]&&byK[s.k].res!=null).map(s=>({k:s.k,h:s.asleep/60,res:byK[s.k].res}));
+  return L}
+
+// Une lo guardado con lo que trae la hoja. Nunca borra días: el historial solo crece.
+function mergeHistory(stored,parsed,legacy){
+  const all={};const blank=()=>[null,null,null,null,null,null];
+  const put=(k,arr,src)=>{if(!arr)return;const cur=all[k];const rn=SRC_RANK[src],rc=cur?(SRC_RANK[cur[6]]||0):0;if(rn<rc)return;
+    const base=cur&&rn===rc?cur.slice(0,6):blank();const n=base.map((v,j)=>arr[j]!=null?arr[j]:v);if(n[0]==null)return;n[6]=src;all[k]=n};
+  for(const y of Object.keys(stored||{}))for(const [k,v] of Object.entries(stored[y].d||{}))all[k]=v.slice();
+  if(legacy){for(const [k,v] of Object.entries(legacy.h2013||{}))put(k,[v],'h');for(const [k,v] of Object.entries(legacy.w||{}))put(k,[v],'c')}
+  if(parsed){for(const [k,v] of Object.entries(parsed.h2013||{}))put(k,[v],'h');for(const [k,v] of Object.entries(parsed.w||{}))put(k,[v],'c');for(const [k,v] of Object.entries(parsed.raw||{}))put(k,v,'w')}
+  const byYear={};for(const k of Object.keys(all).sort()){const y=k.slice(0,4);(byYear[y]||(byYear[y]={y:+y,d:{}})).d[k]=all[k]}
+  return byYear;
+}
+
+/* ---------- plan ---------- */
+function percentile(arr,p){const a=[...arr].sort((x,y)=>x-y);if(!a.length)return null;const r=p*(a.length-1),lo=Math.floor(r);return a[lo]+(a[Math.min(lo+1,a.length-1)]-a[lo])*(r-lo)}
+function planSeries(cfg){
+  const [ra,rb,rc]=cfg.rates&&cfg.rates.length>=3?cfg.rates:DEFAULT_CFG.rates;const g=cfg.goal;
+  const pts=[{k:cfg.startDate,kg:cfg.start}];let t=cfg.start,k=cfg.startDate,guard=0;
+  while(guard++<600){const rate=t>g*1.35+1e-9?ra:t>g*1.2+1e-9?rb:t>g+1e-9?rc:0;if(!rate)break;t=Math.max(g,Math.round((t-rate)*100)/100);k=addK(k,7);pts.push({k,kg:t})}
+  return pts}
+function planAt(plan,k){if(k<=plan[0].k)return plan[0].kg;for(let i=1;i<plan.length;i++){if(k<=plan[i].k){const a=plan[i-1],b=plan[i];const f=diffK(a.k,k)/diffK(a.k,b.k);return a.kg+(b.kg-a.kg)*f}}return plan[plan.length-1].kg}
+function planDateFor(plan,kg){const p=plan.find(x=>x.kg<=kg+1e-9);return p?p.k:null}
+
+/* ---------- serie diaria con composición ---------- */
+function dailySeries(hist,doc,hcm){
+  const map={};for(const y of Object.keys(hist||{}))for(const [k,v] of Object.entries(hist[y].d||{}))map[k]={kg:v[0],c:v.slice(0,6),src:v[6]};
+  for(const [k,v] of Object.entries(doc.h2013||{}))if(!map[k])map[k]={kg:v,c:[v],src:'h'};
+  for(const [k,v] of Object.entries(doc.w||{}))if(!map[k]||map[k].src==='h')map[k]={kg:v,c:[v],src:'c'};
+  for(const [k,v] of Object.entries(doc.manual||{}))if(!map[k])map[k]=Array.isArray(v)?{kg:v[0],c:v,src:'m',manual:true}:{kg:v,c:[v],src:'m',manual:true}; // manual: kg o [kg, grasa %, masa grasa, músculo, agua kg, hueso]
+  const keys=Object.keys(map).sort();if(!keys.length)return [];const t0=keys[0];const h=hcm?hcm/100:null;
+  const all=keys.map(k=>{const e=map[k],c=e.c||[],kg=e.kg;
+    let fp=c[1]??null,fm=c[2]??null;if(fp!=null&&(fp<3||fp>70))fp=fm=null;if(fm==null&&fp!=null)fm=kg*fp/100;
+    const ok=fp!=null;const mu=ok?(c[3]??null):null,wa=ok?(c[4]??null):null,bo=ok?(c[5]??null):null;
+    const p={k,kg,src:e.src,manual:!!e.manual,t:diffK(t0,k),fp,fm,mu,wa,bo};
+    p.lean=fm!=null?kg-fm:null;p.wp=wa!=null?wa/kg*100:null;
+    p.bmi=h?kg/(h*h):null;p.ffmi=h&&p.lean!=null?p.lean/(h*h):null;p.bmr=p.lean!=null?370+21.6*p.lean:null;
+    return p});
+  let tr=null,prevT=null;for(const p of all){if(tr==null)tr=p.kg;else{const g=p.t-prevT;tr+=(1-Math.pow(1-ALPHA,Math.max(1,g)))*(p.kg-tr)}p.trend=tr;prevT=p.t}
+  for(let i=0,j0=0;i<all.length;i++){const p=all[i];while(all[j0].t<p.t-3)j0++;let s=0,n=0;for(let j=j0;j<all.length&&all[j].t<=p.t+3;j++){if(j!==i){s+=all[j].kg;n++}}p.res=n>=3?p.kg-s/n:null}
+  return all;
+}
+function weekly(all,get){const wk=new Map();for(const p of all){const v=get(p);if(v==null||isNaN(v))continue;const m=monday(p.k);if(!wk.has(m))wk.set(m,[]);wk.get(m).push(v)}return [...wk.keys()].sort().map(k=>({k,v:median(wk.get(k)),n:wk.get(k).length}))}
+// suavizado de la composición: mediana de las mediciones en ±7 días; si hay menos de 5, la ventana se amplía (±14 y ±21 días)
+// la bioimpedancia varía mucho de un día a otro con la hidratación, así que hacen falta bastantes mediciones para ver la tendencia real
+function dailySmooth(all,get){const pts=all.filter(p=>get(p)!=null).map(p=>({k:p.k,v:get(p)}));return pts.map((p,i)=>{let nb=[];for(const h of [7,14,21]){nb=[];for(let j=i;j>=0&&diffK(pts[j].k,p.k)<=h;j--)nb.push(pts[j].v);for(let j=i+1;j<pts.length&&diffK(p.k,pts[j].k)<=h;j++)nb.push(pts[j].v);if(nb.length>=5)break}return {k:p.k,v:median(nb)}})}
+function smooth3(wk){return wk.map((p,i)=>{const nb=[wk[i-1],p,wk[i+1]].filter(x=>x&&Math.abs(diffK(x.k,p.k))<=14).map(x=>x.v);return {k:p.k,v:median(nb),n:p.n}})}
+function histStart(all){let start=all[0].k;for(let i=1;i<all.length;i++){if(all[i].t-all[i-1].t>365&&i<all.length*0.15)start=all[i].k}return start}
+function windowMedian(all,get,endK,days){const lo=addK(endK,-days);const v=[];for(let i=all.length-1;i>=0;i--){const p=all[i];if(p.k<=lo)break;if(p.k>endK)continue;const x=get(p);if(x!=null&&!isNaN(x))v.push(x)}return v.length?median(v):null}
+function firstWindowMedian(all,get,startK,days){const hi=addK(startK,days);const v=[];for(const p of all){if(p.k<startK)continue;if(p.k>=hi)break;const x=get(p);if(x!=null&&!isNaN(x))v.push(x)}return v.length?median(v):null}
+
+/* ---------- métricas ---------- */
+const MET={
+  peso:{name:'Peso',unit:'kg',dec:1,color:'var(--weight)',soft:'var(--weight-soft)',better:-1,get:p=>p.kg},
+  grasaPct:{name:'Grasa corporal',unit:'%',dec:1,color:'var(--fat)',soft:'var(--fat-soft)',better:-1,get:p=>p.fp},
+  grasaKg:{name:'Masa grasa',unit:'kg',dec:1,color:'var(--fat)',soft:'var(--fat-soft)',better:-1,get:p=>p.fm},
+  musculo:{name:'Masa muscular',unit:'kg',dec:1,color:'var(--mus)',soft:'var(--mus-soft)',better:1,get:p=>p.mu},
+  magra:{name:'Masa magra',unit:'kg',dec:1,color:'var(--mus)',soft:'var(--mus-soft)',better:1,get:p=>p.lean},
+  aguaPct:{name:'Agua corporal',unit:'%',dec:1,color:'var(--wat)',soft:'var(--wat-soft)',better:1,get:p=>p.wp},
+  hueso:{name:'Masa ósea',unit:'kg',dec:2,color:'var(--bone)',soft:'var(--bone-soft)',better:0,get:p=>p.bo},
+  imc:{name:'IMC',unit:'',dec:1,color:'var(--weight)',soft:'var(--weight-soft)',better:-1,get:p=>p.bmi},
+  ffmi:{name:'Índice de masa magra',unit:'FFMI',dec:1,color:'var(--mus)',soft:'var(--mus-soft)',better:1,get:p=>p.ffmi},
+  bmr:{name:'Metabolismo basal',unit:'kcal',dec:0,color:'var(--mus)',soft:'var(--mus-soft)',better:1,get:p=>p.bmr},
+};
+function metricStats(all,id,lastK,planK){
+  const M0=MET[id],get=M0.get;let lp=null;for(let i=all.length-1;i>=0;i--){if(get(all[i])!=null){lp=all[i];break}}
+  if(!lp)return null;
+  const endK=lp.k;const now=windowMedian(all,get,endK,14);
+  const prev=windowMedian(all,get,addK(endK,-30),14);
+  const base=planK?firstWindowMedian(all,get,planK,14):null;
+  return {id,v:now,k:endK,stale:diffK(endK,lastK)>30,d30:prev!=null?now-prev:null,dPlan:base!=null&&planK<=endK?now-base:null,base,wk:weekly(all,get)};
+}
+
+/* ---------- intentos ---------- */
+// Los huecos de más de 90 días sin pesarse separan tramos: no se mide una bajada a ciegas.
+function detectAttempts(allFull,opts){
+  const parts=[];let cur=[];allFull.forEach((p,i)=>{if(i&&p.t-allFull[i-1].t>90){parts.push(cur);cur=[]}cur.push(p)});parts.push(cur);
+  const res=[];for(const part of parts)res.push(...attemptsIn(part,allFull,opts));return res;
+}
+function attemptsIn(all,allFull,opts){
+  const Z=(opts&&opts.z)||3,MIN_DROP=(opts&&opts.minDrop)||4,MIN_DAYS=21,TOL=1;
+  if(all.length<8)return [];
+  const wk={};for(const p of all){const m=monday(p.k);(wk[m]||(wk[m]=[])).push(p.kg)}
+  const W=Object.keys(wk).sort().map(k=>({k,v:median(wk[k])}));
+  const s=W.map((w,i)=>{const nb=[W[i-1],w,W[i+1]].filter(x=>x&&Math.abs(diffK(x.k,w.k))<=14).map(x=>x.v);return median(nb)});
+  const piv=[];let dir=0,hi=0,lo=0,ext=0;
+  for(let i=1;i<s.length;i++){
+    if(dir===0){if(s[i]>s[hi])hi=i;if(s[i]<s[lo])lo=i;
+      if(s[hi]-s[i]>=Z&&i>hi){piv.push({i:hi,t:'H'});dir=-1;ext=i}else if(s[i]-s[lo]>=Z&&i>lo){piv.push({i:lo,t:'L'});dir=1;ext=i}}
+    else if(dir===-1){if(s[i]<s[ext])ext=i;else if(s[i]-s[ext]>=Z){piv.push({i:ext,t:'L'});dir=1;ext=i}}
+    else{if(s[i]>s[ext])ext=i;else if(s[ext]-s[i]>=Z){piv.push({i:ext,t:'H'});dir=-1;ext=i}}}
+  if(dir!==0)piv.push({i:ext,t:dir===-1?'L':'H',open:true});
+  const out=[];const lastK=all[all.length-1].k;
+  for(let j=0;j<piv.length-1;j++){const a=piv[j],b=piv[j+1];if(a.t!=='H'||b.t!=='L')continue;
+    // tramo diario del intento: de 3 semanas antes del pico semanal hasta el siguiente pico (o el final)
+    const nextH=piv[j+2]?W[piv[j+2].i].k:lastK;const seg=all.filter(p=>p.k>=addK(W[a.i].k,-21)&&p.k<=nextH);if(seg.length<4)continue;
+    const lowWk=addK(W[b.i].k,6);let iMax=0;for(let i=0;i<seg.length&&seg[i].k<=lowWk;i++)if(seg[i].trend>seg[iMax].trend)iMax=i;
+    // el mínimo es el punto más bajo antes de que la tendencia rebote Z kg (el valle semanal puede quedarse corto)
+    let iMin=iMax;for(let i=iMax+1;i<seg.length;i++){if(seg[i].trend<seg[iMin].trend)iMin=i;else if(seg[i].trend-seg[iMin].trend>=Z)break}
+    // el intento arranca la última vez que estabas a menos de 1 kg del pico: una bajada que se recupera entera no cuenta como parte de él
+    let iLast=iMax;for(let i=iMax;i<iMin;i++)if(seg[i].trend>=seg[iMax].trend-TOL)iLast=i;
+    let iStart=iLast;for(let i=iLast;i>=iMax&&seg[i].trend>=seg[iMax].trend-TOL;i--)if(seg[i].trend>seg[iStart].trend)iStart=i;
+    const startP=seg[iStart],endP=seg[iMin];
+    const open=!!b.open&&all[all.length-1]===allFull[allFull.length-1]&&diffK(W[b.i].k,lastK)<=21;
+    const drop=startP.trend-endP.trend,days=diffK(startP.k,endP.k);
+    if(drop<MIN_DROP||days<MIN_DAYS&&!open)continue;
+    const span=all.filter(p=>p.k>=startP.k&&p.k<=endP.k);let gap=0;for(let q=1;q<span.length;q++)gap=Math.max(gap,span[q].t-span[q-1].t);
+    let reb=null;if(!open){const after=allFull.filter(p=>p.t>endP.t&&p.t<=endP.t+182);if(after.length)reb=Math.max(...after.map(p=>p.trend))-endP.trend}
+    const endK=open?lastK:endP.k;
+    out.push({startK:startP.k,endK,lowK:endP.k,startKg:startP.trend,lowKg:endP.trend,days:diffK(startP.k,endK),open,reb,gap})}
+  for(const a of out){a.lost=a.startKg-a.lowKg;a.rate=a.days?-a.lost/a.days*7:0}
+  return out;
+}
+
+/* ---------- modelo completo ---------- */
+function buildModel(doc,hist){
+  const cfg={...DEFAULT_CFG,...(doc.cfg||{})};
+  const all=dailySeries(hist,doc,cfg.height);
+  if(!all.length)return {empty:true,cfg};
+  const last=all[all.length-1],prev=all[all.length-2]||null,lastK=last.k,tNow=last.trend;
+  const today=d2k(new Date());
+  const trendAt=k=>{let lo=0,hi=all.length-1,r=null;while(lo<=hi){const m=(lo+hi)>>1;if(all[m].k<=k){r=all[m].trend;lo=m+1}else hi=m-1}return r};
+  const plan=planSeries(cfg);const hasPlan=lastK>=cfg.startDate;
+  const pts=all.filter(p=>p.k>=cfg.startDate).map(p=>({...p,t:diffK(cfg.startDate,p.k)}));
+  const reg=days=>{const s=all.filter(p=>p.t>last.t-days);if(s.length<4)return null;const n=s.length,mx=s.reduce((a,p)=>a+p.t,0)/n,my=s.reduce((a,p)=>a+p.kg,0)/n;let num=0,den=0;for(const p of s){num+=(p.t-mx)*(p.kg-my);den+=(p.t-mx)**2}if(!den)return null;const b=num/den;return {slope:b,perWeek:b*7,n}};
+  const r28=reg(28),r14=reg(14),r90=reg(90);
+  // control semanal (sábado → viernes, percentil 20 como en la hoja)
+  const weeks=[];if(hasPlan){let fk=cfg.startDate;while(dowIdx(fk)!==4)fk=addK(fk,1);
+    for(let i=0;fk<=addK(lastK,6)&&i<600;i++,fk=addK(fk,7)){const lo=addK(fk,-6);const vals=pts.filter(p=>p.k>=lo&&p.k<=fk).map(p=>p.kg);
+      weeks.push({k:fk,from:lo,n:vals.length,p20:vals.length?r1(percentile(vals,0.2)):null,mean:vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null,min:vals.length?Math.min(...vals):null,max:vals.length?Math.max(...vals):null,target:planAt(plan,fk),partial:fk>lastK})}
+    let prevW=null;for(const w of weeks){w.diff=prevW!=null&&w.p20!=null?r1(w.p20-prevW):null;w.acc=w.p20!=null?r1(w.p20-cfg.start):null;if(w.p20!=null)prevW=w.p20}}
+  const recent=all.filter(p=>p.t>last.t-30&&p.res!=null);
+  const noise=recent.length>4?Math.sqrt(recent.reduce((a,p)=>a+p.res**2,0)/recent.length):null;
+  const dow=Array.from({length:7},()=>({s:0,n:0}));for(const p of all){if(p.res==null)continue;const d=dowIdx(p.k);dow[d].s+=p.res;dow[d].n++}
+  const dowAvg=dow.map(x=>x.n?{v:x.s/x.n,n:x.n}:{v:null,n:0});
+  const win30=all.filter(p=>diffK(p.k,today)<30&&p.k<=today).length;
+  let streak=0;for(let i=weeks.length-1;i>=0;i--){const w=weeks[i];if(w.partial||w.diff==null)continue;if(w.diff<0)streak++;else break}
+  const done=weeks.filter(w=>!w.partial&&w.diff!=null);const bestW=done.length?done.reduce((a,b)=>b.diff<a.diff?b:a):null;
+  const minAll=all.reduce((a,b)=>b.kg<a.kg?b:a),maxAll=all.reduce((a,b)=>b.kg>a.kg?b:a);
+  const minPlan=pts.length?pts.reduce((a,b)=>b.kg<a.kg?b:a):null;
+  const rate=r28&&r28.slope<0?r28.slope:null;
+  const eta=kg=>{if(tNow<=kg)return lastK;if(!rate)return null;return addK(lastK,Math.ceil((kg-tNow)/rate))};
+  const ms=(doc.milestones||[]).slice().sort((a,b)=>b.kg-a.kg);if(!ms.find(m=>Math.abs(m.kg-cfg.goal)<1e-6))ms.push({date:null,kg:cfg.goal});
+  const milestones=ms.map(m=>{const hit=pts.find(p=>p.trend<=m.kg+1e-9);return {kg:m.kg,planK:planDateFor(plan,m.kg)||m.date,hitK:hit?hit.k:null,etaK:hit?null:eta(m.kg)}});
+  // intentos (el actual siempre aparece)
+  const attempts=detectAttempts(all);
+  let cur=attempts.find(a=>a.open||a.endK>=cfg.startDate);
+  if(!cur&&hasPlan){const seg=all.filter(p=>p.k>=cfg.startDate);const st=seg[0];const lowP=seg.reduce((a,b)=>b.trend<a.trend?b:a);cur={startK:st.k,endK:lastK,lowK:lowP.k,startKg:Math.max(cfg.start,st.trend),lowKg:lowP.trend,days:diffK(st.k,lastK),open:true,reb:null,gap:0};cur.lost=cur.startKg-cur.lowKg;cur.rate=cur.days?-cur.lost/cur.days*7:0;attempts.push(cur)}
+  if(cur){cur.current=true;cur.open=true}
+  // años
+  const yrs={};for(const p of all){const y=p.k.slice(0,4);(yrs[y]||(yrs[y]=[])).push(p)}
+  const years=Object.keys(yrs).sort().map(y=>{const a=yrs[y];const v=a.map(p=>p.kg);const fat=a.map(p=>p.fp).filter(x=>x!=null),mus=a.map(p=>p.mu).filter(x=>x!=null);
+    return {y,n:a.length,mean:v.reduce((s,x)=>s+x,0)/v.length,min:Math.min(...v),max:Math.max(...v),first:median(a.slice(0,7).map(p=>p.kg)),last:median(a.slice(-7).map(p=>p.kg)),fat:fat.length?median(fat):null,mus:mus.length?median(mus):null}});
+  // métricas corporales
+  const planK=hasPlan?cfg.startDate:null;const stats={};
+  for(const id of Object.keys(MET)){if(id==='peso')continue;stats[id]=metricStats(all,id,lastK,planK)}
+  const t30=trendAt(addK(lastK,-30)),t7=trendAt(addK(lastK,-7));
+  stats.peso={id:'peso',v:tNow,k:lastK,stale:false,d30:t30!=null?tNow-t30:null,d7:t7!=null?tNow-t7:null,dPlan:hasPlan?tNow-cfg.start:null,base:cfg.start,wk:weekly(all,p=>p.kg)};
+  const hasComp=all.some(p=>p.fp!=null);
+  // calidad de la pérdida desde el inicio del plan
+  let quality=null;
+  if(hasPlan&&hasComp){const g=f=>({b:firstWindowMedian(all,f,cfg.startDate,14),n:windowMedian(all,f,lastK,14)});
+    const W=g(p=>p.fp!=null?p.kg:null),F=g(p=>p.fm),L=g(p=>p.lean);const MU=g(p=>p.mu),WA=g(p=>p.wa),BO=g(p=>p.bo);const dl=x=>x.b!=null&&x.n!=null?x.b-x.n:null;
+    if(W.b!=null&&F.b!=null&&L.b!=null&&W.n!=null&&F.n!=null&&L.n!=null){
+      const lossW=W.b-W.n,lossF=F.b-F.n,lossL=L.b-L.n;
+      const base={f:F.b,l:L.b};
+      const ser=f=>weekly(all.filter(p=>p.k>=cfg.startDate),f);
+      quality={lossW,lossF,lossL,lossMu:dl(MU),lossWa:dl(WA),lossBo:dl(BO),pctFat:lossW>0.5?lossF/lossW*100:null,fat:smooth3(ser(p=>p.fm)).map(x=>({k:x.k,v:x.v-base.f})),lean:smooth3(ser(p=>p.lean)).map(x=>({k:x.k,v:x.v-base.l}))}}}
+  return {cfg,all,histK:histStart(all),pts,last,prev,lastK,tNow,today,trendAt,plan,hasPlan,r28,r14,r90,weeks,noise,dowAvg,win30,streak,bestW,minAll,maxAll,minPlan,eta,milestones,attempts,years,stats,hasComp,quality,notes:doc.notes||{}};
+}
+</script>
