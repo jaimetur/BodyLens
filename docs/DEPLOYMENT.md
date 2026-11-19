@@ -64,6 +64,26 @@ tools/deploy.sh
 It needs, once, a sudo rule on the NAS so that the SSH user can use Docker without a password
 (`/etc/sudoers.d/bodylens-deploy`: `jaimetur_adm ALL=(root) NOPASSWD: /usr/local/bin/docker`, permissions 440).
 
+## Releases
+
+Each version lives in a branch named after it (`0.1.0`, `0.2.0`…); every push to that branch builds
+`jaimetur/bodylens:<version>` and `:latest`, the image the NAS runs. To start a new version, from the current version
+branch:
+
+```
+python3 tools/CreateUpdateRelease.py            # window: Create New Release / Update Current Release
+python3 tools/CreateUpdateRelease.py --create 0.2.0 2026-12-01 [--dirty commit|carry|discard]
+python3 tools/CreateUpdateRelease.py --update 0.1.0 2026-11-20
+```
+
+- **Create New Release** checks that the branch does not exist (locally or on GitHub), then creates it, sets the
+  version in `pyproject.toml` and the major.minor of the Android app's `versionName`, adds an empty
+  `## Release: vX.Y.Z` block on top of `CHANGELOG.md` and of `help/i18n/es/changelog.md` (stamped again), commits and
+  pushes it. If there is uncommitted work it asks first: commit and push it to the current branch, carry it to the new
+  one, or discard it (from the command line, `--dirty`; without it, it stops).
+- **Update Current Release** only rewrites the version and date of the current release (no branch, no commit).
+- After pushing, GitHub Actions builds the image; deploy it as usual with `tools/deploy.sh`.
+
 ## Data sources: Withings, Apple Health and Android
 
 1. **Withings** (once, as administrator): at developer.withings.com, in your application, add the *callback URL*

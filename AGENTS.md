@@ -145,6 +145,7 @@ python3.12 -m venv .venv && .venv/bin/pip install -e '.[test]'   # local environ
 .venv/bin/python -m pytest -q                          # backend tests
 (cd src/frontend && npm ci) && PYTHON=$PWD/.venv/bin/python node tests/frontend/smoke.mjs   # page start-up
 node tests/frontend/i18n.mjs                           # translator
+python3 tools/CreateUpdateRelease.py                   # new release (branch X.Y.Z, version, changelog) or update the current one
 ```
 
 ## Definition of done (for any change)
@@ -157,5 +158,6 @@ node tests/frontend/i18n.mjs                           # translator
   `docs/DEPLOYMENT.md`) and check that the `bodylens` container is `healthy`.
 - No secret or personal data added to the repository.
 - If the deployment changes, `docs/DEPLOYMENT.md` is updated; if the usage changes, the help in `help/`.
+- A new version is started with `tools/CreateUpdateRelease.py` (see `docs/DEPLOYMENT.md` → Releases), never by hand.
 - `CHANGELOG.md` (and its Spanish copy) up to date following the "Changelog" rules above, and the related
   documentation reviewed following the "Documentation" rules.
