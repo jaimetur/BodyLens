@@ -1,4 +1,4 @@
-<!-- en: 4d59e707f3784bde -->
+<!-- en: 439bb5d298b492b4 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -29,6 +29,7 @@
 - **Tu cuenta:**
   - **Cuenta:** perfil, correo, idioma y contraseña, pareja, fuentes de datos, sincronización e importación.
   - **Perfiles:** niveles de acceso a los datos de tu cuenta (todos los perfiles ven los mismos datos), explicados en el propio panel. A cada perfil, también al principal, se le pueden dar solo los módulos que elijas, con fichas como en DriveTest Analyzer; en el menú solo ve esos. Un perfil con módulos limitados no puede gestionar los perfiles ni ver Datos y copias, y siempre queda al menos un perfil con todos los módulos. Los perfiles ya no tienen pareja ni ciclo propios.
+  - **El PIN decide el perfil:** el PIN que se escribe en la pantalla de bloqueo abre el perfil que lo tiene; si varios perfiles comparten PIN, al entrar con él se ven los módulos de todos (el panel avisa cuando pones un PIN que ya usa otro perfil). Desaparece el PIN privado aparte para Ciclo e intimidad: Íntimo es un módulo como los demás, y un perfil solo exporta a PDF los módulos que tiene.
   - **Datos personales** (altura, sexo, fecha de nacimiento) es un panel de la pestaña **Cuenta**, debajo de Contraseña.
   - **Datos y copias:** de dónde llegan los datos del móvil, origen de los datos, copia completa y exportación a CSV.
 - **Administración** (cuentas de administrador), con estas pestañas:

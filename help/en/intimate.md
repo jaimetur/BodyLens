@@ -6,15 +6,9 @@ A private section for tracking the menstrual cycle, sexual activity and mood. It
 
 - Cycle, sexual activity and mood records come from **Apple Health** (iPhone, through Health Auto Export) or **Android** (Health Connect, through the BodyLens app), or you log them here by hand. Android sends menstruation and sexual activity; **mood (State of Mind) is only sent by the iPhone, so on Android log it by hand in the app.** Imported records are labelled "Apple Health / Android".
 
-## Private PIN
+## Who sees it
 
-- When you enter the section you are asked for the profile's **privacy PIN** (4 digits). If it is locked, "Cycle and intimacy" appears with the **Unlock** button.
-- Until you change it, the private PIN is **0000**. It is changed in Your account → Profiles (**Private PIN**), and it cannot be 0000. To change or remove it you need the current private PIN.
-- If the profile has a normal PIN and its own private PIN, when you sign in with the normal PIN the section **does not appear**; it is only visible when you sign in with the private PIN.
-- After 5 failed attempts you have to wait 30 seconds.
-- The PIN locks the screen: it does not encrypt the data.
-- When you lock the profile or close the tab's session, it is asked for again.
-- With the section locked, this information also does not appear in the Summary or in the PDF (exporting Intimate requires having entered the private PIN).
+- Intimate is a module like the others: a profile sees it only if it has the **Intimate** module (Your account → Profiles). There is no separate private PIN any more; to keep it private, give the other profiles a PIN and leave Intimate out of their modules.
 
 ## Tabs
 

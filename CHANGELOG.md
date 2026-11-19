@@ -28,6 +28,7 @@
 - **Your account:**
   - **Account:** profile, email, language and password, partner, data sources, synchronisation and import.
   - **Profiles:** access levels over your account's data (all profiles see the same data), explained on the panel itself. Each profile, the main one included, can be given only the modules you choose, with chips like in DriveTest Analyzer; it only sees those in the menu. A profile with limited modules cannot manage profiles nor see Data and backups, and at least one profile always keeps every module. Profiles no longer have their own partner or cycle.
+  - **The PIN decides the profile:** the PIN typed on the lock screen opens the profile that has it; if several profiles share a PIN, entering with it shows the modules of all of them (the panel warns when you set a PIN another profile already uses). The separate private PIN for Cycle and intimacy is gone: Intimate is a module like the others, and a profile only exports to PDF the modules it has.
   - **Personal data** (height, sex, date of birth) is a panel of the **Account** tab, under Password.
   - **Data and backups:** where your phone data comes from, data source, full backup and CSV export.
 - **Administration** (administrator accounts), with these tabs:

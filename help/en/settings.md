@@ -62,22 +62,18 @@ The following three sections are tabs of **Your account**, not of Goals, plan an
 - Each profile row lets you set:
   - **Name** and **colour** (the colour and initials identify the profile).
   - **Set PIN** / **Change PIN** / **Remove PIN**: 4-digit PIN for the profile.
-  - **Private PIN**: 4-digit PIN for Cycle and intimacy (see below).
   - **Modules** (every profile, the main one included): tap each module to give the profile access to it or take it away: Summary, Weight, Body, Activity, Sleep, Meals, Intimate and Weight history. A profile only sees its modules in the menu, and opening another one takes it to the first module it has. Goals, plan and meals, Your account → Account and Help are always available. A profile with limited modules cannot manage profiles nor see Data and backups, so at least one profile always keeps every module.
   - **Delete** (asks for confirmation with "Sure?"): removes the profile; the data stays, since it is your account's. The main profile cannot be deleted.
 - **Add profile**: type a name and press **Add profile**. Switch to it with the profile button.
 
 ### Profile PIN
 - It is a 4-digit screen lock with a numeric keypad. It **does not encrypt the data.**
+- **The PIN decides the profile:** on the lock screen, the PIN you type opens the profile that has it. So each person can enter with their own PIN and see only the modules of their profile.
+- **Shared PIN:** if several profiles have the same PIN, entering with it opens them together and you see the modules of all of them. When you set a PIN that another profile already has, the panel tells you so.
 - When you open the app or switch to a profile with a PIN, it is asked for. After 5 failed attempts you have to wait 30 seconds.
-- The lock screen lets you **Sign in with another profile**.
+- The lock screen also lets you **Sign in with another profile**.
 - **Lock profile** (in the profile menu) asks for the PIN again.
-- Signing in with the **normal PIN** opens the profile without Cycle and intimacy; signing in with the **private PIN** opens everything.
-
-### Private PIN
-- It protects the Cycle and intimacy section. Until you change it, it is **0000**.
-- To change it you must enter the current private PIN and a new 4-digit one other than 0000. **Back to 0000** resets it.
-- If the profile has a normal PIN and its own private PIN, when you sign in with the normal PIN the Cycle and intimacy section does not even appear.
+- Cycle and intimacy no longer have a PIN of their own: who sees them depends on whether the profile has the **Intimate** module.
 
 ### Personal data (Your account → Account, at the end)
 - **Height (cm)**: between 120 and 230. It is used for BMI, lean mass index, reference zones and the tape measurement formulas.
@@ -117,4 +113,4 @@ The following three sections are tabs of **Your account**, not of Goals, plan an
 - Press **See preview**: A4 pages are generated with the charts as you see them in the app, with the profile name and the period in the header. Tap a page to enlarge it.
 - **Download PDF** saves the file; **Change options** goes back.
 - The PDF is always made with the light theme.
-- The Cycle and intimacy section can only be exported if you have signed in with the private PIN.
+- A profile only exports the modules it has.

@@ -11,7 +11,7 @@ One file per module. The sections of the app are those in the navigation bar; th
 | [Activity](activity.md) | Steps, calories, exercise, workouts and analysis |
 | [Sleep](sleep.md) | Last night, sleep balance, progress, schedule, naps and the rules for nights |
 | [Meals](meals.md) | Meal log and score, and their effect on your weight |
-| [Intimate](intimate.md) | Cycle, sexuality and mood, protected by the private PIN |
+| [Intimate](intimate.md) | Cycle, sexuality and mood, for the profiles that have the Intimate module |
 | [History](history.md) | Your whole weight history by year and weight-loss attempts |
 | [Goals, plan and meals](settings.md) | Goals and weight-loss plan, Meals formula; also profiles, PIN, personal data, backups and export to PDF (in "Your account") |
 

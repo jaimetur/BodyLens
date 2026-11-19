@@ -17,7 +17,7 @@ server, the data arrives on its own, and every person sees only their own data.
 - **Sleep:** last night with stages, 7-night sleep balance, naps, target schedule and analysis. AutoSleep and
   Apple Watch data are merged with their own rules (5 pm → 5 pm window, wake-ups, naps).
 - **Meals:** a daily score of what you eat, drink and exercise, and its estimated effect on your weight.
-- **Intimate:** cycle (with forecast), sexual activity and mood, protected by a private PIN.
+- **Intimate:** cycle (with forecast), sexual activity and mood, visible only to the profiles that have the Intimate module.
 - **Help** inside the app: the help of every module, this README and the changelog, in your language.
 - **PDF report** of the chosen period and **full backups** in JSON and CSV.
 - **Interface:** light and dark themes, designed for the phone (installs as an app from the browser), swipe

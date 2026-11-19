@@ -57,13 +57,14 @@ function cycleSrc(){const own=(HKLOG.e||[]).some(e=>e[0]==='menstrual');if(own)r
 // PIN de privacidad (segundo PIN) para Ciclo e intimidad: por defecto 0000; se cambia en Gestionar perfiles. Solo se guarda su huella.
 const privHash=async(id,pin)=>{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(`bascula-priv:${id}:${pin}`));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')};
 const privKey=p=>p&&p.privH?p.privH:'0000';
-const privOK=()=>{const p=PROF();if(!p)return true;try{return sessionStorage.getItem('bascula:priv:'+p.id)===privKey(p)}catch(e){return PRIV_UNL[p.id]===privKey(p)}};
+// no private PIN any more: access to Íntimo is decided by the profile's modules
+const privOK=()=>true;
 const PRIV_UNL={};const privSet=(p,on)=>{if(on)PRIV_UNL[p.id]=privKey(p);else delete PRIV_UNL[p.id];try{on?sessionStorage.setItem('bascula:priv:'+p.id,privKey(p)):sessionStorage.removeItem('bascula:priv:'+p.id)}catch(e){}};
 async function privCheck(p,pin){return p.privH?(await privHash(p.id,pin))===p.privH:pin==='0000'}
 // «acceso íntimo»: se entró al perfil con el PIN privado. Sin él, el módulo Íntimo ni se ve (si el perfil tiene PIN normal y PIN privado propio)
 const privAcc=p=>{try{return sessionStorage.getItem('bascula:privacc:'+p.id)===privKey(p)}catch(e){return PRIV_ACC[p.id]===privKey(p)}};
 const PRIV_ACC={};const privAccSet=(p,on)=>{if(on)PRIV_ACC[p.id]=privKey(p);else delete PRIV_ACC[p.id];try{on?sessionStorage.setItem('bascula:privacc:'+p.id,privKey(p)):sessionStorage.removeItem('bascula:privacc:'+p.id)}catch(e){}};
-const privVisible=()=>{const p=PROF();return !p||!p.privH||!p.pinH||privAcc(p)||privOK()};
+const privVisible=()=>true;
 function applyIntimoVis(){const on=privVisible();document.querySelectorAll('[data-v="intimo"]').forEach(a=>{a.hidden=!on});document.body.classList.toggle('noint',!on);return on}
 const resCycle=()=>{if(typeof cycleCalc!=='function'||!privOK())return null;const s=cycleSrc(),C=cycleCalc(s.log);if(C)C.who=s.who;return C};
 // la actividad sexual es compartida: la de este perfil más la de la pareja (perfil principal y perfil del ciclo)
@@ -90,9 +91,12 @@ async function lockKey(k){const L=LOCK;if(!L)return;if(Date.now()<L.until)return
   if(k==='⌫'){L.buf=L.buf.slice(0,-1);L.msg='';drawLock();return}if(L.buf.length>=4)return;L.buf+=k;drawLock();
   if(L.buf.length<4)return;
   if(L.mode==='priv'){if(await privCheck(L.p,L.buf)){privSet(L.p,true);privAccSet(L.p,true);const t=L.then;hideLock();if(t)t();else renderView();return}}
-  else{const ok=(await pinHash(L.p.id,L.buf))===L.p.pinH,pv=!!L.p.privH&&(await privHash(L.p.id,L.buf))===L.p.privH;
-    // con el PIN normal se entra sin Íntimo; con el PIN privado, a todo
-    if(ok||pv){setUnlocked(L.p);privSet(L.p,pv);privAccSet(L.p,pv);const t=L.then;hideLock();if(t)t();else{applyIntimoVis();renderView()}return}}
+  else{// the PIN decides the profile: every profile with this PIN opens, and their modules add up
+    const hit=[];for(const q of PROFS)if(q.pinH&&(await pinHash(q.id,L.buf))===q.pinH)hit.push(q);
+    if(hit.length){hit.forEach(setUnlocked);try{sessionStorage.setItem('bascula:grp',JSON.stringify(hit.map(q=>q.id)))}catch(e){}
+      const go=hit.find(q=>q.id===L.p.id)||hit[0];
+      if(go.id!==SEL){hideLock();switchProfile(go.id,true);return}
+      const t=L.then;hideLock();if(t)t();else{applyModVis();route()}return}}
   L.tries++;L.buf='';if(L.tries>=5){L.until=Date.now()+30000;L.tries=0;L.msg='Demasiados intentos. Espera 30 segundos.';setTimeout(()=>{if(LOCK){LOCK.msg='';drawLock()}},30000)}else L.msg='PIN incorrecto';drawLock();
   const d=document.querySelector('.lk-dots');if(d){d.classList.add('shake');setTimeout(()=>d.classList.remove('shake'),400)}}
 document.addEventListener('click',e=>{const k=e.target.closest('[data-lk]');if(k){lockKey(k.dataset.lk);return}
@@ -256,7 +260,10 @@ const SUBV={medidas:'composicion',corazon:'composicion',bienestar:'composicion'}
 // modules a profile can be given access to (a profile without «mods» sees all of them)
 const MODS=[['resumen','Resumen'],['peso','Peso'],['composicion','Cuerpo'],['actividad','Actividad'],['sueno','Sueño'],['comidas','Comidas'],['intimo','Íntimo'],['historial','Historial de pesos']];
 const modsOf=p=>p&&Array.isArray(p.mods)&&p.mods.length?p.mods:null;
-function modAllowed(v){const m=modsOf(PROF()),b=SUBV[v]||v;return !m||!MODS.some(([id])=>id===b)||m.includes(b)}
+// profiles entered together with a shared PIN (this session): their modules add up
+function pinGroup(){try{const g=JSON.parse(sessionStorage.getItem('bascula:grp')||'null');if(Array.isArray(g)&&g.includes(PROF().id))return PROFS.filter(p=>g.includes(p.id))}catch(e){}return [PROF()]}
+function curMods(){const G=pinGroup();if(G.some(p=>!modsOf(p)))return null;return MODS.map(([id])=>id).filter(id=>G.some(p=>p.mods.includes(id)))}
+function modAllowed(v){const m=curMods(),b=SUBV[v]||v;return !m||!MODS.some(([id])=>id===b)||m.includes(b)}
 function applyModVis(){document.querySelectorAll('[data-v]').forEach(a=>a.classList.toggle('nomod',!modAllowed(a.dataset.v)))}
 $('railNav').innerHTML=VIEWS.filter(([id])=>!SUBV[id]).map(([id,l])=>(id==='ajustes'&&!SRV_V.length?`<a class="nav owner-only" href="#ajustes" data-pfnav><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2a4.5 4.5 0 0 1 5 4.8"/></svg><span>Gestionar perfiles</span></a>`:'')+link(id,id==='composicion'?'Cuerpo':l,'nav')).join('');
 // «Gestionar perfiles» en la barra lateral: abre Ajustes en la parte de perfiles
@@ -1423,7 +1430,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&pullAt&&D
 const LIBS={h2c:'https://cdn.jsdelivr.net/npm/html2canvas-pro@1.5.8/dist/html2canvas-pro.min.js',pdf:'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'};
 const loadJs=src=>new Promise((ok,ko)=>{if(document.querySelector(`script[src="${src}"]`)){ok();return}const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=()=>ko(new Error('No se pudo cargar '+src));document.head.append(s)});
 const EXP={scope:'view',range:30,pages:null,blob:null,name:'',orient:UI.pdfOrient||'p'};
-const EXP_VIEWS=VIEWS.filter(([id])=>id!=='ajustes'&&id!=='cuenta'&&id!=='admin');
+const EXP_VIEWS=VIEWS.filter(([id])=>id!=='ajustes'&&id!=='cuenta'&&id!=='admin'&&modAllowed(id));// a profile only exports its modules
 const viewName=id=>(EXP_VIEWS.find(([v])=>v===id)||[])[1]||id;
 // qué se puede exportar: módulos → apartados (pestañas de la sección o subsecciones de Cuerpo y Actividad)
 const EXP_MODS=[['resumen',['resumen']],['peso',['peso']],['composicion',['composicion','medidas','corazon','bienestar']],['actividad',['actividad']],['sueno',['sueno']],['comidas',['comidas']],['intimo',['intimo']],['historial',['historial']]];
@@ -1586,7 +1593,7 @@ if(SRV_V.length){
         save(v){$('cfHeight').value=v.height??'';$('cfSex').value=v.sex||'';$('cfBirth').value=v.birth||'';$('pfMsg').textContent='';$('pfSave').click();
           const m=$('pfMsg').textContent;return {ok:m==='Perfil guardado.',msg:m}}}}}
   if(UI.ajTabPf==='perfil')UI.ajTabPf='perfiles';
-  if(modsOf(PROF()))document.querySelectorAll('#ajTabs [data-ajm="pf"]').forEach(b=>{b.remove();AJ_PF.splice(AJ_PF.indexOf(b.dataset.ajt),1)});
+  if(curMods())document.querySelectorAll('#ajTabs [data-ajm="pf"]').forEach(b=>{b.remove();AJ_PF.splice(AJ_PF.indexOf(b.dataset.ajt),1)});
   const pfBtns=[...document.querySelectorAll('#ajTabs [data-ajm="pf"]')];
   // the «Cuenta» tab in the profiles part of Ajustes
   $('ajTabs').insertAdjacentHTML('afterbegin',`<button type="button" role="tab" data-acct>${accIcon}<span>Cuenta</span></button>`);
@@ -1602,7 +1609,7 @@ if(SRV_V.length){
   showAj(AJT);
 }
 function renderProfCard(){const h=$('pfList');if(!h)return;
-  h.innerHTML=PROFS.map((p,i)=>`<div class="pfrow" data-pfi="${i}"><i style="background:${p.col}">${esc(initials(p.name))}</i><input type="text" value="${esc(p.name)}" data-pfname aria-label="Nombre del perfil"><input type="color" value="${p.col}" data-pfcol aria-label="Color"><button type="button" class="btn ghost" data-pfpin>${p.pinH?'Cambiar PIN':'Poner PIN'}</button><button type="button" class="btn ghost" data-pfppin title="PIN para ver Ciclo e intimidad">PIN privado</button>${i?`<button type="button" class="btn ghost danger" data-pfdel>${PF_DEL===i?'¿Seguro?':'Borrar'}</button>`:'<span class="pfmain">Principal</span>'}${PF_PIN===i?`<span class="pfpin"><input type="password" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="4 cifras" data-pfpinv aria-label="Nuevo PIN"><button type="button" class="btn" data-pfpinok>Guardar</button>${p.pinH?'<button type="button" class="btn ghost danger" data-pfpinoff>Quitar PIN</button>':''}</span>`:''}${PF_PPIN===i?`<span class="pfpin"><small class="pfpn">PIN privado (Ciclo e intimidad)${p.privH?'':' · ahora 0000'}</small><input type="password" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="Actual" data-pfppcur aria-label="PIN privado actual"><input type="password" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="Nuevo" data-pfppv aria-label="Nuevo PIN privado"><button type="button" class="btn" data-pfppok>Guardar</button>${p.privH?'<button type="button" class="btn ghost" data-pfppoff>Volver a 0000</button>':''}</span>`:''}${true?`<span class="pfpin pfmods" role="group" aria-label="Módulos de ${esc(p.name)}"><small class="pfpn">Módulos</small>${MODS.map(([id,l])=>`<label class="pfmod"><input type="checkbox" data-pfmod="${id}"${!modsOf(p)||p.mods.includes(id)?' checked':''}><span>${l}</span></label>`).join('')}</span>`:''}</div>`).join('')}
+  h.innerHTML=PROFS.map((p,i)=>`<div class="pfrow" data-pfi="${i}"><i style="background:${p.col}">${esc(initials(p.name))}</i><input type="text" value="${esc(p.name)}" data-pfname aria-label="Nombre del perfil"><input type="color" value="${p.col}" data-pfcol aria-label="Color"><button type="button" class="btn ghost" data-pfpin>${p.pinH?'Cambiar PIN':'Poner PIN'}</button>${i?`<button type="button" class="btn ghost danger" data-pfdel>${PF_DEL===i?'¿Seguro?':'Borrar'}</button>`:'<span class="pfmain">Principal</span>'}${PF_PIN===i?`<span class="pfpin"><small class="pfpn">Con este PIN se entra en este perfil. Si varios perfiles tienen el mismo PIN, al entrar con él se ven los módulos de todos ellos.</small><input type="password" inputmode="numeric" maxlength="4" pattern="[0-9]*" placeholder="4 cifras" data-pfpinv aria-label="Nuevo PIN"><button type="button" class="btn" data-pfpinok>Guardar</button>${p.pinH?'<button type="button" class="btn ghost danger" data-pfpinoff>Quitar PIN</button>':''}</span>`:''}${true?`<span class="pfpin pfmods" role="group" aria-label="Módulos de ${esc(p.name)}"><small class="pfpn">Módulos</small>${MODS.map(([id,l])=>`<label class="pfmod"><input type="checkbox" data-pfmod="${id}"${!modsOf(p)||p.mods.includes(id)?' checked':''}><span>${l}</span></label>`).join('')}</span>`:''}</div>`).join('')}
 let PF_DEL=null,PF_PIN=null,PF_PPIN=null;
 document.addEventListener('change',e=>{const r=e.target.closest('.pfrow');if(!r)return;const i=+r.dataset.pfi,L=PROFS.map(p=>({...p}));
   if(e.target.matches('[data-pfname]')){const v=e.target.value.trim();if(!v)return renderProfCard();L[i].name=v}
@@ -1617,17 +1624,11 @@ document.addEventListener('change',e=>{const r=e.target.closest('.pfrow');if(!r)
   else return;
   saveProfs(L);renderProfCard();$('pfMsg2').textContent='Guardado.'});
 document.addEventListener('click',async e=>{const r=e.target.closest('.pfrow');if(r){const i=+r.dataset.pfi;
-    if(e.target.closest('[data-pfppin]')){PF_PPIN=PF_PPIN===i?null:i;PF_PIN=null;renderProfCard();const v=document.querySelector('[data-pfppcur]');if(v)v.focus();return}
-    if(e.target.closest('[data-pfppok]')||e.target.closest('[data-pfppoff]')){const p=PROFS[i],cur=r.querySelector('[data-pfppcur]').value,nv=r.querySelector('[data-pfppv]').value,off=!!e.target.closest('[data-pfppoff]');
-      // hace falta el PIN privado actual (así nadie lo cambia para entrar)
-      if(!(await privCheck(p,cur))){$('pfMsg2').textContent='El PIN privado actual no es correcto.';return}
-      if(!off&&!/^\d{4}$/.test(nv)){$('pfMsg2').textContent='El PIN nuevo tiene que tener 4 cifras.';return}
-      if(!off&&nv==='0000'){$('pfMsg2').textContent='Elige un PIN privado distinto de 0000.';return}
-      const L=PROFS.map(q=>({...q}));if(off)delete L[i].privH;else L[i].privH=await privHash(L[i].id,nv);PF_PPIN=null;saveProfs(L);privSet(L[i],true);privAccSet(L[i],true);renderProfCard();applyIntimoVis();
-      $('pfMsg2').textContent=off?`PIN privado de ${L[i].name}: vuelve a ser 0000.`:`PIN privado de ${L[i].name} guardado.`;return}
     if(e.target.closest('[data-pfpin]')){PF_PIN=PF_PIN===i?null:i;PF_PPIN=null;renderProfCard();const v=document.querySelector('[data-pfpinv]');if(v)v.focus();return}
     if(e.target.closest('[data-pfpinok]')){const v=r.querySelector('[data-pfpinv]').value;if(!/^\d{4}$/.test(v)){$('pfMsg2').textContent='El PIN tiene que tener 4 cifras.';return}
-      const L=PROFS.map(p=>({...p}));L[i].pinH=await pinHash(L[i].id,v);PF_PIN=null;setUnlocked(L[i]);saveProfs(L);renderProfCard();$('pfMsg2').textContent=`PIN de ${L[i].name} guardado.`;return}
+      const L=PROFS.map(p=>({...p}));L[i].pinH=await pinHash(L[i].id,v);PF_PIN=null;setUnlocked(L[i]);saveProfs(L);renderProfCard();
+      const same=[];for(const q of L)if(q.id!==L[i].id&&q.pinH&&(await pinHash(q.id,v))===q.pinH)same.push(q.name);
+      $('pfMsg2').textContent=same.length?`PIN de ${L[i].name} guardado. Es el mismo PIN que el de ${same.join(', ')}: quien entre con él verá los módulos de todos esos perfiles.`:`PIN de ${L[i].name} guardado.`;return}
     if(e.target.closest('[data-pfpinoff]')){const L=PROFS.map(p=>({...p}));delete L[i].pinH;PF_PIN=null;saveProfs(L);renderProfCard();$('pfMsg2').textContent=`PIN de ${L[i].name} quitado.`;return}}});
 document.addEventListener('click',e=>{if(e.target.id==='pfAdd'){const n=$('pfNew').value.trim();if(!n){$('pfMsg2').textContent='Escribe un nombre.';return}
     let id=n.toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g,'').slice(0,12)||'perfil';while(PROFS.some(p=>p.id===id))id+='2';

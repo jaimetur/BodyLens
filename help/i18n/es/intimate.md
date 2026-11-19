@@ -1,4 +1,4 @@
-<!-- en: c93d5f3709773af7 -->
+<!-- en: 398b641f043e96d9 -->
 # Ciclo e intimidad
 
 Una sección privada para seguir el ciclo menstrual, la actividad sexual y el ánimo. Está protegida por su propio PIN de privacidad y se puede ocultar por completo.
@@ -7,15 +7,9 @@ Una sección privada para seguir el ciclo menstrual, la actividad sexual y el á
 
 - Los registros de ciclo, actividad sexual y ánimo vienen de **Apple Salud** (iPhone, a través de Health Auto Export) o de **Android** (Health Connect, a través de la app de BodyLens), o los apuntas aquí a mano. Android envía la menstruación y la actividad sexual; **el ánimo (Estado de ánimo) solo lo envía el iPhone, así que en Android apúntalo a mano en la app.** Los registros importados se etiquetan «Apple Salud / Android».
 
-## PIN privado
+## Quién lo ve
 
-- Al entrar en la sección se te pide el **PIN de privacidad** del perfil (4 dígitos). Si está bloqueada, «Ciclo e intimidad» aparece con el botón **Desbloquear**.
-- Hasta que lo cambies, el PIN privado es **0000**. Se cambia en Tu cuenta → Perfiles (**PIN privado**) y no puede ser 0000. Para cambiarlo o quitarlo necesitas el PIN privado actual.
-- Si el perfil tiene un PIN normal y su propio PIN privado, cuando entras con el PIN normal la sección **no aparece**; solo se ve al entrar con el PIN privado.
-- Tras 5 intentos fallidos tienes que esperar 30 segundos.
-- El PIN bloquea la pantalla: no cifra los datos.
-- Cuando bloqueas el perfil o cierras la sesión de la pestaña, se vuelve a pedir.
-- Con la sección bloqueada, esta información tampoco aparece en el Resumen ni en el PDF (para exportar Íntimo hay que haber introducido el PIN privado).
+- Íntimo es un módulo como los demás: un perfil lo ve solo si tiene el módulo **Íntimo** (Tu cuenta → Perfiles). Ya no hay un PIN privado aparte; para que sea privado, pon PIN a los demás perfiles y deja Íntimo fuera de sus módulos.
 
 ## Pestañas
 

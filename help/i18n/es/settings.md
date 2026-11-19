@@ -1,4 +1,4 @@
-<!-- en: 88fce7bb7e5db500 -->
+<!-- en: cb2d7cdee0e63137 -->
 # Objetivos, plan y comidas
 
 Sirve para fijar tus objetivos y el plan de pérdida y la fórmula de Comidas. La misma página de la app incluye también las pestañas de **Tu cuenta** que se describen al final de este documento: perfiles y PIN, datos personales, copias de seguridad y exportar a PDF.
@@ -63,22 +63,18 @@ Las tres secciones siguientes son pestañas de **Tu cuenta**, no de Objetivos, p
 - Cada fila de perfil te permite definir:
   - **Nombre** y **color** (el color y las iniciales identifican el perfil).
   - **Poner PIN** / **Cambiar PIN** / **Quitar PIN**: PIN de 4 dígitos para el perfil.
-  - **PIN privado**: PIN de 4 dígitos para Ciclo e intimidad (mira más abajo).
   - **Módulos** (todos los perfiles, también el principal): toca cada módulo para darle acceso al perfil o quitárselo: Resumen, Peso, Cuerpo, Actividad, Sueño, Comidas, Íntimo e Historial de pesos. Un perfil solo ve sus módulos en el menú, y si abre otro va al primero que tiene. Objetivos, plan y comidas, Tu cuenta → Cuenta y la Ayuda están siempre disponibles. Un perfil con módulos limitados no puede gestionar los perfiles ni ver Datos y copias, así que siempre queda al menos un perfil con todos los módulos.
   - **Borrar** (pide confirmación con «¿Seguro?»): quita el perfil; los datos se quedan, porque son de tu cuenta. El perfil principal no se puede borrar.
 - **Añadir perfil**: escribe un nombre y pulsa **Añadir perfil**. Cambia a él con el botón del perfil.
 
 ### PIN del perfil
 - Es un bloqueo de pantalla de 4 dígitos con teclado numérico. **No cifra los datos.**
+- **El PIN decide el perfil:** en la pantalla de bloqueo, el PIN que escribes abre el perfil que lo tiene. Así cada persona entra con su PIN y solo ve los módulos de su perfil.
+- **PIN compartido:** si varios perfiles tienen el mismo PIN, al entrar con él se abren juntos y se ven los módulos de todos ellos. Cuando pones un PIN que ya tiene otro perfil, el panel te lo avisa.
 - Al abrir la app o cambiar a un perfil con PIN, se pide. Tras 5 intentos fallidos tienes que esperar 30 segundos.
-- La pantalla de bloqueo te permite **Entrar con otro perfil**.
+- La pantalla de bloqueo también te permite **Entrar con otro perfil**.
 - **Bloquear perfil** (en el menú del perfil) vuelve a pedir el PIN.
-- Si entras con el **PIN normal**, el perfil se abre sin Ciclo e intimidad; si entras con el **PIN privado**, se abre todo.
-
-### PIN privado
-- Protege la sección Ciclo e intimidad. Hasta que lo cambies, es **0000**.
-- Para cambiarlo debes introducir el PIN privado actual y uno nuevo de 4 dígitos distinto de 0000. **Volver a 0000** lo restablece.
-- Si el perfil tiene un PIN normal y su propio PIN privado, cuando entras con el PIN normal la sección Ciclo e intimidad ni siquiera aparece.
+- Ciclo e intimidad ya no tienen un PIN propio: quién los ve depende de si el perfil tiene el módulo **Íntimo**.
 
 ### Datos personales (Tu cuenta → Cuenta, al final)
 - **Altura (cm)**: entre 120 y 230. Se usa para el IMC, el índice de masa magra, las zonas de referencia y las fórmulas de las medidas con cinta.
@@ -118,4 +114,4 @@ Las tres secciones siguientes son pestañas de **Tu cuenta**, no de Objetivos, p
 - Pulsa **Ver vista previa**: se generan páginas A4 con los gráficos tal como los ves en la app, con el nombre del perfil y el periodo en la cabecera. Toca una página para agrandarla.
 - **Descargar PDF** guarda el fichero; **Cambiar opciones** vuelve atrás.
 - El PDF se hace siempre con el tema claro.
-- La sección Ciclo e intimidad solo se puede exportar si has entrado con el PIN privado.
+- Un perfil solo exporta los módulos que tiene.

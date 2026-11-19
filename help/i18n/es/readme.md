@@ -1,4 +1,4 @@
-<!-- en: e1645a9ccf07b307 -->
+<!-- en: 53bd019478a02664 -->
 # BodyLens
 
 **BodyLens** es una app web de salud personal, multiusuario y autoalojada. Reúne el peso y la composición corporal
@@ -18,7 +18,7 @@ servidor, los datos llegan solos y cada persona ve únicamente los suyos.
 - **Sueño:** la última noche con sus fases, saldo de sueño de 7 noches, siestas, horario objetivo y análisis. Los datos de AutoSleep y
   del Apple Watch se combinan con reglas propias (ventana de 17:00 a 17:00, despertares, siestas).
 - **Comidas:** una nota diaria de lo que comes, bebes y haces de ejercicio, y su efecto estimado en tu peso.
-- **Íntimo:** ciclo (con previsión), actividad sexual y ánimo, protegidos por un PIN privado.
+- **Íntimo:** ciclo (con previsión), actividad sexual y ánimo, visibles solo para los perfiles que tienen el módulo Íntimo.
 - **Ayuda** dentro de la app: la ayuda de cada módulo, este README y el registro de cambios, en tu idioma.
 - **Informe en PDF** del periodo elegido y **copias de seguridad completas** en JSON y CSV.
 - **Interfaz:** temas claro y oscuro, pensada para el móvil (se instala como app desde el navegador), gestos de
