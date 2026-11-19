@@ -77,6 +77,13 @@ def list_users(con: sqlite3.Connection, active: bool | None = True) -> list[User
     return [User.from_row(r) for r in con.execute("SELECT * FROM users WHERE active=? ORDER BY id", (int(active),))]
 
 
+def ensure_other_admin(con: sqlite3.Connection, user_id: int) -> None:
+    """Refuse to leave the server without an active admin (removing, deactivating or deleting the last one)."""
+    n = con.execute("SELECT count(*) FROM users WHERE is_admin=1 AND active=1 AND id<>?", (user_id,)).fetchone()[0]
+    if not n:
+        raise UserError("Es la única cuenta de administración activa: haz antes administradora a otra cuenta.")
+
+
 def admin_emails(con: sqlite3.Connection) -> list[str]:
     return [u.email for u in list_users(con) if u.is_admin and u.email]
 

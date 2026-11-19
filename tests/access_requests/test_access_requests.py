@@ -145,3 +145,26 @@ def test_admin_mail_settings(client, make_user, login, monkeypatch):
     s = mailer.settings()
     assert s["host"] == "smtp2.example.test" and s["password"] == "secreto"
     assert a.put("/api/admin/mail", json={"security": "raro"}).status_code == 400
+
+
+
+def test_nunca_sin_administracion(client, make_user, login):
+    """No se puede quitar, desactivar ni borrar la última cuenta de administración activa."""
+    from app.accounts import users
+    from app.accounts.users import UserError
+    from app.core import db
+    me = make_user("jaimetur", admin=True)
+    a = login("jaimetur")
+    with db.ro() as con:
+        adm = users.get_by_username(con, "admin")
+    # con otra admin activa (yo), a la cuenta inicial se le puede quitar la administración y desactivar
+    assert a.patch(f"/api/admin/accounts/{adm.id}", json={"isAdmin": False}).status_code == 200
+    # a mí mismo no (soy la única que queda)
+    assert a.patch(f"/api/admin/accounts/{me.id}", json={"isAdmin": False}).status_code == 400
+    assert a.patch(f"/api/admin/accounts/{me.id}", json={"active": False}).status_code == 400
+    assert a.delete(f"/api/admin/accounts/{me.id}").status_code == 400
+    # la comprobación del servidor, por si cambia la regla de «a ti mismo no»
+    with db.ro() as con:
+        with pytest.raises(UserError, match="única cuenta de administración"):
+            users.ensure_other_admin(con, me.id)
+        users.ensure_other_admin(con, adm.id)   # quedo yo: vale

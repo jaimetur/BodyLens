@@ -51,6 +51,8 @@ def edit_account(user_id: int, body: AccountIn, u: User = Depends(admin_user)):
                 raise HTTPException(404, "No existe esa cuenta.")
             if user_id == u.id and (body.isAdmin is False or body.active is False):
                 raise UserError("No puedes quitarte a ti mismo la administración ni desactivar tu cuenta.")
+            if x.is_admin and x.active and (body.isAdmin is False or body.active is False):
+                users.ensure_other_admin(con, user_id)
             if body.username is not None or body.name is not None:
                 users.rename(con, user_id, x.username if body.username is None else body.username,
                              x.name if body.name is None else body.name)
@@ -104,6 +106,11 @@ def delete_account(user_id: int, u: User = Depends(admin_user)):
         x = users.get_user(con, user_id)
         if not x:
             raise HTTPException(404, "No existe esa cuenta.")
+        if x.is_admin and x.active:
+            try:
+                users.ensure_other_admin(con, user_id)
+            except UserError as e:
+                raise HTTPException(400, str(e))
         if x.partner_id:
             docstore.unlink_partner(con, x)
         con.execute("DELETE FROM invites WHERE used_by=?", (user_id,))

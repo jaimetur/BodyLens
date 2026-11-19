@@ -59,6 +59,9 @@ Lo que hay que crear está descrito en `docs/MIGRACION.md` (backend FastAPI, cap
    están en `.gitignore`. Los fixtures de tests deben ser sintéticos o mínimos.
 6. **Zona horaria `Europe/Madrid`** para todo cálculo de días y noches (igual que la hoja).
 7. Trabaja por fases (las de `docs/MIGRACION.md`), con commits pequeños y tests en cada una.
+8. **Idioma del trabajo.** Con Jaime se habla **siempre en español** (mensajes, resúmenes, preguntas, informes).
+   Los **comentarios del código** y los docstrings nuevos van **en inglés**; los que ya existen en español se dejan
+   como están salvo que se reescriba ese código. Los textos que ve quien usa la app siguen la regla 3.
 
 ## Textos e idiomas
 
