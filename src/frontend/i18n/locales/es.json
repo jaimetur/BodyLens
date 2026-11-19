@@ -51,6 +51,7 @@
  "10 years": "10 años",
  "12 wk": "12 sem",
  "14-day average": "media de 14 días",
+ "14-night average": "Media de 14 noches",
  "15 minutes without activity": "15 minutos sin actividad",
  "2 minutes without activity": "2 minutos sin actividad",
  "2-week median": "mediana de 2 semanas",
@@ -237,7 +238,6 @@
  "Average mood by what influences it": "Ánimo medio según lo que influye",
  "Average of": "Media de",
  "Average of each day's minimum HR": "Media de la FC mínima de cada día",
- "Average of the earlier nights": "Media de las noches anteriores",
  "Average of the three rings": "Media de los tres anillos",
  "Average over the 16 weeks: {0}": "Media de las 16 semanas: {0}",
  "Average period": "Regla media",
@@ -1894,14 +1894,14 @@
  "Week of {0} {1} to {2} {3}": "Semana del {0} {1} al {2} {3}",
  "Week of {0}: {1} kg over {2} {3} between weigh-ins": "Semana del {0}: {1} kg en {2} {3} entre pesadas",
  "Week {0}": "Semana {0}",
- "Weekday target": "Objetivo entre semana",
+ "Weekday target": "Objetivo laborable",
  "Weekdays": [
   "Entre semana",
   "Laborables"
  ],
  "Weekdays and weekends": "Entre semana y fin de semana",
  "Weekend": "Fin de semana",
- "Weekend target": "Objetivo del fin de semana",
+ "Weekend target": "Objetivo de finde",
  "Weekends": "Fines de semana",
  "Weekly average": [
   "Media de la semana",
