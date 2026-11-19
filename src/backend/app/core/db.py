@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS users (
   font_size TEXT NOT NULL DEFAULT 'md',
   theme TEXT NOT NULL DEFAULT 'auto',
   lock_min INTEGER NOT NULL DEFAULT 1,
+  nav TEXT NOT NULL DEFAULT '{}',
   created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS sessions (
@@ -173,6 +174,8 @@ def _migrate(con: sqlite3.Connection) -> None:
         con.execute("ALTER TABLE users ADD COLUMN theme TEXT NOT NULL DEFAULT 'auto'")
     if "lock_min" not in cols:
         con.execute("ALTER TABLE users ADD COLUMN lock_min INTEGER NOT NULL DEFAULT 1")
+    if "nav" not in cols:
+        con.execute("ALTER TABLE users ADD COLUMN nav TEXT NOT NULL DEFAULT '{}'")
     if "lang" not in cols:
         # las cuentas de antes del multi-idioma usaban la app en español: lo conservan; las nuevas, inglés
         con.execute("ALTER TABLE users ADD COLUMN lang TEXT NOT NULL DEFAULT 'en'")

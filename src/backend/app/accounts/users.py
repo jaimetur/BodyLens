@@ -1,6 +1,7 @@
 """Cuentas, sesiones, invitaciones y parejas."""
 from __future__ import annotations
 
+import json
 import re
 import sqlite3
 from dataclasses import dataclass
@@ -47,6 +48,7 @@ class User:
     font_size: str = "md"
     theme: str = "auto"
     lock_min: int = 1
+    nav: str = "{}"
 
     @classmethod
     def from_row(cls, r: sqlite3.Row) -> "User":
@@ -55,12 +57,13 @@ class User:
                    r["requested_at"], r["request_note"], r["lang"] if "lang" in r.keys() else "en",
                    r["font_size"] if "font_size" in r.keys() else "md",
                    r["theme"] if "theme" in r.keys() else "auto",
-                   r["lock_min"] if "lock_min" in r.keys() else 1)
+                   r["lock_min"] if "lock_min" in r.keys() else 1,
+                   r["nav"] if "nav" in r.keys() else "{}")
 
     def public(self) -> dict:
         return {"id": self.id, "username": self.username, "name": self.name, "isAdmin": self.is_admin,
                 "mustChange": self.must_change, "email": self.email or "", "lang": self.lang,
-                "fontSize": self.font_size, "theme": self.theme, "lockMin": self.lock_min}
+                "fontSize": self.font_size, "theme": self.theme, "lockMin": self.lock_min, "nav": _json_obj(self.nav)}
 
 
 def _utcnow() -> datetime:
@@ -163,6 +166,25 @@ def set_font_size(con: sqlite3.Connection, user_id: int, size: str | None) -> st
         raise UserError("Ese tamaño de texto no está disponible.")
     con.execute("UPDATE users SET font_size=? WHERE id=?", (size, user_id))
     return size
+
+
+def _json_obj(s: str | None) -> dict:
+    try:
+        v = json.loads(s or "{}")
+    except ValueError:
+        return {}
+    return v if isinstance(v, dict) else {}
+
+
+# what each profile of the account had open (section, tabs), so the app reopens it on any device
+NAV_MAX_BYTES = 32_000
+
+
+def set_nav(con: sqlite3.Connection, user_id: int, nav: dict) -> None:
+    s = json.dumps(nav, ensure_ascii=False, separators=(",", ":"))
+    if len(s.encode()) > NAV_MAX_BYTES:
+        raise UserError("Demasiados datos de navegación.")
+    con.execute("UPDATE users SET nav=? WHERE id=?", (s, user_id))
 
 
 # colour themes of the interface (CSS in src/frontend/common/themes.css); "auto" follows the device

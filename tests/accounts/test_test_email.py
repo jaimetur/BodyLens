@@ -11,4 +11,4 @@ def test_test_email_content(client, make_user, login, monkeypatch):
     assert r.status_code == 200, r.text
     to, subject, body = sent[0]
     assert to == ["ana@example.test"] and subject == "Comprobación del correo"
-    assert "Hola Ana," in body and "No es spam" in body and "Abrir BodyLens" in body
+    assert "Hola Ana," in body and "Abrir BodyLens" in body and "spam" not in body   # the word itself scores as spam

@@ -34,8 +34,6 @@ async def admin_test_email(body: TestMailIn, request: Request, u: User = Depends
             "este es el correo de comprobación que has pedido desde Administración → Correo. Si te ha llegado, BodyLens "
             "ya puede enviarte los avisos de tu cuenta: peticiones de acceso, invitaciones, contraseñas e invitaciones "
             "de pareja.",
-            "Si lo encuentras en la carpeta de spam, márcalo como «No es spam» y añade esta dirección a tus contactos: "
-            "así los próximos avisos llegarán a la bandeja de entrada.",
         ], link=("Abrir BodyLens", f"{base_url(request)}/")))
     except RuntimeError as e:
         raise HTTPException(502, str(e))

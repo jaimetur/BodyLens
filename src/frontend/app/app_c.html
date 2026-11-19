@@ -32,8 +32,16 @@ async function buildPage(snap){const tP='"'+'@@'+'PACK'+'@@"';const pack=await g
 // preferencias de esta vista (periodo elegido, series ocultas): solo comodidad, viven en este dispositivo
 const UI=(()=>{try{return JSON.parse(localStorage.getItem('bascula:ui')||'{}')||{}}catch(e){return {}}})();
 // what each profile had open (section in the address, tabs of each section) is kept apart, to reopen it when entering that profile
-const saveUI=()=>{try{if(typeof SEL==='string')UI.byProf={...(UI.byProf||{}),[SEL]:{h:location.hash,vt:UI.vt,lastSub:UI.lastSub,ajTab:UI.ajTab,ajTabPf:UI.ajTabPf}}}catch(e){}
+// (kept in this browser and, on the server, in the account, so a restart or another device reopens the same place)
+let NAV_T=null,NAV_LAST='';
+function navPush(){if(!window.BODYLENS_SERVER)return;clearTimeout(NAV_T);NAV_T=setTimeout(()=>{const s=JSON.stringify(UI.byProf||{});if(s===NAV_LAST)return;NAV_LAST=s;
+  fetch('/api/me/nav',{method:'POST',headers:{'Content-Type':'application/json','X-BodyLens':'1'},body:JSON.stringify({nav:UI.byProf||{}}),keepalive:true}).catch(()=>{NAV_LAST=''})},1500)}
+const saveUI=()=>{try{if(typeof SEL==='string'){const cur=(UI.byProf||{})[SEL]||{},nx={h:location.hash,vt:UI.vt,lastSub:UI.lastSub,ajTab:UI.ajTab,ajTabPf:UI.ajTabPf};
+    if(JSON.stringify({...cur,t:0})!==JSON.stringify({...nx,t:0})){UI.byProf={...(UI.byProf||{}),[SEL]:{...nx,t:Date.now()}};navPush()}}}catch(e){}
   try{localStorage.setItem('bascula:ui',JSON.stringify(UI))}catch(e){}};
+// what the server keeps wins over this browser's copy when it is newer (another device, or this browser's data was cleared)
+try{const srv=(window.BODYLENS_USER&&BODYLENS_USER.nav)||{},loc=UI.byProf||{};const m={...loc};
+  for(const [k,v] of Object.entries(srv))if(v&&typeof v==='object'&&(!loc[k]||(v.t||0)>(loc[k].t||0)))m[k]=v;UI.byProf=m;NAV_LAST=JSON.stringify(srv)}catch(e){}
 /* ---------- perfiles: cada persona tiene sus propios documentos («pf-<id>-…»); el perfil principal usa los de siempre ---------- */
 const PROF_DEF=[{"id":"","name":"Jaime Tur","col":"#3f51e0","partner":"laura","pinH":"b306e613261e589c95f54353e7647436ad522b508d1a7ea41bccfd24741623bb","partnerSince":"2026-03-01"},{"id":"laura","name":"Laura Romero","col":"#d6457a","cycle":1,"partner":"","pinH":"4e68ba88e45912c2d4a386c50521c22abda50a12b692992e00851267670516a9","partnerSince":"2026-03-01"}];
 let PROFS=(()=>{try{const p=JSON.parse(localStorage.getItem('bascula:profs')||'null');return Array.isArray(p)&&p.length?p:PROF_DEF}catch(e){return PROF_DEF}})();

@@ -231,6 +231,20 @@ def change_theme(body: ThemeIn, u: User = Depends(current_user)):
     return {"ok": True, "theme": theme}
 
 
+class NavIn(BaseModel):
+    nav: dict
+
+
+@router.post("/api/me/nav")
+def save_nav(body: NavIn, u: User = Depends(current_user)):
+    try:
+        with db.tx() as con:
+            users.set_nav(con, u.id, body.nav)
+    except UserError as e:
+        bad(e)
+    return {"ok": True}
+
+
 class LockIn(BaseModel):
     minutes: int
 

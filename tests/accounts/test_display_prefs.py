@@ -18,3 +18,13 @@ def test_theme_and_lock_minutes(client, make_user, login):
     assert c.post("/api/me/lock", json={"minutes": 7}).status_code == 400
     me = c.get("/api/me").json()["user"]
     assert me["theme"] == "ocean" and me["lockMin"] == 5
+
+
+def test_navigation_is_kept_on_the_server(client, make_user, login):
+    make_user("eva")
+    c = login("eva")
+    nav = {"": {"h": "#sueno", "vt": {"sueno": "hor"}, "t": 1}, "pa": {"h": "#comidas", "t": 2}}
+    assert c.post("/api/me/nav", json={"nav": nav}).status_code == 200
+    assert c.get("/api/me").json()["user"]["nav"] == nav
+    assert '"h": "#sueno"' in c.get("/").text          # the app page gets it at start
+    assert c.post("/api/me/nav", json={"nav": {"x": "y" * 40_000}}).status_code == 400

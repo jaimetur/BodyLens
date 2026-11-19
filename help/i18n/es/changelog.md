@@ -1,4 +1,4 @@
-<!-- en: dc806c1efaaed472 -->
+<!-- en: 9035325957e060bc -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -30,7 +30,7 @@
   - **Cuenta:** perfil, correo, idioma y contraseña, pareja, fuentes de datos, sincronización e importación.
   - **Perfiles:** niveles de acceso a los datos de tu cuenta (todos los perfiles ven los mismos datos), explicados en el propio panel. A cada perfil, también al principal, se le pueden dar solo los módulos que elijas, con fichas como en DriveTest Analyzer; en el menú solo ve esos. Los módulos incluyen Objetivos, plan y comidas, Tu cuenta (que también abre Perfiles y Datos y copias) y, en administradores, Administración; al menos un perfil tiene que tener esos, y los demás pueden tener los módulos que quieras. Los perfiles ya no tienen pareja ni ciclo propios.
   - **El PIN decide el perfil:** el PIN que se escribe en la pantalla de bloqueo abre el perfil que lo tiene; si varios perfiles comparten PIN, al entrar con él se ven los módulos de todos (el panel avisa cuando pones un PIN que ya usa otro perfil). Desaparece el PIN privado aparte para Ciclo e intimidad: Íntimo es un módulo como los demás, y un perfil solo exporta a PDF los módulos que tiene.
-  - **Orden y perfil principal:** los perfiles se ordenan arrastrando su asa ⋮⋮; el primero es el perfil principal. Al abrir la app se entra en el perfil principal si no tiene PIN; si lo tiene, se pide y el PIN que se escriba decide el perfil. Un perfil con PIN se bloquea solo tras 1 minuto sin actividad, y cada perfil se reabre en la sección y las pestañas que tenía abiertas. En el móvil, la barra de abajo muestra las secciones más grandes cuando el perfil tiene menos.
+  - **Orden y perfil principal:** los perfiles se ordenan arrastrando su asa ⋮⋮; el primero es el perfil principal. Al abrir la app se entra en el perfil principal si no tiene PIN; si lo tiene, se pide y el PIN que se escriba decide el perfil. Un perfil con PIN se bloquea solo tras 1 minuto sin actividad, y cada perfil se reabre en la sección y las pestañas que tenía abiertas, también tras un reinicio o en otro dispositivo (se guarda en la cuenta, en el servidor). En el móvil, la barra de abajo muestra las secciones más grandes cuando el perfil tiene menos.
   - **Datos personales** (altura, sexo, fecha de nacimiento) es un panel de la pestaña **Cuenta**, debajo de Contraseña.
   - **Datos y copias:** de dónde llegan los datos del móvil, origen de los datos, copia completa y exportación a CSV.
 - **Administración** (cuentas de administrador), con estas pestañas:
@@ -76,7 +76,7 @@
   - Cada nota está en la fila de su comida, con botones grandes, y el Agua tiene su propia fila.
   - El registro del día va antes de la pérdida estimada.
   - El registro del día muestra arriba las últimas 4 semanas (de lunes a domingo) en lugar de una sola; las flechas saltan 4 semanas.
-- **Correo:** el servidor saluda al servidor de correo con su nombre público en vez de con la dirección privada del contenedor, que los filtros de spam penalizan; el correo de prueba es como un aviso real (saludo, para qué sirve, enlace a la app) en vez de una sola frase.
+- **Correo:** el servidor saluda al servidor de correo con su nombre público en vez de con la dirección privada del contenedor, que los filtros de spam penalizan; el correo de prueba es como un aviso real (saludo, para qué sirve, enlace a la app) en vez de una sola frase, y Administración → Correo explica qué hacer si llega al spam.
 - **Panel de perfiles:** cada fila se adapta al ancho del panel, así que los botones de PIN ya no quedan fuera de la vista.
 - **Entrada manual en todos los módulos:** la tarjeta de pesada manual está en Peso (también cuando aún no hay pesadas, en vez de una página vacía); Actividad tiene tarjetas para apuntar a mano la actividad del día (pasos, minutos de ejercicio, calorías activas) y los entrenamientos; Sueño, una para apuntar a mano cualquier noche, y Cuerpo → Corazón, una para apuntar el pulso en reposo, la VFC, la saturación de oxígeno y el VO2 máx. Los datos de tus fuentes para el mismo día mandan. Las medidas, las comidas, el ánimo y los registros personales ya se podían apuntar a mano.
 - **Android al mismo nivel que el iPhone:** todas las pantallas, avisos y mensajes de «sin datos» que solo hablaban de Apple Salud / Health Auto Export explican también el camino de Android (Health Connect con la app de BodyLens), con la misma dirección de envío para los dos.
