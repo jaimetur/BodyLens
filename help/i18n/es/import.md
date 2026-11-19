@@ -1,14 +1,14 @@
-<!-- en: c973035a97a24cd1 -->
+<!-- en: 8e55b185050f09e8 -->
 # Importar datos
 
-Para traer a tu cuenta una copia de BodyLens: una de la versión anterior o una que te hayas descargado tú.
+Para traer a tu cuenta una copia de BodyLens, por ejemplo una que te hayas descargado tú.
 
 ## Dónde
 **Ajustes → Datos y copias → Importar una copia…** (es el único sitio).
 
 ## Qué ficheros acepta
 - **Copia completa (JSON)**: la que descargas en esa misma sección con **Descargar copia completa**.
-- **`snap.json`**: la copia de todos los datos que guardaba la página anterior. Si contiene varios perfiles, primero se te pregunta **de quién son los datos** que importas: cada persona importa los suyos desde su cuenta con el mismo fichero.
+- Si la copia contiene varios perfiles, primero se te pregunta **de quién son los datos** que importas: cada persona importa los suyos desde su cuenta con el mismo fichero.
 
 ## Cómo se importa
 - Antes de importar ves un resumen de lo que contiene la copia (pesadas, actividad, sueño, comidas, medidas…).
@@ -18,5 +18,5 @@ Para traer a tu cuenta una copia de BodyLens: una de la versión anterior o una 
 
 ## Desde la consola (administración)
 ```
-docker exec bodylens python -m app.data.importer /data/import/snap.json --usuario <usuario> [--perfil <id>] [--con-perfiles]
+docker exec bodylens python -m app.data.importer /data/import/<copia>.json --usuario <usuario> [--perfil <id>] [--con-perfiles]
 ```

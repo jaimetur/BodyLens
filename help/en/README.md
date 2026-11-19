@@ -20,7 +20,7 @@ One file per module. The sections of the app are those in the navigation bar; th
 |---|---|
 | [Accounts and access](accounts.md) | Signing in, requesting an account, invitations, first sign-in and "Your account" |
 | [Partner](couples.md) | Linking two accounts to share cycle and intimacy |
-| [Import data](import.md) | Bring in `snap.json` or a full backup (Settings → Data and backups) |
+| [Import data](import.md) | Bring in a full backup (Settings → Data and backups) |
 | [Sync](sync.md) | How Withings and Apple Health data arrive on their own |
 | [Administration](administration.md) | Access requests, invitations, each account's sources and email |
 

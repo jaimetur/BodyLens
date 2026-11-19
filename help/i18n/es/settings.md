@@ -1,4 +1,4 @@
-<!-- en: 46acbc9b1ef08461 -->
+<!-- en: 511ac05c8aa72086 -->
 # Ajustes
 
 Sirve para configurar la app: perfiles y PIN, datos personales, objetivos y plan de pérdida, fórmula de Comidas, copias de seguridad y exportar a PDF.
@@ -82,7 +82,7 @@ Fijan las líneas de objetivo de las barras y cuentan los días y las noches en 
   - Casillas: un día normal mantiene tu peso (modelo neutro); contar todos los días aunque no te peses (con tu última pesada); y contar los días sin comidas apuntadas con la nota por defecto.
   - Fórmula: pérdida estimada del día = factor × (objetivo − peso) ÷ objetivo × nota del día.
   - Una vista previa muestra el desglose en % de cada elemento.
-  - **Guardar fórmula**, **Valores por defecto** (modelo neutro) y **Modelo de la hoja** (los valores de la hoja de cálculo original).
+  - **Guardar fórmula**, **Valores por defecto** (modelo neutro) y **Modelo de la hoja** (los valores de referencia con los que se ajustó la fórmula al principio).
 
 ---
 

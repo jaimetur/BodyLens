@@ -1,4 +1,4 @@
-<!-- en: fc3d6cedbfade5a9 -->
+<!-- en: 606f0b9ecca2bf5a -->
 # Ayuda de BodyLens
 
 Un fichero por módulo. Las secciones de la app son las de la barra de navegación; las de la cuenta están en «Tu cuenta».
@@ -21,7 +21,7 @@ Un fichero por módulo. Las secciones de la app son las de la barra de navegaci�
 |---|---|
 | [Cuentas y acceso](accounts.md) | Entrar, pedir una cuenta, invitaciones, primera entrada y «Tu cuenta» |
 | [Pareja](couples.md) | Unir dos cuentas para compartir ciclo e intimidad |
-| [Importar datos](import.md) | Traer `snap.json` o una copia completa (Ajustes → Datos y copias) |
+| [Importar datos](import.md) | Traer una copia completa (Ajustes → Datos y copias) |
 | [Sincronización](sync.md) | Cómo llegan solos los datos de Withings y Apple Salud |
 | [Administración](administration.md) | Peticiones de acceso, invitaciones, fuentes y correo de cada cuenta |
 

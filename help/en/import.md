@@ -1,13 +1,13 @@
 # Import data
 
-To bring a BodyLens backup into your account: one from the previous version or one you downloaded yourself.
+To bring a BodyLens backup into your account, for example one you downloaded yourself.
 
 ## Where
 **Settings → Data and backups → Import a backup…** (it is the only place).
 
 ## Which files it accepts
 - **Full backup (JSON)**: the one you download in that same section with **Download full copy**.
-- **`snap.json`**: the copy of all the data kept by the previous page. If it contains several profiles, you are first asked **whose data** you are importing: each person imports their own from their own account using the same file.
+- If the backup contains several profiles, you are first asked **whose data** you are importing: each person imports their own from their own account using the same file.
 
 ## How it is imported
 - Before importing you see a summary of what the backup contains (weigh-ins, activity, sleep, meals, measurements…).
@@ -17,5 +17,5 @@ To bring a BodyLens backup into your account: one from the previous version or o
 
 ## From the console (administration)
 ```
-docker exec bodylens python -m app.data.importer /data/import/snap.json --usuario <usuario> [--perfil <id>] [--con-perfiles]
+docker exec bodylens python -m app.data.importer /data/import/<backup>.json --usuario <usuario> [--perfil <id>] [--con-perfiles]
 ```

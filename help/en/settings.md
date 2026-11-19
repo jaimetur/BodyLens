@@ -81,7 +81,7 @@ They set the goal lines on the bars and count the days and nights on which you m
   - Checkboxes: a normal day keeps your weight (neutral model); count all days even if you do not weigh yourself (using your last weigh-in); and count days without meals logged with the default score.
   - Formula: estimated loss for the day = factor × (goal − weight) ÷ goal × score for the day.
   - A preview shows the breakdown in % of each item.
-  - **Save formula**, **Default values** (neutral model) and **Sheet model** (the values from the original spreadsheet).
+  - **Save formula**, **Default values** (neutral model) and **Sheet model** (the reference values the formula was first tuned with).
 
 ---
 
