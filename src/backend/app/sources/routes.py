@@ -75,6 +75,26 @@ async def withings_callback(request: Request, code: str = "", state: str = "", e
     return RedirectResponse("/#cuenta", status_code=303)
 
 
+@router.api_route("/oauth/withings/callback", methods=["POST", "HEAD"])
+async def withings_notify(request: Request):
+    """Withings llama a la dirección registrada con POST: para comprobarla («Test») y para avisar de datos nuevos
+    (userid=…). Siempre se responde 200; si es un aviso de una cuenta conectada, se sincroniza al momento."""
+    if request.method == "POST":
+        try:
+            form = await request.form()
+            wuid = str(form.get("userid") or "")
+        except Exception:  # noqa: BLE001 — la prueba de Withings puede venir sin cuerpo
+            wuid = ""
+        if wuid:
+            with db.ro() as con:
+                rows = con.execute("SELECT user_id FROM source_tokens WHERE source='withings'").fetchall()
+            for r in rows:
+                tok = withings.load_tokens(r["user_id"]) or {}
+                if str(tok.get("userid")) == wuid:
+                    asyncio.create_task(_withings_now(r["user_id"]))
+    return {"ok": True}
+
+
 async def _withings_now(user_id: int) -> None:
     try:
         r = await withings.sync(user_id)

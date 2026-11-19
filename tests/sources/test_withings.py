@@ -91,3 +91,9 @@ def test_withings_no_pisa_salud(wenv, make_user):
                         merge=rules.mezcla_withings(12))
         a = store.read_rows(con, uid, ACTIVIDAD)["2026-11-18"]
     assert a[1] == 12000 and a[3] == 10 and a[4] == 40 and a[12] == "Apple Salud"
+
+
+def test_callback_acepta_la_prueba_de_withings(client):
+    assert client.post("/oauth/withings/callback").status_code == 200
+    assert client.head("/oauth/withings/callback").status_code == 200
+    assert client.post("/oauth/withings/callback", data={"userid": "999", "appli": "1"}).status_code == 200
