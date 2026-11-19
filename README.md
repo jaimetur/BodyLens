@@ -132,3 +132,7 @@ one. The help, the README and the changelog are translated automatically: you on
 - Instructions for coding agents: [`AGENTS.md`](AGENTS.md)
 
 Personal data never goes into the repository: databases, JSON backups and `.env` are in `.gitignore`.
+
+---
+
+© 2026 Jaime Tur. BodyLens was created by Jaime Tur.
