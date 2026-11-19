@@ -1,4 +1,4 @@
-<!-- en: 3afc480b4fb92deb -->
+<!-- en: 367c03f6868aa2c5 -->
 # Administración
 
 Solo para cuentas de administrador. Está en «Tu cuenta» → **Administración**.
@@ -18,10 +18,6 @@ Solo para cuentas de administrador. Está en «Tu cuenta» → **Administración
 ## Invitaciones
 - **Crear invitación**: genera un enlace de registro de un solo uso (opcional: una nota para recordar a quién va dirigido). El enlace se muestra una sola vez: cópialo.
 - La lista indica si cada invitación está pendiente, usada (y por quién) o caducada.
-
-## Cuentas y fuentes (fase 1)
-- Para cada cuenta: **ID de la hoja de Google** (compartida como lector con la cuenta de servicio del servidor) y **URL del Apps Script** (`https://script.google.com/…/exec`).
-- Solo la administración puede cambiarlas, para que nadie pueda leer la hoja de otra persona.
 
 ## Correo
 - El correo se envía desde el buzón configurado en el servidor (variables `SMTP_*`). **Enviarme un correo de prueba** comprueba que funciona.

@@ -1,29 +1,140 @@
-<!-- en: 6223420ef26a82e8 -->
+<!-- en: c27ce72cdf780f84 -->
 # Sincronización
 
-Los datos de tu báscula y de tu reloj llegan solos a tu cuenta. Se configura en **Tu cuenta → Fuentes de datos**.
+BodyLens no te pide que escribas tus datos: los recibe de tu báscula, tu móvil y tu reloj. Solo tienes que conectar
+cada servicio una vez. Todo se configura en **Tu cuenta → Fuentes de datos**, y allí se ve el estado de cada fuente.
 
-## Withings (báscula, y lo que Withings tenga del reloj)
-- **Conectar Withings** te lleva a Withings para dar permiso; cuando vuelves, el servidor trae tus datos y desde entonces los lee solo cada pocos minutos.
-- Trae pesadas y composición, actividad, entrenamientos, sueño (las últimas 3 noches se piden siempre de nuevo, porque a veces se cierran tarde), SpO2, VO2 máx y ECG.
-- Withings nunca sobrescribe lo que llega de Apple Salud: solo rellena los huecos (por ejemplo la actividad suave e intensa o los despertares).
+¿Cuáles necesitas?
 
-## Apple Salud (Health Auto Export en el iPhone)
-- **Crear mi dirección de envío** te da una dirección personal; ponla como URL en cada automatización de Health Auto Export (tipo **REST API**, formato **JSON versión 2**).
-- Para el **sueño sin resumir**, el intervalo de fechas es **últimos 2–7 días** (así se recogen las noches que el reloj o AutoSleep cierran tarde). Para todo lo demás, «Desde la última sincronización».
-- Apple Salud es la fuente principal de sueño, siestas, actividad, entrenamientos, frecuencia cardiaca, HRV, SpO2, ECG, avisos, ciclo, ánimo y síntomas.
-- Reglas del sueño: noche de 17:00 a 17:00, AutoSleep decide el horario si está (salvo que el reloj registre claramente más), profundo y REM del reloj, despertares de 10 min o más, siestas de 10 min o más. Un envío nuevo corrige lo que esa app ya no tiene en el periodo que cubre.
-- **Cambiar la dirección** invalida la anterior.
+| Tienes… | Conecta |
+|---|---|
+| Una báscula Withings (o un reloj Withings) | **Withings** |
+| Un iPhone (y quizá un Apple Watch, AutoSleep…) | **Apple Salud** con la app Health Auto Export |
+| Un móvil Android (Samsung, Pixel, un reloj Wear OS, Fitbit…) | **Android** con la app de BodyLens para Health Connect |
 
-## Android (Health Connect)
-- Instala la app de BodyLens para Android: en **Tu cuenta → Fuentes de datos** hay un enlace para descargarla (`/android.apk`). Android te pedirá permiso para instalar apps de fuera de Google Play.
-- En la app: pega la misma **dirección de envío** de antes, pulsa **Conceder permisos de Health Connect** (y acepta también «leer datos en segundo plano») y **Enviar ahora**.
-- La primera vez envía los últimos 30 días; después, cada hora, lo que haya nuevo (el sueño de los últimos 3 días se reenvía siempre, por si una noche llega tarde).
-- Envía: pasos, distancia, pisos, energía activa y frecuencia cardiaca por horas; frecuencia cardiaca en reposo, HRV, SpO2, respiración y VO2 máx; sueño con fases; entrenamientos; ciclo y actividad sexual. El servidor lo trata igual que lo que llega del iPhone.
+Puedes conectar varios: Apple Salud o Android son la fuente principal de sueño, actividad y corazón; Withings trae tus
+pesadas y tu composición corporal y rellena los huecos.
 
-## Cómo te enteras
-- La página abierta se actualiza sola cuando llegan datos (comprueba cada minuto y cuando vuelves a la pestaña).
-- **Sincronizar ahora** (o el botón de la nube de arriba) pide a Withings los últimos datos al instante.
+## Withings, paso a paso
 
-## Antes (puente con la hoja de Google)
-Mientras una cuenta no haya conectado Withings ni recibido envíos directos, el servidor sigue leyendo su hoja de Google cada pocos minutos. La primera vez que llega algo directamente, la cuenta pasa a guardar sus datos en el servidor: antes se importa toda su hoja para no perder historial.
+1. Abre BodyLens y ve a **Tu cuenta → Fuentes de datos**.
+2. En el recuadro **Withings**, pulsa **Conectar Withings**.
+   - Si no aparece el botón, el servidor aún no está preparado para Withings: pídeselo a quien lo administra (se hace
+     una vez en **Administración → Withings**).
+3. Se abre Withings. Entra con tu cuenta de Withings (la misma de la app de Withings: [App Store](https://apps.apple.com/app/id542701020), [Google Play](https://play.google.com/store/apps/details?id=com.withings.wiscale2); o créala en la [web de Withings](https://account.withings.com/)).
+4. Withings te pregunta si BodyLens puede leer tus datos: pulsa **Permitir**.
+5. Vuelves a BodyLens y el recuadro pone **conectado**. La primera vez BodyLens trae tus datos recientes; puede tardar
+   un minuto.
+
+A partir de ahí BodyLens lee Withings cada pocos minutos, y al momento cuando tu báscula manda una pesada nueva.
+Para dejarlo, pulsa **Desconectar** en el mismo recuadro.
+
+Qué trae: pesadas y composición (grasa, músculo, agua, hueso), actividad, entrenamientos, sueño, SpO2, VO2 máx y ECG.
+Withings nunca pisa lo que llega de Apple Salud o de Android: solo rellena los huecos.
+
+## Apple Salud (iPhone), paso a paso
+
+El iPhone guarda tus datos de salud solo en el teléfono, así que hace falta una app que se los mande a BodyLens.
+BodyLens usa **Health Auto Export**, de la App Store. El envío automático (las **automatizaciones**) necesita su
+versión Premium.
+
+### 1. Crea tu dirección de envío en BodyLens
+
+1. En BodyLens, ve a **Tu cuenta → Fuentes de datos**, recuadro **Apple Salud / Android**.
+2. Pulsa **Crear mi dirección de envío**. Aparece una dirección larga (`https://…/api/ingest/hae/…`).
+3. Pulsa **Copiar la dirección**. Abre BodyLens en el propio iPhone, para copiarla allí y pegarla en la app.
+
+La dirección es personal: quien la tenga puede mandar datos a tu cuenta. No la compartas. Si crees que alguien la
+tiene, pulsa **Cambiar la dirección** y pon la nueva en tus automatizaciones (la anterior deja de funcionar).
+
+### 2. Instala Health Auto Export y dale acceso a Salud
+
+1. Instala [Health Auto Export – JSON+CSV](https://apps.apple.com/app/id1115567069) desde la App Store y ábrela.
+2. Cuando pida acceso a Salud, permite **todos** los tipos de datos (puedes cambiarlo después en **Ajustes → Salud →
+   Acceso a datos y dispositivos** del iPhone).
+3. Consigue la versión Premium, que hace falta para las automatizaciones.
+
+### 3. Crea las automatizaciones
+
+Health Auto Export manda un tipo de datos por automatización, así que crea una para cada tipo que quieras (por lo
+menos las dos primeras). En cada una:
+
+1. Abre la pestaña **Automatizaciones** (Automations) y crea una nueva.
+2. Tipo: **REST API**.
+3. URL: pega tu **dirección de envío**.
+4. Formato: **JSON**, versión **2**.
+5. Elige los datos (mira la tabla) y el intervalo de fechas.
+6. Activa la automatización y guárdala.
+
+| Automatización | Datos que elegir | Intervalo de fechas | Notas |
+|---|---|---|---|
+| Métricas de salud | **Health Metrics**, todas | Desde la última sincronización | Resumir (agrupar) por **hora** |
+| Sueño | **Health Metrics**, solo **Sleep Analysis** | **Últimos 2–7 días** | **Desactiva** el resumen, para que lleguen las fases |
+| Entrenamientos | **Workouts** | Desde la última sincronización | |
+| ECG | **ECG** | Desde la última sincronización | Si tienes un Apple Watch con ECG |
+| Avisos del corazón | **Heart Rate Notifications** | Desde la última sincronización | Avisos de pulso alto, bajo y ritmo irregular |
+| Ciclo | **Cycle Tracking** | Desde la última sincronización | Si apuntas tu ciclo en Salud |
+| Ánimo, síntomas, medicamentos | **State of Mind**, **Symptoms**, **Medications** | Desde la última sincronización | Opcional |
+
+La automatización del sueño mira varios días atrás porque AutoSleep y el reloj a veces cierran una noche tarde;
+mandar una noche otra vez la corrige, nunca la duplica.
+
+### 4. Comprueba que funciona
+
+1. En cada automatización, usa su botón para enviar ahora (exportación manual).
+2. En BodyLens, **Tu cuenta → Fuentes de datos**: el recuadro pasa de **esperando datos** a **recibiendo**, con la hora
+   del último envío. Tu sueño, tus pasos y tu pulso aparecen en la app en menos de un minuto.
+
+Health Auto Export envía en segundo plano, pero iOS solo se lo permite si desbloqueas el teléfono de vez en cuando.
+Si dejan de llegar tus datos, abre Health Auto Export un momento.
+
+## Android (Health Connect), paso a paso
+
+En Android, las apps de salud (Samsung Health, Google Fit, Fitbit, un reloj Wear OS…) pueden compartir sus datos a
+través de **Health Connect**. La app de BodyLens para Android los lee allí y los manda a tu cuenta cada hora.
+
+### 1. Asegúrate de que tus datos llegan a Health Connect
+
+1. Health Connect viene con Android 14 y posteriores (en **Ajustes → Seguridad y privacidad → Privacidad → Health
+   Connect**, o busca «Health Connect» en Ajustes). En versiones anteriores, instala
+   [Health Connect](https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata) desde Google Play.
+2. En la app que registra tu salud (Samsung Health, Fitbit, Google Fit, la app de tu reloj…), activa la
+   sincronización con Health Connect. En Samsung Health, por ejemplo: **Ajustes → Health Connect**.
+
+### 2. Instala la app de BodyLens
+
+1. En el móvil, abre BodyLens en el navegador y entra con tu cuenta.
+2. Ve a **Tu cuenta → Fuentes de datos**, recuadro **Apple Salud / Android**. Si aún no tienes dirección de envío,
+   pulsa **Crear mi dirección de envío**.
+3. Toca el enlace para descargar **la app de BodyLens** (`/android.apk`) y abre el fichero descargado.
+4. Android avisa de que viene de fuera de Google Play: permite instalar apps desde tu navegador e instálala.
+
+### 3. Configúrala
+
+1. En BodyLens (la web), pulsa **Copiar la dirección**.
+2. Abre la app de BodyLens y pégala en **Dirección de envío**.
+3. Pulsa **Dar permisos de Health Connect** y permite todos los tipos de datos. Permite también **leer datos en
+   segundo plano**, para que pueda enviar con la app cerrada.
+4. Deja activado **Enviar automáticamente cada hora** y pulsa **Enviar ahora**.
+
+La primera vez manda los últimos 30 días; después, cada hora, lo que haya nuevo. La app muestra la hora y el
+resultado del último envío, y en BodyLens el recuadro pasa a **recibiendo**.
+
+## Cómo ves que llegan tus datos
+
+- **Tu cuenta → Fuentes de datos** muestra cada fuente: **conectado** / **sin conectar** para Withings, y
+  **recibiendo** / **esperando datos** para Apple Salud y Android, con la hora del último dato.
+- La página abierta se actualiza sola cuando llegan datos (lo comprueba cada minuto y cuando vuelves a la pestaña).
+- **Sincronizar ahora** (o el botón de la nube de arriba) pide a Withings los últimos datos al momento.
+
+## Si no llegan tus datos
+
+| Problema | Qué hacer |
+|---|---|
+| No aparece el botón **Conectar Withings** | Quien administra tiene que preparar Withings una vez (Administración → Withings). |
+| Withings sigue **sin conectar** después de permitir | Vuelve a pulsar **Conectar Withings** y asegúrate de pulsar **Permitir** en la página de Withings. |
+| Apple Salud se queda en **esperando datos** | Comprueba que la URL de cada automatización es exactamente tu dirección de envío, que el formato es JSON versión 2 y que la automatización está activada; después envíala a mano. |
+| El sueño llega sin fases | En la automatización del sueño, desactiva el resumen y usa los últimos 2–7 días. |
+| Dejan de llegar datos del iPhone | Abre Health Auto Export un momento; iOS pausa las apps en segundo plano. |
+| Has cambiado tu dirección de envío | Pon la nueva dirección en todas las automatizaciones (iPhone) o en la app de BodyLens (Android). |
+| Android no envía nada | Comprueba que tu app de salud sincroniza con Health Connect y que la app de BodyLens tiene todos los permisos, también el de leer en segundo plano. |

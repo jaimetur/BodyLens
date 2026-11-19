@@ -16,10 +16,6 @@ cannot write to `/data`, check PUID/PGID.
 2. **Docker Hub repository**: the first push creates `jaimetur/bodylens` as **public** unless you create it beforehand as
    private. The image carries the code (no data or secrets). If you want it private, create it private on Docker Hub and
    run `docker login` on the NAS so that Dockhand can pull it.
-3. **Google service account** (phase 1 only, bridge with the sheet):
-   Google Cloud Console → project → enable **Google Drive API** → create a *service account* → download its JSON
-   key → save it on the NAS as `/volume1/docker/data/bodylens/secrets/google-sa.json`.
-   Share the "Peso Jaime 2026" sheet with the service account's email, as **viewer**.
 
 ## First deployment (manual, with Dockhand)
 
@@ -37,11 +33,10 @@ cannot write to `/data`, check PUID/PGID.
    or rejected in `/cuenta` → Administration → Access requests, and the person receives an email.
    Outgoing email: `SMTP_*` variables in the `.env` (`bodylens@jaimetur.cloud`, `jaimetur.cloud:465` SSL); the
    password only in the NAS `.env`. "Send me a test email" in Administration checks it.
-5. Your account's sources (phase 1): in `/cuenta` → Administration → your account → sheet ID and Apps Script URL.
-6. **Laura**: create an invitation in `/cuenta` (Administration → Create invitation) and send her the link. Once she has her
+5. **Laura**: create an invitation in `/cuenta` (Administration → Create invitation) and send her the link. Once she has her
    account, she goes to `/cuenta` → Import data with the same `snap.json` and chooses **Laura Romero**.
    After that, one of you requests to **link the accounts** in `/cuenta` → Partner and the other accepts.
-7. **Caddy**: add to the `Caddyfile` of the `caddy` stack a block like those of the other apps and define the port in its `.env`:
+6. **Caddy**: add to the `Caddyfile` of the `caddy` stack a block like those of the other apps and define the port in its `.env`:
    ```
    {$CADDY_HOST}:{$BODYLENS_HTTPS_PORT} {
      import tls_profile
@@ -69,17 +64,13 @@ tools/deploy.sh
 It needs, once, a sudo rule on the NAS so that the SSH user can use Docker without a password
 (`/etc/sudoers.d/bodylens-deploy`: `jaimetur_adm ALL=(root) NOPASSWD: /usr/local/bin/docker`, permissions 440).
 
-## Phase 2: direct Withings and Apple Health (without the Google sheet)
+## Data sources: Withings, Apple Health and Android
 
 1. **Withings** (once, as administrator): at developer.withings.com, in your application, add the *callback URL*
    `https://<bodylens>/oauth/withings/callback`. Copy its *Client ID* and *Client secret* into BodyLens → Administration →
    Withings (or `WITHINGS_CLIENT_ID` / `WITHINGS_CLIENT_SECRET` in the `.env`).
-2. **Each account**: Your account → Data sources → **Connect Withings**. The first time, the account starts having its data
-   on the server: its Google sheet is first imported in full (if it had one) so no history is lost.
-3. **Each account**: Your account → Data sources → **Create my upload address** and put it in all the Health Auto Export
-   automations (sleep not summarised: last 2–7 days).
-4. Once everything has arrived fine for a few days, the Apps Script triggers, the Google service account
-   and the sheet can be deleted (it stays as a copy).
+2. **Each account** connects its own sources in Your account → Data sources: step by step in the help, section
+   *Sync* (also inside the app, in Help).
 
 ## Android app (Health Connect)
 

@@ -18,10 +18,6 @@ Only for administrator accounts. It is in "Your account" → **Administration**.
 - **Create invitation**: generates a single-use sign-up link (optional: a note to remember who it is for). The link is shown only once: copy it.
 - The list shows whether each invitation is pending, used (and by whom) or expired.
 
-## Accounts and sources (phase 1)
-- For each account: **Google Sheet ID** (shared as a reader with the server's service account) and **Apps Script URL** (`https://script.google.com/…/exec`).
-- Only the administration can change them, so that nobody can read another person's sheet.
-
 ## Email
 - Email is sent from the mailbox configured on the server (`SMTP_*` variables). **Send me a test email** checks that it works.
 
