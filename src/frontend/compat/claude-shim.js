@@ -201,3 +201,15 @@ document.addEventListener('click', e => {
     setTimeout(() => window.closeProfMenu(), 0);
   }
 });
+
+// Help button in the top bar, next to Sync and PDF (on phones the sidebar with Help is not shown)
+document.addEventListener('DOMContentLoaded', () => {
+  const pdf = document.getElementById('pdfBtn');
+  if (!pdf || document.getElementById('helpBtn')) return;
+  const b = document.createElement('button');
+  b.className = 'iconbtn'; b.id = 'helpBtn'; b.type = 'button';
+  b.setAttribute('aria-label', 'Help'); b.title = 'Help';
+  b.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.7"/><circle cx="12" cy="17" r=".6"/></svg>';
+  b.addEventListener('click', () => { location.hash = 'help'; });
+  pdf.parentNode.insertBefore(b, pdf);
+});
