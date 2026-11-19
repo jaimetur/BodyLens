@@ -1,4 +1,4 @@
-<!-- en: 2856c72777769c22 -->
+<!-- en: e1645a9ccf07b307 -->
 # BodyLens
 
 **BodyLens** es una app web de salud personal, multiusuario y autoalojada. Reúne el peso y la composición corporal
@@ -132,7 +132,7 @@ uno. La ayuda, el README y el registro de cambios se traducen automáticamente: 
 - Cambios de cada versión: [`CHANGELOG.md`](CHANGELOG.md)
 - Instrucciones para agentes de código: [`AGENTS.md`](AGENTS.md)
 
-Los datos personales nunca van al repositorio: las bases de datos, las copias JSON y `.env` están en `.gitignore`.
+**Privacidad:** tus datos personales solo se usan para mostrártelos en la app. No se usan para ningún otro fin y nunca se ceden a terceros.
 
 ---
 

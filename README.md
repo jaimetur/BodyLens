@@ -131,7 +131,7 @@ one. The help, the README and the changelog are translated automatically: you on
 - Changes in each version: [`CHANGELOG.md`](CHANGELOG.md)
 - Instructions for coding agents: [`AGENTS.md`](AGENTS.md)
 
-Personal data never goes into the repository: databases, JSON backups and `.env` are in `.gitignore`.
+**Privacy:** your personal data is used only to show it to you in the app. It is not used for any other purpose and is never shared with third parties.
 
 ---
 
