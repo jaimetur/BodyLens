@@ -1138,12 +1138,13 @@ function foodDayHtml(k){const e=foodGet(k)||{t:[null,null,null,null,null,null],s
   const chips=i=>{const [l0,,lo,hi]=FOOD_S[i];const l=(i===5||i===6)&&e.s[i]!=null&&!(e.man&&e.man[i])?`${l0} <small class="auto">auto</small>`:l0;const vals=[];for(let v=lo;v<=hi;v++)vals.push(v);if(lo<0)vals.reverse();
     return `<div class="fsc"><span>${l}</span><div class="chips" role="group" aria-label="${l0}">${vals.map(v=>`<button type="button" data-fs="${i}" data-v="${v}" class="${e.s[i]===v?'on':e.s[i]==null&&v===(i<3?foodCfg().blank:0)&&!ro?'def':''}${lo<0&&v<0?' neg':''}"${ro?' disabled':''}>${v}</button>`).join('')}</div></div>`};
   const ctx=[w?`<span class="fctx"><b>${fmtN(w.kg,1)} kg</b>${prevW?` ${sgn(w.kg-prevW.kg)}`:''}</span>`:'',act&&act.steps?`<span class="fctx"><b>${fmtInt(act.steps)}</b> pasos</span>`:'',slp&&slp.asleep?`<span class="fctx"><b>${fmtDur(slp.asleep)}</b> dormido</span>`:'',...wos.map(x=>`<span class="fctx">${esc(x.type||'Entreno')}${x.dur?' · '+fmtDur(x.dur):''}</span>`)].filter(Boolean).join('');
-  // semana completa (de lunes a domingo): las flechas saltan una semana y la tira elige el día
-  const wk0=addK(k,-dowIdx(k)),wk6=addK(wk0,6),nextW=addK(k,7)>today?today:addK(k,7);
-  const wstrip=[0,1,2,3,4,5,6].map(n=>{const dk=addK(wk0,n),fe=foodGet(dk),fs=foodScore(fe),fut=dk>today;
-    return `<button type="button" class="fwd${dk===k?' on':''}${dk===today?' today':''}" data-fd="${dk}" ${fut?'disabled':''} aria-label="${DSN[dowIdx(dk)]} ${k2d(dk).getDate()}"><span>${DS[n]}</span><b>${k2d(dk).getDate()}</b><i style="background:${fe?foodCol(fs):'transparent'};${fe?'':'box-shadow:inset 0 0 0 1.5px var(--line)'}"></i></button>`}).join('');
-  return `<div class="fweek"><button type="button" class="fnav" data-fd="${addK(k,-7)}" aria-label="Semana anterior">‹</button><span>Semana del ${k2d(wk0).getDate()} ${MS[k2d(wk0).getMonth()]} al ${k2d(wk6).getDate()} ${MS[k2d(wk6).getMonth()]}</span>${k!==today?`<button type="button" class="ftoday" data-fd="${today}">Hoy</button>`:''}<button type="button" class="fnav" data-fd="${nextW}" ${wk6>=today?'disabled':''} aria-label="Semana siguiente">›</button></div>
-    <div class="fwstrip">${wstrip}</div>
+  // last 4 full weeks (Monday to Sunday) up to the week of the chosen day: the arrows jump 4 weeks, the strip picks the day
+  const wk6=addK(k,6-dowIdx(k)),wk0=addK(wk6,-27),nextW=addK(k,28)>today?today:addK(k,28);
+  const wstrip=Array.from({length:28},(_,n)=>{const dk=addK(wk0,n),dd=k2d(dk),fe=foodGet(dk),fs=foodScore(fe),fut=dk>today;
+    const top=n<7?DS[n]:dd.getDate()===1?MS[dd.getMonth()]:'';
+    return `<button type="button" class="fwd${dk===k?' on':''}${dk===today?' today':''}" data-fd="${dk}" ${fut?'disabled':''} aria-label="${DSN[dowIdx(dk)]} ${dd.getDate()}">${top?`<span>${top}</span>`:''}<b>${dd.getDate()}</b><i style="background:${fe?foodCol(fs):'transparent'};${fe?'':'box-shadow:inset 0 0 0 1.5px var(--line)'}"></i></button>`}).join('');
+  return `<div class="fweek"><button type="button" class="fnav" data-fd="${addK(k,-28)}" aria-label="Semanas anteriores">‹</button><span>Del ${k2d(wk0).getDate()} ${MS[k2d(wk0).getMonth()]} al ${k2d(wk6).getDate()} ${MS[k2d(wk6).getMonth()]}</span>${k!==today?`<button type="button" class="ftoday" data-fd="${today}">Hoy</button>`:''}<button type="button" class="fnav" data-fd="${nextW}" ${wk6>=today?'disabled':''} aria-label="Semanas siguientes">›</button></div>
+    <div class="fwstrip f4w">${wstrip}</div>
     <div class="fhead">
       <div class="fdate"><b>${DSN[dowIdx(k)].replace(/^./,ch=>ch.toUpperCase())} ${d.getDate()} de ${MSL[d.getMonth()]}</b><small>${d.getFullYear()}${k===today?' · hoy':k===addK(today,-1)?' · ayer':''}</small><input type="date" id="fPick" value="${k}" max="${today}" aria-label="Elegir día"></div>
 </div>

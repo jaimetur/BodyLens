@@ -61,6 +61,7 @@
 - **Comidas:**
   - Cada puntuación va en la fila de su comida, con botones grandes, y Agua tiene su propia fila.
   - El registro del día va antes que la pérdida estimada.
+  - El registro del día muestra arriba las últimas 4 semanas (de lunes a domingo) en lugar de una sola; las flechas saltan 4 semanas.
 - **Estado de ánimo:** se pueden apuntar estados de días pasados, con fecha y hora o tocando el día en el calendario.
 - **Historial** pasa a llamarse **Historial de pesos**.
 - **Pantallas anchas:** la app llega a 1600 px, y Tu cuenta y Administración aprovechan el ancho con columnas.
