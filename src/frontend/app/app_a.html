@@ -505,12 +505,14 @@ table.yrs td b{display:block;font-weight:600}table.yrs td small{display:block;fo
 .fgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:start}@media (min-width:900px){.fgrid{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}}
 /* primero lo que comiste y después la puntuación */
 .fgrid>.ffields{order:-1}
-.frows{display:flex;flex-direction:column;gap:12px}
-.frow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 18px;align-items:start}
-.frow.full{grid-template-columns:minmax(0,1fr)}
-.frow>.fsc{padding-top:15px}
-.frow>.fsc>span{font-size:0}.frow>.fsc>span small.auto{font-size:.66rem}
-@media (max-width:760px){.frow{grid-template-columns:minmax(0,1fr)}.frow>.fsc{padding-top:0}}
+.frows{display:flex;flex-direction:column;gap:14px}
+/* cada concepto: el título y su puntuación en la misma línea; lo escrito (platos, campo) debajo, a todo el ancho */
+.frow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center}
+.frow>.ffld{display:contents}
+.frow>.ffld>*{grid-column:1/-1}
+.frow>.ffld>span{grid-column:1;grid-row:1}
+.frow>.fsc{grid-column:2;grid-row:1}
+.frow>.fsc{flex-wrap:nowrap}.frow>.fsc>.chips{margin:0}.frow>.fsc>span{font-size:0;flex:0 0 auto;line-height:0}.frow>.fsc>span small.auto{font-size:.66rem;line-height:1.2}
 @media (max-width:760px){.fgrid{grid-template-columns:minmax(0,1fr)}}
 .ffields{display:flex;flex-direction:column;gap:10px}.ffld{display:flex;flex-direction:column;gap:4px}.ffld>span{font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .ffld input{font:inherit;font-size:16px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);min-width:0;width:100%;box-sizing:border-box}
@@ -1008,7 +1010,7 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
         <section data-tg="ana" class="card"><h2>Lo que comes y tu peso</h2><p class="lead">¿Se nota en la báscula al día siguiente cómo has comido?</p><div id="foodW"></div></section>
         <section data-tg="reg" class="card"><h2>Lo que más repites</h2><p class="lead">Lo que más veces has anotado en el periodo elegido.</p><div id="foodTop" class="ftops"></div></section>
       </section>
-      <section class="view" id="v-historial" data-title="Historial" hidden>
+      <section class="view" id="v-historial" data-title="Historial de pesos" hidden>
         <nav class="cuetabs vtabs" data-view="historial" aria-label="Apartados"><a href="#historial" data-tab="anios"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v16M12 7v10M18 5v14"/><path d="M4 9h4M10 10h4M16 12h4"/></svg><span>Años</span></a><a href="#historial" data-tab="todo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18c3-1 4-7 7-7s3 4 6 4 3-6 5-8"/><path d="M3 21h18"/></svg><span>Todo</span></a><a href="#historial" data-tab="int"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".8"/></svg><span>Intentos</span></a></nav>
         <section data-tg="anios" class="card"><h2>Año a año</h2><p class="lead">Rango de peso de cada año (de mínimo a máximo) y su media.</p><div class="chart" id="chYears"></div><div class="tbl" id="years"></div></section>
         <section data-tg="todo" class="card">
