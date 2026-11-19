@@ -116,6 +116,28 @@ def delete_account(user_id: int, u: User = Depends(admin_user)):
     return {"ok": True}
 
 
+# ---------- Withings (aplicación de desarrollador) ----------
+
+class WithingsAppIn(BaseModel):
+    clientId: str = ""
+    clientSecret: str = ""   # vacío = conservar el guardado
+
+
+@router.get("/api/admin/withings")
+def get_withings_app(u: User = Depends(admin_user)):
+    from app.sources import withings
+    return {"clientId": withings.client_id(), "hasSecret": bool(withings.client_secret()),
+            "configured": withings.configured(), "callback": withings.redirect_uri()}
+
+
+@router.put("/api/admin/withings")
+def put_withings_app(body: WithingsAppIn, u: User = Depends(admin_user)):
+    from app.sources import withings
+    with db.tx() as con:
+        withings.save_app(con, body.clientId, body.clientSecret or None)
+    return get_withings_app(u)
+
+
 # ---------- correo ----------
 
 class MailIn(BaseModel):

@@ -15,12 +15,47 @@ log = logging.getLogger("bodylens.sync")
 _locks: dict[int, asyncio.Lock] = defaultdict(asyncio.Lock)
 
 
+def _server_mode(user: User) -> bool:
+    from app.sheets import service as sheets
+    return sheets.source_of(user.id) == "server"
+
+
 def has_sources(user: User) -> bool:
+    if _server_mode(user):
+        from app.sources import withings
+        return bool(withings.load_tokens(user.id))
     return bool(user.sheet_id or user.apps_script_url)
 
 
+async def sync_server(user: User, client: httpx.AsyncClient | None = None) -> dict:
+    """Fase 2: Withings directo (si está conectado) y libro regenerado desde las tablas."""
+    from app.sheets import service as sheets
+    from app.sources import withings
+    lock = _locks[user.id]
+    async with lock:
+        result: dict = {"ok": True}
+        if withings.load_tokens(user.id):
+            r = await withings.sync(user.id, client)
+            with db.tx() as con:
+                db.set_setting(con, f"withings_last:{user.id}", {"at": db.now_iso(), **r})
+            result["withings"] = r
+            if r.get("errores"):
+                result["ok"] = False
+                result["error"] = "; ".join(r["errores"])
+        changed = await sheets.rebuild_async(user.id)
+        result["workbook"] = {"changed": changed}
+        n = (result.get("withings") or {}).get("pesadas", 0)
+        result["message"] = result.get("error") or (
+            (f"{n} {'pesada nueva' if n == 1 else 'pesadas nuevas'} de Withings. " if n else "") +
+            ("Datos al día." if not changed else "Datos actualizados."))
+        workbook.record_sync(user.id, result)
+        return result
+
+
 async def sync_user(user: User, client: httpx.AsyncClient | None = None) -> dict:
-    """Fase 1: dispara el Apps Script y exporta la hoja. Devuelve un resumen para la app."""
+    """Sincroniza la cuenta: fase 2 (Withings directo) o fase 1 (Apps Script + hoja). Devuelve un resumen."""
+    if _server_mode(user):
+        return await sync_server(user, client)
     if not has_sources(user):
         return {"ok": False, "message": "Tu cuenta no tiene fuentes de datos configuradas todavía."}
     lock = _locks[user.id]

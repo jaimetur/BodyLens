@@ -28,6 +28,7 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
     <button type="button" data-tab="peticiones">Peticiones de acceso<b id="nReq" hidden></b></button>
     <button type="button" data-tab="invitaciones">Invitaciones</button>
     <button type="button" data-tab="correo">Correo</button>
+    <button type="button" data-tab="withings">Withings</button>
     <button type="button" data-tab="fuentes">Fuentes de datos</button>
   </div>
 
@@ -78,6 +79,17 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
     <p class="small" id="mState"></p>
   </section>
 
+  <section class="card" data-panel="withings" hidden>
+    <h2>Withings</h2>
+    <p>Los datos de tu aplicación en <a href="https://developer.withings.com/dashboard/" target="_blank" rel="noopener">developer.withings.com</a>. Allí, en la aplicación, añade esta dirección de retorno (callback URL): <span class="code" id="wCb"></span></p>
+    <div class="edit">
+      <label>Client ID<input id="wId" autocomplete="off" spellcheck="false"></label>
+      <label>Client secret<input id="wSecret" type="password" autocomplete="new-password" placeholder="(sin cambios)"></label>
+    </div>
+    <div class="row"><button id="wSave" type="button">Guardar</button><span class="msg" id="wMsg"></span></div>
+    <p class="small" id="wState"></p>
+  </section>
+
   <section class="card" data-panel="fuentes" hidden>
     <h2>Fuentes de datos (puente con Google)</h2>
     <p>Mientras la báscula y el iPhone sigan pasando por la hoja de Google: ID de la hoja de cada cuenta (compartida como lector con la cuenta de servicio del servidor) y URL de la aplicación web de su Apps Script.</p>
@@ -92,7 +104,10 @@ document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click
 show((location.hash || '#usuarios').slice(1).replace(/[^a-z]/g, '') || 'usuarios');
 
 async function load() {
-  const [acc, rq, inv, mail] = await Promise.all([api('GET', '/api/admin/accounts'), api('GET', '/api/admin/access-requests'), api('GET', '/api/admin/invites'), api('GET', '/api/admin/mail')]);
+  const [acc, rq, inv, mail, wapp] = await Promise.all([api('GET', '/api/admin/accounts'), api('GET', '/api/admin/access-requests'), api('GET', '/api/admin/invites'), api('GET', '/api/admin/mail'), api('GET', '/api/admin/withings')]);
+  $('wCb').textContent = wapp.callback; $('wId').value = wapp.clientId || ''; $('wSecret').value = '';
+  $('wSecret').placeholder = wapp.hasSecret ? '(guardado; escribe otro para cambiarlo)' : '';
+  $('wState').textContent = wapp.configured ? 'Configurado: cada cuenta puede conectar su Withings en «Tu cuenta».' : 'Sin configurar.';
   D = acc;
   // usuarios
   $('uBody').innerHTML = acc.users.map(u => `<tr><td><b>${esc(u.name)}</b> <span class="small">${esc(u.username)}</span>${u.isAdmin ? '<span class="tag adm">admin</span>' : ''}${u.partner ? `<span class="tag">pareja: ${esc(u.partner)}</span>` : ''}<br><span class="small">desde ${when(u.createdAt)}${u.sync && u.sync.lastSync ? ' · sincronizado ' + when(u.sync.lastSync) : ''}</span></td>
@@ -152,6 +167,9 @@ $('mSave').addEventListener('click', async () => {
     await api('PUT', '/api/admin/mail', { host: $('mHost').value, port: +$('mPort').value || null, security: $('mSec').value, username: $('mUser').value, password: $('mPass').value, from_address: $('mFrom').value, from_name: $('mName').value });
     say($('mMsg'), 'Guardado.', 'ok'); await load();
   } catch (e) { say($('mMsg'), e.message, 'err'); }
+});
+$('wSave').addEventListener('click', async () => {
+  try { await api('PUT', '/api/admin/withings', { clientId: $('wId').value, clientSecret: $('wSecret').value }); say($('wMsg'), 'Guardado.', 'ok'); await load(); } catch (e) { say($('wMsg'), e.message, 'err'); }
 });
 $('mTest').addEventListener('click', async () => {
   $('mTest').disabled = true; say($('mMsg'), 'Enviando…');

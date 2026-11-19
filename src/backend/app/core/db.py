@@ -76,6 +76,18 @@ CREATE TABLE IF NOT EXISTS user_state (
   last_sync TEXT,
   last_sync_result TEXT
 );
+CREATE TABLE IF NOT EXISTS source_tokens (
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  source TEXT NOT NULL,
+  data TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  PRIMARY KEY (user_id, source)
+);
+CREATE TABLE IF NOT EXISTS ingest_tokens (
+  token_hash TEXT PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  source TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS settings (
   key TEXT PRIMARY KEY,
   value TEXT NOT NULL

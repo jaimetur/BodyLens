@@ -15,8 +15,9 @@ def env(tmp_path, monkeypatch):
     monkeypatch.setenv("BRANDING_DIR", str(ROOT / "assets" / "branding"))
     monkeypatch.setenv("COOKIE_SECURE", "0")
     monkeypatch.setenv("SCHEDULER_ENABLED", "0")
-    from app.core import config, db
+    from app.core import config, crypto, db
     config.reload_settings()
+    crypto.reset()
     db.init_db()
     from app.core.security import login_throttle
     login_throttle._hits.clear()

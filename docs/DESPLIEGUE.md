@@ -69,13 +69,17 @@ tools/deploy.sh
 Necesita, una vez, una regla de sudo en el NAS para que el usuario de SSH pueda usar Docker sin contraseña
 (`/etc/sudoers.d/bodylens-deploy`: `jaimetur_adm ALL=(root) NOPASSWD: /usr/local/bin/docker`, permisos 440).
 
-## Fase 2 (cuando esté el port del Apps Script)
+## Fase 2: Withings y Apple Salud directos (sin la hoja de Google)
 
-1. **Withings**: en developer.withings.com añade la *callback URL* `https://<bodylens>/oauth/withings/callback`, pon
-   `WITHINGS_CLIENT_ID` y `WITHINGS_CLIENT_SECRET` en el `.env`, redepliega y autoriza desde la app (cada cuenta la suya).
-2. **Health Auto Export**: cada cuenta tendrá su URL con token (`/api/ingest/hae?token=…`) en «Tu cuenta».
-   En la automatización de **sueño sin resumir**, rango **últimos 2–7 días**.
-3. Cuando todo cuadre unos días, se desactivan los activadores del Apps Script y la hoja queda como copia.
+1. **Withings** (una vez, como administrador): en developer.withings.com, en tu aplicación, añade la *callback URL*
+   `https://<bodylens>/oauth/withings/callback`. Copia su *Client ID* y *Client secret* en BodyLens → Administración →
+   Withings (o `WITHINGS_CLIENT_ID` / `WITHINGS_CLIENT_SECRET` en el `.env`).
+2. **Cada cuenta**: Tu cuenta → Fuentes de datos → **Conectar Withings**. La primera vez, la cuenta pasa a tener sus datos
+   en el servidor: antes se importa entera su hoja de Google (si tenía) para no perder historial.
+3. **Cada cuenta**: Tu cuenta → Fuentes de datos → **Crear mi dirección de envío** y ponerla en todas las automatizaciones de
+   Health Auto Export (sueño sin resumir: últimos 2–7 días).
+4. Cuando todo llegue bien unos días, se pueden borrar los activadores del Apps Script, la cuenta de servicio de Google
+   y la hoja (queda como copia).
 
 ## Copia de seguridad
 

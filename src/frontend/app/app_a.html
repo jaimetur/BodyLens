@@ -1105,13 +1105,13 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
         </section>
         <section data-ajc="datos" class="card">
           <h2>Apple Salud</h2>
-          <p class="lead">El pulso en reposo, la VFC, la saturación de oxígeno, la frecuencia respiratoria, el VO2 máx, la temperatura de muñeca, los ECG y los avisos del Apple Watch llegan desde Apple Salud con la app <b>Health Auto Export</b>, a través del script de tu hoja. Se ven en Cuerpo → Corazón y en Sueño.</p>
+          <p class="lead">El pulso en reposo, la VFC, la saturación de oxígeno, la frecuencia respiratoria, el VO2 máx, la temperatura de muñeca, los ECG y los avisos del Apple Watch llegan desde Apple Salud con la app <b>Health Auto Export</b>, directamente a tu cuenta de este servidor. Se ven en Cuerpo → Corazón y en Sueño.</p>
           <ol class="lead" style="padding-left:20px;margin:0">
             <li>En Health Auto Export: Exportar → Automatizado → Nueva automatización → tipo <b>API REST</b>.</li>
-            <li>URL: la dirección del script de tu hoja con tu clave (<code>…/exec?token=…</code>); no se muestra aquí porque esta página se puede compartir.</li>
+            <li>URL: tu dirección de envío, que se crea y se copia en <a href="#cuenta">Tu cuenta → Fuentes de datos</a> (es personal: no la compartas).</li>
             <li>Formato JSON, versión 2, «Resumir datos» activado y agrupación por <b>horas</b> (así se separan las medidas de la noche).</li>
             <li>Datos: Métricas de salud (pulso en reposo, variabilidad, saturación de oxígeno, frecuencia respiratoria, VO2 máx, temperatura de muñeca, alteraciones respiratorias, luz del día, horas de pie, pisos, pulso al caminar, velocidad y estabilidad al caminar, recuperación cardiaca), ECG y Notificaciones de frecuencia cardiaca.</li>
-            <li>Intervalo «Desde la última sincronización» y frecuencia de unas horas. Para el historial, usa «Carga manual».</li>
+            <li>Intervalo: para el <b>sueño sin resumir</b>, los <b>últimos 2–7 días</b> (así llegan las noches que el reloj o AutoSleep cierran tarde); para lo demás, «Desde la última sincronización». Frecuencia: cada hora o menos. Para el historial, usa «Carga manual».</li>
           </ol>
         </section>
         <section data-ajc="datos" class="card">

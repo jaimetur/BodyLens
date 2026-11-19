@@ -69,12 +69,22 @@
       </section>
 
       <section class="card">
-        <h2>Sincronización</h2>
-        <dl class="kv">
-          <dt>Fuentes</dt><dd id="sSrc">—</dd>
+        <h2>Fuentes de datos</h2>
+        <div class="src">
+          <div class="src-h"><b>Withings</b><span class="pill" id="wSt">—</span></div>
+          <p class="small" id="wInfo"></p>
+          <div class="row"><a class="btn" id="wGo" href="/oauth/withings/start" target="_top" hidden>Conectar Withings</a><button class="ghost danger-t" id="wOff" type="button" hidden>Desconectar</button><span class="msg" id="wMsg"></span></div>
+        </div>
+        <div class="src">
+          <div class="src-h"><b>Apple Salud</b> <span class="small">(Health Auto Export)</span><span class="pill" id="hSt">—</span></div>
+          <p class="small" id="hInfo"></p>
+          <p id="hUrlBox" hidden><span class="code" id="hUrl"></span></p>
+          <div class="row"><button class="ghost" id="hCopy" type="button" hidden>Copiar la dirección</button><button class="ghost" id="hNew" type="button">Crear mi dirección de envío</button><span class="msg" id="hMsg"></span></div>
+        </div>
+        <dl class="kv" style="margin-top:12px">
+          <dt>Origen</dt><dd id="sSrc">—</dd>
           <dt>Última</dt><dd id="sLast">—</dd>
           <dt>Resultado</dt><dd id="sRes">—</dd>
-          <dt>Datos de</dt><dd id="sWb">—</dd>
         </dl>
         <div class="row"><button class="ghost" id="sGo" type="button">Sincronizar ahora</button><span class="msg" id="sMsg"></span></div>
       </section>
@@ -101,11 +111,25 @@ async function load() {
   if (p) { $('pName').textContent = `${p.name} (${p.username})`; $('pSince').textContent = p.since || '—'; }
   $('pIn').innerHTML = ME.requests.incoming.map(r => `<li><span><b>${esc(r.name)}</b> (${esc(r.username)}) quiere unir su cuenta con la tuya</span><span><button data-acc="${esc(r.username)}" type="button">Aceptar</button> <button class="ghost" data-rej="${esc(r.username)}" type="button">Rechazar</button></span></li>`).join('');
   $('pOut').innerHTML = ME.requests.outgoing.map(r => `<li><span>Esperando a que <b>${esc(r.name)}</b> acepte</span><button class="ghost" data-rej="${esc(r.username)}" type="button">Cancelar</button></li>`).join('');
-  const s = ME.sources, src = [s.sheet && 'hoja de Google', s.appsScript && 'Apps Script'].filter(Boolean);
-  $('sSrc').textContent = src.length ? src.join(' + ') : 'ninguna todavía (la configura quien administra el servidor)';
   $('sLast').textContent = when(ME.sync.lastSync) + ` (cada ${ME.syncIntervalMin} min)`;
   $('sRes').textContent = ME.sync.lastSyncResult ? ME.sync.lastSyncResult.message || '—' : '—';
-  $('sWb').textContent = when(ME.sync.updatedAt);
+  loadSources();
+}
+async function loadSources() {
+  const S = await api('GET', '/api/sources');
+  const w = S.withings, h = S.hae;
+  $('sSrc').textContent = S.dataSource === 'server' ? 'directo al servidor' : (ME.sources.sheet ? 'hoja de Google (puente provisional)' : 'ninguna todavía');
+  $('wSt').textContent = w.connected ? 'conectado' : 'sin conectar'; $('wSt').dataset.on = w.connected ? '1' : '';
+  $('wGo').hidden = w.connected || !w.configured; $('wOff').hidden = !w.connected;
+  $('wInfo').textContent = !w.configured ? 'El servidor aún no tiene los datos de la aplicación de Withings (Administración → Withings).'
+    : w.connected ? `Conectado desde ${when(w.connectedAt)}.` + (w.last ? ` Última lectura ${when(w.last.at)}: ${w.last.pesadas || 0} pesadas nuevas${w.last.errores && w.last.errores.length ? ' · ' + w.last.errores.join('; ') : ''}.` : '')
+    : 'Pesadas y composición, actividad, entrenos, sueño, SpO2, VO2 máx y ECG, directamente de tu cuenta de Withings.';
+  $('hSt').textContent = h.last ? 'recibiendo' : (h.url ? 'esperando datos' : 'sin configurar'); $('hSt').dataset.on = h.last ? '1' : '';
+  $('hUrlBox').hidden = !h.url; $('hUrl').textContent = h.url || ''; $('hCopy').hidden = !h.url;
+  $('hNew').textContent = h.url ? 'Cambiar la dirección' : 'Crear mi dirección de envío';
+  $('hInfo').innerHTML = h.url
+    ? 'En Health Auto Export, en cada automatización (API REST, JSON v2) pon esta dirección como URL.' + (h.last ? ` Último envío ${when(h.last.at)}${h.last.noches ? ` · ${h.last.noches} noches` : ''}${h.last.metricas ? ` · ${h.last.metricas} métricas` : ''}.` : ' Todavía no ha llegado ningún envío.')
+    : 'Crea tu dirección de envío y ponla en las automatizaciones de Health Auto Export: el sueño, la actividad, el pulso y lo demás llegarán directos al servidor.';
 }
 const act = (btn, msg, fn, okText) => btn.addEventListener('click', async () => {
   btn.disabled = true; say(msg, '…');
@@ -118,6 +142,9 @@ act($('profGo'), $('profMsg'), async () => {
 act($('pAsk'), $('pMsg'), async () => { const r = await api('POST', '/api/partner/request', { username: $('pUser').value, since: $('pDate').value || null }); if (r.linked) alert('Cuentas unidas.'); }, 'Petición enviada.');
 act($('pUnlink'), $('pMsg2'), async () => { if (!confirm('¿Separar las cuentas? Cada uno se queda con una copia de lo compartido.')) throw new Error('Cancelado.'); await api('POST', '/api/partner/unlink'); }, 'Cuentas separadas.');
 act($('pwGo'), $('pwMsg'), async () => { if ($('pw1').value !== $('pw2').value) throw new Error('Las dos contraseñas nuevas no coinciden.'); await api('POST', '/api/me/password', { current: $('pw0').value, new: $('pw1').value }); $('pw0').value = $('pw1').value = $('pw2').value = ''; }, 'Contraseña cambiada.');
+act($('wOff'), $('wMsg'), async () => { if (!confirm('¿Desconectar Withings? Dejarán de llegar las pesadas hasta que lo vuelvas a conectar.')) throw new Error('Cancelado.'); await api('POST', '/api/sources/withings/disconnect'); }, 'Desconectado.');
+act($('hNew'), $('hMsg'), async () => { if ($('hUrl').textContent && !confirm('Si cambias la dirección, la anterior deja de funcionar y tendrás que ponerla otra vez en Health Auto Export. ¿Seguir?')) throw new Error('Cancelado.'); await api('POST', '/api/sources/hae/token'); }, 'Dirección creada: cópiala en Health Auto Export.');
+$('hCopy').addEventListener('click', () => { navigator.clipboard && navigator.clipboard.writeText($('hUrl').textContent); say($('hMsg'), 'Copiada.', 'ok'); });
 act($('sGo'), $('sMsg'), async () => { const r = await api('POST', '/api/sync'); if (!r.ok) throw new Error(r.message); }, 'Sincronizado.');
 // primera entrada con la contraseña provisional
 $('mGo').addEventListener('click', async () => {
