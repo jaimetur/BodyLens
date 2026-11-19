@@ -15,6 +15,15 @@
 .hnav a.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 6px 18px rgba(59,123,242,.28)}
 .hnav a.on i{background:rgba(255,255,255,.22)}
 .hlang select{width:auto;display:inline-block;padding:5px 8px;font-size:14px}
+.hpn{display:flex;justify-content:space-between;gap:10px;margin:0 0 18px}
+.hpn.bottom{margin:28px 0 0;padding-top:18px;border-top:2px dashed var(--line)}
+.hpn a{display:flex;align-items:center;gap:8px;max-width:48%;padding:9px 14px;border-radius:12px;text-decoration:none;font-weight:600;font-size:15px;
+  color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 25%,var(--line))}
+.hpn a:hover{background:color-mix(in srgb,var(--accent) 16%,var(--surface))}
+.hpn a.next{margin-left:auto;text-align:right;justify-content:flex-end}
+.hpn a small{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.hpn a span{min-width:0}
+.hpn b{font-weight:700;overflow:hidden;text-overflow:ellipsis;display:block}
 .hpick{display:none;width:100%;margin-bottom:12px;font-size:16px}
 .hdoc{min-width:0;padding:26px 30px 30px!important}
 .hnote{font-size:14px;border-radius:12px;padding:10px 14px;margin:0 0 18px;background:color-mix(in srgb,var(--accent) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));color:var(--ink)}
@@ -57,7 +66,9 @@
     <nav class="card hnav" id="nav" aria-label="Help"></nav>
     <section class="card hdoc">
       <p class="hnote" id="note" hidden></p>
+      <nav class="hpn" id="pnTop" aria-label="Help"></nav>
       <article class="md" id="doc" data-noi18n><p class="small">…</p></article>
+      <nav class="hpn bottom" id="pnBot" aria-label="Help"></nav>
     </section>
   </div>
 </main>
@@ -77,6 +88,14 @@ function navHtml() {
   return `<h3>Help</h3>${item('home', 'Home')}${IDX.modules.map(m => item(m.id, m.title, true)).join('')}
     <h3>BodyLens</h3>${item('readme', 'About BodyLens')}${item('changelog', "What's new")}`;
 }
+// previous / next section, in the order of the index, above and below each document
+function prevNext(doc) {
+  const items = [...document.querySelectorAll('#nav a')].map(a => ({ id: a.dataset.id, ico: a.querySelector('i').textContent, t: a.querySelector('span').textContent }));
+  const i = items.findIndex(x => x.id === doc);
+  const link = (x, cls, lbl) => x ? `<a href="#${x.id}" class="${cls}"><span><small>${esc(lbl)}</small><b>${cls === 'prev' ? '← ' : ''}${x.ico} ${esc(x.t)}${cls === 'next' ? ' →' : ''}</b></span></a>` : '';
+  const html = i < 0 ? '' : link(items[i - 1], 'prev', (window.blT || String)('Previous')) + link(items[i + 1], 'next', (window.blT || String)('Next'));
+  $('pnTop').innerHTML = html; $('pnBot').innerHTML = html;
+}
 function mark() {
   document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.id === CUR));
   $('pick').value = CUR;
@@ -89,6 +108,7 @@ async function load(doc, quiet) {
     if (CUR !== doc) return;
     $('doc').setAttribute('lang', r.shown);
     $('doc').innerHTML = r.html;
+    prevNext(doc);
     const n = $('note');
     if (r.lang !== 'en' && r.shown === 'en') {
       n.hidden = false;
