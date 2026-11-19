@@ -23,7 +23,11 @@ Google Sheet (Apps Script) is only left for accounts not moved yet and will be r
   in Spanish, mapped to the English catalog by `locales/es.json`; keep that bridge working when you change them.
 - **Documentation is written in English only:** `help/en/`, `README.md` and `CHANGELOG.md`. The Help module of the
   app translates them automatically into each account's language (Claude API, `src/backend/app/help/translate.py`,
-  cached until the English text changes). No translated copies of documents are kept in the repository.
+  cached until the English text changes).
+- **Exception: Spanish.** It is the language most users use, so its translation of every document is kept in the
+  repository (`help/i18n/es/`) and needs no translator. When you change an English document, update its Spanish
+  translation and run `python3 tools/help_i18n.py stamp es <doc>`; `tools/help_i18n.py check` (also run by `pytest`)
+  fails while one is out of date.
 
 ## Layout
 

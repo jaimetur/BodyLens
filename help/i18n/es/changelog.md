@@ -1,4 +1,4 @@
-<!-- en: 20cf3e40ce00a574 -->
+<!-- en: 28ba489bc5cae48d -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -58,7 +58,9 @@
   - El catálogo base está en inglés (`src/frontend/i18n/`), con una guía para contribuir con traducciones.
   - El idioma también se elige en los formularios de petición de acceso y de invitación.
 - **Ayuda:** una sección Ayuda en la app con la ayuda de cada módulo, el README y el registro de cambios, sin salir de la herramienta.
-  - Los documentos están escritos solo en inglés y se traducen automáticamente al idioma de cada cuenta con la API de Claude (Administración → **Traductor**, con la clave de la API de Anthropic guardada cifrada); cada traducción se conserva hasta que cambia el texto en inglés, y los idiomas que usan las cuentas se preparan de antemano.
+  - Los documentos están escritos solo en inglés y se traducen automáticamente al idioma de cada cuenta con LibreTranslate, un traductor gratuito que funciona en el propio servidor junto a BodyLens (la API de Claude se puede poner como alternativa opcional y de pago en Administración → **Traductor**); cada traducción se conserva hasta que cambia el texto en inglés.
+  - El español viene ya traducido con la app (`help/i18n/es/`), así que no necesita traductor.
+- **Tamaño del texto** por cuenta (Pequeño, Normal, Grande, Muy grande) en *Tu cuenta*, igual que el idioma; el nuevo Normal es algo más grande que antes.
 
 #### 🚀 Mejoras:
 - **Un único importador** (Ajustes → Datos y copias) para la copia completa y para el `snap.json` de la versión anterior. Si la copia tiene varios perfiles, eliges cuál importar.

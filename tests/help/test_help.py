@@ -162,3 +162,13 @@ def test_bundled_translation(client, make_user, login, docs_dir, monkeypatch):
     (docs_dir / "help" / "en" / "weight.md").write_text("# Weight\n\nChanged.\n")
     r = c.get("/api/help/weight?lang=es").json()
     assert r["shown"] == "en" and "Changed" in r["html"]               # stale: not used any more
+
+
+def test_bundled_translations_up_to_date():
+    """The translations kept in the repository (help/i18n/<lang>/) match the current English documents."""
+    import subprocess
+    import sys
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[2]
+    r = subprocess.run([sys.executable, str(root / "tools" / "help_i18n.py"), "check"], capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout
