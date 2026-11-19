@@ -34,7 +34,7 @@ fi
 TMP=$(mktemp -d); trap 'rm -rf "$TMP"' EXIT
 git archive HEAD src assets | tar -x -C "$TMP"
 echo "$SHA $(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$TMP/REVISION"
-COPYFILE_DISABLE=1 tar -c -C "$TMP" src assets REVISION | ssh -o BatchMode=yes "$HOST" \
+COPYFILE_DISABLE=1 tar --no-xattrs -c -C "$TMP" src assets REVISION | ssh -o BatchMode=yes "$HOST" \
   "mkdir -p $STACK/code && find $STACK/code -type f -delete && tar -x -C $STACK/code && find $STACK/code -depth -type d -empty -delete; mkdir -p $STACK/code"
 
 if [ "$IMAGE" = 1 ]; then

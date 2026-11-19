@@ -53,16 +53,21 @@ puede escribir en `/data`, revisa PUID/PGID.
 
 ## Despliegues siguientes (los hace el agente)
 
-Cada push a la rama de la versión actual (p. ej. `0.1.0`) → GitHub Actions (tests + imagen `latest` y `<versión>`) →
-el agente despliega por `ssh nas`. Un push a `main` solo publica la imagen `main`.
+El stack del NAS monta el código desde `/volume1/docker/stacks/bodylens/code` (`docker/compose.hot.yml`), así que
+**los cambios se ven en segundos, sin esperar a una imagen nueva**:
+
+```bash
+tools/deploy.sh
 ```
-ssh nas 'cd /volume1/docker/stacks/bodylens && sudo -n /usr/local/bin/docker compose -p bodylens pull && sudo -n /usr/local/bin/docker compose -p bodylens up -d'
-```
-y comprueba que el contenedor `bodylens` queda `healthy`. Para que pueda hacerlo sin contraseña, una vez, como
-administrador del NAS, crea `/etc/sudoers.d/bodylens-deploy` (`sudo visudo -f /etc/sudoers.d/bodylens-deploy`):
-```
-jaimetur_adm ALL=(root) NOPASSWD: /usr/local/bin/docker
-```
+
+- Copia el commit actual (solo lo que está en git) a `code/` por SSH y escribe `code/REVISION`.
+- Si cambia el backend, reinicia el contenedor (unos segundos); si solo cambia la página, ni eso.
+- Si cambian dependencias (`pyproject.toml`), el Dockerfile o las librerías de la página (`package*.json`), espera
+  a la imagen nueva de GitHub Actions y la baja (`docker compose pull` + `up -d`). `tools/deploy.sh --imagen` lo fuerza.
+- Las páginas abiertas avisan «BodyLens se ha actualizado» con un botón para recargar.
+
+Necesita, una vez, una regla de sudo en el NAS para que el usuario de SSH pueda usar Docker sin contraseña
+(`/etc/sudoers.d/bodylens-deploy`: `jaimetur_adm ALL=(root) NOPASSWD: /usr/local/bin/docker`, permisos 440).
 
 ## Fase 2 (cuando esté el port del Apps Script)
 

@@ -73,7 +73,8 @@ python3.12 -m venv .venv && .venv/bin/pip install -e '.[test]'   # entorno local
 - `pytest` en verde y la prueba de arranque del frontend sin errores.
 - La imagen se construye (`docker build -f docker/Dockerfile .`).
 - Se trabaja en la **rama de la versión actual** (p. ej. `0.1.0`), nunca directamente en `main` (Jaime la pone al día).
-  Cada push a esa rama construye `jaimetur/bodylens:latest`. Tras el push y el build verde, desplegar en el NAS (ver `docs/DESPLIEGUE.md`, «Despliegues siguientes»)
+  Cada push a esa rama construye `jaimetur/bodylens:latest`. Tras el push, desplegar en el NAS con `tools/deploy.sh`
+  (en caliente; solo espera a la imagen si cambian dependencias o el Dockerfile) (ver `docs/DESPLIEGUE.md`, «Despliegues siguientes»)
   y comprobar que el contenedor `bodylens` queda `healthy`.
 - Ningún secreto ni dato personal añadido al repo.
 - Si cambia el comportamiento, actualizado `docs/MIGRACION.md` o `docs/DESPLIEGUE.md`.
