@@ -1781,7 +1781,7 @@
  "Whole nights within their target schedule and with 6 h or more asleep": "Nits senceres dins del seu horari objectiu i amb 6 h o més dormides",
  "Why": "Per què",
  "Windsurfing": "Windsurf",
- "With a PIN, the profile opens when you type it on the lock screen: depending on the PIN typed, you enter one profile or another. If several profiles have the same PIN, entering with it shows the modules of all of them together.": "Amb un PIN, el perfil s’obre en escriure’l a la pantalla de bloqueig: segons el PIN que s’escrigui, s’entra en un perfil o en un altre. Si diversos perfils tenen el mateix PIN, en entrar-hi es veuen els mòduls de tots junts.",
+ "With a PIN, the profile opens when you type it on the lock screen: depending on the PIN typed, you enter one profile or another. If several profiles have the same PIN, entering with it shows the modules of all of them together. A profile with a PIN locks itself after 1 minute without activity.": "Amb un PIN, el perfil s’obre en escriure’l a la pantalla de bloqueig: segons el PIN que s’escrigui, s’entra en un perfil o en un altre. Si diversos perfils tenen el mateix PIN, en entrar-hi es veuen els mòduls de tots junts. Un perfil amb PIN es bloqueja sol després d’1 minut sense activitat.",
  "With debt": "Amb deute",
  "With indulgences": "Amb pecats",
  "With protection": "Amb protecció",

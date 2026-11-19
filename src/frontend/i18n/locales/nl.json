@@ -1781,7 +1781,7 @@
  "Whole nights within their target schedule and with 6 h or more asleep": "Hele nachten binnen hun doelschema en met 6 u of meer geslapen",
  "Why": "Waarom",
  "Windsurfing": "Windsurfen",
- "With a PIN, the profile opens when you type it on the lock screen: depending on the PIN typed, you enter one profile or another. If several profiles have the same PIN, entering with it shows the modules of all of them together.": "Met een pincode opent het profiel zodra je die op het vergrendelscherm intypt: afhankelijk van de pincode kom je in het ene of het andere profiel. Hebben meerdere profielen dezelfde pincode, dan zie je de modules van al die profielen samen.",
+ "With a PIN, the profile opens when you type it on the lock screen: depending on the PIN typed, you enter one profile or another. If several profiles have the same PIN, entering with it shows the modules of all of them together. A profile with a PIN locks itself after 1 minute without activity.": "Met een pincode opent het profiel zodra je die op het vergrendelscherm intypt: afhankelijk van de pincode kom je in het ene of het andere profiel. Hebben meerdere profielen dezelfde pincode, dan zie je de modules van al die profielen samen. Een profiel met pincode vergrendelt zichzelf na 1 minuut zonder activiteit.",
  "With debt": "Met schuld",
  "With indulgences": "Met zonden",
  "With protection": "Met bescherming",

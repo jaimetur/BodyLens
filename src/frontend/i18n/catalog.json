@@ -1781,7 +1781,7 @@
  "Whole nights within their target schedule and with 6 h or more asleep",
  "Why",
  "Windsurfing",
- "With a PIN, the profile opens when you type it on the lock screen: depending on the PIN typed, you enter one profile or another. If several profiles have the same PIN, entering with it shows the modules of all of them together.",
+ "With a PIN, the profile opens when you type it on the lock screen: depending on the PIN typed, you enter one profile or another. If several profiles have the same PIN, entering with it shows the modules of all of them together. A profile with a PIN locks itself after 1 minute without activity.",
  "With debt",
  "With indulgences",
  "With protection",

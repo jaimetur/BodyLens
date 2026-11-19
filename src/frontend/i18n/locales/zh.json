@@ -1781,7 +1781,7 @@
  "Whole nights within their target schedule and with 6 h or more asleep": "完整处于目标作息内且睡满 6 h 或以上的夜晚",
  "Why": "原因",
  "Windsurfing": "帆板",
- "With a PIN, the profile opens when you type it on the lock screen: depending on the PIN typed, you enter one profile or another. If several profiles have the same PIN, entering with it shows the modules of all of them together.": "设置 PIN 后，在锁定屏幕输入它即可打开该档案：输入不同的 PIN，进入不同的档案。如果多个档案使用同一个 PIN，用它进入时会同时看到所有这些档案的模块。",
+ "With a PIN, the profile opens when you type it on the lock screen: depending on the PIN typed, you enter one profile or another. If several profiles have the same PIN, entering with it shows the modules of all of them together. A profile with a PIN locks itself after 1 minute without activity.": "设置 PIN 后，在锁定屏幕输入它即可打开该档案：输入不同的 PIN，进入不同的档案。如果多个档案使用同一个 PIN，用它进入时会同时看到所有这些档案的模块。有 PIN 的档案在 1 分钟无操作后会自动锁定。",
  "With debt": "有欠账",
  "With indulgences": "有放纵",
  "With protection": "有防护",

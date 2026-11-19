@@ -1781,7 +1781,7 @@
  "Whole nights within their target schedule and with 6 h or more asleep": "Nuits entières dans leur horaire cible et avec 6 h ou plus dormies",
  "Why": "Pourquoi",
  "Windsurfing": "Planche à voile",
- "With a PIN, the profile opens when you type it on the lock screen: depending on the PIN typed, you enter one profile or another. If several profiles have the same PIN, entering with it shows the modules of all of them together.": "Avec un PIN, le profil s’ouvre quand on le tape sur l’écran de verrouillage : selon le PIN saisi, on entre dans un profil ou dans un autre. Si plusieurs profils ont le même PIN, en entrant avec lui on voit les modules de tous ces profils réunis.",
+ "With a PIN, the profile opens when you type it on the lock screen: depending on the PIN typed, you enter one profile or another. If several profiles have the same PIN, entering with it shows the modules of all of them together. A profile with a PIN locks itself after 1 minute without activity.": "Avec un PIN, le profil s’ouvre quand on le tape sur l’écran de verrouillage : selon le PIN saisi, on entre dans un profil ou dans un autre. Si plusieurs profils ont le même PIN, en entrant avec lui on voit les modules de tous ces profils réunis. Un profil avec PIN se verrouille tout seul après 1 minute d’inactivité.",
  "With debt": "Avec dette",
  "With indulgences": "Avec péchés",
  "With protection": "Avec protection",

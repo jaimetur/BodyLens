@@ -31,7 +31,9 @@ async function buildPage(snap){const tP='"'+'@@'+'PACK'+'@@"';const pack=await g
 
 // preferencias de esta vista (periodo elegido, series ocultas): solo comodidad, viven en este dispositivo
 const UI=(()=>{try{return JSON.parse(localStorage.getItem('bascula:ui')||'{}')||{}}catch(e){return {}}})();
-const saveUI=()=>{try{localStorage.setItem('bascula:ui',JSON.stringify(UI))}catch(e){}};
+// what each profile had open (section in the address, tabs of each section) is kept apart, to reopen it when entering that profile
+const saveUI=()=>{try{if(typeof SEL==='string')UI.byProf={...(UI.byProf||{}),[SEL]:{h:location.hash,vt:UI.vt,lastSub:UI.lastSub,ajTab:UI.ajTab,ajTabPf:UI.ajTabPf}}}catch(e){}
+  try{localStorage.setItem('bascula:ui',JSON.stringify(UI))}catch(e){}};
 /* ---------- perfiles: cada persona tiene sus propios documentos («pf-<id>-…»); el perfil principal usa los de siempre ---------- */
 const PROF_DEF=[{"id":"","name":"Jaime Tur","col":"#3f51e0","partner":"laura","pinH":"b306e613261e589c95f54353e7647436ad522b508d1a7ea41bccfd24741623bb","partnerSince":"2026-03-01"},{"id":"laura","name":"Laura Romero","col":"#d6457a","cycle":1,"partner":"","pinH":"4e68ba88e45912c2d4a386c50521c22abda50a12b692992e00851267670516a9","partnerSince":"2026-03-01"}];
 let PROFS=(()=>{try{const p=JSON.parse(localStorage.getItem('bascula:profs')||'null');return Array.isArray(p)&&p.length?p:PROF_DEF}catch(e){return PROF_DEF}})();
@@ -41,8 +43,12 @@ let PROFS=(()=>{try{const p=JSON.parse(localStorage.getItem('bascula:profs')||'n
 const SEL=(()=>{let s=null;try{s=sessionStorage.getItem('bascula:sel')}catch(e){}if(s!=null&&PROFS.some(p=>p.id===s))return s;
   return PROFS[0]?PROFS[0].id:''})();const PID='';
 if(PID)LS='bascula:v3:'+PID;
-// al cambiar de perfil se vuelve a la misma sección (las pestañas de cada sección ya se recuerdan)
-if(UI.pfRet){const r=UI.pfRet;delete UI.pfRet;saveUI();if(location.hash.slice(1)!==r){try{history.replaceState(null,'','#'+r)}catch(e){location.hash='#'+r}}}
+// entering a profile (or opening the app without a section in the address) reopens the section and tabs it had open
+{const b=UI.byProf&&UI.byProf[SEL],sw=!!UI.pfSwitch;delete UI.pfSwitch;delete UI.pfRet;
+  if(b){for(const k of ['vt','lastSub','ajTab','ajTabPf'])if(b[k]!==undefined)UI[k]=b[k];
+    if(b.h&&(sw||!location.hash)&&location.hash!==b.h){try{history.replaceState(null,'',b.h)}catch(e){location.hash=b.h}}}
+  else if(sw){try{history.replaceState(null,'','#resumen')}catch(e){}}}
+addEventListener('hashchange',()=>saveUI());
 const PROF=()=>PROFS.find(p=>p.id===SEL)||PROFS[0];
 const dk=id=>PID?`pf-${PID}-${id}`:id;
 const CYC_T=['menstrual','intermenstrual','ovulation','bbt','cervical','contraceptive','pregnancy'];
@@ -108,7 +114,7 @@ document.addEventListener('click',e=>{const k=e.target.closest('[data-lk]');if(k
   if(e.target.closest('[data-lkx]'))hideLock()});
 document.addEventListener('keydown',e=>{if(!LOCK)return;if(/^\d$/.test(e.key))lockKey(e.key);else if(e.key==='Backspace')lockKey('⌫');else if(e.key==='Escape'&&(LOCK.mode==='priv'||!(LOCK.p.id===SEL&&!unlocked(PROF()))))hideLock()});
 function checkLock(){const p=PROF();if(!unlocked(p)){if(!LOCK)showLock(p,null)}else if(LOCK&&LOCK.p.id===SEL&&!LOCK.then)hideLock();document.body.classList.toggle('locked',!unlocked(p))}
-function switchProfile(id,ok){if(id===SEL){closeProfMenu();return}const p=PROFS.find(x=>x.id===id);if(!ok&&p&&!unlocked(p)){closeProfMenu();showLock(p,()=>switchProfile(id,true));return}try{saveLocal()}catch(e){}try{sessionStorage.setItem('bascula:sel',id)}catch(e){}UI.profile=id;UI.pfRet=(location.hash||'#resumen').slice(1);UI.pfY=window.scrollY||0;saveUI();location.reload()}
+function switchProfile(id,ok){if(id===SEL){closeProfMenu();return}const p=PROFS.find(x=>x.id===id);if(!ok&&p&&!unlocked(p)){closeProfMenu();showLock(p,()=>switchProfile(id,true));return}try{saveLocal()}catch(e){}try{sessionStorage.setItem('bascula:sel',id)}catch(e){}saveUI();UI.profile=id;UI.pfSwitch=1;try{localStorage.setItem('bascula:ui',JSON.stringify(UI))}catch(e){}location.reload()}
 (()=>{try{for(const l of document.querySelectorAll('body link[rel="icon"],body link[rel="apple-touch-icon"]'))document.head.appendChild(l.cloneNode(true))}catch(e){}})();
 function renderProfBtn(){const b=$('pfBtn');if(!b)return;try{$('brandSub').textContent='Salud y seguimiento · '+PROF().name.split(' ')[0]}catch(e){}try{checkLock()}catch(e){}const p=PROF();b.innerHTML=`<i style="background:${p.col}">${esc(initials(p.name))}</i><span>${esc(p.name.split(' ')[0])}</span>`;b.setAttribute('aria-label','Perfil: '+p.name+'. Cambiar de perfil')}
 function closeProfMenu(){const m=$('pfMenu');if(m)m.hidden=true;const b=$('pfBtn');if(b)b.setAttribute('aria-expanded','false')}
@@ -122,6 +128,13 @@ document.addEventListener('click',e=>{if(e.target.closest('#pfBtn')){$('pfMenu')
   if(e.target.closest('[data-pfmanage]')){closeProfMenu();setTimeout(()=>{showAj(UI.ajTabPf||'perfiles');scrollTo(0,0)},120);return}
   if(!e.target.closest('#pfMenu'))closeProfMenu()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeProfMenu()});
+// a profile with a PIN locks itself after 1 minute without activity (here or in the pages shown inside the app)
+let LAST_ACT=Date.now();window.blActivity=()=>{LAST_ACT=Date.now()};
+for(const ev of ['pointerdown','pointermove','keydown','wheel','touchstart','scroll'])addEventListener(ev,()=>{LAST_ACT=Date.now()},{passive:true,capture:true});
+function idleCheck(){const p=PROF();if(!p||!p.pinH||LOCK||!unlocked(p)||Date.now()-LAST_ACT<60000)return;
+  for(const q of PROFS){delete UNL[q.id];try{sessionStorage.removeItem('bascula:unl:'+q.id)}catch(e){}}try{sessionStorage.removeItem('bascula:grp')}catch(e){}
+  closeProfMenu();showLock(p,null);document.body.classList.add('locked')}
+setInterval(idleCheck,5000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)idleCheck()});
 // en el perfil principal, los datos del ciclo que llegan de Apple Salud pasan al perfil que los recibe
 function routeCycle(){return;if(PID||!OWNER||!col||!dbFresh)return;const t=PROFS.find(p=>p.cycle&&p.id);if(!t)return;
   const mv=(HKLOG.e||[]).filter(e=>CYC_T.includes(e[0]));if(!mv.length)return;

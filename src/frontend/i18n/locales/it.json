@@ -1781,7 +1781,7 @@
  "Whole nights within their target schedule and with 6 h or more asleep": "Notti intere nel loro orario obiettivo e con 6 h o più dormite",
  "Why": "Perché",
  "Windsurfing": "Windsurf",
- "With a PIN, the profile opens when you type it on the lock screen: depending on the PIN typed, you enter one profile or another. If several profiles have the same PIN, entering with it shows the modules of all of them together.": "Con un PIN, il profilo si apre digitandolo nella schermata di blocco: a seconda del PIN digitato, si entra in un profilo o in un altro. Se più profili hanno lo stesso PIN, entrando con quello si vedono i moduli di tutti insieme.",
+ "With a PIN, the profile opens when you type it on the lock screen: depending on the PIN typed, you enter one profile or another. If several profiles have the same PIN, entering with it shows the modules of all of them together. A profile with a PIN locks itself after 1 minute without activity.": "Con un PIN, il profilo si apre digitandolo nella schermata di blocco: a seconda del PIN digitato, si entra in un profilo o in un altro. Se più profili hanno lo stesso PIN, entrando con quello si vedono i moduli di tutti insieme. Un profilo con PIN si blocca da solo dopo 1 minuto di inattività.",
  "With debt": "Con debito",
  "With indulgences": "Con peccati",
  "With protection": "Con protezione",

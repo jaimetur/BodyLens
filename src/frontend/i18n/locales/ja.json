@@ -1781,7 +1781,7 @@
  "Whole nights within their target schedule and with 6 h or more asleep": "目標の時間帯に収まり、かつ 6 h 以上眠れた夜",
  "Why": "理由",
  "Windsurfing": "ウィンドサーフィン",
- "With a PIN, the profile opens when you type it on the lock screen: depending on the PIN typed, you enter one profile or another. If several profiles have the same PIN, entering with it shows the modules of all of them together.": "PIN を設定すると、ロック画面で入力したときにそのプロフィールが開きます。入力した PIN によって、どのプロフィールに入るかが決まります。複数のプロフィールが同じ PIN の場合、その PIN で入るとすべてのプロフィールのモジュールがまとめて表示されます。",
+ "With a PIN, the profile opens when you type it on the lock screen: depending on the PIN typed, you enter one profile or another. If several profiles have the same PIN, entering with it shows the modules of all of them together. A profile with a PIN locks itself after 1 minute without activity.": "PIN を設定すると、ロック画面で入力したときにそのプロフィールが開きます。入力した PIN によって、どのプロフィールに入るかが決まります。複数のプロフィールが同じ PIN の場合、その PIN で入るとすべてのプロフィールのモジュールがまとめて表示されます。PIN のあるプロフィールは、1分間操作がないと自動的にロックされます。",
  "With debt": "不足あり",
  "With indulgences": "「罪」あり",
  "With protection": "避妊あり",

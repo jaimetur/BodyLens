@@ -52,6 +52,9 @@ function blFitFrame() {
   if (!f || !m) return;
   f.style.height = Math.max(480, Math.ceil(m.getBoundingClientRect().bottom + (window.scrollY || 0) + 24)) + 'px';
 }
+// activity inside a page shown in the app keeps the profile from locking itself for inactivity
+if (EMBED) for (const ev of ['pointerdown', 'pointermove', 'keydown', 'wheel', 'touchstart', 'scroll'])
+  addEventListener(ev, () => { try { if (TOP.blActivity) TOP.blActivity(); } catch (e) { /* other origin */ } }, { passive: true, capture: true });
 if (EMBED && window.frameElement) {
   const m = document.querySelector('main');
   if (m) new ResizeObserver(blFitFrame).observe(m);
