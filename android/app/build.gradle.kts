@@ -16,25 +16,21 @@ android {
         versionName = "0.1." + (System.getenv("BODYLENS_ANDROID_BUILD") ?: "0")
     }
 
+    // en CI, si hay almacén de claves en los secretos, se firma con él; si no, con la clave de depuración
+    val ks = System.getenv("ANDROID_KEYSTORE_FILE")?.let { file(it) }?.takeIf { it.exists() }
     signingConfigs {
-        // en CI, si hay almacén de claves en los secretos, se firma con él; si no, con la clave de depuración
-        create("release") {
-            val ks = System.getenv("ANDROID_KEYSTORE_FILE")
-            if (ks != null && file(ks).exists()) {
-                storeFile = file(ks)
-                storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
-                keyAlias = System.getenv("ANDROID_KEY_ALIAS")
-                keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
-            } else {
-                initWith(getByName("debug"))
-            }
+        if (ks != null) create("release") {
+            storeFile = ks
+            storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+            keyAlias = System.getenv("ANDROID_KEY_ALIAS")
+            keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
         }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = signingConfigs.getByName(if (ks != null) "release" else "debug")
         }
     }
     compileOptions {
