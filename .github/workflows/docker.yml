@@ -67,6 +67,9 @@ jobs:
 
       - name: Construir y publicar (amd64 + arm64)
         uses: docker/build-push-action@v7
+        env:
+          # sin artefacto de registro del build (la cuota de almacenamiento de Actions está llena)
+          DOCKER_BUILD_RECORD_UPLOAD: false
         with:
           context: .
           file: docker/Dockerfile
