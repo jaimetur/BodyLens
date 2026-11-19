@@ -3465,11 +3465,25 @@ const WHL_R={qmKg:[30,300,.1],qmFp:[3,70,.1],qmMu:[10,150,.1],qmWp:[20,80,.1],qm
   maSteps:[0,60000,100],maMin:[0,600,1],maKcal:[0,5000,10],mwDur:[1,600,1],mwKcal:[0,5000,10],mwDist:[0,300,.1],
   mhRhr:[30,200,1],mhHrv:[5,300,1],mhSpo:[70,100,.5],mhVo2:[10,90,.5],cfHeight:[120,230,1]};
 const whlRange=el=>WHL_R[el.id]||(/^md-/.test(el.id)?[10,300,.5]:null);
+// where the wheel starts when there is no earlier value: a typical value for the profile's sex, age and height
+// (Personal data), or for an average adult when they are not set
+function whlDefault(id){const c={...DEFAULT_CFG,...((DOC&&DOC.cfg)||{})},sx=c.sex==='h'?'h':c.sex==='m'?'m':'';
+  const by=c.birth?+String(c.birth).slice(0,4):null,age=by?Math.max(16,Math.min(95,new Date().getFullYear()-by)):40;
+  const pick=(h,m,n)=>sx==='h'?h:sx==='m'?m:n,cl=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+  const hcm=+c.height>=120&&+c.height<=230?+c.height:pick(176,163,170);
+  const kg=Math.round(pick(24.5,23.5,24)*(hcm/100)**2*10)/10,fat=pick(20,29,25)+(age>40?Math.min(6,(age-40)*.15):0);
+  const D={qmKg:kg,mKg:kg,qmFp:Math.round(fat*10)/10,qmMu:Math.round(kg*(1-fat/100)*.94*10)/10,qmWp:pick(57,50,54),qmBo:pick(3.2,2.5,2.9),
+    maSteps:age>70?5000:age>55?6500:7500,maMin:30,maKcal:pick(400,300,350),
+    mwDur:45,mwKcal:pick(350,280,300),mwDist:5,
+    mhRhr:pick(64,68,66),mhHrv:Math.round(cl(65-.7*(age-20),20,80)),mhSpo:97,mhVo2:Math.round(cl(pick(46,38,42)-.35*(age-25),15,60)*2)/2,
+    cfHeight:hcm,
+    'md-cintura':pick(92,80,86)+(age>45?3:0),'md-cadera':pick(100,102,101),'md-pecho':pick(101,92,96),'md-cuello':pick(39,33,36),'md-brazo':pick(32,28,30),'md-muslo':pick(56,57,56)};
+  return D[id]??null}
 let WHL=null;
 function whlOpen(el){const R=whlRange(el);if(!R)return;const [lo,hi,st]=R,dec=st<1?(String(st).split('.')[1]||'').length:0;
   const vals=[];for(let i=0;lo+i*st<=hi+1e-9;i++)vals.push(+(lo+i*st).toFixed(dec));
   const num=s=>{const v=parseFloat(String(s||'').replace(/\./g,dec?'.':'').replace(',','.'));return isNaN(v)?null:v};
-  const start=num(el.value)??num(el.placeholder)??vals[Math.floor(vals.length/2)];
+  const start=num(el.value)??num(el.placeholder)??whlDefault(el.id)??vals[Math.floor(vals.length/2)];
   let idx=0,best=Infinity;vals.forEach((v,i)=>{const d=Math.abs(v-start);if(d<best){best=d;idx=i}});
   WHL={el,vals,dec,idx};const lab=el.closest('label');$('whlLbl').textContent=lab?lab.childNodes[0].textContent.trim():'';
   $('whlList').innerHTML=vals.map(v=>`<div>${fmtN(v,dec)}</div>`).join('');$('whl').hidden=false;
