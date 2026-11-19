@@ -505,14 +505,13 @@ table.yrs td b{display:block;font-weight:600}table.yrs td small{display:block;fo
 .fgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:start}@media (min-width:900px){.fgrid{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}}
 /* primero lo que comiste y después la puntuación */
 .fgrid>.ffields{order:-1}
-.frows{display:flex;flex-direction:column;gap:14px}
-/* cada concepto: el título y su puntuación en la misma línea; lo escrito (platos, campo) debajo, a todo el ancho */
-.frow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center}
-.frow>.ffld{display:contents}
-.frow>.ffld>*{grid-column:1/-1}
-.frow>.ffld>span{grid-column:1;grid-row:1}
-.frow>.fsc{grid-column:2;grid-row:1}
-.frow>.fsc{flex-wrap:nowrap}.frow>.fsc>.chips{margin:0}.frow>.fsc>span{font-size:0;flex:0 0 auto;line-height:0}.frow>.fsc>span small.auto{font-size:.66rem;line-height:1.2}
+.frows{display:flex;flex-direction:column;gap:12px}
+/* cada concepto en su fila: lo escrito a la izquierda y su puntuación a la derecha, a la altura de la caja de texto */
+.frow{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:6px 24px;align-items:end}
+.frow.full{grid-template-columns:minmax(0,1fr)}
+.frow>.fsc{min-height:45px;align-items:center}
+.frow>.fsc>.chips{margin:0}
+@media (max-width:760px){.frow{grid-template-columns:minmax(0,1fr)}.frow>.fsc{min-height:0}}
 @media (max-width:760px){.fgrid{grid-template-columns:minmax(0,1fr)}}
 .ffields{display:flex;flex-direction:column;gap:10px}.ffld{display:flex;flex-direction:column;gap:4px}.ffld>span{font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .ffld input{font:inherit;font-size:16px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);min-width:0;width:100%;box-sizing:border-box}
