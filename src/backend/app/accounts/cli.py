@@ -5,6 +5,7 @@
   python -m app.accounts.cli contrasena USUARIO               # cambia la contraseña de una cuenta
   python -m app.accounts.cli usuarios                         # lista las cuentas
   python -m app.accounts.cli fuentes USUARIO [--hoja ID] [--apps-script URL]   # fase 1: hoja de Google de esa cuenta
+  python -m app.accounts.cli mover-perfil ORIGEN PERFIL DESTINO [--sin-pareja]  # un perfil pasa a la cuenta de esa persona
 
 La contraseña se pide por teclado (o en la variable BODYLENS_NEW_PASSWORD, para automatizar).
 """
@@ -37,6 +38,8 @@ def main(argv: list[str] | None = None) -> None:
     p = sub.add_parser("contrasena"); p.add_argument("usuario")
     sub.add_parser("usuarios")
     p = sub.add_parser("fuentes"); p.add_argument("usuario"); p.add_argument("--hoja"); p.add_argument("--apps-script")
+    p = sub.add_parser("mover-perfil"); p.add_argument("origen"); p.add_argument("perfil"); p.add_argument("destino")
+    p.add_argument("--sin-pareja", action="store_true", help="no unir las dos cuentas en pareja")
     a = ap.parse_args(argv)
     db.init_db()
     try:
@@ -61,6 +64,13 @@ def main(argv: list[str] | None = None) -> None:
                 users.update_bridge(con, u.id, a.hoja if a.hoja is not None else u.sheet_id,
                                     a.apps_script if a.apps_script is not None else u.apps_script_url)
                 print("Fuentes guardadas.")
+            elif a.cmd == "mover-perfil":
+                from app.data import profiles
+                try:
+                    r = profiles.move_profile_by_names(con, a.origen, a.perfil, a.destino, not a.sin_pareja)
+                except profiles.ProfileError as e:
+                    raise SystemExit(str(e))
+                print(f"Movidos {r['documents']} documentos." + (" Cuentas unidas en pareja." if r["linked"] else ""))
     except users.UserError as e:
         raise SystemExit(str(e))
     finally:
