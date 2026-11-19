@@ -116,6 +116,27 @@ When you add or change visible texts (page, server pages, error messages, emails
 3. Add the translations to every file in `locales/` (same tone and terms as the rest).
 4. `python3 tools/i18n_check.py` must print OK (`pytest` checks it too).
 
+## Changelog
+
+- Every big change, new feature, enhancement or user-visible fix updates `CHANGELOG.md` (English) in the **current
+  version** (the branch's), and its Spanish copy `help/i18n/es/changelog.md` in the same way; then run
+  `python3 tools/help_i18n.py stamp es changelog`.
+- Sections, in this order: Breaking Changes, New Features, Enhancements, Bug fixes, Documentation. If the release has
+  Breaking Changes, that section always goes first, right after the release date.
+- Add a new entry as the **last bullet** of its section.
+- Keep it concise and describe the **final state** of the implementation, not the sequence of intermediate changes.
+- Within the current (unreleased) version, do not add several bullets for incremental changes, fixes or refinements of
+  the same functionality: if a bullet already describes it, update or rewrite that bullet so it reflects the final
+  behaviour.
+- No entries for internal changes with no user-facing or developer-facing impact.
+- No blank lines between bullets of a section, nor between the section name and its first bullet.
+
+## Documentation
+
+- Whenever you implement or change a feature, review all the documentation related to it (`help/en/`, its Spanish
+  copy in `help/i18n/es/`, `README.md`, `docs/DEPLOYMENT.md`) and update whatever is no longer accurate.
+- Documentation describes the final supported behaviour, not intermediate attempts or temporary states.
+
 ## Commands
 
 ```
@@ -136,6 +157,5 @@ node tests/frontend/i18n.mjs                           # translator
   `docs/DEPLOYMENT.md`) and check that the `bodylens` container is `healthy`.
 - No secret or personal data added to the repository.
 - If the deployment changes, `docs/DEPLOYMENT.md` is updated; if the usage changes, the help in `help/`.
-- `CHANGELOG.md` up to date: every change visible in the app, the server or the deployment goes in the current
-  version (the branch's), in its section (Breaking Changes, New Features, Enhancements, Bug fixes, Documentation),
-  in the format of the existing entries.
+- `CHANGELOG.md` (and its Spanish copy) up to date following the "Changelog" rules above, and the related
+  documentation reviewed following the "Documentation" rules.
