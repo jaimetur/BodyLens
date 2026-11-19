@@ -18,7 +18,7 @@
 .hpick{display:none;width:100%;margin-bottom:12px;font-size:16px}
 .hdoc{min-width:0;padding:26px 30px 30px!important}
 .hnote{font-size:14px;border-radius:12px;padding:10px 14px;margin:0 0 18px;background:color-mix(in srgb,var(--accent) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));color:var(--ink)}
-.md{line-height:1.7;font-size:17px;overflow-wrap:anywhere}
+.md{line-height:1.7;font-size:17px;overflow-wrap:break-word}
 .md h1{font-family:"Big Shoulders Display","Instrument Sans",sans-serif;font-weight:800;font-size:38px;text-transform:uppercase;letter-spacing:.02em;margin:0 0 18px;
   background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
 .md h2{font-size:23px;margin:34px 0 12px;padding:4px 0 4px 14px;border-left:5px solid var(--accent);border-radius:2px}
@@ -35,16 +35,20 @@
 .md code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.86em;background:color-mix(in srgb,var(--accent2) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--accent2) 22%,var(--line));border-radius:6px;padding:1px 6px}
 .md pre{background:var(--raised);border:1px solid var(--line);border-left:4px solid var(--accent2);border-radius:12px;padding:14px 16px;overflow:auto;font-size:14px;line-height:1.5}
 .md pre code{background:none;border:0;padding:0}
-.md .tbl{overflow-x:auto;margin:0 0 16px;border:1px solid var(--line);border-radius:12px}
+.md .tbl{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 16px;border:1px solid var(--line);border-radius:12px}
 .md table{border-collapse:collapse;font-size:15.5px;width:100%}
-.md th,.md td{border-bottom:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+.md th,.md td{border-bottom:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top;overflow-wrap:normal;word-break:normal;min-width:6.5em}
+.md td:first-child,.md th:first-child{min-width:7.5em}
 .md tr:last-child td{border-bottom:0}
 .md th{background:color-mix(in srgb,var(--accent) 12%,var(--surface));color:var(--ink);font-size:13px;text-transform:uppercase;letter-spacing:.04em}
 .md tbody tr:nth-child(even){background:color-mix(in srgb,var(--accent) 4%,transparent)}
 .md blockquote{margin:0 0 14px;padding:8px 16px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--surface));border-radius:0 10px 10px 0}
 .md hr{border:0;border-top:2px dashed var(--line);margin:26px 0}
 .md a{color:var(--accent);font-weight:600}
-@media (max-width:760px){.hlp{grid-template-columns:1fr}.hnav{display:none}.hpick{display:block}.hdoc{padding:18px 16px!important}.md{font-size:16px}.md h1{font-size:30px}}
+@media (max-width:760px){.hlp{grid-template-columns:1fr}.hnav{display:none}.hpick{display:block}.hdoc{padding:16px 14px!important;border-radius:14px}
+  .md{font-size:15.5px;line-height:1.6}.md h1{font-size:28px}.md h2{font-size:19px;margin:26px 0 10px;padding-left:10px}.md h3{font-size:17px}
+  .md table{font-size:14px}.md th,.md td{padding:7px 9px}.md ul,.md ol{padding-left:20px}.md pre{font-size:12.5px;padding:10px 12px}
+  .top{flex-wrap:wrap;gap:10px}.top>span{display:flex;width:100%;justify-content:space-between;align-items:center;gap:8px}}
 </style></head>
 <body><main class="acct">
   <div class="top"><a class="brand" href="/"><img src="/icon.svg" alt=""><b>BodyLens · Help</b></a><span><label class="hlang">🌐 <select id="langPick2" aria-label="Language"></select></label> <a class="btn ghost" href="/">Back to the app</a></span></div>
