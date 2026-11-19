@@ -1,4 +1,4 @@
-<!-- en: 7dd9dfdbaf2342de -->
+<!-- en: b99e7597d600c3ea -->
 # Comidas
 
 Sirve para apuntar lo que comes cada día y puntuarlo, y para ver cuánto debería afectar a tu peso según una fórmula, comparado con lo que marca la báscula al día siguiente. Los pesos vienen de la báscula **Withings**; las comidas las escribes tú.
@@ -13,16 +13,8 @@ Sirve para apuntar lo que comes cada día y puntuarlo, y para ver cuánto deber�
 
 ## Hoy
 
-### Pérdida estimada
-- Anillo con la **nota del día** (en %), dividida en lo que suma (verde) y lo que resta (rojo).
-- **Estimada y real**: la pérdida estimada por la fórmula para el día y, a su lado, el cambio real en la báscula entre la mañana de ese día y la del siguiente (solo si te pesas los dos días). Lo que comes un día se nota en la báscula a la mañana siguiente, por eso las tiras de semana se organizan por día de pesada.
-- **Día perfecto**: lo que estimaría la fórmula con una nota del 100 %.
-- **Tiras de semana**: una con la pérdida estimada y otra con la pérdida real, con flechas para moverte entre semanas y el botón **Hoy** para volver.
-- **Cifras**: estimada y real de la semana, desde el inicio del plan, ritmo estimado de los últimos 14 días y la fecha en que llegarías al objetivo a ese ritmo.
-- Con periodos de más de una semana, el panel resume el periodo y puedes navegar por periodos.
-
 ### Registro del día
-- Elige el día con la tira de la semana (flechas para saltar entre semanas), con el selector de fecha o con **Hoy**. Los días con apuntes tienen el color de su nota.
+- Elige el día en la tira de las últimas 4 semanas, de lunes a domingo (las flechas saltan 4 semanas), con el selector de fecha o con **Hoy**. Los días con apuntes tienen el color de su nota.
 - **Desayuno**, **Almuerzo** y **Cena**: añade varios platos escribiendo y pulsando Intro. Se sugieren los platos que más has escrito. Los platos de una comida se pueden pasar a otra.
 - **Pecados de comida** y **Pecados de bebida**: cada pecado tiene una cantidad. Cuentan automáticamente hasta un tope de −5.
 - **Deporte** y **Nota**: texto libre.
@@ -30,6 +22,14 @@ Sirve para apuntar lo que comes cada día y puntuarlo, y para ver cuánto deber�
   - Desayuno, Almuerzo, Cena, Agua y Deporte: de 0 a 5.
   - Pecados de comida y de bebida: de −5 a 0. Se calculan automáticamente a partir de lo que has escrito; si pulsas un valor lo fijas a mano y, si lo vuelves a pulsar, vuelven a contar automáticamente.
 - Junto al día se muestran, como contexto, el peso del día, los pasos, el sueño y los entrenamientos. Los cambios se guardan al instante.
+
+### Pérdida estimada
+- Anillo con la **nota del día** (en %), dividida en lo que suma (verde) y lo que resta (rojo).
+- **Estimada y real**: la pérdida estimada por la fórmula para el día y, a su lado, el cambio real en la báscula entre la mañana de ese día y la del siguiente (solo si te pesas los dos días). Lo que comes un día se nota en la báscula a la mañana siguiente, por eso las tiras de semana se organizan por día de pesada.
+- **Día perfecto**: lo que estimaría la fórmula con una nota del 100 %.
+- **Tiras de semana**: una con la pérdida estimada y otra con la pérdida real, con flechas para moverte entre semanas y el botón **Hoy** para volver.
+- **Cifras**: estimada y real de la semana, desde el inicio del plan, ritmo estimado de los últimos 14 días y la fecha en que llegarías al objetivo a ese ritmo.
+- Con periodos de más de una semana, el panel resume el periodo y puedes navegar por periodos.
 
 ## Registro
 
