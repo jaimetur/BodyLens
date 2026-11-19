@@ -9,7 +9,7 @@ HOST=${BODYLENS_HOST:-nas}
 STACK=${BODYLENS_STACK:-/volume1/docker/stacks/bodylens}
 DOCKER="sudo -n /usr/local/bin/docker"
 cd "$(git rev-parse --show-toplevel)"
-[ -z "$(git status --porcelain -- src assets docker pyproject.toml)" ] || { echo "Hay cambios sin commit en src/, assets/ o docker/: haz commit antes." >&2; exit 1; }
+[ -z "$(git status --porcelain --untracked-files=no -- src assets docker pyproject.toml)" ] || { echo "Hay cambios sin commit en src/, assets/ o docker/: haz commit antes." >&2; exit 1; }
 SHA=$(git rev-parse --short=7 HEAD)
 PREV=$(ssh -o BatchMode=yes "$HOST" "cut -d' ' -f1 $STACK/code/REVISION 2>/dev/null || true")
 IMAGE=0
