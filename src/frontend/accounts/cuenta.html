@@ -94,6 +94,7 @@
         <div class="src">
           <div class="src-h"><b>Apple Salud / Android</b> <span class="small">(Health Auto Export o Health Connect)</span><span class="pill" id="hSt">—</span></div>
           <p class="small" id="hInfo"></p>
+          <p class="small" id="hFrom"></p>
           <p id="hUrlBox" hidden><span class="code" id="hUrl"></span></p>
           <p class="small applinks">iPhone: <a href="https://apps.apple.com/app/id1115567069" target="_blank" rel="noopener">Health Auto Export</a> (App Store) · Android: <a href="/android.apk" target="_top">BodyLens app</a> o <a href="/android-bridge.apk" target="_top">BodyLens Bridge</a> + <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata" target="_blank" rel="noopener">Health Connect</a> (Google Play) · <a href="/help#sync" target="_top">Step-by-step guide</a></p>
           <div id="hNative" hidden>
@@ -181,7 +182,13 @@ async function loadSources() {
   $('wInfo').textContent = !w.configured ? 'El servidor aún no tiene los datos de la aplicación de Withings (Administración → Withings).'
     : w.connected ? `Conectado desde ${when(w.connectedAt)}.` + (w.last ? ` Última lectura ${when(w.last.at)}: ${w.last.pesadas || 0} pesadas nuevas${w.last.errores && w.last.errores.length ? ' · ' + w.last.errores.join('; ') : ''}.` : '')
     : 'Pesadas y composición, actividad, entrenos, sueño, SpO2, VO2 máx y ECG, directamente de tu cuenta de Withings.';
-  $('hSt').textContent = h.last ? 'recibiendo' : (h.url ? 'esperando datos' : 'sin configurar'); $('hSt').dataset.on = h.last ? '1' : '';
+  // which service the data comes from: Apple Health, Android or both (sent in the last 2 days)
+  const recent = x => x && Date.now() - new Date(x.at).getTime() < 2 * 864e5;
+  const from = recent(h.apple) && recent(h.android) ? 'recibiendo de Apple Salud y Android' : recent(h.apple) ? 'recibiendo de Apple Salud'
+    : recent(h.android) ? 'recibiendo de Android' : 'recibiendo';
+  $('hSt').textContent = h.last ? from : (h.url ? 'esperando datos' : 'sin configurar'); $('hSt').dataset.on = h.last ? '1' : '';
+  const line = (name, x) => x ? `${name}: último envío ${when(x.at)}${x.noches ? ` · ${x.noches} noches` : ''}${x.metricas ? ` · ${x.metricas} métricas` : ''}${x.ignoradas ? ` · ${x.ignoradas} datos sin usar porque manda la otra fuente` : ''}.` : '';
+  $('hFrom').textContent = [line('Apple Salud', h.apple), line('Android', h.android)].filter(Boolean).join(' ');
   $('hUrlBox').hidden = !h.url; $('hUrl').textContent = h.url || ''; $('hCopy').hidden = !h.url;
   // one-tap setup of the Android app: the link opens it with the address (or downloads the app if it is missing)
   const android = /Android/i.test(navigator.userAgent);

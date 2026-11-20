@@ -151,7 +151,9 @@ async def _ingest(request: Request, token: str):
         with db.tx() as con:
             return hae.ingest(con, u.id, body, android, priority.count_post(con, u.id, android))
     res = await asyncio.to_thread(work)
-    _note(u.id, "hae_last", {"at": db.now_iso(), **{k: v for k, v in res.items() if k != "ok"}})
+    last = {"at": db.now_iso(), **{k: v for k, v in res.items() if k != "ok"}}
+    _note(u.id, "hae_last", last)
+    _note(u.id, "hae_last_android" if android else "hae_last_apple", last)   # which service the data comes from
     await sheets.rebuild_async(u.id)
     return res
 
@@ -180,7 +182,8 @@ def sources(request: Request, u: User = Depends(current_user)):
                      "connectedAt": (tok or {}).get("connected_at"), "last": db.get_setting(f"withings_last:{u.id}"),
                      "callback": withings.redirect_uri()},
         "hae": {"url": f"{base_url(request)}/api/ingest/hae/{hae_tok['token']}" if hae_tok else None,
-                "last": db.get_setting(f"hae_last:{u.id}")},
+                "last": db.get_setting(f"hae_last:{u.id}"),
+                "apple": db.get_setting(f"hae_last_apple:{u.id}"), "android": db.get_setting(f"hae_last_android:{u.id}")},
         "androidApk": _apk_exists(),
         "healthPrimary": priority.state(u.id),
     }

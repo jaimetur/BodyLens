@@ -1,4 +1,4 @@
-<!-- en: 42c5b6fc87534c19 -->
+<!-- en: 68e1b2838a3a449d -->
 # Sincronización
 
 BodyLens no te pide que escribas tus datos: los recibe de tu báscula, tu móvil y tu reloj. Solo tienes que conectar
@@ -153,7 +153,10 @@ Android y una pantalla de inicio.
 3. La app se une sola a tu cuenta y abre ella sola su pantalla de Health Connect. Si falta Health Connect o está
    desactualizado, la pantalla te lo indica y **Abrir Health Connect en Google Play** lo instala; al volver, la app te
    pide los permisos. Permite todos los tipos de datos y también **leer datos en segundo plano**, para que pueda
-   enviar con la app cerrada. Si la dejas sin permisos, la app te lo recuerda como mucho una vez por semana.
+   enviar con la app cerrada. Después Android pregunta si la app puede funcionar en segundo plano sin límites de
+   batería: permítelo, o Android puede retrasar o parar el envío de cada hora. La pantalla de Health Connect muestra
+   las dos cosas, con un botón para lo que falte. Si la dejas sin ellos, la app te lo recuerda como mucho una vez por
+   semana.
 4. Ya está: envía tus datos al momento y después cada hora ella sola.
 
 Dentro de la app, **Tu cuenta → Fuentes de datos** muestra el estado de Health Connect (permisos concedidos y último
@@ -171,7 +174,9 @@ resultado del último envío, y en BodyLens el recuadro pasa a **recibiendo**.
 ## Cómo ves que llegan tus datos
 
 - **Tu cuenta → Fuentes de datos** muestra cada fuente: **conectado** / **sin conectar** para Withings, y
-  **recibiendo** / **esperando datos** para Apple Salud y Android, con la hora del último dato.
+  **recibiendo** / **esperando datos** para Apple Salud y Android, indicando de dónde llegan los datos (Apple Salud,
+  Android o los dos, en los dos últimos días) y el último envío de cada uno, con cuántos datos no se han usado porque
+  manda la otra fuente.
 - La página abierta se actualiza sola cuando llegan datos (lo comprueba cada minuto y cuando vuelves a la pestaña).
 - **Sincronizar ahora** (o el botón de la nube de arriba) pide a Withings los últimos datos al momento.
 

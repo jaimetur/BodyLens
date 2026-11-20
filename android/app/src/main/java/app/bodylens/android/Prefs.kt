@@ -37,6 +37,11 @@ class Prefs(context: Context) {
         get() = sp.getLong("askedAt", 0L)
         set(v) = sp.edit().putLong("askedAt", v).apply()
 
+    /** The system's question about battery limits was already shown once on its own. */
+    var askedBattery: Boolean
+        get() = sp.getBoolean("askedBattery", false)
+        set(v) = sp.edit().putBoolean("askedBattery", v).apply()
+
     var lastMessage: String
         get() = sp.getString("lastMessage", "") ?: ""
         set(v) = sp.edit().putString("lastMessage", v).apply()

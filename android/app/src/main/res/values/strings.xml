@@ -11,6 +11,10 @@
     <string name="perm_count">Data types allowed: %1$d of %2$d</string>
     <string name="perm_button">Grant Health Connect permissions</string>
     <string name="perm_background">Allow \"read data in the background\" too, so the hourly sending works with the app closed.</string>
+    <string name="bg_ok">✓ Reading in the background allowed: the hourly sending works with the app closed.</string>
+    <string name="battery_ok">✓ No battery limits: Android lets the app send every hour.</string>
+    <string name="battery_missing">Android may delay or stop the hourly sending to save battery. Let the app run in the background.</string>
+    <string name="battery_button">Allow in the background</string>
     <string name="step3">3 · Sending</string>
     <string name="auto_label">Send automatically every hour</string>
     <string name="send_now">Send now</string>

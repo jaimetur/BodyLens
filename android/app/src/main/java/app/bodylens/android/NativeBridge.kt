@@ -54,14 +54,16 @@ class NativeBridge(private val activity: MainActivity) {
         prefs.url = u
         if (first) prefs.auto = true
         Sync.schedule(activity, prefs.auto)
-        // Health Connect missing or without any permission: the app opens its screen on its own (to install it, or to
-        // give the permissions), at once the first time and then at most once a week
+        // Health Connect missing, without permissions (reading in the background included) or with battery limits: the app
+        // opens its screen on its own (to install it, or to allow them), at once the first time and then at most once a week
         val sdk = HealthConnectClient.getSdkStatus(activity)
         if (sdk == HealthConnectClient.SDK_UNAVAILABLE || System.currentTimeMillis() - prefs.askedAt < 7 * 24 * 3600_000L) return
         activity.scope().launch {
             val none = sdk != HealthConnectClient.SDK_AVAILABLE || try {
-                HealthConnectClient.getOrCreate(activity).permissionController.getGrantedPermissions().intersect(HealthReader.PERMISSIONS).isEmpty()
-            } catch (_: Exception) { true }
+                val g = HealthConnectClient.getOrCreate(activity).permissionController.getGrantedPermissions()
+                g.intersect(HealthReader.PERMISSIONS).isEmpty() || HealthReader.BACKGROUND !in g
+            } catch (_: Exception) { true } ||
+                activity.getSystemService(android.os.PowerManager::class.java)?.isIgnoringBatteryOptimizations(activity.packageName) == false
             if (!none) return@launch
             prefs.askedAt = System.currentTimeMillis()
             activity.runOnUiThread {

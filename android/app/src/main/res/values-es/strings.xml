@@ -11,6 +11,10 @@
     <string name="perm_count">Tipos de datos permitidos: %1$d de %2$d</string>
     <string name="perm_button">Dar permisos de Health Connect</string>
     <string name="perm_background">Permite también «leer datos en segundo plano», para que el envío de cada hora funcione con la app cerrada.</string>
+    <string name="bg_ok">✓ Lectura en segundo plano permitida: el envío de cada hora funciona con la app cerrada.</string>
+    <string name="battery_ok">✓ Sin límites de batería: Android deja que la app envíe cada hora.</string>
+    <string name="battery_missing">Android puede retrasar o parar el envío de cada hora para ahorrar batería. Deja que la app funcione en segundo plano.</string>
+    <string name="battery_button">Permitir en segundo plano</string>
     <string name="step3">3 · Envío</string>
     <string name="auto_label">Enviar automáticamente cada hora</string>
     <string name="send_now">Enviar ahora</string>

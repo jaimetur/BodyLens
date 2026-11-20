@@ -18,7 +18,7 @@ def test_apple_rules_android_only_fills_gaps(env, make_user):
     from app.sheets.tabs import ACTIVIDAD
     uid = _uid(make_user)
     _post(uid, steps("2026-11-18", 5000, "iPhone"), False, False)
-    _post(uid, steps("2026-11-18", 9000), True, False)      # Apple already has that day: ignored, not added up
+    assert _post(uid, steps("2026-11-18", 9000), True, False)["ignoradas"] == 1   # Apple has that day: ignored
     _post(uid, steps("2026-11-19", 7000), True, False)      # a day Apple has nothing: filled in
     a = _rows(uid, ACTIVIDAD)
     assert a["2026-11-18"][1] == 5000 and a["2026-11-19"][1] == 7000
@@ -59,5 +59,7 @@ def test_auto_follows_where_most_data_comes_from(client, make_user, login):
     anon.post(f"/api/ingest/hae/{token}", json=steps("2026-11-18", 100), headers={"User-Agent": "BodyLens-Android"})
     p = c.get("/api/sources").json()["healthPrimary"]
     assert p == {"mode": "auto", "rules": "apple", "apple": 2, "android": 1}
+    h = c.get("/api/sources").json()["hae"]
+    assert h["apple"]["metricas"] == 1 and h["android"]["ignoradas"] == 1 and "ignoradas" not in h["apple"]
     assert c.post("/api/sources/primary", json={"mode": "android"}).json()["rules"] == "android"
     assert c.post("/api/sources/primary", json={"mode": "nope"}).status_code == 400

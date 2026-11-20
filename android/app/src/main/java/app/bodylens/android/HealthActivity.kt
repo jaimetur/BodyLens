@@ -2,6 +2,8 @@ package app.bodylens.android
 
 import android.content.Intent
 import android.net.Uri
+import android.os.PowerManager
+import android.provider.Settings
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -104,6 +106,17 @@ private fun Screen(setupTick: Int, resumeTick: Int, onClose: (() -> Unit)?) {
     val available = sdk == HealthConnectClient.SDK_AVAILABLE
     // opened by the setup link while Health Connect was missing: ask for the permissions once it is installed
     var askWhenInstalled by remember { mutableStateOf(false) }
+    // Android does not stop or delay the hourly sending to save battery
+    val power = remember { context.getSystemService(PowerManager::class.java) }
+    fun unrestricted() = power?.isIgnoringBatteryOptimizations(context.packageName) ?: true
+    var battery by remember { mutableStateOf(unrestricted()) }
+    fun askBattery() {
+        try {
+            context.startActivity(Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:" + context.packageName)))
+        } catch (_: Exception) {
+            try { context.startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)) } catch (_: Exception) { }
+        }
+    }
 
     suspend fun refreshGranted() {
         if (available) granted = HealthConnectClient.getOrCreate(context).permissionController.getGrantedPermissions()
@@ -121,6 +134,11 @@ private fun Screen(setupTick: Int, resumeTick: Int, onClose: (() -> Unit)?) {
     val askPermissions = rememberLauncherForActivityResult(PermissionController.createRequestPermissionResultContract()) {
         granted = it
         if (it.intersect(HealthReader.PERMISSIONS).isNotEmpty() && prefs.url.isNotEmpty() && prefs.lastRun == 0L) sendNow()
+        // then, once, the system's question to let the app send in the background without battery limits
+        if (it.intersect(HealthReader.PERMISSIONS).isNotEmpty() && !unrestricted() && !prefs.askedBattery) {
+            prefs.askedBattery = true
+            askBattery()
+        }
     }
     LaunchedEffect(Unit) {
         refreshGranted()
@@ -128,6 +146,7 @@ private fun Screen(setupTick: Int, resumeTick: Int, onClose: (() -> Unit)?) {
     }
     LaunchedEffect(resumeTick) {
         val was = available
+        battery = unrestricted()
         sdk = HealthConnectClient.getSdkStatus(context)
         if (sdk != HealthConnectClient.SDK_AVAILABLE) return@LaunchedEffect
         refreshGranted()
@@ -142,7 +161,8 @@ private fun Screen(setupTick: Int, resumeTick: Int, onClose: (() -> Unit)?) {
         url = prefs.url; auto = prefs.auto
         refreshGranted()
         if (!available) { askWhenInstalled = true; return@LaunchedEffect }
-        if (!granted.containsAll(HealthReader.PERMISSIONS)) askPermissions.launch(HealthReader.PERMISSIONS + HealthReader.BACKGROUND)
+        if (!granted.containsAll(HealthReader.PERMISSIONS + HealthReader.BACKGROUND))
+            askPermissions.launch(HealthReader.PERMISSIONS + HealthReader.BACKGROUND)
         else sendNow()
     }
 
@@ -183,8 +203,9 @@ private fun Screen(setupTick: Int, resumeTick: Int, onClose: (() -> Unit)?) {
         OutlinedButton(enabled = available, onClick = {
             askPermissions.launch(HealthReader.PERMISSIONS + HealthReader.BACKGROUND)
         }) { Text(stringResource(R.string.perm_button)) }
-        if (available && HealthReader.BACKGROUND !in granted && have > 0)
-            Text(stringResource(R.string.perm_background), fontSize = 13.sp, color = Color.Gray)
+        if (available && have > 0)
+            if (HealthReader.BACKGROUND in granted) Text(stringResource(R.string.bg_ok), fontSize = 14.sp, color = Color(0xFF1F9D6B))
+            else Text(stringResource(R.string.perm_background), fontSize = 13.sp, color = MaterialTheme.colorScheme.error)
 
         Text(stringResource(R.string.step3), fontWeight = FontWeight.Bold)
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -192,6 +213,11 @@ private fun Screen(setupTick: Int, resumeTick: Int, onClose: (() -> Unit)?) {
             Switch(checked = auto, onCheckedChange = {
                 auto = it; prefs.auto = it; Sync.schedule(context, it && prefs.url.isNotEmpty())
             })
+        }
+        if (battery) Text(stringResource(R.string.battery_ok), fontSize = 14.sp, color = Color(0xFF1F9D6B))
+        else {
+            Text(stringResource(R.string.battery_missing), fontSize = 13.sp, color = MaterialTheme.colorScheme.error)
+            OutlinedButton(onClick = { askBattery() }) { Text(stringResource(R.string.battery_button)) }
         }
         Button(enabled = !busy && available && url.isNotBlank(), onClick = { sendNow() }, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(if (busy) R.string.sending else R.string.send_now))

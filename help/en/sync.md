@@ -151,7 +151,9 @@ start screen.
 3. The app links itself to your account and opens its Health Connect screen on its own. If Health Connect is missing
    or out of date, the screen tells you and **Open Health Connect in Google Play** installs it; when you come back,
    the app asks for the permissions. Allow all the data types, and also **read data in the background**, so it can
-   send with the app closed. If you leave it without permissions, the app reminds you at most once a week.
+   send with the app closed. Then Android asks whether the app may run in the background without battery limits:
+   allow it, or Android may delay or stop the hourly sending. The Health Connect screen shows both, with a button for
+   whatever is missing. If you leave it without them, the app reminds you at most once a week.
 4. That's all: it sends your data at once, and then every hour on its own.
 
 Inside the app, **Your account → Data sources** shows the state of Health Connect (permissions allowed and the last
@@ -169,7 +171,9 @@ the last submission, and in BodyLens the box changes to **receiving**.
 ## How you see that your data is arriving
 
 - **Your account → Data sources** shows each source: **connected** / **not connected** for Withings, and
-  **receiving** / **waiting for data** for Apple Health and Android, with the time of the last data.
+  **receiving** / **waiting for data** for Apple Health and Android, saying where the data comes from (Apple Health,
+  Android or both, in the last two days) and the last sending of each, with how many values were not used because
+  the other source rules.
 - The open page updates itself when data arrives (it checks every minute and when you come back to the tab).
 - **Sync now** (or the cloud button at the top of the app) asks Withings for the latest data at once.
 

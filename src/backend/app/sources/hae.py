@@ -284,6 +284,7 @@ def ingest(con, user_id: int, body, android: bool = False, android_rules: bool =
         k = f"{tipo}|{ini.ms}"
         avisos[k] = [ini.local, fin.local, tipo, f"umbral {n['threshold']}" if nn(n.get("threshold")) else "", k]
     quitar_salud = quitar_reg = None
+    recibidas = len(filas) + len(registros)
     if filas:
         filas, quitar_salud = _priorizar(con, user_id, SALUD, filas, 1, 7, android, android_rules)
     if registros:
@@ -297,6 +298,8 @@ def ingest(con, user_id: int, body, android: bool = False, android_rules: bool =
     if registros or quitar_reg:
         store.save_rows(con, user_id, REGISTROS, registros, remove=quitar_reg)
     res = {"ok": True, "metricas": len(filas), "ecg": len(ecgs), "avisos": len(avisos), "registros": len(registros)}
+    if recibidas > len(filas) + len(registros):   # the other health source rules on those days (see priority.py)
+        res["ignoradas"] = recibidas - len(filas) - len(registros)
     # Salud como fuente principal: actividad del día, noches y siestas, entrenamientos
     try:
         res["actividad"] = actividad_desde_salud(con, user_id, list(dias_act))
