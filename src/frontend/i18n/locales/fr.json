@@ -1893,6 +1893,7 @@
  "The username must be 2 to 32 characters: lowercase letters, numbers, full stop, hyphen or underscore.": "L'identifiant doit comporter de 2 à 32 caractères : lettres minuscules, chiffres, point, tiret ou tiret bas.",
  "The weights for the daily score and the estimated loss. Estimated loss for the day = factor × (target − weight) ÷ target × daily score. “Default values” goes back to the scale weights (neutral model) and “Classic model” sets those of the original formula.": "Les poids du score quotidien et de la perte estimée. Perte estimée du jour = facteur × (objectif − poids) ÷ objectif × score quotidien. « Valeurs par défaut » revient aux poids de la balance (modèle neutre) et « Modèle classique » applique ceux de la formule d'origine.",
  "Theme": "Thème",
+ "Themes": "Thèmes",
  "There are no attempts in this time window.": "Aucune tentative dans cette fenêtre de temps.",
  "There are no copies yet.": "Pas encore de copies.",
  "There are no dishes in this meal yet.": "Pas encore de plats dans ce repas.",

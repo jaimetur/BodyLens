@@ -1893,6 +1893,7 @@
  "The username must be 2 to 32 characters: lowercase letters, numbers, full stop, hyphen or underscore.": "L'usuari ha de tenir de 2 a 32 caràcters: lletres minúscules, números, punt, guionet o guionet baix.",
  "The weights for the daily score and the estimated loss. Estimated loss for the day = factor × (target − weight) ÷ target × daily score. “Default values” goes back to the scale weights (neutral model) and “Classic model” sets those of the original formula.": "Els pesos de la puntuació diària i de la pèrdua estimada. Pèrdua estimada del dia = factor × (objectiu − pes) ÷ objectiu × puntuació diària. «Valors per defecte» torna als pesos de la bàscula (model neutre) i «Model clàssic» estableix els de la fórmula original.",
  "Theme": "Tema",
+ "Themes": "Temes",
  "There are no attempts in this time window.": "No hi ha intents en aquesta finestra temporal.",
  "There are no copies yet.": "Encara no hi ha còpies.",
  "There are no dishes in this meal yet.": "Encara no hi ha plats en aquest àpat.",

@@ -1893,6 +1893,7 @@
  "The username must be 2 to 32 characters: lowercase letters, numbers, full stop, hyphen or underscore.": "ユーザー名は2〜32文字で、小文字、数字、ピリオド、ハイフン、アンダースコアが使えます。",
  "The weights for the daily score and the estimated loss. Estimated loss for the day = factor × (target − weight) ÷ target × daily score. “Default values” goes back to the scale weights (neutral model) and “Classic model” sets those of the original formula.": "日次スコアと推定減少量の重みです。その日の推定減少量 = 係数 × (目標 − 体重) ÷ 目標 × 日次スコア。「デフォルト値」は体重計の重み (中立モデル) に戻し、「従来モデル」は元の計算式の重みに設定します。",
  "Theme": "テーマ",
+ "Themes": "テーマ",
  "There are no attempts in this time window.": "この期間には挑戦がありません。",
  "There are no copies yet.": "バックアップはまだありません。",
  "There are no dishes in this meal yet.": "この食事にはまだ料理がありません。",

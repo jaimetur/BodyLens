@@ -1893,6 +1893,7 @@
  "The username must be 2 to 32 characters: lowercase letters, numbers, full stop, hyphen or underscore.": "用户名必须为 2 到 32 个字符：小写字母、数字、句点、连字符或下划线。",
  "The weights for the daily score and the estimated loss. Estimated loss for the day = factor × (target − weight) ÷ target × daily score. “Default values” goes back to the scale weights (neutral model) and “Classic model” sets those of the original formula.": "每日评分和预估减重的权重。当天预估减重 = 系数 × （目标 − 体重）÷ 目标 × 每日评分。“默认值”会恢复为体重秤的权重（中性模型），“经典模型”则设为原始公式的权重。",
  "Theme": "主题",
+ "Themes": "主题",
  "There are no attempts in this time window.": "此时间窗口内没有尝试。",
  "There are no copies yet.": "暂时还没有备份。",
  "There are no dishes in this meal yet.": "这一餐还没有菜品。",
