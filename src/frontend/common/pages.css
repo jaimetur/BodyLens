@@ -46,12 +46,13 @@ code,.code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;bac
 [hidden]{display:none!important}
 
 /* «Tu cuenta»: dos columnas (lo tuyo · tus datos), tarjetas con el estilo de la app */
-main.acct .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,480px),1fr));gap:16px;align-items:stretch}
-/* both columns end at the same height: their last card takes the remaining space */
-main.acct .col>.card:last-child{flex:1}
+main.acct .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,480px),1fr));gap:16px;align-items:start}
 main.acct .col{display:flex;flex-direction:column;gap:16px}
 main.acct .card{margin:0 0 16px;padding:20px 22px 22px;border-radius:18px}
 main.acct .col>.card{margin:0}
+/* a row of two cards of the same height under the columns; the delete form on one line */
+main.acct .cols.pair{margin-top:16px;align-items:stretch}main.acct .cols.pair>.card{margin:0}
+.delrow{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}.delrow label{flex:1 1 200px;margin:0}.delrow button{flex:none}#delMsg:empty{display:none}
 main.acct .card h2{font-family:"Big Shoulders Display","Instrument Sans",sans-serif;font-weight:800;font-size:21px;letter-spacing:.02em;text-transform:uppercase;margin:0 0 10px}
 main.acct .card.alert{border-color:var(--bad)}
 .fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:0 12px}

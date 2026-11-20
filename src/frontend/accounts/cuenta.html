@@ -61,12 +61,6 @@
         </div>
         <div class="row"><button id="pdGo" type="button">Guardar perfil</button><span class="msg" id="pdMsg"></span></div>
       </section>
-
-      <section class="card">
-        <h2>Privacidad y condiciones</h2>
-        <p class="small">Qué datos guarda BodyLens, para qué, con quién se comparten y tus derechos.</p>
-        <p class="small"><a href="/privacy" target="_blank" rel="noopener">Política de privacidad</a> · <a href="/terms" target="_blank" rel="noopener">Condiciones de uso</a> · <a href="/delete-account" target="_blank" rel="noopener">Borrar una cuenta</a></p>
-      </section>
     </div>
 
     <div class="col">
@@ -128,14 +122,21 @@
         <p class="small" id="subHelp">Para cancelarla o cambiar de plan: Google Play → Pagos y suscripciones → Suscripciones. Sigue activa hasta el final del periodo pagado.</p>
       </section>
 
-      <section class="card" id="delCard">
-        <h2>Borrar mi cuenta</h2>
-        <p class="small">Borra tu cuenta y <b>todos tus datos</b> de este servidor: pesadas, actividad, sueño, comidas, ciclo, ánimo y ajustes. No se puede deshacer. Si tienes pareja vinculada, conserva su copia de lo compartido. Antes, si quieres, guarda una copia en Datos y copias.</p>
-        <div class="fgrid"><label>Tu contraseña<input id="delPw" type="password" autocomplete="current-password"></label></div>
-        <div class="row"><button class="danger" id="delGo" type="button">Borrar mi cuenta</button><span class="msg" id="delMsg"></span></div>
-      </section>
-
     </div>
+  </div>
+
+  <div class="cols pair">
+    <section class="card">
+      <h2>Privacidad y condiciones</h2>
+      <p class="small">Qué datos guarda BodyLens, para qué, con quién se comparten y tus derechos.</p>
+      <p class="small"><a href="/privacy" target="_blank" rel="noopener">Política de privacidad</a> · <a href="/terms" target="_blank" rel="noopener">Condiciones de uso</a> · <a href="/delete-account" target="_blank" rel="noopener">Borrar una cuenta</a></p>
+    </section>
+    <section class="card" id="delCard">
+      <h2>Borrar mi cuenta</h2>
+      <p class="small">Borra tu cuenta y <b>todos tus datos</b> de este servidor: pesadas, actividad, sueño, comidas, ciclo, ánimo y ajustes. No se puede deshacer. Si tienes pareja vinculada, conserva su copia de lo compartido. Antes, si quieres, guarda una copia en Datos y copias.</p>
+      <div class="delrow"><label>Tu contraseña<input id="delPw" type="password" autocomplete="current-password"></label><button class="danger" id="delGo" type="button">Borrar mi cuenta</button></div>
+      <p class="msg" id="delMsg"></p>
+    </section>
   </div>
 </main>
 <script src="/pages.js"></script>
