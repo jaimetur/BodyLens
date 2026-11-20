@@ -23,7 +23,8 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
 .sw input:checked+span{background:#22A06B}.sw input:checked+span::before{transform:translateX(18px)}
 .sw input:disabled+span{opacity:.5;cursor:not-allowed}.sw input:focus-visible+span{outline:2px solid #3B7BF2;outline-offset:2px}
 .swl{margin-left:8px;vertical-align:middle}
-.edit{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:0 14px}.edit label.wide{grid-column:1/-1}
+.edit{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:0 14px}.edit label.wide{grid-column:1/-1}.edit label{display:flex;flex-direction:column}.edit label>input,.edit label>select,.edit label>textarea{margin-top:auto}   /* fields in a row line up even when a label takes two lines */
+#cdList{min-height:84px}
 @media (max-width:640px){table thead{display:none}table,tbody,tr,td{display:block}tr{border-bottom:1px solid var(--line);padding:6px 0}td{border:0;padding:3px 0}td.act{text-align:left}}
 .secret{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:15px;background:var(--raised);padding:6px 10px;border-radius:8px;display:inline-block}
 </style></head>
