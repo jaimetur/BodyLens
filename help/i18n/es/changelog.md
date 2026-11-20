@@ -1,4 +1,4 @@
-<!-- en: 2169cd8ba3d57c8c -->
+<!-- en: a8d445c037831802 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -106,7 +106,7 @@
   - Tu cuenta y Administración se pueden mostrar dentro de la app.
   - Las tarjetas ampliadas caben en la pantalla y su botón de cerrar sigue visible al desplazarte, también con el texto más grande en el móvil.
 - **Calendarios de pesadas y de sueño en el móvil:** cada día muestra su cifra completa (por ejemplo 110,9) en vez de cortarla, y la tabla cabe en la pantalla, así que deslizar el dedo sobre ella cambia de pestaña.
-- **Traducciones:** se traducen los textos que aún salían en español en los demás idiomas: las iniciales de los días de los calendarios y las de las comidas, las etiquetas del IMC y de los rangos, las fases del sueño y sus descripciones emergentes, los textos de los anillos y las leyendas de los gráficos, la lista de estados de ánimo (emociones y con qué se relacionan) y sus relaciones, cuentas como «21 de 30», el texto de ayuda de las notas y varias frases de los análisis.
+- **Traducciones:** se traducen los textos que aún salían en español en los demás idiomas: las iniciales de los días de los calendarios y las de las comidas, las etiquetas del IMC y de los rangos, las fases del sueño y sus descripciones emergentes, los textos de los anillos y las leyendas de los gráficos, la lista de estados de ánimo (emociones y con qué se relacionan) y sus relaciones, cuentas como «21 de 30», el texto de ayuda de las notas y varias frases de los análisis. En español, las fechas conservan su «de» («viernes 20 de noviembre»).
 
 #### 📚 Documentación:
 - **El inglés es el idioma oficial del proyecto:** código, documentación y mensajes de commit. `README.md` completo; el README, la ayuda y el registro de cambios se escriben solo en inglés y se muestran traducidos en la app.
