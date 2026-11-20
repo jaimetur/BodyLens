@@ -1,4 +1,4 @@
-<!-- en: f5ef1283f3b5145a -->
+<!-- en: 6fbe9775320e1884 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -7,7 +7,7 @@
 ## Release: v0.1.0
 ### Release Date: 2026-11-19
 #### ⚠️ Cambios incompatibles:
-- **De un artefacto de claude.ai a un servidor propio:** BodyLens ya no vive en claude.ai y pasa a un contenedor Docker en el NAS (`https://bodylens.jaimetur.cloud`). Los datos están en una base de datos SQLite del servidor, no en el espacio de datos del artefacto. Entras con un usuario y una contraseña de BodyLens, no con tu cuenta de Claude.
+- **De un artefacto de claude.ai a un servidor propio:** BodyLens ya no vive en claude.ai y pasa a un contenedor Docker en el NAS (`https://bodylens.jtgcloud.com`). Los datos están en una base de datos SQLite del servidor, no en el espacio de datos del artefacto. Entras con un usuario y una contraseña de BodyLens, no con tu cuenta de Claude.
 - **Ya no hace falta la hoja de Google:** Withings, Apple Salud y Android envían los datos directamente al servidor, y cada cuenta guarda allí sus datos; la hoja y su Apps Script ya no se usan.
 - **Idioma por defecto: inglés.** Las cuentas nuevas empiezan en inglés; las existentes conservan el español.
 

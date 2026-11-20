@@ -286,7 +286,7 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         /** Suggested server for a new installation (it can be changed). */
-        const val DEFAULT_SERVER = "https://bodylens.jaimetur.cloud"
+        const val DEFAULT_SERVER = "https://bodylens.jtgcloud.com"
 
         fun normalise(s: String): String {
             var u = s.trim().trimEnd('/')

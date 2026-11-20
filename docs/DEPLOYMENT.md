@@ -3,7 +3,7 @@
 Image: `jaimetur/bodylens` on Docker Hub (built by GitHub Actions on every push to `main`).
 Dockhand stack: `/volume1/docker/stacks/bodylens` (`compose.yml` + `.env`).
 Data: `/volume1/docker/data/bodylens` (SQLite database, each account's workbooks, `secrets/`, `import/`).
-Port on the NAS: **7280** → 8000 of the container. HTTPS: `https://bodylens.jaimetur.cloud` (the NAS reverse proxy).
+Port on the NAS: **7280** → 8000 of the container. HTTPS: `https://bodylens.jtgcloud.com` (the NAS reverse proxy).
 The server runs as `docker_limited:docker_users` (`PUID=1034`, `PGID=65544`): on Synology the ACLs rule, and the
 data folder only grants write access to `docker_users`/`administrators`. If the container does not start and the log says it
 cannot write to `/data`, check PUID/PGID.
@@ -31,7 +31,7 @@ cannot write to `/data`, check PUID/PGID.
 4. **Access requests**: on the sign-in screen, "Don't have an account? Request one" creates the inactive account and notifies
    by email the administrator accounts that have an email (yours: `BODYLENS_ADMIN_EMAIL` or "Your account"). They are approved
    or rejected in `/cuenta` → Administration → Access requests, and the person receives an email.
-   Outgoing email: `SMTP_*` variables in the `.env` (`bodylens@jaimetur.cloud`, `jaimetur.cloud:465` SSL); the
+   Outgoing email: `SMTP_*` variables in the `.env` (`bodylens@jtgcloud.com`, server `jaimetur.cloud:465` SSL: its certificate is for `jaimetur.cloud`, not `jtgcloud.com`); the
    password only in the NAS `.env`. "Send me a test email" in Administration checks it.
 5. **Laura**: create an invitation in `/cuenta` (Administration → Create invitation) and send her the link. Once she has her
    account, she goes to `/cuenta` → Import data with the same `snap.json` and chooses **Laura Romero**.
@@ -106,7 +106,7 @@ python3 tools/CreateUpdateRelease.py --update 0.1.0 2026-11-20
 The code is in `android/` (Kotlin). It is the whole of BodyLens: a native shell that shows the server's web app (so
 every server deployment updates the app too), plus Health Connect (it posts to the account's Health Auto Export
 address, `/api/ingest/hae/<token>`, in the same JSON format), downloads, the file picker, Android's back button and
-Google Play subscriptions. It asks for the server address the first time (`https://bodylens.jaimetur.cloud` by default).
+Google Play subscriptions. It asks for the server address the first time (`https://bodylens.jtgcloud.com` by default).
 
 - Two apps come from the same code (Gradle flavours): `full` is BodyLens (`app.bodylens.android`) and `bridge` is
   BodyLens Bridge (`app.bodylens.bridge`), which only sends Health Connect data; the server serves them at

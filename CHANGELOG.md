@@ -6,7 +6,7 @@
 ## Release: v0.1.0
 ### Release Date: 2026-11-19
 #### ⚠️ Breaking Changes:
-- **From a claude.ai artifact to a server of its own:** BodyLens no longer lives in claude.ai and moves to a Docker container on the NAS (`https://bodylens.jaimetur.cloud`). The data is in a SQLite database on the server, not in the artifact's data space. You sign in with a BodyLens username and password, not with your Claude account.
+- **From a claude.ai artifact to a server of its own:** BodyLens no longer lives in claude.ai and moves to a Docker container on the NAS (`https://bodylens.jtgcloud.com`). The data is in a SQLite database on the server, not in the artifact's data space. You sign in with a BodyLens username and password, not with your Claude account.
 - **The Google sheet is no longer needed:** Withings, Apple Health and Android send the data straight to the server, and every account keeps its data there; the sheet and its Apps Script are no longer used.
 - **Default language: English.** New accounts start in English; existing ones keep Spanish.
 

@@ -83,13 +83,13 @@ def test_mailer_smtp_ssl(monkeypatch):
         def send_message(self, m): calls["msg"] = m
     monkeypatch.setattr(smtplib, "SMTP_SSL", FakeSMTP)
     for k, v in {"SMTP_HOST": "jaimetur.cloud", "SMTP_PORT": "465", "SMTP_SECURITY": "ssl",
-                 "SMTP_USERNAME": "bodylens@jaimetur.cloud", "SMTP_PASSWORD": "secreto", "SMTP_FROM": "bodylens@jaimetur.cloud"}.items():
+                 "SMTP_USERNAME": "bodylens@jtgcloud.com", "SMTP_PASSWORD": "secreto", "SMTP_FROM": "bodylens@jtgcloud.com"}.items():
         monkeypatch.setenv(k, v)
     mailer.send(["a@example.test"], "Hola", mailer.page("Hola", ["texto <b>x</b>"], link=("Entrar", "https://x/login")))
-    assert calls["conn"] == ("jaimetur.cloud", 465) and calls["login"] == ("bodylens@jaimetur.cloud", "secreto")
+    assert calls["conn"] == ("jaimetur.cloud", 465) and calls["login"] == ("bodylens@jtgcloud.com", "secreto")
     assert calls["helo"] and not calls["helo"].startswith("[")  # a public name, never the container address
     m = calls["msg"]
-    assert m["Subject"] == "BodyLens - Hola" and "bodylens@jaimetur.cloud" in m["From"]
+    assert m["Subject"] == "BodyLens - Hola" and "bodylens@jtgcloud.com" in m["From"]
     assert "https://x/login" in m.get_body(("plain",)).get_content()   # el texto va en el idioma del destinatario
     assert "secreto" not in str(mailer.public_settings())
 
