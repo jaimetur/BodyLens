@@ -132,7 +132,8 @@ Google Play subscriptions. It asks for the server address the first time (`https
 - **Stripe** (subscriptions on the website): paste the secret key in Administration → Web payments (Stripe); the server
   creates the product and the prices (€1.49/month, €12/year). Create the webhook with the address shown there and the
   events `checkout.session.completed` and `customer.subscription.*`, and paste its signing secret. Enable Google Pay
-  and Apple Pay in Stripe → Settings → Payment methods (Apple Pay also needs the domain verified in Stripe).
+  and Apple Pay in Stripe → Settings → Payment methods (Stripe's own checkout page is used, so no domain needs
+  verifying for Apple Pay).
 - **Unpaid accounts**: every 6 hours the server checks paid accounts; one whose subscription is over gets three emails,
   a week apart, and is deleted seven days after the third one (administrators never).
 - **Landing page**: visitors who are not signed in see `src/frontend/landing/index.html` at `/`. Its screenshots and
