@@ -13,6 +13,8 @@ services:
       - ./code/src/frontend/admin:/app/frontend/admin:ro
       - ./code/src/frontend/i18n:/app/frontend/i18n:ro
       - ./code/src/frontend/help:/app/frontend/help:ro
+      - ./code/src/frontend/landing:/app/frontend/landing:ro
+      - ./code/src/frontend/legal:/app/frontend/legal:ro
       - ./code/assets/branding:/app/branding:ro
       - ./code:/app/code:ro
     environment:
