@@ -95,6 +95,8 @@ html:not(.embed) .hero{margin-top:12px;border-radius:26px}
   };
   if (P.length && !P.some(p => p.plan === plan)) plan = P[0].plan;
   draw();
+  const qc = new URLSearchParams(location.search).get('code');   // from the landing page's promotion
+  if (qc && !renew) $('code').value = qc;
   const label = () => { if (renew) return; $('go').textContent = $('code').value.trim() ? 'Crear mi cuenta gratis' : paid ? 'Empezar la prueba gratuita' : 'Crear mi cuenta'; };
   label();
   $('code').addEventListener('input', label);

@@ -1,4 +1,4 @@
-<!-- en: 502033339454bc3e -->
+<!-- en: af3d7c7d59c47122 -->
 # Condiciones de uso
 
 Última actualización: 20 de noviembre de 2026.
@@ -17,7 +17,7 @@ Estas condiciones se aplican al uso de BodyLens en este servidor, a través de l
 - La suscripción cuesta **1,49 € al mes** o **12 € al año** (1 € al mes), impuestos incluidos; la página de pago muestra el precio exacto en tu moneda antes de pagar. Empieza con una **prueba gratuita de 7 días**, una vez por persona: si la cancelas durante la prueba, no se cobra nada.
 - La suscripción se renueva sola al final de cada periodo hasta que la canceles. Puedes cancelarla cuando quieras: en Tu cuenta → Suscripción (web) o en Google Play → Pagos y suscripciones (app). Sigue activa hasta el final del periodo ya pagado.
 - Los pagos, las renovaciones y los reembolsos los gestionan Stripe o Google Play con sus propias condiciones; BodyLens nunca ve los datos de tu tarjeta. Los reembolsos siguen sus políticas de reembolso y la ley de tu país.
-- **Si la suscripción o el acceso gratuito termina, o no se paga**, no puedes usar la cuenta hasta que la renueves, y se te avisa por correo **tres veces, con una semana de diferencia**. Si **siete días después del tercer aviso** la suscripción sigue sin renovarse, la cuenta y todos sus datos se eliminan del servidor. Antes puedes renovarla, descargar tus datos (Tu cuenta → Datos y copias) o borrar la cuenta tú mismo.
+- **Puedes darte de baja o cambiar entre el plan mensual y el anual** cuando quieras en Tu cuenta → Suscripción, sin borrar tu cuenta: una suscripción dada de baja sigue activa hasta el final del periodo pagado, y un cambio de plan se aplica desde la siguiente renovación. **Si la suscripción o el acceso gratuito termina, o no se paga**, la cuenta queda **en solo lectura durante 30 días**: puedes entrar y ver y descargar tus datos, pero no añadir datos nuevos, y se detienen la sincronización y los datos que envían tus fuentes. Se te avisa por correo tres veces (al terminar, una semana antes del borrado y el día anterior). Si **pasados esos 30 días** la suscripción sigue sin renovarse, la cuenta y todos sus datos se eliminan del servidor. Antes puedes renovarla, descargar tus datos (Tu cuenta → Datos y copias) o borrar la cuenta tú mismo.
 
 ## No es asesoramiento médico
 

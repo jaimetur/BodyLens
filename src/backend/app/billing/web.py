@@ -23,17 +23,34 @@ def _ms(sec) -> int:
     return int(sec or 0) * 1000
 
 
+def _method(sub: dict) -> str | None:
+    """How the subscription is paid, when Stripe sent its payment method expanded: "Apple Pay", "Google Pay" or the
+    card ("Visa ·4242"); None when it is not known (only the method's id)."""
+    pm = sub.get("default_payment_method")
+    if not isinstance(pm, dict):
+        return None
+    card = pm.get("card") or {}
+    wallet = (card.get("wallet") or {}).get("type")
+    if wallet:
+        return {"apple_pay": "Apple Pay", "google_pay": "Google Pay", "link": "Link"}.get(wallet, wallet.replace("_", " ").title())
+    if card:
+        return f"{(card.get('brand') or 'card').title()} ·{card.get('last4', '')}".strip()
+    return (pm.get("type") or "").replace("_", " ").title() or None
+
+
 def _save(con, user_id: int, sub: dict) -> None:
     item = ((sub.get("items") or {}).get("data") or [{}])[0]
     price = (item.get("price") or {}).get("id")
     plan = next((p for p, pid in stripe.settings()["prices"].items() if pid == price), None)
     end = sub.get("current_period_end") or item.get("current_period_end")
     con.execute(
-        "INSERT INTO stripe_subs(user_id, customer_id, subscription_id, plan, status, period_end_ms, updated_at) "
-        "VALUES(?,?,?,?,?,?,?) ON CONFLICT(user_id) DO UPDATE SET customer_id=excluded.customer_id, "
+        "INSERT INTO stripe_subs(user_id, customer_id, subscription_id, plan, status, period_end_ms, updated_at, method, "
+        "cancel_end) VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(user_id) DO UPDATE SET customer_id=excluded.customer_id, "
         "subscription_id=excluded.subscription_id, plan=excluded.plan, status=excluded.status, "
-        "period_end_ms=excluded.period_end_ms, updated_at=excluded.updated_at",
-        (user_id, sub.get("customer"), sub["id"], plan, sub.get("status", ""), _ms(end), stripe.now_iso()))
+        "period_end_ms=excluded.period_end_ms, updated_at=excluded.updated_at, "
+        "method=coalesce(excluded.method, stripe_subs.method), cancel_end=excluded.cancel_end",
+        (user_id, sub.get("customer"), sub["id"], plan, sub.get("status", ""), _ms(end), stripe.now_iso(), _method(sub),
+         int(bool(sub.get("cancel_at_period_end")))))
 
 
 def active(user_id: int, row) -> bool:
@@ -80,7 +97,10 @@ def signup(body: SignupIn, request: Request, response: Response):
             with db.tx() as con:
                 u = users.create_user(con, body.username, body.name, body.password, email=clean_email(body.email, required=True))
                 users.set_lang(con, u.id, lang)
-                codes.grant(con, u.id, codes.norm(body.code), None)
+                c = codes.use(con, body.code)
+                if c is None:
+                    raise UserError("Ese código de invitación no es válido.")
+                codes.grant(con, u.id, codes.norm(c["code"]), codes.until_ms(c["duration"]))
                 token = users.create_session(con, u.id)
         except UserError as e:
             raise HTTPException(400, str(e))
@@ -122,8 +142,8 @@ def signup(body: SignupIn, request: Request, response: Response):
 def _account_for(session: dict) -> User | None:
     """Makes the account of a completed checkout (once), or links the renewal of an existing one."""
     sub = session.get("subscription")
-    if isinstance(sub, str):
-        sub = stripe.call("GET", f"/subscriptions/{sub}")
+    if isinstance(sub, str) or (sub and not isinstance(sub.get("default_payment_method"), dict) and sub.get("default_payment_method")):
+        sub = stripe.call("GET", f"/subscriptions/{sub if isinstance(sub, str) else sub['id']}", {"expand": ["default_payment_method"]})
     if not sub or session.get("status") != "complete":
         return None
     meta = session.get("metadata") or {}
@@ -157,7 +177,7 @@ class CompleteIn(BaseModel):
 def complete(body: CompleteIn, response: Response):
     """Back from Stripe's checkout: the account (made now, or by the webhook a moment before) and a session."""
     try:
-        session = stripe.call("GET", f"/checkout/sessions/{body.session_id}", {"expand": ["subscription"]})
+        session = stripe.call("GET", f"/checkout/sessions/{body.session_id}", {"expand": ["subscription", "subscription.default_payment_method"]})
     except stripe.StripeError as e:
         raise HTTPException(400, str(e))
     try:
@@ -198,6 +218,64 @@ def renew(body: RenewIn, request: Request, u: User = Depends(signed_in_user)):
         return {"url": stripe.call("POST", "/checkout/sessions", params)["url"]}
     except stripe.StripeError as e:
         raise HTTPException(502, str(e))
+
+
+class ChangeIn(BaseModel):
+    plan: str
+
+
+def _my_sub(u: User):
+    with db.ro() as con:
+        w = con.execute("SELECT * FROM stripe_subs WHERE user_id=?", (u.id,)).fetchone()
+    if not w:
+        raise HTTPException(404, "No tienes una suscripción de la web.")
+    if not stripe.configured():
+        raise HTTPException(503, "Los pagos con tarjeta todavía no están disponibles en este servidor.")
+    return w
+
+
+def _update(u: User, w, params: dict) -> dict:
+    try:
+        sub = stripe.call("POST", f"/subscriptions/{w['subscription_id']}", params)
+    except stripe.StripeError as e:
+        raise HTTPException(502, str(e))
+    with db.tx() as con:
+        _save(con, u.id, sub)
+    from app.billing.routes import status
+    return status(u.id)
+
+
+@router.post("/api/web/change")
+def change_plan(body: ChangeIn, u: User = Depends(signed_in_user)):
+    """Monthly ↔ yearly: the new price applies from the next renewal (nothing is charged or refunded now)."""
+    w = _my_sub(u)
+    price = stripe.settings()["prices"].get(body.plan)
+    if not price:
+        raise HTTPException(400, "Ese plan no existe.")
+    if w["plan"] == body.plan:
+        raise HTTPException(400, "Ya tienes ese plan.")
+    try:
+        cur = stripe.call("GET", f"/subscriptions/{w['subscription_id']}")
+    except stripe.StripeError as e:
+        raise HTTPException(502, str(e))
+    if cur.get("status") not in stripe.ACTIVE:
+        raise HTTPException(400, "Tu suscripción ha terminado: renuévala con el plan que quieras.")
+    item = ((cur.get("items") or {}).get("data") or [{}])[0]
+    return _update(u, w, {"items": [{"id": item.get("id"), "price": price}], "proration_behavior": "none",
+                          "cancel_at_period_end": "false"})
+
+
+@router.post("/api/web/cancel")
+def cancel(u: User = Depends(signed_in_user)):
+    """Cancels the subscription without deleting the account: it stays active until the end of the paid period, then
+    the account is read-only for 30 days and is deleted if it is not renewed."""
+    return _update(u, _my_sub(u), {"cancel_at_period_end": "true"})
+
+
+@router.post("/api/web/resume")
+def resume(u: User = Depends(signed_in_user)):
+    """Undoes a cancellation before the paid period ends."""
+    return _update(u, _my_sub(u), {"cancel_at_period_end": "false"})
 
 
 @router.post("/api/web/portal")

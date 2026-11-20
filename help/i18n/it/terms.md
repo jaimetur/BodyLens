@@ -1,4 +1,4 @@
-<!-- en: 502033339454bc3e -->
+<!-- en: af3d7c7d59c47122 -->
 # Condizioni d'uso
 
 Ultimo aggiornamento: 20 novembre 2026.
@@ -17,7 +17,7 @@ Queste condizioni si applicano all'uso di BodyLens su questo server, tramite il 
 - L'abbonamento costa **1,49 € al mese** o **12 € all'anno** (1 € al mese), tasse incluse; la pagina di pagamento mostra il prezzo esatto nella tua valuta prima del pagamento. Inizia con una **prova gratuita di 7 giorni**, una volta per persona: se annulli durante la prova, non viene addebitato nulla.
 - L'abbonamento si rinnova automaticamente alla fine di ogni periodo finché non lo annulli. Puoi annullarlo in qualsiasi momento: in Il tuo account → Abbonamento (sito web) o in Google Play → Pagamenti e abbonamenti (app). Resta attivo fino alla fine del periodo già pagato.
 - Pagamenti, rinnovi e rimborsi sono gestiti da Stripe o Google Play secondo le loro condizioni; BodyLens non vede mai i dati della tua carta. I rimborsi seguono le loro politiche di rimborso e la legge del tuo paese.
-- **Se l'abbonamento o l'accesso gratuito termina, o un pagamento non viene effettuato**, non puoi più usare l'account finché non lo rinnovi e vieni avvisato via email **tre volte, a una settimana di distanza**. Se **sette giorni dopo il terzo avviso** l'abbonamento non è ancora stato rinnovato, l'account e tutti i suoi dati vengono eliminati dal server. Prima puoi rinnovarlo, scaricare i tuoi dati (Il tuo account → Dati e copie) o eliminare tu stesso l'account.
+- **Puoi disdire l'abbonamento o passare dal piano mensile a quello annuale** in qualsiasi momento in Il tuo account → Abbonamento, senza eliminare il tuo account: un abbonamento disdetto resta attivo fino alla fine del periodo pagato, e un cambio di piano si applica dal rinnovo successivo. **Se l'abbonamento o l'accesso gratuito termina, o un pagamento non viene effettuato**, l'account resta **in sola lettura per 30 giorni**: puoi accedere, vedere e scaricare i tuoi dati, ma non aggiungerne di nuovi, e la sincronizzazione e i dati inviati dalle tue fonti si fermano. Vieni avvisato via email tre volte (alla fine, una settimana prima dell'eliminazione e il giorno prima). Se **trascorsi questi 30 giorni** l'abbonamento non è ancora stato rinnovato, l'account e tutti i suoi dati vengono eliminati dal server. Prima puoi rinnovarlo, scaricare i tuoi dati (Il tuo account → Dati e copie) o eliminare tu stesso l'account.
 
 ## Non è un consiglio medico
 

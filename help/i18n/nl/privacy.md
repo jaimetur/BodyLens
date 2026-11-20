@@ -1,4 +1,4 @@
-<!-- en: b65e3af63e8e76ea -->
+<!-- en: 58c21d5b8fee9c1c -->
 # Privacybeleid
 
 Laatst bijgewerkt: 20 november 2026.
@@ -61,7 +61,7 @@ BodyLens is een persoonlijke gezondheidstracker die op een privéserver draait. 
 
 - In een database op de BodyLens-server die bovenaan deze pagina staat, niet in clouds van derden. Verbindingen met de server zijn versleuteld (HTTPS).
 - De server maakt dagelijks een back-up en bewaart de laatste 30.
-- Je gegevens worden bewaard zolang je account bestaat. Als een betaald abonnement niet wordt verlengd, word je drie keer, met een week ertussen, per e-mail gewaarschuwd en wordt het account zeven dagen na de derde waarschuwing verwijderd.
+- Je gegevens worden bewaard zolang je account bestaat. Als een betaald abonnement of een gratis toegang eindigt en niet wordt verlengd, blijft het account 30 dagen alleen-lezen, word je drie keer per e-mail gewaarschuwd (bij het einde, een week voor de verwijdering en de dag ervoor) en daarna wordt het account verwijderd.
 - Als een account wordt verwijderd, worden de gegevens direct uit de database verwijderd en verdwijnen ze uit de back-ups naarmate die verlopen (binnen 30 dagen).
 
 ## Cookies en opslag op je apparaat

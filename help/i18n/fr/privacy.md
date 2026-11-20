@@ -1,4 +1,4 @@
-<!-- en: b65e3af63e8e76ea -->
+<!-- en: 58c21d5b8fee9c1c -->
 # Politique de confidentialité
 
 Dernière mise à jour : 20 novembre 2026.
@@ -61,7 +61,7 @@ BodyLens est un suivi de santé personnel qui fonctionne sur un serveur privé. 
 
 - Dans une base de données sur le serveur BodyLens indiqué en haut de cette page, pas dans des clouds tiers. Les connexions au serveur sont chiffrées (HTTPS).
 - Le serveur effectue une sauvegarde quotidienne et conserve les 30 dernières.
-- Tes données sont conservées tant que ton compte existe. Si un abonnement payant n'est pas renouvelé, tu es prévenu trois fois par e-mail, à une semaine d'intervalle, et le compte est supprimé sept jours après le troisième avertissement.
+- Tes données sont conservées tant que ton compte existe. Si un abonnement payant ou un accès gratuit prend fin et n'est pas renouvelé, le compte reste en lecture seule pendant 30 jours, tu es prévenu trois fois par e-mail (à la fin, une semaine avant la suppression et la veille), puis le compte est supprimé.
 - Lorsqu'un compte est supprimé, ses données sont supprimées de la base de données immédiatement et disparaissent des sauvegardes à mesure qu'elles expirent (sous 30 jours).
 
 ## Cookies et stockage sur ton appareil

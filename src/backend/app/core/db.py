@@ -56,7 +56,9 @@ CREATE TABLE IF NOT EXISTS stripe_subs (
   plan TEXT,
   status TEXT NOT NULL,
   period_end_ms INTEGER NOT NULL DEFAULT 0,
-  updated_at TEXT NOT NULL
+  updated_at TEXT NOT NULL,
+  method TEXT,
+  cancel_end INTEGER NOT NULL DEFAULT 0
 );
 CREATE TABLE IF NOT EXISTS pending_signups (
   id TEXT PRIMARY KEY,
@@ -213,6 +215,12 @@ def _migrate(con: sqlite3.Connection) -> None:
         con.execute("ALTER TABLE users ADD COLUMN lock_min INTEGER NOT NULL DEFAULT 1")
     if "nav" not in cols:
         con.execute("ALTER TABLE users ADD COLUMN nav TEXT NOT NULL DEFAULT '{}'")
+    # how a website subscription is paid (card brand and last digits, Google Pay or Apple Pay), for Administration
+    scols = {r[1] for r in con.execute("PRAGMA table_info(stripe_subs)")}
+    if "method" not in scols:
+        con.execute("ALTER TABLE stripe_subs ADD COLUMN method TEXT")
+    if "cancel_end" not in scols:   # cancelled by its owner: it ends with the paid period
+        con.execute("ALTER TABLE stripe_subs ADD COLUMN cancel_end INTEGER NOT NULL DEFAULT 0")
     if "lang" not in cols:
         # las cuentas de antes del multi-idioma usaban la app en español: lo conservan; las nuevas, inglés
         con.execute("ALTER TABLE users ADD COLUMN lang TEXT NOT NULL DEFAULT 'en'")

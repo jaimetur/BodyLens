@@ -54,6 +54,11 @@ REPLACEMENTS: list[tuple] = [
      "<p class=\"lead\">Los datos de la báscula y del móvil (Apple Salud o Android) llegan solos al servidor cada pocos minutos; con el botón de la nube de arriba se piden al momento. Las fuentes se ven en <a href=\"#cuenta\">Tu cuenta</a>.</p>"),
     ("<p class=\"foot\">Tus datos se guardan en el espacio de datos de esta app en Claude y están disponibles en el iPhone y en el Mac. Quien abra el enlace con sesión iniciada en claude.ai los ve al momento; sin sesión, ve la copia que lleva la página. Solo tú puedes cambiarlos o sincronizarlos.</p>",
      "<p class=\"foot\">Tus datos se guardan en tu cuenta de este servidor y solo los ves tú (lo de Ciclo e intimidad, también tu pareja si habéis unido las cuentas).</p>"),
+    # weekday initials of the calendars in the account's language (i18n.js sets BL_DS; Spanish keeps «L M X J V S D»)
+    ("const DS=['L','M','X','J','V','S','D'];", "const DS=window.BL_DS||['L','M','X','J','V','S','D'];"),
+    # initials of breakfast, lunch and dinner in the meals list: the first letter of each name in the account's language
+    ("[[0,'D'],[1,'A'],[2,'C']]",
+     "[[0,'Desayuno'],[1,'Almuerzo'],[2,'Cena']].map(([i,n])=>[i,(window.blT?blT(n):n).charAt(0).toUpperCase()])"),
     # mensajes de descarga (aparecen dos veces)
     ("'Esta vista no permite descargar archivos. Abre la app en claude.ai.'", "'No se pudo preparar la descarga.'", 2),
 ]

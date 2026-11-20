@@ -103,6 +103,8 @@ def _summary(r: dict) -> str:
 async def sync_all() -> None:
     with db.ro() as con:
         users = [u for u in list_users(con) if has_sources(u)]
+    from app.billing.routes import expired
+    users = [u for u in users if not expired(u.id)]     # read-only accounts (subscription over) are not synchronised
     async with httpx.AsyncClient() as client:
         for u in users:
             try:

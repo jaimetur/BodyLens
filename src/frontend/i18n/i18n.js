@@ -38,7 +38,11 @@
     var src = k.replace(/[.*+?^$()|[\]\\]/g, '\\$&').replace(/\\?\{(\d)\\?\}|\{(\d)\}/g, function (_, a, b) {
       nums.push(a || b); return '([\\s\\S]*?)';
     });
-    try { PAT.push({ re: new RegExp('^' + src + '$'), tr: D[k], nums: nums, len: k.length }); } catch (e) {}
+    // short patterns («en {0}», «{0} de {1}») never take in several sentences or «a · b» parts, and with two parts or
+    // more each part is a figure (see figure(): «21 de 30», «el 19 nov»), so a text of the person («Sopa de
+    // pescado») is not translated piece by piece
+    var weak = (k.replace(/\{\d\}/g, '').match(/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g) || []).length <= 3 ? nums.length : 0;
+    try { PAT.push({ re: new RegExp('^' + src + '$'), tr: D[k], nums: nums, len: k.length, weak: weak, dot: k.indexOf('·') >= 0 }); } catch (e) {}
   });
   PAT.sort(function (a, b) { return b.len - a.len; });
 
@@ -82,12 +86,20 @@
     return r;
   }
 
+  // a part of a short pattern: a figure with its unit, a date or a day («52,5 h», «19 nov», «lunes»)
+  function figure(x) {
+    return (/\d/.test(x) || WORDS[x.trim().toLowerCase()]) &&
+      (x.match(/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{4,}/g) || []).every(function (w) { return WORDS[w.toLowerCase()]; });
+  }
+  function datede(s) { var d = /(^|\D)\d{1,2} de ([A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+)/.exec(s); return !!(d && WORDS[d[2].toLowerCase()]); }   // «3 de marzo»
   function core(s, depth) {
     var v = D[s];
     if (typeof v === 'string') return v;
     for (var i = 0; i < PAT.length; i++) {
       var p = PAT[i], m = p.re.exec(s);
-      if (!m) continue;
+      // a part never takes in «a · b» pieces the pattern does not have (they are translated one by one)
+      if (!m || (!p.dot && m.slice(1).some(function (x) { return x.indexOf(' · ') >= 0; })) || (p.weak && (m.slice(1).some(function (x) { return /[.;:!?]\s|[·|]/.test(x); }) ||
+                            (p.weak > 1 && (!m.slice(1).every(figure) || datede(s)))))) continue;
       return p.tr.replace(/\{(\d)\}/g, function (_, n) {
         var j = p.nums.indexOf(n), val = j >= 0 ? m[j + 1] : '';
         return depth < 2 ? T(val, depth + 1) : val;
@@ -127,6 +139,11 @@
         if (ch2) r = outp.join(' ');
       }
     }
+    if (r == null && depth > 0 && /, /.test(c)) {   // a list inside a translated text («gratitud, alegría»): only if every item is known
+      var items = c.split(', '), all = true;
+      for (var q = 0; q < items.length && all; q++) { var ti = T(items[q], depth + 1); if (ti === items[q]) all = false; else items[q] = ti; }
+      if (all) r = items.join(', ');
+    }
     if (r == null) r = words(c);
     var out = r == null ? text : pre + r + suf;
     if (cache.size > 20000) cache.clear();
@@ -134,6 +151,13 @@
     return out;
   }
   window.blT = function (s) { return T(String(s)); };
+  // weekday initials of the calendars (the app's «L M X J V S D»), Monday first
+  if (LANG !== 'es') window.BL_DS = names0(LOC, { weekday: 'narrow', timeZone: 'UTC' });
+  function names0(loc, opt) {
+    var out = [];
+    for (var i = 0; i < 7; i++) { try { out.push(new (Intl.DateTimeFormat)(loc, opt).format(new Date(Date.UTC(2021, 1, 1 + i, 12)))); } catch (e) { return null; } }
+    return out;
+  }
 
   // ---- la página ----
   var SKIP = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, CODE: 1, PRE: 1, NOSCRIPT: 1 };
@@ -168,11 +192,11 @@
     if (!root) return;
     if (root.nodeType === 3) { doText(root); return; }
     if (root.nodeType !== 1 && root.nodeType !== 11) return;
-    if (root.nodeType === 1) { if (SKIP[root.nodeName]) return; doEl(root); }
+    if (root.nodeType === 1) { if (SKIP[root.nodeName]) { if (root.nodeName === 'TEXTAREA') doEl(root); return; } doEl(root); }
     var w = document.createTreeWalker(root, 5 /* elementos y textos */), n;
     while ((n = w.nextNode())) {
       if (n.nodeType === 3) doText(n);
-      else if (SKIP[n.nodeName]) { /* sus textos los descarta doText */ } else doEl(n);
+      else if (SKIP[n.nodeName]) { if (n.nodeName === 'TEXTAREA') doEl(n); /* sus textos los descarta doText */ } else doEl(n);
     }
   }
   new MutationObserver(function (ms) {

@@ -42,7 +42,7 @@ def test_an_inactive_purchase_is_refused(client, google):
     assert _signup(client).status_code == 400
 
 
-def test_expired_subscription_blocks_the_app_until_renewed(client, google, monkeypatch):
+def test_expired_subscription_leaves_the_app_read_only_until_renewed(client, google, monkeypatch):
     state, _ = google
     assert _signup(client).status_code == 200
     from app.core import db
@@ -50,15 +50,20 @@ def test_expired_subscription_blocks_the_app_until_renewed(client, google, monke
         con.execute("UPDATE subscriptions SET expiry_ms=?, checked_at=0", (NOW() - 1000,))
     state["tok-1"].update(active=False, state="SUBSCRIPTION_STATE_EXPIRED", expiry=NOW() - 1000)
     assert client.get("/api/me").status_code == 200              # still allowed
-    assert client.post("/api/me/theme", json={"theme": "ocean"}).status_code == 402
-    assert client.get("/", follow_redirects=False).headers["location"] == "/alta"
-    assert client.get("/api/play/status").json()["active"] is False
+    assert client.post("/api/me/theme", json={"theme": "ocean"}).status_code == 402   # read-only
+    assert client.post("/api/sync").status_code == 402
+    assert client.get("/api/sources").status_code == 200                              # reading still works
+    r = client.get("/", follow_redirects=False)
+    assert r.status_code == 200 and 'id="roDay"' in r.text                            # the app with the banner
+    st = client.get("/api/play/status").json()
+    assert st["active"] is False and st["readOnly"] and 29 < (st["deleteOn"] - NOW()) / 86400_000 <= 30
     # renewed in the app: a new purchase token linked to the account
     state["tok-2"] = {"active": True, "state": "SUBSCRIPTION_STATE_ACTIVE", "product": "bodylens", "basePlan": "yearly",
                       "expiry": NOW() + 365 * 86400_000, "acknowledged": True}
     r = client.post("/api/play/link", json={"token": "tok-2"})
     assert r.status_code == 200 and r.json()["active"] and r.json()["basePlan"] == "yearly"
     assert client.post("/api/me/theme", json={"theme": "ocean"}).status_code == 200
+    assert "readOnly" not in client.get("/api/play/status").json() and 'id="roDay"' not in client.get("/").text
 
 
 def test_accounts_without_a_subscription_never_expire(client, make_user, login):

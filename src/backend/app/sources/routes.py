@@ -135,6 +135,9 @@ async def _ingest(request: Request, token: str):
     u = _user_for_token(token)
     if not u or not u.active:
         return {"ok": False, "error": "token"}
+    from app.billing.routes import expired
+    if expired(u.id):     # read-only account (subscription over): nothing new comes in
+        return {"ok": False, "error": "subscription"}
     try:
         body = json.loads(await request.body())
     except ValueError:

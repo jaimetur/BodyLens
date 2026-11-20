@@ -86,10 +86,25 @@ def index(request: Request):
         return landing(request)
     if u.must_change:
         return RedirectResponse("/cuenta?cambiar=1", status_code=303)
-    from app.billing.routes import expired
-    if expired(u.id):   # the Google Play subscription is over: the renewal page
-        return RedirectResponse("/alta", status_code=303)
-    return HTMLResponse(page.page(u.public(), i18n_tags(u.lang) + display_css(u)), headers={"Cache-Control": "no-store"})
+    from app.billing.routes import read_only_until
+    ro = read_only_until(u.id)   # subscription over: the app, read-only, with a banner until the account is deleted
+    extra = _read_only_banner(ro) if ro else ""
+    return HTMLResponse(page.page(u.public(), i18n_tags(u.lang) + display_css(u) + extra), headers={"Cache-Control": "no-store"})
+
+
+def _read_only_banner(delete_ms: int) -> str:
+    """A bar at the bottom of the app: the account is inactive and read-only, and the day it will be deleted."""
+    return ("<style>#roBar{position:fixed;left:0;right:0;bottom:0;z-index:9000;display:flex;flex-wrap:wrap;align-items:center;"
+            "justify-content:center;gap:8px 14px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));"
+            "background:#b4372a;color:#fff;font:600 14px/1.35 'Instrument Sans',system-ui,sans-serif;text-align:center;"
+            "box-shadow:0 -6px 24px rgba(0,0,0,.25)}#roBar a{flex:none;padding:7px 16px;border-radius:999px;background:#fff;"
+            "color:#b4372a;font-weight:800;text-decoration:none}body{padding-bottom:64px}</style>"
+            "<script>document.addEventListener('DOMContentLoaded',function(){var b=document.createElement('div');b.id='roBar';"
+            "b.setAttribute('role','status');b.innerHTML='<span><span>Tu cuenta está inactiva y es de solo lectura: no puedes "
+            "añadir datos ni sincronizar.</span> <span>Se borrará el</span> <b data-noi18n id=\"roDay\"></b> <span>si no renuevas "
+            "la suscripción.</span></span><a href=\"/alta\" target=\"_top\">Renovar</a>';document.body.appendChild(b);"
+            f"document.getElementById('roDay').textContent=new Date({int(delete_ms)}).toLocaleDateString("
+            "document.documentElement.lang||'es',{day:'numeric',month:'long',year:'numeric'});});</script>")
 
 
 LANDING_LANGS = ("en", "es")
@@ -110,6 +125,9 @@ def landing(request: Request) -> HTMLResponse:
     from app.core import version
     build = version.current()["build"]
     r.body = r.body.replace(b'<html lang="es">', f'<html lang="{lang}" data-build="{build}">'.encode(), 1)
+    # the colour themes of the app, scoped to the previews of the themes section (".thm[data-theme=…]")
+    css = config.settings.frontend_dir.joinpath("common", "themes.css").read_text(encoding="utf-8")
+    r.body = r.body.replace(b"</head>", ("<style>" + css.replace("html:root[data-theme=", ".thm[data-theme=") + "</style></head>").encode(), 1)
     r.headers["content-length"] = str(len(r.body))
     r.headers["vary"] = "accept-language,cookie"
     if lang == "en":   # the description for search engines (the page's texts are translated in the browser)

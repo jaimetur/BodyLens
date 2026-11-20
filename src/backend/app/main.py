@@ -61,6 +61,10 @@ async def lifespan(app: FastAPI):
                         s.admin_username)
         if users.bootstrap_default_admin(con):
             log.warning("Creada la cuenta «%s» con la contraseña por defecto «%s»: cámbiala cuanto antes.", *users.DEFAULT_ADMIN)
+        # the deployment's own administrator accounts (the default "admin" and BODYLENS_ADMIN_USER) are free for life
+        for name in {users.DEFAULT_ADMIN[0], (s.admin_username or "").strip().lower()} - {""}:
+            con.execute("INSERT OR IGNORE INTO grants(user_id, code, until_ms, created_at) "
+                        "SELECT id, 'admin', NULL, datetime('now') FROM users WHERE username=? AND is_admin=1", (name,))
         try:
             users.bootstrap_email(con, s.admin_username, s.admin_email)
         except UserError:

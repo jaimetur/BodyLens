@@ -1,9 +1,11 @@
-"""Accounts that stop paying: three warnings by email, a week apart, and then the account and its data are deleted.
+"""Accounts whose subscription is over (cancelled, not paid, or a free time that ended): 30 days read-only, three
+warnings by email, and then the account and its data are deleted.
 
-Every few hours the server looks at each paid account (Google Play or the website). When its subscription is over it
-counts as lapsed: the first warning goes at once, the second a week later and the third a week after that; if seven
-days after the third warning the subscription has not been renewed, the account is deleted with all its data (the
-partner keeps their own copy of what was shared). Renewing at any moment clears the warnings."""
+Every few hours the server looks at each paid or free-for-a-time account. When its subscription is over it counts as
+lapsed: for 30 days it can still sign in and see its data, but not add new data, synchronise or receive data from its
+sources; the app shows a banner with the day it will be deleted. A warning goes at once, another a week before that day
+and the last one the day before; on that day, if the subscription has not been renewed, the account is deleted with all
+its data (the partner keeps their own copy of what was shared). Renewing at any moment ends all this."""
 from __future__ import annotations
 
 import asyncio
@@ -17,7 +19,8 @@ from app.mail import mailer
 
 log = logging.getLogger("bodylens")
 WARNINGS = 3
-GAP = timedelta(days=7)
+GRACE = timedelta(days=30)                                       # read-only, then deleted
+WARN_AT = (timedelta(0), timedelta(days=23), timedelta(days=29))  # after the lapse: at once, a week and a day before
 
 
 def _now() -> datetime:
@@ -33,6 +36,7 @@ def _warn(u, n: int, delete_on: datetime) -> None:
     mailer.send_later([u.email], f"Tu suscripción de BodyLens ha terminado ({n} de {WARNINGS})", mailer.page(
         "Renueva tu suscripción", [
             f"Hola, {u.name}. Tu suscripción de BodyLens ha terminado y no se ha renovado.",
+            "Mientras tanto tu cuenta es de solo lectura: puedes ver tus datos, pero no añadir datos nuevos ni sincronizar.",
             f"Si no la renuevas, tu cuenta y todos tus datos se borrarán del servidor el {_when(delete_on)}.",
             "Antes, si quieres, puedes descargar una copia de tus datos en Tu cuenta → Datos y copias.",
         ], link=("Renovar la suscripción", f"{base}/alta")))
@@ -62,24 +66,26 @@ def run_once(now: datetime | None = None) -> dict:
                 continue
             if row is None:
                 con.execute("INSERT INTO lapses(user_id, lapsed_at, warnings) VALUES(?,?,0)", (uid, now.isoformat()))
-                row = {"warnings": 0, "last_warning_at": None}
-            last = datetime.fromisoformat(row["last_warning_at"]) if row["last_warning_at"] else None
-            if row["warnings"] < WARNINGS and (last is None or now - last >= GAP):
-                n = row["warnings"] + 1
-                con.execute("UPDATE lapses SET warnings=?, last_warning_at=? WHERE user_id=?", (n, now.isoformat(), uid))
-                _warn(u, n, now + GAP * (WARNINGS - n + 1))
-                out["warned"] += 1
-            elif row["warnings"] >= WARNINGS and last is not None and now - last >= GAP:
+                row = {"warnings": 0, "last_warning_at": None, "lapsed_at": now.isoformat()}
+            since = datetime.fromisoformat(row["lapsed_at"])
+            delete_on = since + GRACE
+            due = sum(1 for w in WARN_AT if now - since >= w)
+            if now >= delete_on:
                 try:
                     deletion.delete_account(con, u)
                 except users.UserError:
                     continue   # the last administrator is never deleted
                 mailer.send_later([u.email], "Tu cuenta de BodyLens se ha borrado", mailer.page(
-                    "Cuenta borrada", [f"Hola, {u.name}. Como tu suscripción no se ha renovado tras tres avisos, tu cuenta "
+                    "Cuenta borrada", [f"Hola, {u.name}. Como tu suscripción no se ha renovado en 30 días, tu cuenta "
                                        "y todos tus datos se han borrado del servidor."]))
                 out["deleted"] += 1
                 gone = True
-                log.warning("Deleted account %s: subscription not renewed after %s warnings", uid, WARNINGS)
+                log.warning("Deleted account %s: subscription not renewed in %s days", uid, GRACE.days)
+            elif row["warnings"] < due:
+                n = due
+                con.execute("UPDATE lapses SET warnings=?, last_warning_at=? WHERE user_id=?", (n, now.isoformat(), uid))
+                _warn(u, n, delete_on)
+                out["warned"] += 1
         if gone:
             deletion.delete_files(uid)
     return out

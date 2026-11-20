@@ -28,18 +28,18 @@ def signed_in_user(request: Request) -> User:
     return u
 
 
-# what an account whose Google Play subscription is over can still do
-EXPIRED_OK = ("/api/me", "/api/logout", "/api/me/delete", "/api/play/")
+# what an account whose subscription is over can still do besides reading (it is read-only for 30 days, then deleted)
+EXPIRED_OK = ("/api/me", "/api/logout", "/api/me/delete", "/api/play/", "/api/web/")
 
 
 def current_user(request: Request) -> User:
     u = signed_in_user(request)
     path = request.url.path
-    if path == "/api/me" or path.startswith(EXPIRED_OK[1:]) or (request.method == "GET" and path.startswith("/api/data")):
+    if path == "/api/me" or path.startswith(EXPIRED_OK[1:]) or request.method in ("GET", "HEAD"):
         return u
     from app.billing.routes import expired   # here: billing's routes use these dependencies
     if expired(u.id):
-        raise HTTPException(402, "Tu suscripción ha terminado. Renuévala en la app de BodyLens para Android.")
+        raise HTTPException(402, "Tu cuenta es de solo lectura porque tu suscripción ha terminado: renuévala para añadir datos o sincronizar.")
     return u
 
 

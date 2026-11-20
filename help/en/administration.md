@@ -4,6 +4,7 @@ Only for administrator accounts. It is in "Your account" → **Administration**.
 
 ## Users
 - All the accounts on the server. The **switch** on each row enables or disables the account (a disabled account cannot sign in, but its data is kept). You cannot disable your own.
+- Next to each name, how the account was made: the **invitation code** it used (or "Free from the administration") with the end of its free time, or its **subscription**: on the website (monthly or yearly, and how it is paid: card brand and last digits, Google Pay or Apple Pay) or in Google Play (monthly or yearly).
 - **Edit**: username, full name, email and, if you want, a new password (typed twice; empty = unchanged). Changing the password signs out that account's open sessions.
 - **Reset password**: sets a temporary one, emails it to the person and asks them to change it when they sign in.
 - **Make admin / Remove admin** and **Delete** (deletes the account and all its data).
@@ -20,7 +21,7 @@ Only for administrator accounts. It is in "Your account" → **Administration**.
 - The list shows whether each invitation is pending, used (and by whom) or expired.
 
 ## Invitation codes
-- In the Invitations tab, **Invitation codes**: one per line (`INVITACION_AMIGOS` by default). Whoever signs up with one gets a free account for life, without paying; capitals, accents and spaces do not matter.
+- In the Invitations tab, **Invitation codes**: each code with its **duration**: 1 month, 3 months, 6 months, 1 year, for life or until a date you choose. `INVITACION_AMIGOS`, for life, by default. Whoever signs up with one gets a free account, without paying, for that time counted from the sign-up day, or until that date (to the end of the last day); you can change its end date later in Users → Edit. A code can also have an **expiry date** and a **maximum of accounts** (both optional, e.g. the first 100 for a promotion): it can be used until the end of that day, or until that many accounts have used it; then it is deleted and is no longer valid, while the accounts already made with it keep their free time. Under the maximum you see how many places are left. **Announce on the website** shows the code on the landing page as a promotion, with its free time and a counter of the places left. A code can have **aliases**, in its **Alias** field, separated by commas (e.g. `LAUNCH` for `LANZAMIENTO`): other names for the same code that share its duration, dates and places; the English landing page shows the first alias. Capitals, accents and spaces do not matter. **Add code** adds a row, **Remove** takes one away, and **Save** keeps the list.
 - **Users → Edit → Free access**: none, **For life** or **Until a date** (the end of that day). When it is over, the account is treated like an unpaid subscription: it can only renew, download its data or delete itself, it gets three warnings a week apart and is deleted seven days after the third one. The list shows each account's free access and subscription.
 
 ## Email

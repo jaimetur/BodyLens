@@ -134,8 +134,9 @@ Google Play subscriptions. It asks for the server address the first time (`https
   events `checkout.session.completed` and `customer.subscription.*`, and paste its signing secret. Enable Google Pay
   and Apple Pay in Stripe → Settings → Payment methods (Stripe's own checkout page is used, so no domain needs
   verifying for Apple Pay).
-- **Unpaid accounts**: every 6 hours the server checks paid accounts; one whose subscription is over gets three emails,
-  a week apart, and is deleted seven days after the third one (administrators never).
+- **Unpaid accounts**: every 6 hours the server checks paid accounts and those free for a time; one whose subscription
+  is over is read-only for 30 days (no new data, no synchronisation, Health Auto Export / Health Connect posts
+  refused), gets three emails (at once, a week before and the day before) and is then deleted (administrators never).
 - **Landing page**: visitors who are not signed in see `src/frontend/landing/index.html` at `/`. Its screenshots and
   videos (`src/frontend/landing/media/`) are made from a synthetic demo account with `tools/demo_data.py` and
   `tools/landing_capture.py` (Playwright and ffmpeg on the development machine, not in the image).

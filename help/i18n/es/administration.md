@@ -1,10 +1,11 @@
-<!-- en: ba545567cd87b696 -->
+<!-- en: c900891e8a381610 -->
 # Administración
 
 Solo para cuentas de administrador. Está en «Tu cuenta» → **Administración**.
 
 ## Usuarios
 - Todas las cuentas del servidor. El **interruptor** de cada fila activa o desactiva la cuenta (una cuenta desactivada no puede entrar, pero conserva sus datos). No puedes desactivar la tuya.
+- Junto a cada nombre, cómo se creó la cuenta: el **código de invitación** que usó (o «Gratis por administración») con el final de su tiempo gratis, o su **suscripción**: en la web (mensual o anual, y cómo se paga: marca y últimas cifras de la tarjeta, Google Pay o Apple Pay) o en Google Play (mensual o anual).
 - **Editar**: usuario, nombre y apellidos, correo y, si quieres, una contraseña nueva (escrita dos veces; vacío = sin cambios). Al cambiar la contraseña se cierran las sesiones abiertas de esa cuenta.
 - **Restablecer contraseña**: pone una temporal, se la envía por correo a la persona y le pide que la cambie al entrar.
 - **Hacer admin / Quitar admin** y **Borrar** (borra la cuenta y todos sus datos).
@@ -21,7 +22,7 @@ Solo para cuentas de administrador. Está en «Tu cuenta» → **Administración
 - La lista indica si cada invitación está pendiente, usada (y por quién) o caducada.
 
 ## Códigos de invitación
-- En la pestaña Invitaciones, **Códigos de invitación**: uno por línea (`INVITACION_AMIGOS` por defecto). Quien se registra con uno tiene una cuenta gratis de por vida, sin pagar; las mayúsculas, las tildes y los espacios no importan.
+- En la pestaña Invitaciones, **Códigos de invitación**: cada código con su **duración**: 1 mes, 3 meses, 6 meses, 1 año, de por vida o hasta una fecha que elijas. `INVITACION_AMIGOS`, de por vida, por defecto. Quien se registra con uno tiene una cuenta gratis, sin pagar, durante ese tiempo contado desde el día del alta, o hasta esa fecha (hasta el final del último día); después puedes cambiarle la fecha de fin en Usuarios → Editar. Un código puede tener además una **fecha de caducidad** y un **máximo de cuentas** (los dos opcionales; por ejemplo, las 100 primeras para una promoción): se puede usar hasta el final de ese día o hasta que lo hayan usado esas cuentas; después se borra y ya no vale, pero las cuentas que ya se crearon con él conservan su tiempo gratis. Debajo del máximo se ve cuántas plazas quedan. **Anunciar en la web** muestra el código en la página principal como promoción, con su tiempo gratis y un contador de las plazas que quedan. Un código puede tener **alias**, en su campo **Alias**, separados por comas (por ejemplo, `LAUNCH` para `LANZAMIENTO`): otros nombres del mismo código que comparten su duración, sus fechas y sus plazas; la página principal en inglés muestra el primer alias. Las mayúsculas, las tildes y los espacios no importan. **Añadir código** añade una fila, **Quitar** la elimina y **Guardar** guarda la lista.
 - **Usuarios → Editar → Acceso gratuito**: ninguno, **De por vida** o **Hasta una fecha** (el final de ese día). Cuando termina, la cuenta se trata como una suscripción sin pagar: solo puede renovar, descargar sus datos o borrarse, recibe tres avisos con una semana de diferencia y se borra siete días después del tercero. La lista muestra el acceso gratuito y la suscripción de cada cuenta.
 
 ## Correo

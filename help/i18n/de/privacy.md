@@ -1,4 +1,4 @@
-<!-- en: b65e3af63e8e76ea -->
+<!-- en: 58c21d5b8fee9c1c -->
 # Datenschutzerklärung
 
 Zuletzt aktualisiert: 20. November 2026.
@@ -61,7 +61,7 @@ BodyLens ist ein persönlicher Gesundheitstracker, der auf einem privaten Server
 
 - In einer Datenbank auf dem BodyLens-Server, der oben auf dieser Seite angegeben ist, nicht in Clouds Dritter. Verbindungen zum Server sind verschlüsselt (HTTPS).
 - Der Server erstellt täglich eine Sicherungskopie und behält die letzten 30.
-- Deine Daten werden gespeichert, solange dein Konto besteht. Wird ein kostenpflichtiges Abonnement nicht verlängert, wirst du dreimal im Abstand einer Woche per E-Mail gewarnt, und das Konto wird sieben Tage nach der dritten Warnung gelöscht.
+- Deine Daten werden gespeichert, solange dein Konto besteht. Endet ein kostenpflichtiges Abonnement oder ein kostenloser Zugang und wird nicht verlängert, ist das Konto 30 Tage lang schreibgeschützt, du wirst dreimal per E-Mail gewarnt (beim Ende, eine Woche vor der Löschung und am Tag davor), und danach wird das Konto gelöscht.
 - Wenn ein Konto gelöscht wird, werden seine Daten sofort aus der Datenbank gelöscht und verschwinden aus den Sicherungen, sobald diese ablaufen (innerhalb von 30 Tagen).
 
 ## Cookies und Speicher auf deinem Gerät

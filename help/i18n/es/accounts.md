@@ -1,4 +1,4 @@
-<!-- en: 3debc5cd0805d718 -->
+<!-- en: ce7f4b9752fa8ea0 -->
 # Cuentas y acceso
 
 Cada persona tiene su propia cuenta de BodyLens, con sus datos separados de los de los demás. Entras con tu nombre de usuario (o tu correo) y tu contraseña.
@@ -12,8 +12,8 @@ Cada persona tiene su propia cuenta de BodyLens, con sus datos separados de los 
 - En la pantalla de acceso (web y app de Android), la tarjeta **Crear mi cuenta** abre el registro; en la web, la página de inicio (`/`) muestra qué hace BodyLens y sus precios, y **Empezar gratis** también lo abre (`/alta`).
 - **Planes**: 1,49 € al mes o 12 € al año (1 € al mes), los dos con **7 días de prueba gratis**. En la web se paga con tarjeta, Google Pay o Apple Pay (en la página segura de Stripe); en la app de Android, con Google Play.
 - **Datos que se piden**: nombre y apellidos, correo, usuario y contraseña, un **código de invitación** si tienes uno, y aceptar las [condiciones](/terms) y la [política de privacidad](/privacy). La cuenta se crea en cuanto la página de pago confirma la suscripción, y entras con ella.
-- **Código de invitación**: con un código válido la cuenta es **gratis** y se crea al momento, sin pagar, de por vida salvo que la administración le ponga una fecha de fin. Las mayúsculas, las tildes y los espacios no importan.
-- Si una suscripción termina o un pago falla, la app te pide renovarla (`/alta`) y se te avisa por correo tres veces, con una semana de diferencia; siete días después del tercer aviso, la cuenta y sus datos se borran.
+- **Código de invitación**: con un código válido la cuenta es **gratis** y se crea al momento, sin pagar, durante el tiempo que dé el código (1, 3 o 6 meses, un año, hasta una fecha o de por vida); la administración puede cambiarle la fecha de fin después. Las mayúsculas, las tildes y los espacios no importan.
+- Si una suscripción termina (te diste de baja, falló un pago o se acabó tu tiempo gratis), la cuenta queda **en solo lectura durante 30 días**: puedes entrar y ver y descargar tus datos, pero no añadir datos nuevos, y se detienen la sincronización y los datos que envían tus fuentes (Withings, Apple Salud, Health Connect). Una barra roja abajo en la app lo indica y muestra el día en que se borrará la cuenta, con **Renovar** (`/alta`). Se te avisa por correo tres veces (al terminar, una semana antes del borrado y el día anterior); si en 30 días no se renueva, la cuenta y sus datos se borran.
 
 ## Pedir una cuenta
 - Ya no se piden cuentas: se crean con una suscripción o con un código de invitación. Las peticiones hechas antes siguen en Administración → Peticiones de acceso.
@@ -35,7 +35,7 @@ Cada persona tiene su propia cuenta de BodyLens, con sus datos separados de los 
 - **Contraseña**: pide la actual; al cambiarla se cierra tu sesión en los demás dispositivos.
 - **Pareja** y **Sincronización**: mira [pareja](couples.md) y [sincronización](sync.md). Importar copias está en Tu cuenta → Datos y copias ([importar](import.md)).
 - **Administración**: solo para cuentas de administrador; mira [administración](administration.md).
-- **Suscripción** (cuentas con suscripción): el plan, hasta cuándo está activa y **Gestionar**: en la web, la página de Stripe para cambiar la tarjeta, descargar facturas o cancelar; en la app, las suscripciones de Google Play. Si se te ha avisado de un pago fallido, indica cuántos avisos llevas, con **Renovar**.
+- **Suscripción** (cuentas con suscripción): el plan y hasta cuándo está activa. Si pagas en la web, puedes **cambiar entre mensual y anual** (el nuevo precio se aplica desde la siguiente renovación; ahora no se cobra nada), **Darme de baja** sin borrar la cuenta (sigue activa hasta el final del periodo pagado y después queda en solo lectura 30 días), **Seguir con mi suscripción** para deshacer la baja, y **Tarjeta y facturas** (la página de Stripe). Si pagas en la app, el cambio de plan se hace en Google Play y **Darme de baja** funciona igual. Cuando la suscripción ha terminado, indica el día en que se borrará la cuenta, con **Renovar**.
 - **Privacidad y condiciones**: enlaces a la [política de privacidad](/privacy), las [condiciones de uso](/terms) y [cómo borrar una cuenta](/delete-account).
 - **Borrar mi cuenta**: escribe tu contraseña y confirma. Tu cuenta y todos sus datos se borran al momento y se cancela cualquier suscripción. No se puede deshacer: descarga antes una copia en Datos y copias si quieres conservar tus datos.
 

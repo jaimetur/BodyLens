@@ -1,4 +1,4 @@
-<!-- en: b65e3af63e8e76ea -->
+<!-- en: 58c21d5b8fee9c1c -->
 # Política de privacitat
 
 Darrera actualització: 20 de novembre de 2026.
@@ -61,7 +61,7 @@ BodyLens és un seguidor personal de salut que s'executa en un servidor privat. 
 
 - En una base de dades al servidor de BodyLens indicat a la part superior d'aquesta pàgina, no en núvols de tercers. Les connexions al servidor estan xifrades (HTTPS).
 - El servidor fa una còpia de seguretat diària i en conserva les últimes 30.
-- Les teves dades es conserven mentre existeixi el teu compte. Si una subscripció de pagament no es renova, se t'avisa tres vegades per correu electrònic, amb una setmana de diferència, i el compte s'esborra set dies després del tercer avís.
+- Les teves dades es conserven mentre existeixi el teu compte. Si una subscripció de pagament o un accés gratuït acaba i no es renova, el compte queda en només lectura durant 30 dies, se t'avisa tres vegades per correu electrònic (en acabar, una setmana abans de l'esborrat i el dia anterior) i després el compte s'esborra.
 - Quan s'esborra un compte, les seves dades s'eliminen de la base de dades a l'instant i desapareixen de les còpies de seguretat a mesura que caduquen (en un màxim de 30 dies).
 
 ## Galetes i emmagatzematge al teu dispositiu

@@ -118,8 +118,13 @@
       <section class="card" id="subCard" hidden>
         <h2>Suscripción</h2>
         <p id="subTxt"></p>
-        <div class="row"><a class="btn ghost" id="subManage" href="#" target="_blank" rel="noopener">Gestionar la suscripción en Google Play</a></div>
+        <div id="subPlans" hidden>
+          <div class="subseg" role="radiogroup" aria-label="Plan"><button type="button" data-p="monthly"><b>Mensual</b><small id="subPm" data-noi18n></small></button><button type="button" data-p="yearly"><b>Anual</b><small id="subPy" data-noi18n></small></button></div>
+          <p class="small">Puedes cambiar de plan cuando quieras: el nuevo precio se aplica en la próxima renovación y ahora no se cobra nada.</p>
+        </div>
+        <div class="row"><a class="btn ghost" id="subManage" href="#" target="_blank" rel="noopener">Gestionar la suscripción en Google Play</a><button class="danger" id="subCancel" type="button" hidden>Darme de baja</button><button id="subResume" type="button" hidden>Seguir con mi suscripción</button></div>
         <p class="small" id="subHelp">Para cancelarla o cambiar de plan: Google Play → Pagos y suscripciones → Suscripciones. Sigue activa hasta el final del periodo pagado.</p>
+        <p class="msg" id="subMsg" aria-live="polite"></p>
       </section>
 
     </div>
@@ -208,19 +213,55 @@ if (NATIVE) {
 }
 async function loadSub() {
   let s = null; try { s = await api('GET', '/api/play/status'); } catch (e) { return; }
-  if (!s || (s.plan !== 'play' && s.plan !== 'web')) return;
+  if (!s || (s.plan !== 'play' && s.plan !== 'web' && !s.readOnly)) return;
   $('subCard').hidden = false;
+  const day = ms => ms ? new Date(ms).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : '—';
   const plan = s.basePlan === 'monthly' ? 'mensual' : s.basePlan === 'yearly' ? 'anual' : '';
-  const until = s.expiry ? new Date(s.expiry).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : '—';
-  $('subTxt').textContent = s.active ? `Plan ${plan} de Google Play, activo hasta el ${until} (se renueva solo si no lo cancelas).` : `Tu suscripción terminó el ${until}.`;
-  if (s.plan === 'web') {   // paid on the website: Stripe's page to change the card, see invoices or cancel
-    $('subManage').textContent = 'Gestionar el pago y la suscripción'; $('subManage').removeAttribute('target');
-    $('subHelp').textContent = 'Cambia la tarjeta, descarga tus facturas o cancela la suscripción. Sigue activa hasta el final del periodo pagado.';
+  const until = day(s.expiry);
+  const row = $('subManage').parentElement;
+  row.querySelectorAll('.renew').forEach(x => x.remove());
+  if (s.readOnly) $('subTxt').textContent = `Tu suscripción terminó el ${until}. Tu cuenta es de solo lectura (puedes ver y descargar tus datos, pero no añadir datos nuevos ni sincronizar) y se borrará el ${day(s.deleteOn)} si no la renuevas.`;
+  else if (s.cancelAtEnd) $('subTxt').textContent = `Te has dado de baja: tu suscripción sigue activa hasta el ${until} y no se renovará. Después tu cuenta será de solo lectura durante 30 días y se borrará si no la renuevas.`;
+  else $('subTxt').textContent = s.plan === 'web' ? `Plan ${plan}, activo hasta el ${until}. Se renueva solo.` : `Plan ${plan} de Google Play, activo hasta el ${until} (se renueva solo si no lo cancelas).`;
+  const live = s.active && !s.readOnly;
+  $('subCancel').hidden = !live || s.cancelAtEnd;
+  $('subResume').hidden = !(live && s.cancelAtEnd && s.plan === 'web');
+  if (s.plan === 'web') {   // paid on the website: change of plan, cancel and resume here; the card and invoices in Stripe's page
+    $('subManage').textContent = 'Tarjeta y facturas'; $('subManage').removeAttribute('target');
+    $('subHelp').textContent = 'En «Tarjeta y facturas» cambias la forma de pago y descargas tus facturas.';
     $('subManage').onclick = async e => { e.preventDefault(); try { const r = await api('POST', '/api/web/portal'); TOP.location.href = r.url; } catch (err) { alert(err.message); } };
-  } else $('subManage').href = `https://play.google.com/store/account/subscriptions?sku=${encodeURIComponent(s.product)}&package=${encodeURIComponent(s.package)}`;
-  if (s.warnings) $('subTxt').textContent += ` Te hemos avisado ${s.warnings} de 3 veces: si no la renuevas, tu cuenta y tus datos se borrarán.`;
-  if (!s.active) { const a = document.createElement('a'); a.className = 'btn'; a.href = '/alta'; a.target = '_top'; a.textContent = 'Renovar'; $('subManage').parentElement.prepend(a); }
+    $('subPlans').hidden = !live;
+    if (live) {
+      try { const W = await api('GET', '/api/web/plans'); const fmt = c => (c / 100).toLocaleString(document.documentElement.lang || 'es', { style: 'currency', currency: 'EUR', minimumFractionDigits: c % 100 ? 2 : 0 });
+        W.plans.forEach(x => { const el = $(x.plan === 'monthly' ? 'subPm' : 'subPy'); if (el) el.textContent = fmt(x.cents) + (x.interval === 'year' ? ' / año' : ' / mes'); }); } catch (e) {}
+      document.querySelectorAll('.subseg button').forEach(b => { b.classList.toggle('on', b.dataset.p === s.basePlan); b.setAttribute('aria-checked', b.dataset.p === s.basePlan); });
+    }
+  } else if (s.plan === 'play') {
+    $('subManage').textContent = 'Cambiar de plan en Google Play';
+    $('subManage').href = `https://play.google.com/store/account/subscriptions?sku=${encodeURIComponent(s.product)}&package=${encodeURIComponent(s.package)}`;
+    $('subHelp').textContent = 'El cambio de plan se hace en Google Play (Pagos y suscripciones → Suscripciones).';
+  } else { $('subManage').hidden = true; $('subHelp').hidden = true; }
+  if (s.readOnly || !s.active) { const a = document.createElement('a'); a.className = 'btn renew'; a.href = '/alta'; a.target = '_top'; a.textContent = 'Renovar'; row.prepend(a); }
 }
+document.querySelectorAll('.subseg button').forEach(b => b.addEventListener('click', async () => {
+  if (b.classList.contains('on')) return;
+  const name = b.dataset.p === 'monthly' ? 'mensual' : 'anual';
+  if (!confirm(`¿Cambiar al plan ${name}? Se aplica en la próxima renovación.`)) return;
+  say($('subMsg'), '…');
+  try { await api('POST', '/api/web/change', { plan: b.dataset.p }); say($('subMsg'), 'Plan cambiado.', 'ok'); loadSub(); }
+  catch (e) { say($('subMsg'), e.message, 'err'); }
+}));
+$('subCancel').addEventListener('click', async () => {
+  if (!confirm('¿Darte de baja? Tu suscripción seguirá activa hasta el final del periodo pagado. Después tu cuenta será de solo lectura durante 30 días (podrás ver y descargar tus datos, pero no añadir nuevos ni sincronizar) y, si no la renuevas, se borrará con todos tus datos.')) return;
+  say($('subMsg'), '…');
+  try { const s = await api('GET', '/api/play/status'); await api('POST', s.plan === 'play' ? '/api/play/cancel' : '/api/web/cancel'); say($('subMsg'), 'Te has dado de baja.', 'ok'); loadSub(); }
+  catch (e) { say($('subMsg'), e.message, 'err'); }
+});
+$('subResume').addEventListener('click', async () => {
+  say($('subMsg'), '…');
+  try { await api('POST', '/api/web/resume'); say($('subMsg'), 'Tu suscripción seguirá renovándose.', 'ok'); loadSub(); }
+  catch (e) { say($('subMsg'), e.message, 'err'); }
+});
 loadSub();
 $('delGo').addEventListener('click', async () => {
   if (!$('delPw').value) { say($('delMsg'), 'Escribe tu contraseña.', 'err'); return; }

@@ -17,9 +17,12 @@ main.login p.small{margin:0}.foot{display:flex;justify-content:space-between;ali
 .subcta::after{content:"";position:absolute;inset:-40%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.35),transparent 40%);animation:shine 6s linear infinite}
 @keyframes glow{50%{box-shadow:0 22px 50px -14px #9a5cf0}}@keyframes shine{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.subcta,.subcta::after{animation:none}}
+/* the logo and the "Home" button go to the landing page (not in the Android app, which has no landing page) */
+main.login .top{display:flex;align-items:center;justify-content:space-between;gap:10px}main.login a.brand{text-decoration:none;color:inherit}
+main.login .home{padding:9px 16px;font-size:.92rem;border-radius:999px;text-decoration:none}html.inapp main.login .home{display:none}
 </style></head>
 <body><main class="narrow login">
-  <div class="brand"><img src="/icon.svg" alt=""><b>BodyLens</b></div>
+  <div class="top"><a class="brand" href="/" target="_top"><img src="/icon.svg" alt=""><b>BodyLens</b></a><a class="btn ghost home" href="/" target="_top"><span aria-hidden="true">🏠</span> Página de inicio</a></div>
   <form class="card" id="f">
     <h1>Entrar</h1>
     <p>Tus datos de salud, solo para ti.</p>

@@ -1,4 +1,4 @@
-<!-- en: 502033339454bc3e -->
+<!-- en: af3d7c7d59c47122 -->
 # Nutzungsbedingungen
 
 Zuletzt aktualisiert: 20. November 2026.
@@ -17,7 +17,7 @@ Diese Bedingungen gelten für die Nutzung von BodyLens auf diesem Server, über 
 - Das Abonnement kostet **1,49 € pro Monat** oder **12 € pro Jahr** (1 € pro Monat), inklusive Steuern; die Zahlungsseite zeigt dir den genauen Preis in deiner Währung an, bevor du bezahlst. Es beginnt mit einer **7-tägigen kostenlosen Testphase**, einmal pro Person: Wenn du während der Testphase kündigst, wird nichts berechnet.
 - Das Abonnement verlängert sich am Ende jedes Zeitraums automatisch, bis du es kündigst. Du kannst es jederzeit kündigen: unter Dein Konto → Abo (Website) oder in Google Play → Zahlungen und Abos (App). Es bleibt bis zum Ende des bereits bezahlten Zeitraums aktiv.
 - Zahlungen, Verlängerungen und Erstattungen werden von Stripe oder Google Play nach deren eigenen Bedingungen abgewickelt; BodyLens sieht deine Kartendaten nie. Erstattungen richten sich nach deren Erstattungsrichtlinien und dem Recht deines Landes.
-- **Wenn das Abonnement oder der kostenlose Zugang endet oder eine Zahlung nicht erfolgt**, kannst du das Konto nicht mehr nutzen, bis du es verlängerst, und du wirst **dreimal im Abstand einer Woche** per E-Mail gewarnt. Wenn das Abonnement **sieben Tage nach der dritten Warnung** noch immer nicht verlängert wurde, werden das Konto und alle seine Daten vom Server gelöscht. Vorher kannst du verlängern, deine Daten herunterladen (Dein Konto → Daten und Kopien) oder das Konto selbst löschen.
+- **Du kannst dein Abonnement jederzeit kündigen oder zwischen monatlich und jährlich wechseln**, unter Dein Konto → Abonnement, ohne dein Konto zu löschen: Ein gekündigtes Abonnement bleibt bis zum Ende des bezahlten Zeitraums aktiv, und ein Planwechsel gilt ab der nächsten Verlängerung. **Wenn das Abonnement oder der kostenlose Zugang endet oder eine Zahlung nicht erfolgt**, ist das Konto **30 Tage lang schreibgeschützt**: Du kannst dich anmelden und deine Daten ansehen und herunterladen, aber keine neuen Daten hinzufügen, und die Synchronisierung und die Daten deiner Quellen werden angehalten. Du wirst dreimal per E-Mail gewarnt (beim Ende, eine Woche vor der Löschung und am Tag davor). Wenn das Abonnement **nach diesen 30 Tagen** noch immer nicht verlängert wurde, werden das Konto und alle seine Daten vom Server gelöscht. Vorher kannst du verlängern, deine Daten herunterladen (Dein Konto → Daten und Kopien) oder das Konto selbst löschen.
 
 ## Keine medizinische Beratung
 

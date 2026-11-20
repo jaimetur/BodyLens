@@ -1,4 +1,4 @@
-<!-- en: b65e3af63e8e76ea -->
+<!-- en: 58c21d5b8fee9c1c -->
 # Política de privacidade
 
 Última atualização: 20 de novembro de 2026.
@@ -61,7 +61,7 @@ O BodyLens é um registo pessoal de saúde que funciona num servidor privado. Es
 
 - Numa base de dados no servidor BodyLens indicado no topo desta página, não em clouds de terceiros. As ligações ao servidor são cifradas (HTTPS).
 - O servidor faz uma cópia de segurança diária e guarda as últimas 30.
-- Os teus dados são guardados enquanto a tua conta existir. Se uma subscrição paga não for renovada, és avisado três vezes por e-mail, com uma semana de intervalo, e a conta é apagada sete dias após o terceiro aviso.
+- Os teus dados são guardados enquanto a tua conta existir. Se uma subscrição paga ou um acesso gratuito terminar e não for renovado, a conta fica só de leitura durante 30 dias, és avisado três vezes por e-mail (quando termina, uma semana antes da eliminação e na véspera) e depois a conta é apagada.
 - Quando uma conta é apagada, os seus dados são eliminados da base de dados de imediato e desaparecem das cópias de segurança à medida que estas expiram (num prazo de 30 dias).
 
 ## Cookies e armazenamento no teu dispositivo

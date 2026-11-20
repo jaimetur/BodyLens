@@ -1,4 +1,4 @@
-<!-- en: 502033339454bc3e -->
+<!-- en: af3d7c7d59c47122 -->
 # Gebruiksvoorwaarden
 
 Laatst bijgewerkt: 20 november 2026.
@@ -17,7 +17,7 @@ Deze voorwaarden gelden voor het gebruik van BodyLens op deze server, via de web
 - Het abonnement kost **€1,49 per maand** of **€12 per jaar** (€1 per maand), inclusief belasting; de betaalpagina toont de exacte prijs in je valuta voordat je betaalt. Het begint met een **gratis proefperiode van 7 dagen**, één keer per persoon: als je tijdens de proefperiode opzegt, wordt er niets in rekening gebracht.
 - Het abonnement wordt aan het einde van elke periode automatisch verlengd totdat je het opzegt. Je kunt het op elk moment opzeggen: in Je account → Abonnement (website) of in Google Play → Betalingen en abonnementen (app). Het blijft actief tot het einde van de al betaalde periode.
 - Betalingen, verlengingen en terugbetalingen worden door Stripe of Google Play afgehandeld volgens hun eigen voorwaarden; BodyLens ziet je kaartgegevens nooit. Terugbetalingen volgen hun terugbetalingsbeleid en de wetgeving van je land.
-- **Als het abonnement of de gratis toegang eindigt, of een betaling niet wordt gedaan**, kun je het account niet meer gebruiken totdat je het verlengt, en word je **drie keer, met een week ertussen**, per e-mail gewaarschuwd. Als het abonnement **zeven dagen na de derde waarschuwing** nog steeds niet is verlengd, worden het account en al zijn gegevens van de server verwijderd. Daarvoor kun je verlengen, je gegevens downloaden (Je account → Gegevens en kopieën) of het account zelf verwijderen.
+- **Je kunt je abonnement op elk moment opzeggen of wisselen tussen maandelijks en jaarlijks** in Je account → Abonnement, zonder je account te verwijderen: een opgezegd abonnement blijft actief tot het einde van de betaalde periode, en een planwijziging geldt vanaf de volgende verlenging. **Als het abonnement of de gratis toegang eindigt, of een betaling niet wordt gedaan**, wordt het account **30 dagen alleen-lezen**: je kunt inloggen en je gegevens bekijken en downloaden, maar geen nieuwe gegevens toevoegen, en de synchronisatie en de gegevens die je bronnen sturen stoppen. Je wordt drie keer per e-mail gewaarschuwd (bij het einde, een week voor de verwijdering en de dag ervoor). Als het abonnement **na die 30 dagen** nog steeds niet is verlengd, worden het account en al zijn gegevens van de server verwijderd. Daarvoor kun je verlengen, je gegevens downloaden (Je account → Gegevens en kopieën) of het account zelf verwijderen.
 
 ## Geen medisch advies
 

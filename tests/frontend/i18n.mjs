@@ -12,11 +12,12 @@ const runtime = readFileSync(path.join(ROOT, 'src', 'frontend', 'i18n', 'i18n.js
 const dict = { 'Entrar': 'Sign in', '{0} pasos': '{0} steps', 'Peso de hoy': "Today's weight",
   'Tu contraseña': 'Your password', 'Usuario': 'Username', 'el {0}': 'on {0}', '¿Seguro?': 'Sure?',
   'De {0} días{1}, {2} anotados.': 'Of {0} days{1}, {2} logged.', 'Máximo {0} kg.': 'Highest {0} kg.',
-  '{0} días con pesada. Máximo {1} kg.': '{0} days weighed. Max {1} kg.', 'Tu cuenta.': 'Your account.' };
+  '{0} días con pesada. Máximo {1} kg.': '{0} days weighed. Max {1} kg.', 'Tu cuenta.': 'Your account.',
+  '{0} de {1}': '{0} of {1}', 'por {0}': 'by {0}', 'salud': 'health', 'trabajo': 'work' };
 
 const dom = new JSDOM(`<!doctype html><html lang="es"><head>
 <script>window.BL_LANG='en';window.BL_I18N=${JSON.stringify(dict)};</script><script>${runtime}</script></head>
-<body><h1>Peso de hoy</h1><p id="a">  Entrar: </p><input id="u" placeholder="Usuario"><textarea>Entrar</textarea>
+<body><h1>Peso de hoy</h1><p id="a">  Entrar: </p><input id="u" placeholder="Usuario"><textarea placeholder="Usuario">Entrar</textarea>
 <p id="n" data-noi18n>Entrar</p></body></html>`, { runScripts: 'dangerously', pretendToBeVisual: true });
 const w = dom.window, d = w.document;
 const tick = () => new Promise(r => setTimeout(r, 0));
@@ -27,6 +28,7 @@ assert.equal(d.querySelector('h1').textContent, "Today's weight");
 assert.equal(d.getElementById('a').textContent, ' Sign in: ');
 assert.equal(d.getElementById('u').placeholder, 'Username');
 assert.equal(d.querySelector('textarea').value, 'Entrar', 'lo que escribe la persona no se toca');
+assert.equal(d.querySelector('textarea').placeholder, 'Username', 'the placeholder of a text area is translated');
 assert.equal(d.getElementById('n').textContent, 'Entrar', 'data-noi18n no se traduce');
 
 // lo que la app pinta después también, con patrones y fechas
@@ -49,4 +51,11 @@ assert.equal(w.blT('De 84 días, 0 anotados. Máximo 60 kg.'), 'Of 84 days, 0 lo
 assert.equal(w.blT('. Máximo 60 kg.'), '. Highest 60 kg.');
 assert.equal(w.blT('De 84 días, 0 anotados. Máximo 60 kg. Sin traducir.'), 'Of 84 days, 0 logged. Highest 60 kg. Sin traducir.');
 assert.equal(w.blT('3 días con pesada. Máximo 60 kg. Tu cuenta.'), '3 days weighed. Max 60 kg. Your account.');
+// short patterns: «{0} de {1}» only with figures, so a text of the person is left alone; lists inside a translated text
+assert.equal(w.blT('21 de 30'), '21 of 30');
+assert.equal(w.blT('Sopa de pescado'), 'Sopa de pescado');
+assert.equal(w.blT('3 nov · por salud, trabajo'), '3 Nov · by health, work');
+assert.equal(w.blT('Sopa, trabajo'), 'Sopa, trabajo');
+// weekday initials of the calendars in the chosen language
+assert.equal(w.BL_DS.join(''), 'MTWTFSS');
 console.log('i18n.js: OK');

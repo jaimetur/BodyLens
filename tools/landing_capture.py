@@ -9,7 +9,8 @@ Needs Playwright and Pillow (`pip install playwright pillow && python -m playwri
 project dependencies) and ffmpeg, to trim and encode the videos. Everything goes to src/frontend/landing/media/:
 screenshots as WebP, videos as MP4 (H.264) and the first frame of each video (<video>-1.webp) as its poster.
 Phone videos are 780x1688; desktop ones (video-desk-*, wide layout) 1440x900. --only desktop takes just the desktop
-screenshots and videos.
+screenshots and videos. video-temas and video-desk-temas show the Summary going through every colour theme (switched in
+the page, without saving the setting of the account).
 --lang en switches the demo account to English for the capture (and back to Spanish at the end) and names every file
 with the suffix -en (resumen-en.webp, video-sueno-en.mp4, video-sueno-en-1.webp); Spanish files have no suffix.
 The browser clock is set to 20:35 of today (Madrid), the time the demo data stops (tools/demo_data.py).
@@ -455,9 +456,54 @@ def dtour_ajustes(page: Page, still) -> None:   # Your account: a couple of colo
         page.wait_for_timeout(1700)
 
 
+# every colour theme of Your account, in its order; the videos switch them in the page (no reload, nothing saved)
+THEMES = ["light", "dark", "sepia", "ocean", "forest", "contrast", "rose", "lavender", "mint", "sunset", "graphite"]
+
+
+def prep_temas(page: Page, desk: bool) -> None:
+    """The themes (the server only inlines them when the account uses one), the first one on and the Summary scrolled so
+    the hero card and the charts below it are in view."""
+    page.add_style_tag(content=(ROOT / "src" / "frontend" / "common" / "themes.css").read_text(encoding="utf-8"))
+    page.evaluate("t => { const h = document.documentElement; h.dataset.themeWas = h.getAttribute('data-theme') || '';"
+                  " h.setAttribute('data-theme', t) }", THEMES[0])
+    page.evaluate("dy => window.scrollTo(0, dy)", 0 if desk else 60)
+    page.wait_for_timeout(600)
+
+
+def set_theme(page: Page, theme: str) -> None:
+    page.evaluate("t => document.documentElement.setAttribute('data-theme', t)", theme)
+
+
+def restore_theme(page: Page) -> None:
+    page.evaluate("() => { const h = document.documentElement, t = h.dataset.themeWas; delete h.dataset.themeWas;"
+                  " if (t) h.setAttribute('data-theme', t); else h.removeAttribute('data-theme') }")
+
+
+def tour_temas(page: Page, still) -> None:   # Summary → General through every theme, with a slow scroll halfway
+    still()
+    for i, theme in enumerate(THEMES[1:]):
+        set_theme(page, theme)
+        if i in (3, 7):
+            scroll(page, 170, 1300)
+        else:
+            page.wait_for_timeout(1300)
+    page.wait_for_timeout(200)
+    restore_theme(page)
+
+
+def dtour_temas(page: Page, still) -> None:   # the same on the desktop layout
+    page.mouse.move(900, 500)
+    still(1300)
+    for theme in THEMES[1:]:
+        set_theme(page, theme)
+        page.wait_for_timeout(1300)
+    page.wait_for_timeout(200)
+    restore_theme(page)
+
+
 DESK_VIDEOS = [("video-desk-resumen", "resumen", "gen", dtour_resumen), ("video-desk-peso", "peso", "evo", dtour_peso),
                ("video-desk-sueno", "sueno", "hoy", dtour_sueno), ("video-desk-actividad", "actividad", "evo", dtour_actividad),
-               ("video-desk-ajustes", "cuenta", None, dtour_ajustes)]
+               ("video-desk-ajustes", "cuenta", None, dtour_ajustes), ("video-desk-temas", "resumen", "gen", dtour_temas)]
 
 VIDEOS = [("video-resumen", "resumen", "gen", tour_resumen), ("video-peso", "peso", "evo", tour_peso),
           ("video-sueno", "sueno", "hoy", tour_sueno), ("video-actividad", "actividad", "hoy", tour_actividad),
@@ -465,17 +511,20 @@ VIDEOS = [("video-resumen", "resumen", "gen", tour_resumen), ("video-peso", "pes
           ("video-sueno-saldo", "sueno", "banco", tour_sueno_saldo), ("video-comidas", "comidas", "hoy", tour_comidas),
           ("video-intimo", "intimo", "animo", tour_intimo), ("video-historial", "historial", "anios", tour_historial),
           ("video-actividad-entrenos", "actividad", "wo", tour_actividad_entrenos),
-          ("video-resumen-salud", "resumen", "cue", tour_resumen_salud)]
+          ("video-resumen-salud", "resumen", "cue", tour_resumen_salud), ("video-temas", "resumen", "gen", tour_temas)]
+PREP = {"video-temas": prep_temas, "video-desk-temas": prep_temas}   # done off camera (trimmed) and for the poster
 
 
 def open_view(browser, url: str, state: Path, view: str, tab: str | None, video_dir: str | None = None,
-              desk: bool = False) -> Page:
+              desk: bool = False, prep=None) -> Page:
     page = new_page(browser, state, DESKTOP_REC if desk and video_dir else DESKTOP if desk else PHONE,
                     video_dir=video_dir, video_size=DESK_VIDEO_SIZE if desk else VIDEO_SIZE)
     page.goto(url + "/#" + view)
     translated(page)
     settle(page, 2000)
     go(page, view, tab, 1000)
+    if prep:
+        prep(page, desk)
     return page
 
 
@@ -492,7 +541,7 @@ def videos(browser, url: str, state: Path, out: Path) -> None:
         # the video: the page loads off camera (trimmed), then the tour
         tmp = tempfile.mkdtemp(prefix="bl-video-")
         t0 = time.monotonic()
-        page = open_view(browser, url, state, view, tab, tmp)
+        page = open_view(browser, url, state, view, tab, tmp, prep=PREP.get(name))
         start = time.monotonic() - t0
         tour(page, lambda: page.wait_for_timeout(120))
         page.wait_for_timeout(500)
@@ -502,7 +551,7 @@ def videos(browser, url: str, state: Path, out: Path) -> None:
         encode(Path(video.path()), out / f"{name}{SFX}.mp4", start, length)
         shutil.rmtree(tmp, ignore_errors=True)
         # the poster: the first frame of the tour, without recording
-        page = open_view(browser, url, state, view, tab)
+        page = open_view(browser, url, state, view, tab, prep=PREP.get(name))
         page.wait_for_timeout(250)
         save_webp(page.screenshot(), out / f"{name}{SFX}-1.webp", 1170, 78)
         page.context.close()
@@ -516,7 +565,7 @@ def desktop_videos(browser, url: str, state: Path, out: Path) -> None:
         for name, view, tab, tour in DESK_VIDEOS:
             tmp = tempfile.mkdtemp(prefix="bl-video-")
             t0 = time.monotonic()
-            page = open_view(browser, url, state, view, tab, tmp, desk=True)
+            page = open_view(browser, url, state, view, tab, tmp, desk=True, prep=PREP.get(name))
             if view == "cuenta":
                 theme_frame(page)
                 page.wait_for_timeout(600)
@@ -528,7 +577,7 @@ def desktop_videos(browser, url: str, state: Path, out: Path) -> None:
             page.context.close()
             encode(Path(video.path()), out / f"{name}{SFX}.mp4", start, length, DESK_VF, 26)
             shutil.rmtree(tmp, ignore_errors=True)
-            page = open_view(browser, url, state, view, tab, desk=True)
+            page = open_view(browser, url, state, view, tab, desk=True, prep=PREP.get(name))
             if view == "cuenta":
                 theme_frame(page)
             page.wait_for_timeout(600)

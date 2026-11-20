@@ -114,6 +114,47 @@ section.sec{padding:100px 0;position:relative}
 .tile{padding:26px;border-radius:22px;background:linear-gradient(160deg,color-mix(in srgb,var(--k) 16%,var(--card)),var(--card) 60%);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--k) 30%,var(--line));transition:transform .3s}
 .tile:hover{transform:translateY(-4px)}.tile h3{font-size:28px;margin:12px 0 8px}.tile p{margin:0;color:var(--muted);font-size:16px}
 .tile .ic{font-size:30px}
+/* themes section: a small preview of the app in each colour theme (the server adds the themes, scoped to .thm) */
+.thm{--bg:#eef1f5;--surface:#fff;--raised:#f5f7fa;--ink:#121a26;--muted:#5a6677;--line:#dde3ea;--weight:#3d4fd6;--good:#1c9a62;
+  --hero:#141c2b;--hero-2:#1c2740;--hero-ink:#f3f5fa;--hero-muted:#a9b3c4;--hero-accent:#8e9bff;--act:#0f8b8d;--slp:#6f55d1;--accent:#3B7BF2}
+.themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+.thm{border-radius:18px;padding:10px;background:var(--bg);color:var(--ink);box-shadow:0 0 0 1px rgba(255,255,255,.08),0 12px 30px rgba(0,0,0,.25);transition:transform .3s}
+.thm:hover{transform:translateY(-4px) rotate(-.6deg)}
+.thm .tw{display:grid;grid-template-columns:22px 1fr;gap:8px;height:128px}
+.thm .sb{background:var(--surface);border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:8px 0}
+.thm .sb i{width:9px;height:9px;border-radius:3px;background:var(--line)}.thm .sb i:first-child{background:var(--accent)}
+.thm .mn{display:grid;grid-template-rows:auto 1fr;gap:8px;min-width:0}
+.thm .hr{border-radius:10px;padding:8px 10px;background:linear-gradient(135deg,var(--hero),var(--hero-2));color:var(--hero-ink);font:800 20px/1 "Big Shoulders Display",sans-serif}
+.thm .hr small{display:block;font:600 9px/1.2 "Instrument Sans",sans-serif;color:var(--hero-muted);margin-bottom:3px;letter-spacing:.06em;text-transform:uppercase}
+.thm .hr u{display:block;height:4px;border-radius:2px;margin-top:6px;background:linear-gradient(90deg,var(--hero-accent) 64%,rgba(255,255,255,.15) 64%)}
+.thm .ts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.thm .tl{background:var(--surface);border-radius:10px;display:flex;align-items:flex-end;gap:3px;padding:7px}
+.thm .tl i{flex:1;border-radius:2px 2px 0 0;background:var(--c)}
+.thm p{margin:9px 2px 1px;font-weight:700;font-size:.92rem;color:var(--ink)}
+/* launch promotion (a public invitation code, Administration → Invitations): big banner with the places left */
+.promo{padding:10px 0 30px}
+.pbox{position:relative;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:34px;align-items:center;padding:34px 38px;border-radius:30px;isolation:isolate;overflow:hidden;
+  background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--d) 34%,transparent),transparent 55%),radial-gradient(120% 140% at 100% 100%,color-mix(in srgb,var(--a) 40%,transparent),transparent 60%),var(--card)}
+.pbox::before{content:"";position:absolute;inset:0;padding:2px;border-radius:inherit;background:conic-gradient(from var(--ang),var(--c),var(--d),var(--e),var(--a),var(--b),var(--c));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:spin 6s linear infinite;z-index:-1}
+@property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}@keyframes spin{to{--ang:360deg}}
+.pbox::after{content:"";position:absolute;inset:-40%;background:linear-gradient(115deg,transparent 45%,rgba(255,255,255,.07) 50%,transparent 55%);animation:shine 5s ease-in-out infinite;z-index:-1;pointer-events:none}
+@keyframes shine{from{transform:translateX(-40%)}to{transform:translateX(40%)}}
+.pbadge{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;background:linear-gradient(135deg,var(--c),var(--d));color:#fff;font-weight:800;font-size:14px;letter-spacing:.02em;box-shadow:0 8px 24px -8px var(--d)}
+.pbadge i{width:8px;height:8px;border-radius:50%;background:#fff;animation:pulse 1.4s ease-in-out infinite}@keyframes pulse{50%{opacity:.3;transform:scale(.6)}}
+.pbox h2{margin:16px 0 8px;font:900 clamp(44px,7vw,84px)/.95 var(--display);letter-spacing:-.01em;text-transform:uppercase}
+.pbox p{margin:0 0 18px;color:var(--muted);font-size:18px;max-width:520px}.pbox p b{color:var(--ink)}
+.pcode{display:inline-flex;align-items:center;gap:14px;padding:12px 14px 12px 20px;border-radius:16px;border:2px dashed color-mix(in srgb,var(--c) 70%,transparent);background:rgba(255,255,255,.04);color:var(--ink);cursor:pointer;font:800 22px var(--mono,ui-monospace,monospace);letter-spacing:.08em}
+.pcode small{font:700 13px var(--body);letter-spacing:0;padding:6px 10px;border-radius:10px;background:var(--c);color:#1b1206}
+.pr{text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+.pleft b{display:block;font:900 clamp(80px,12vw,140px)/.85 var(--display);background:linear-gradient(180deg,#fff,color-mix(in srgb,var(--c) 70%,#fff));-webkit-background-clip:text;background-clip:text;color:transparent;font-variant-numeric:tabular-nums}
+.pleft span{display:block;margin-top:6px;font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.12em;color:var(--c)}
+.pbar{width:min(320px,100%);height:12px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.pbar i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,var(--c),var(--d));transition:width 1.6s cubic-bezier(.2,.8,.2,1)}
+.pr small{color:var(--muted)}.pr .btn{margin-top:8px;padding:17px 28px;font-size:18px}
+.eyebrow.hot{background:linear-gradient(135deg,color-mix(in srgb,var(--c) 30%,transparent),color-mix(in srgb,var(--d) 30%,transparent));text-decoration:none;color:var(--ink)}
+@media (max-width:900px){.pbox{grid-template-columns:1fr;padding:28px 22px;gap:22px}.pcode{font-size:18px}}
+@media (prefers-reduced-motion:reduce){.pbox::before,.pbox::after,.pbadge i{animation:none}}
 @media (max-width:900px){.grid{grid-template-columns:1fr 1fr}}@media (max-width:560px){.grid{grid-template-columns:1fr}}
 /* desktop */
 .laptop{max-width:980px;margin:0 auto;border-radius:18px;padding:12px 12px 0;background:linear-gradient(#2a3352,#121a30);box-shadow:0 40px 90px -30px #000,0 0 0 1px rgba(255,255,255,.08)}
@@ -174,6 +215,15 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
   <div class="strip"><div class="wrap">
     <span><b>Tus datos</b>, solo para ti</span><span><b>Sin anuncios</b> ni rastreadores</span><span><b>Web y Android</b>, siempre iguales</span><span><b>7 días gratis</b>, cancela cuando quieras</span>
   </div></div>
+
+  <section class="promo" id="promo" hidden><div class="wrap">
+    <div class="pbox rv">
+      <div><span class="pbadge"><i></i>Oferta de lanzamiento</span><h2 id="pHead"></h2><p id="pTxt"></p>
+        <button class="pcode" id="pCode" type="button"><span id="pCodeT" data-noi18n></span><small id="pCopy">Copiar</small></button></div>
+      <div class="pr"><div class="pleft"><b id="pLeft" data-noi18n>0</b><span id="pUnit">plazas libres</span></div><div class="pbar"><i id="pBar"></i></div><small id="pOf"></small>
+        <a class="btn pri" id="pGo" href="/alta">Conseguir mi cuenta gratis</a></div>
+    </div>
+  </div></section>
 
   <section class="sec" id="modulos"><div class="wrap">
     <div class="sh rv"><h2>Todo lo que importa,<br><span class="grad">de un vistazo</span></h2><p>Cada módulo convierte tus datos en gráficos que se entienden al momento y en consejos hechos con tu propia historia.</p></div>
@@ -250,11 +300,19 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
 
   <section class="sec" id="web" style="padding-top:20px"><div class="wrap">
     <div class="sh rv"><h2>En el ordenador, <span class="grad">a lo grande</span></h2><p>La misma app en la web, con todo el espacio para tus gráficos: ábrela en cualquier navegador, sin instalar nada.</p></div>
-    <div class="media rv" style="--k:var(--a)"><div class="glow"></div><div class="car lap" data-slides="video-desk-resumen,desktop-resumen,video-desk-peso,desktop-peso,video-desk-sueno,desktop-sueno,video-desk-actividad,desktop-actividad,desktop-cuerpo,video-desk-ajustes"></div></div>
+    <div class="media rv" style="--k:var(--a)"><div class="glow"></div><div class="car lap" data-slides="video-desk-resumen,desktop-resumen,video-desk-peso,desktop-peso,video-desk-sueno,desktop-sueno,video-desk-actividad,desktop-actividad,desktop-cuerpo,video-desk-temas"></div></div>
     <div class="grid" style="margin-top:46px">
       <div class="tile rv" style="--k:var(--b)"><span class="ic">🧭</span><h3>Todo a la vista</h3><p>Menú lateral, pestañas y paneles en varias columnas: tus módulos y tus gráficos sin desplazarte tanto.</p></div>
       <div class="tile rv" style="--k:var(--a)"><span class="ic">🖱️</span><h3>Gráficos que responden</h3><p>Pasa el ratón por cualquier gráfico para ver el valor exacto de cada día, y amplía las tarjetas para ver más detalle.</p></div>
       <div class="tile rv" style="--k:var(--c)"><span class="ic">🖨️</span><h3>Informes y copias</h3><p>Exporta a PDF el periodo que quieras y descarga tu copia completa en un clic.</p></div>
+    </div>
+  </div></section>
+
+  <section class="sec" id="temas" style="padding-top:20px"><div class="wrap">
+    <div class="sh rv"><h2>Tu app, <span class="grad">tus colores</span></h2><p>Elige el tema en Tu cuenta, o deja que siga el modo claro u oscuro de tu dispositivo. Todos los gráficos cambian de color con él.</p></div>
+    <div class="feat rv" style="--k:var(--e);margin-bottom:0">
+      <div class="media"><div class="glow"></div><div class="car" id="themesCar"></div></div>
+      <div class="themes" id="themes"></div>
     </div>
   </div></section>
 
@@ -316,6 +374,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
 })();
 (() => {
   // L: the English page shows the app in English (files ending in -en); V: new files after each deployment
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const M = '/landing/media/', L = document.documentElement.lang === 'en' ? '-en' : '', V = '?v=' + (document.documentElement.dataset.build || '1');
   const canPlay = (() => { try { return !!document.createElement('video').canPlayType('video/mp4'); } catch (e) { return false; } })();
   const stills = n => [`${M}${n}${L}-1.webp${V}`];   // the poster of each video
@@ -397,6 +456,14 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
     setTimeout(() => { dots(); mark(); }, 300);
     new MutationObserver(() => { dots(); mark(); }).observe(track, { childList: true });
   }
+  // the themes section: one preview per colour theme of the app, with its name (translated like the app)
+  (() => {
+    const box = document.getElementById('themes'); if (!box) return;
+    const TH = [['light', 'Diurno'], ['dark', 'Nocturno'], ['sepia', 'Sepia'], ['ocean', 'Océano'], ['forest', 'Bosque'], ['contrast', 'Alto contraste'],
+      ['rose', 'Rosa'], ['lavender', 'Lavanda'], ['mint', 'Menta'], ['sunset', 'Atardecer'], ['graphite', 'Grafito']];
+    const bars = (c, h) => h.map(x => `<i style="--c:var(${c});height:${x}%"></i>`).join('');
+    box.innerHTML = TH.map(([id, name]) => `<div class="thm" data-theme="${id}"><div class="tw"><div class="sb"><i></i><i></i><i></i><i></i><i></i></div><div class="mn"><div class="hr"><small>${(window.blT || String)('Peso')}</small>84.3 kg<u></u></div><div class="ts"><div class="tl">${bars('--weight', [70, 55, 80, 62, 90, 74])}</div><div class="tl">${bars('--slp', [60, 85, 50, 78, 66, 92])}</div></div></div></div><p>${(window.blT || String)(name)}</p></div>`).join('');
+  })();
   const lang = document.documentElement.lang === 'en' ? 'en' : 'es';
   const nm = o => (o && (o[lang] || o.es || o.en)) || '';
   fetch(M + 'manifest.json' + V).then(r => r.ok ? r.json() : null).catch(() => null).then(man => {
@@ -420,7 +487,42 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
       const lap = document.querySelector('.car.lap');
       if (lap) build(lap, lap.dataset.slides.split(',').map(n => ({ file: n, kind: n.startsWith('video-') ? 'video' : 'image', poster: false })), null);
     }
+    try { build(document.getElementById('themesCar'), [{ file: 'video-temas', kind: 'video', poster: false }], null); } catch (e) { console.error(e); }
     document.querySelectorAll('.rv').forEach(el => { if (el.getBoundingClientRect().top < innerHeight) el.classList.add('in'); });
+  });
+  // the launch promotion: the first public invitation code with places left (Administration → Invitations)
+  fetch('/api/promos').then(r => r.ok ? r.json() : null).catch(() => null).then(d => {
+    const p = d && (d.promos || []).find(x => x.left === null || x.left > 0); if (!p) return;
+    const T = window.blT || String, box = document.getElementById('promo');
+    const loc = document.documentElement.lang === 'en' ? 'en-GB' : 'es-ES';
+    const day = s => new Date(s + 'T12:00:00').toLocaleDateString(loc, { day: 'numeric', month: 'long', year: 'numeric' });
+    const head = { '1m': '1 mes gratis', '3m': '3 meses gratis', '6m': '6 meses gratis', '1y': '1 año gratis', life: 'Gratis para siempre' }[p.duration];
+    document.getElementById('pHead').textContent = head ? T(head) : T(`Gratis hasta el ${day(p.duration)}`);
+    document.getElementById('pTxt').innerHTML = esc(T(p.max ? `Solo para las primeras ${p.max} cuentas.` : 'Por tiempo limitado.')) + ' '
+      + esc(T('Sin tarjeta: crea tu cuenta con este código y empieza ya.')) + (p.expires ? ' ' + esc(T(`Hasta el ${day(p.expires)}.`)) : '');
+    const code = document.documentElement.lang === 'en' && (p.aliases || [])[0] || p.code;   // the English name of the code, if it has one
+    document.getElementById('pCodeT').textContent = code;
+    document.getElementById('pGo').href = '/alta?code=' + encodeURIComponent(code);
+    const pr = box.querySelector('.pr');
+    if (p.left === null) pr.querySelector('.pleft').remove(), pr.querySelector('.pbar').remove();
+    else {
+      document.getElementById('pOf').textContent = T(`${p.left} de ${p.max} plazas`);
+      if (p.left === 1) document.getElementById('pUnit').textContent = T('plaza libre');
+      let shown = false;
+      new IntersectionObserver((es, o) => es.forEach(e => { if (!e.isIntersecting || shown) return; shown = true; o.disconnect();
+        document.getElementById('pBar').style.width = (100 * p.left / p.max) + '%';
+        const b = document.getElementById('pLeft'), t0 = performance.now(), from = p.max;   // counts down to the places left
+        const step = t => { const k = Math.min(1, (t - t0) / 1400), e2 = 1 - Math.pow(1 - k, 3); b.textContent = Math.round(from - (from - p.left) * e2); if (k < 1) requestAnimationFrame(step); };
+        matchMedia('(prefers-reduced-motion: reduce)').matches ? (b.textContent = p.left) : requestAnimationFrame(step);
+      }), { threshold: .4 }).observe(box);
+    }
+    document.getElementById('pCode').addEventListener('click', () => { try { navigator.clipboard.writeText(code); } catch (e) {}
+      const c = document.getElementById('pCopy'); c.textContent = T('¡Copiado!'); setTimeout(() => { c.textContent = T('Copiar'); }, 1600); });
+    // the hero's top label points to it
+    const eb = document.querySelector('.hero .eyebrow'); const a = document.createElement('a'); a.className = 'eyebrow hot'; a.href = '#promo';
+    a.innerHTML = '<i></i>' + esc('🚀 ' + (head ? T(head) : T('Oferta de lanzamiento')) + (p.left !== null ? ' · ' + T(`quedan ${p.left} plazas`) : ''));
+    eb.replaceWith(a);
+    box.hidden = false; box.querySelectorAll('.rv').forEach(el => { if (el.getBoundingClientRect().top < innerHeight) el.classList.add('in'); });
   });
   // the Google Play link, once the app is published there (Administration → Google Play)
   fetch('/api/play/config').then(r => r.ok ? r.json() : null).then(c => {

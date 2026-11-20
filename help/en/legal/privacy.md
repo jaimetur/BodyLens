@@ -60,7 +60,7 @@ BodyLens is a personal health tracker that runs on a private server. This policy
 
 - In a database on the BodyLens server shown at the top of this page, not in third-party clouds. Connections to the server are encrypted (HTTPS).
 - The server makes a daily backup copy and keeps the last 30.
-- Your data is kept while your account exists. If a paid subscription is not renewed, you are warned three times by email, a week apart, and the account is deleted seven days after the third warning.
+- Your data is kept while your account exists. If a paid subscription or a free access ends and is not renewed, the account stays read-only for 30 days, you are warned three times by email (when it ends, a week before the deletion and the day before), and then the account is deleted.
 - When an account is deleted, its data is deleted from the database at once and disappears from the backups as they expire (within 30 days).
 
 ## Cookies and storage on your device

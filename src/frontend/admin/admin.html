@@ -24,7 +24,15 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
 .sw input:disabled+span{opacity:.5;cursor:not-allowed}.sw input:focus-visible+span{outline:2px solid #3B7BF2;outline-offset:2px}
 .swl{margin-left:8px;vertical-align:middle}
 .edit{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:0 14px}.edit label.wide{grid-column:1/-1}.edit label{display:flex;flex-direction:column}.edit label>input,.edit label>select,.edit label>textarea{margin-top:auto}   /* fields in a row line up even when a label takes two lines */
-#cdList{min-height:84px}
+/* invitation codes: code, duration (custom = until a date), expiry date, maximum of accounts and a button to remove it */
+.tag.pay{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}.tag.bycode{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.cdrow .cdPub{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:12px}.cdrow .cdPub input{width:auto;height:auto;margin:0}
+.cdrow .cdUsed{display:block;margin-top:3px;font-size:12px;color:var(--muted);min-height:15px}.cdrow button{margin-top:24px}
+.cdrow{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,.75fr) auto;gap:10px;align-items:start;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.cdrow label{margin:0}.cdrow .cdDays.off{visibility:hidden}
+/* an empty date shows nothing (Safari would show today's date in grey, as if it were set) */
+.cdrow input.empty:not(:focus)::-webkit-datetime-edit{opacity:0}.cdrow button{height:42px}
+@media (max-width:760px){.cdrow{grid-template-columns:1fr 1fr;padding-bottom:10px;border-bottom:1px solid var(--line)}.cdrow .cdc,.cdrow button{grid-column:1/-1}.cdrow .cdDays.off{display:none}.cdrow button{margin-top:0}.cdrow .cdUsed:empty{display:none}}
 @media (max-width:640px){table thead{display:none}table,tbody,tr,td{display:block}tr{border-bottom:1px solid var(--line);padding:6px 0}td{border:0;padding:3px 0}td.act{text-align:left}}
 .secret{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:15px;background:var(--raised);padding:6px 10px;border-radius:8px;display:inline-block}
 </style></head>
@@ -81,9 +89,9 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
     <p id="iLink" hidden><span class="code" id="iUrl"></span> <button class="ghost" id="iCopy" type="button">Copiar</button></p>
     <ul class="list" id="iList"></ul>
     <h2 style="margin-top:22px">Códigos de invitación</h2>
-    <p>Quien se suscribe con uno de estos códigos tiene cuenta gratis de por vida, sin pagar, hasta que le pongas una fecha de fin en Usuarios → Editar. Da igual cómo se escriban las mayúsculas y las tildes. Uno por línea.</p>
-    <label>Códigos<textarea id="cdList" rows="3" spellcheck="false"></textarea></label>
-    <div class="row"><button id="cdSave" type="button">Guardar</button><span class="msg" id="cdMsg"></span></div>
+    <p>Quien crea su cuenta con uno de estos códigos la tiene gratis, sin pagar, durante el tiempo del código (contado desde ese día). Luego puedes cambiarle la fecha de fin en Usuarios → Editar. Si le pones fecha de caducidad o un máximo de cuentas (por ejemplo, las 100 primeras), el código se borra pasado ese día o cuando se llega a ese número, pero quien ya lo usó conserva su tiempo gratis. «Anunciar en la web» lo muestra como promoción en la página principal, con las plazas que quedan. Los alias (por ejemplo, LAUNCH para LANZAMIENTO) son otros nombres del mismo código y comparten sus plazas; la página en inglés muestra el primer alias. Da igual cómo se escriban las mayúsculas y las tildes.</p>
+    <div id="cdRows"></div>
+    <div class="row"><button class="ghost" id="cdAdd" type="button">Añadir código</button><button id="cdSave" type="button">Guardar</button><span class="msg" id="cdMsg"></span></div>
   </section>
 
   <section class="card" data-panel="correo" hidden>
@@ -192,7 +200,7 @@ async function load() {
   $('wState').textContent = wapp.configured ? 'Configurado: cada cuenta puede conectar su Withings en «Tu cuenta».' : 'Sin configurar.';
   D = acc;
   // usuarios
-  $('uBody').innerHTML = acc.users.map(u => `<tr><td><b>${esc(u.name)}</b> <span class="small">${esc(u.username)}</span>${u.isAdmin ? '<span class="tag adm">admin</span>' : ''}${u.partner ? `<span class="tag">pareja: ${esc(u.partner)}</span>` : ''}${u.plan && (u.plan.kind === 'gift' || u.plan.gift) ? `<span class="tag">${u.plan.giftUntil ? 'gratis hasta ' + new Date(u.plan.giftUntil).toLocaleDateString('es-ES') : 'gratis de por vida'}</span>` : ''}${u.plan && u.plan.kind === 'web' ? '<span class="tag">suscripción web</span>' : ''}${u.plan && u.plan.kind === 'play' ? '<span class="tag">Google Play</span>' : ''}<br><span class="small">desde ${when(u.createdAt)}${u.sync && u.sync.lastSync ? ' · sincronizado ' + when(u.sync.lastSync) : ''}</span></td>
+  $('uBody').innerHTML = acc.users.map(u => `<tr><td><b>${esc(u.name)}</b> <span class="small">${esc(u.username)}</span>${u.isAdmin ? '<span class="tag adm">admin</span>' : ''}${u.partner ? `<span class="tag">pareja: ${esc(u.partner)}</span>` : ''}${planTags(u.plan)}<br><span class="small">desde ${when(u.createdAt)}${u.sync && u.sync.lastSync ? ' · sincronizado ' + when(u.sync.lastSync) : ''}</span></td>
     <td>${esc(u.email) || '<span class="small">—</span>'}</td>
     <td>${!u.active && u.requestedAt ? '<span class="tag off">pendiente</span>' : `<label class="sw" title="${u.id === acc.me ? 'No puedes desactivar tu propia cuenta' : (u.active ? 'Desactivar la cuenta' : 'Activar la cuenta')}"><input type="checkbox" data-sw="${u.id}" ${u.active ? 'checked' : ''} ${u.id === acc.me ? 'disabled' : ''}><span></span></label><span class="swl">${u.active ? 'Activa' : 'Desactivada'}</span>`}${u.mustChange ? '<br><span class="small">contraseña provisional</span>' : ''}</td>
     <td class="act"><button class="ghost" data-ed="${u.id}" type="button">Editar</button>${u.id === acc.me ? '' : `<button class="ghost" data-adm="${u.id}" type="button">${u.isAdmin ? 'Quitar admin' : 'Hacer admin'}</button>`}<button class="ghost" data-pw="${u.id}" type="button">Restablecer contraseña</button>${u.id === acc.me ? '' : `<button class="danger" data-del="${u.id}" type="button">Borrar</button>`}</td></tr>`).join('');
@@ -272,10 +280,44 @@ $('mSave').addEventListener('click', async () => {
     say($('mMsg'), 'Guardado.', 'ok'); await load();
   } catch (e) { say($('mMsg'), e.message, 'err'); }
 });
-async function loadCodes() { try { $('cdList').value = (await api('GET', '/api/admin/codes')).codes.join('\n'); } catch (e) {} }
+const CD_DUR = [['1m', '1 mes'], ['3m', '3 meses'], ['6m', '6 meses'], ['1y', '1 año'], ['life', 'De por vida'], ['custom', 'Hasta una fecha']];
+// how the account was made, for the list of users: the invitation code used, or the subscription with its plan and how it is paid
+function planTags(p) {
+  if (!p) return '';
+  const per = x => x === 'monthly' ? 'mensual' : x === 'yearly' ? 'anual' : '';
+  let out = '';
+  if (p.kind === 'web') out += `<span class="tag pay">Suscripción web${p.plan ? ` · <span>${per(p.plan)}</span>` : ''}${p.method ? ` · <b data-noi18n>${esc(p.method)}</b>` : ''}</span>`;
+  if (p.kind === 'play') out += `<span class="tag pay">Google Play${p.plan ? ` · <span>${per(p.plan)}</span>` : ''}</span>`;
+  if (p.kind === 'gift' || p.gift) {
+    out += p.code && p.code !== 'admin' ? `<span class="tag bycode">Código <b data-noi18n>${esc(p.code)}</b></span>` : '<span class="tag bycode">Gratis por administración</span>';
+    out += `<span class="tag">${p.giftUntil ? 'gratis hasta ' + new Date(p.giftUntil).toLocaleDateString('es-ES') : 'gratis de por vida'}</span>`;
+  }
+  return out;
+}
+function cdRow(c) {
+  const d = c.duration || 'life', custom = /^\d{4}-/.test(d);
+  const el = document.createElement('div'); el.className = 'cdrow';
+  el.innerHTML = `<div class="cdc"><label>Código<input class="cdCode" maxlength="60" spellcheck="false" autocapitalize="characters" value="${esc(c.code || '')}"></label>`
+    + `<label class="cdPub"><input type="checkbox"${c.public ? ' checked' : ''}><span>Anunciar en la web</span></label></div>`
+    + `<label class="cdAl">Alias (opcional)<input class="cdAlias" maxlength="200" spellcheck="false" autocapitalize="characters" value="${esc((c.aliases || []).join(', '))}"><span class="cdUsed">Separados por comas</span></label>`
+    + `<label>Duración<select class="cdDur">${CD_DUR.map(([v, n]) => `<option value="${v}"${(custom ? 'custom' : d) === v ? ' selected' : ''}>${n}</option>`).join('')}</select></label>`
+    + `<label class="cdDays${custom ? '' : ' off'}">Gratis hasta<input class="cdN" type="date" value="${custom ? esc(d) : ''}"></label>`
+    + `<label>Caduca (opcional)<input class="cdExp" type="date" value="${esc(c.expires || '')}"></label>`
+    + `<label>Máx. de cuentas<input class="cdMax" type="number" min="1" max="1000000" placeholder="∞" value="${c.max == null ? '' : c.max}"><span class="cdUsed">${c.max != null ? `Quedan {0} de {1}`.replace('{0}', Math.max(0, c.max - (c.used || 0))).replace('{1}', c.max) : c.used ? `Usado {0} veces`.replace('{0}', c.used) : ''}</span></label>`
+    + `<button class="danger" type="button">Quitar</button>`;
+  el.querySelector('.cdDur').addEventListener('change', e => { el.querySelector('.cdDays').classList.toggle('off', e.target.value !== 'custom'); });
+  el.querySelectorAll('input[type=date]').forEach(i => { const f = () => i.classList.toggle('empty', !i.value); f(); i.addEventListener('input', f); i.addEventListener('change', f); });
+  el.querySelector('button').addEventListener('click', () => el.remove());
+  $('cdRows').appendChild(el);
+}
+function drawCodes(list) { $('cdRows').innerHTML = ''; list.forEach(cdRow); if (!list.length) cdRow({}); }
+async function loadCodes() { try { drawCodes((await api('GET', '/api/admin/codes')).codes); } catch (e) {} }
 loadCodes();
+$('cdAdd').addEventListener('click', () => { cdRow({}); $('cdRows').lastChild.querySelector('input').focus(); });
 $('cdSave').addEventListener('click', async () => {
-  try { const r = await api('PUT', '/api/admin/codes', { codes: $('cdList').value.split('\n') }); $('cdList').value = r.codes.join('\n'); say($('cdMsg'), 'Guardado.', 'ok'); }
+  const list = [...document.querySelectorAll('.cdrow')].map(r => { const v = r.querySelector('.cdDur').value;
+    return { code: r.querySelector('.cdCode').value, aliases: r.querySelector('.cdAlias').value.split(',').map(s => s.trim()).filter(Boolean), duration: v === 'custom' ? r.querySelector('.cdN').value : v, expires: r.querySelector('.cdExp').value, max: r.querySelector('.cdMax').value ? parseInt(r.querySelector('.cdMax').value, 10) : null, public: r.querySelector('.cdPub input').checked }; });
+  try { drawCodes((await api('PUT', '/api/admin/codes', { codes: list })).codes); say($('cdMsg'), 'Guardado.', 'ok'); }
   catch (e) { say($('cdMsg'), e.message, 'err'); }
 });
 async function loadStripe() {

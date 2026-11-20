@@ -33,8 +33,9 @@ server, the data arrives on its own, and every person sees only their own data.
 - **Several accounts**, each with its own data, signed in with username and password.
 - **Sign-up:** access requests from the sign-in page, approved by an administrator (with email notices), single-use
   invitation links, or a **paid subscription** (€1.49/month or €12/year, 7-day free trial): on the website through
-  Stripe (card, Google Pay, Apple Pay) or in the Android app through Google Play. Accounts that stop paying are warned
-  three times by email and then deleted.
+  Stripe (card, Google Pay, Apple Pay) or in the Android app through Google Play. A subscription can be switched
+  between monthly and yearly or cancelled without deleting the account; an account whose subscription ends is
+  read-only for 30 days (with three email warnings) and then deleted.
 - **Delete my account** from *Your account*, and public pages for the privacy policy, the terms of use and deleting
   an account.
 - **Couples:** two accounts can be linked to share and edit the cycle and intimacy records together.

@@ -119,6 +119,8 @@ def test_default_admin_and_login_hint(env):
         assert c.post("/api/login", json={"username": "admin", "password": "admin123"}).status_code == 200
         me = c.get("/api/me").json()
         assert me["user"]["isAdmin"] and me["defaultPassword"] is True
+        st = c.get("/api/play/status").json()
+        assert st["plan"] == "gift" and st["active"] and st["expiry"] is None      # free for life
         assert c.post("/api/me/password", json={"current": "admin123", "new": "otra"}).status_code == 200
         assert c.get("/api/login-hint").json() == {"accounts": []}
         assert c.get("/api/me").json()["defaultPassword"] is False
