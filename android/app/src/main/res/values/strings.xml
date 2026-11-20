@@ -20,4 +20,17 @@
     <string name="sent_ok">Sent (%1$d values).</string>
     <string name="err_no_url">Paste the sending address first.</string>
     <string name="configured">✓ Linked to your BodyLens account. Allow the permissions and the app sends your data every hour on its own.</string>
+    <string name="server_intro">Your BodyLens server: the address you open BodyLens at in the browser.</string>
+    <string name="server_label">Server address</string>
+    <string name="server_go">Continue</string>
+    <string name="server_checking">Checking…</string>
+    <string name="server_error">No BodyLens server answers at that address. Check it and your connection.</string>
+    <string name="server_help">Then sign in with your BodyLens username and password, or create an account. You can change the server later in Your account.</string>
+    <string name="offline">Cannot connect to the BodyLens server. Check your connection.</string>
+    <string name="retry">Retry</string>
+    <string name="change_server">Change the server</string>
+    <string name="saved_downloads">Saved in Downloads: %1$s</string>
+    <string name="no_purchase">There is no BodyLens subscription on this phone\'s Google account.</string>
+    <string name="purchase_pending">The payment is pending. When Google Play confirms it, tap \"Restore\".</string>
+    <string name="purchase_failed">The purchase could not be completed.</string>
 </resources>

@@ -2,7 +2,7 @@ package app.bodylens.android
 
 import android.content.Context
 
-/** Ajustes de la app: dirección de envío (lleva el token secreto), último envío y resultado. */
+/** Settings of the app: server address, sending address (it carries the secret token), last sending and result. */
 class Prefs(context: Context) {
     private val sp = context.getSharedPreferences("bodylens", Context.MODE_PRIVATE)
 
@@ -26,6 +26,16 @@ class Prefs(context: Context) {
     var lastOk: Boolean
         get() = sp.getBoolean("lastOk", false)
         set(v) = sp.edit().putBoolean("lastOk", v).apply()
+
+    /** Address of the BodyLens server the app shows (https://…); empty until the first set-up. */
+    var server: String
+        get() = sp.getString("server", "") ?: ""
+        set(v) = sp.edit().putString("server", v.trim().trimEnd('/')).apply()
+
+    /** Health Connect permissions were already asked for once after linking (not asked again on their own). */
+    var askedPerms: Boolean
+        get() = sp.getBoolean("askedPerms", false)
+        set(v) = sp.edit().putBoolean("askedPerms", v).apply()
 
     var lastMessage: String
         get() = sp.getString("lastMessage", "") ?: ""

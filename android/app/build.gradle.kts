@@ -50,4 +50,6 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.health.connect:connect-client:1.1.0-alpha10")
     implementation("androidx.work:work-runtime-ktx:2.10.0")
+    implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("com.android.billingclient:billing-ktx:7.1.1")
 }

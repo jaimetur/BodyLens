@@ -19,4 +19,17 @@
     <string name="sent_ok">Enviado (%1$d valores).</string>
     <string name="err_no_url">Pega antes la dirección de envío.</string>
     <string name="configured">✓ Unida a tu cuenta de BodyLens. Permite los permisos y la app enviará tus datos cada hora ella sola.</string>
+    <string name="server_intro">Tu servidor de BodyLens: la dirección en la que abres BodyLens en el navegador.</string>
+    <string name="server_label">Dirección del servidor</string>
+    <string name="server_go">Continuar</string>
+    <string name="server_checking">Comprobando…</string>
+    <string name="server_error">En esa dirección no responde ningún servidor de BodyLens. Revísala y revisa tu conexión.</string>
+    <string name="server_help">Después entra con tu usuario y contraseña de BodyLens, o crea una cuenta. Puedes cambiar el servidor más tarde en Tu cuenta.</string>
+    <string name="offline">No se puede conectar con el servidor de BodyLens. Revisa tu conexión.</string>
+    <string name="retry">Reintentar</string>
+    <string name="change_server">Cambiar el servidor</string>
+    <string name="saved_downloads">Guardado en Descargas: %1$s</string>
+    <string name="no_purchase">No hay ninguna suscripción de BodyLens en la cuenta de Google de este móvil.</string>
+    <string name="purchase_pending">El pago está pendiente. Cuando Google Play lo confirme, pulsa \"Recuperar\".</string>
+    <string name="purchase_failed">No se ha podido completar la compra.</string>
 </resources>

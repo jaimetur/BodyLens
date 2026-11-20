@@ -29,8 +29,23 @@
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
 
+        <!-- the whole app: the BodyLens web app with Android's downloads, files, back button and Health Connect -->
         <activity
             android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.BodyLens.Start"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|uiMode|density"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Health Connect: permissions and sending (from Your account, or the setup link of a browser) -->
+        <activity
+            android:name=".HealthActivity"
             android:exported="true"
             android:launchMode="singleTop">
             <!-- setup link from Your account → Data sources: bodylens://setup?url=<sending address> -->
@@ -40,26 +55,31 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="bodylens" android:host="setup" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <!-- Health Connect muestra para qué se usan los datos (Android 13 y anteriores) -->
+            <!-- Health Connect shows what the data is used for (Android 13 and earlier) -->
             <intent-filter>
                 <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
             </intent-filter>
         </activity>
 
-        <!-- Android 14 y posteriores -->
+        <!-- Android 14 and later -->
         <activity-alias
             android:name="ViewPermissionUsageActivity"
             android:exported="true"
             android:permission="android.permission.START_VIEW_PERMISSION_USAGE"
-            android:targetActivity=".MainActivity">
+            android:targetActivity=".HealthActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW_PERMISSION_USAGE" />
                 <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
             </intent-filter>
         </activity-alias>
+
+        <!-- files the web app saves (PDF, backups), shared with other apps -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.files"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
+        </provider>
     </application>
 </manifest>
