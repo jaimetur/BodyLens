@@ -380,6 +380,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
   // L: the English page shows the app in English (files ending in -en); V: new files after each deployment
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const M = '/landing/media/', L = document.documentElement.lang === 'en' ? '-en' : '', V = '?v=' + (document.documentElement.dataset.build || '1');
+  let MV = V;   // the carousels' media: the build of the recording (manifest.json), so a new recording is never served from cache
   const canPlay = (() => { try { return !!document.createElement('video').canPlayType('video/mp4'); } catch (e) { return false; } })();
   const stills = n => [`${M}${n}${L}-1.webp${V}`];   // the poster of each video
   document.querySelectorAll('[data-media]').forEach(el => {
@@ -415,12 +416,12 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
     if (it.kind !== 'image') {
       const v = document.createElement('video');
       Object.assign(v, { muted: true, playsInline: true, preload: 'metadata' });
-      v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.poster = M + it.file + L + (it.poster === false ? '-1' : '') + '.webp' + V;
-      v.innerHTML = `<source src="${M}${it.file}${L}.mp4${V}" type="video/mp4">`;
+      v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.poster = M + it.file + L + (it.poster === false ? '-1' : '') + '.webp' + MV;
+      v.innerHTML = `<source src="${M}${it.file}${L}.mp4${MV}" type="video/mp4">`;
       v.lastChild.addEventListener('error', () => el.closest('.slide') && el.closest('.slide').remove());   // a missing video drops its entry
       el.appendChild(v);
     } else {
-      const im = new Image(); im.loading = 'lazy'; im.alt = ''; im.src = M + it.file + L + '.webp' + V;
+      const im = new Image(); im.loading = 'lazy'; im.alt = ''; im.src = M + it.file + L + '.webp' + MV;
       im.onerror = () => el.closest('.slide') && el.closest('.slide').remove(); el.appendChild(im);
     }
   };
@@ -480,6 +481,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
   if (lang === 'en') document.querySelectorAll('.pm[data-en]').forEach(el => { el.textContent = el.dataset.en; });   // prices written the English way
   const nm = o => (o && (o[lang] || o.es || o.en)) || '';
   fetch(M + 'manifest.json' + V).then(r => r.ok ? r.json() : null).catch(() => null).then(man => {
+    if (man && man.build) MV = '?v=' + man.build;
     const box = document.querySelector('#modulos .wrap');
     if (man && Array.isArray(man.modules)) {
       // the sections in the app's order; a new module gets a section with its name, a removed one disappears
