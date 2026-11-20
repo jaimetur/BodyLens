@@ -82,11 +82,11 @@ def test_mailer_smtp_ssl(monkeypatch):
         def login(self, u, p): calls["login"] = (u, p)
         def send_message(self, m): calls["msg"] = m
     monkeypatch.setattr(smtplib, "SMTP_SSL", FakeSMTP)
-    for k, v in {"SMTP_HOST": "jaimetur.cloud", "SMTP_PORT": "465", "SMTP_SECURITY": "ssl",
+    for k, v in {"SMTP_HOST": "mail.jtgcloud.com", "SMTP_PORT": "465", "SMTP_SECURITY": "ssl",
                  "SMTP_USERNAME": "bodylens@jtgcloud.com", "SMTP_PASSWORD": "secreto", "SMTP_FROM": "bodylens@jtgcloud.com"}.items():
         monkeypatch.setenv(k, v)
     mailer.send(["a@example.test"], "Hola", mailer.page("Hola", ["texto <b>x</b>"], link=("Entrar", "https://x/login")))
-    assert calls["conn"] == ("jaimetur.cloud", 465) and calls["login"] == ("bodylens@jtgcloud.com", "secreto")
+    assert calls["conn"] == ("mail.jtgcloud.com", 465) and calls["login"] == ("bodylens@jtgcloud.com", "secreto")
     assert calls["helo"] and not calls["helo"].startswith("[")  # a public name, never the container address
     m = calls["msg"]
     assert m["Subject"] == "BodyLens - Hola" and "bodylens@jtgcloud.com" in m["From"]
