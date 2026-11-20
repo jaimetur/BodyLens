@@ -3,13 +3,14 @@
 
     DATA_DIR=<demo dir> .venv/bin/python tools/demo_data.py          # demo account (prints its password)
     (start a server on that DATA_DIR, e.g. on port 8765)
-    DEMO_PASSWORD=... .venv/bin/python tools/landing_capture.py [--url http://localhost:8765] [--out DIR]
+    DEMO_PASSWORD=... .venv/bin/python tools/landing_capture.py [--url http://localhost:8765] [--out DIR] [--lang en|es]
 
 Needs Playwright and Pillow (`pip install playwright pillow && python -m playwright install chromium`; they are not
-project dependencies) and, to trim the videos and make the MP4 copies, ffmpeg. Everything goes to
-src/frontend/landing/media/: screenshots as WebP, videos as WebM + MP4, and ~6 stills of each video
-(<video>-1.webp…) for a slideshow fallback. The browser clock is set to 20:35 of today (Madrid), the time the demo
-data stops (tools/demo_data.py).
+project dependencies) and ffmpeg, to trim and encode the videos. Everything goes to src/frontend/landing/media/:
+screenshots as WebP, videos as MP4 (H.264) and the first frame of each video (<video>-1.webp) as its poster.
+--lang en switches the demo account to English for the capture (and back to Spanish at the end) and names every file
+with the suffix -en (resumen-en.webp, video-sueno-en.mp4, video-sueno-en-1.webp); Spanish files have no suffix.
+The browser clock is set to 20:35 of today (Madrid), the time the demo data stops (tools/demo_data.py).
 """
 from __future__ import annotations
 
@@ -33,6 +34,11 @@ TZ = ZoneInfo("Europe/Madrid")
 PHONE = {"viewport": {"width": 390, "height": 844}, "device_scale_factor": 3, "is_mobile": True, "has_touch": True}
 DESKTOP = {"viewport": {"width": 1440, "height": 900}, "device_scale_factor": 2}
 COMMON = {"locale": "es-ES", "timezone_id": "Europe/Madrid"}
+LOCALES = {"es": "es-ES", "en": "en-GB"}
+SFX = ""   # file name suffix of the language ("-en"; none for Spanish)
+# texts the tours look for, in each language (the page translates them in the browser)
+TEXTS = {"es": {"prev": "Anterior", "daily": "Pesada diaria"}, "en": {"prev": "Previous", "daily": "Daily weigh-in"}}
+TXT = TEXTS["es"]
 VIDEO_SIZE = {"width": 780, "height": 1688}
 
 # (file name, view, tab or None): phone screenshots, the top of the screen as a user sees it
@@ -53,6 +59,13 @@ def save_webp(png: bytes, path: Path, width: int, quality: int = 82) -> None:
     if im.width != width:
         im = im.resize((width, round(im.height * width / im.width)), Image.LANCZOS)
     im.save(path, "WEBP", quality=quality, method=6)
+
+
+def translated(page: Page) -> None:
+    """Waits until the page texts are in the capture language (they are translated in the browser after load)."""
+    if SFX:
+        page.wait_for_function("""() => { const s = document.querySelector('nav.vtabs[data-view="peso"] a[data-tab="evo"] span');
+                                          return s && s.textContent.trim() !== 'Evolución' }""", timeout=20000)
 
 
 def settle(page: Page, ms: int = 1200) -> None:
@@ -116,7 +129,13 @@ def close_sheet(page: Page, ms: int = 700) -> None:
     tap(page, "#sheet .shclose", ms)
 
 
-def login(browser, url: str, password: str, out_state: Path) -> None:
+def set_lang(page: Page, url: str, lang: str) -> None:
+    res = page.request.post(url + "/api/me/lang", data={"lang": lang}, headers={"X-BodyLens": "1"})
+    if not res.ok:
+        sys.exit(f"Could not set the account language to {lang}: {res.status} {res.text()}")
+
+
+def login(browser, url: str, password: str, out_state: Path, lang: str) -> None:
     ctx = browser.new_context(**PHONE, **COMMON, color_scheme="light")
     page = ctx.new_page()
     page.goto(url + "/login")
@@ -124,6 +143,8 @@ def login(browser, url: str, password: str, out_state: Path) -> None:
     page.fill("#p", password)
     page.click("#go")
     page.wait_for_url(url + "/", timeout=20000)
+    set_lang(page, url, lang)
+    page.reload()
     settle(page, 3000)   # first start: the page reads the workbook and saves its documents
     ctx.storage_state(path=str(out_state))
     ctx.close()
@@ -140,38 +161,41 @@ def new_page(browser, state: Path, profile: dict, scheme: str = "light", video_d
 def screenshots(browser, url: str, state: Path, out: Path) -> None:
     page = new_page(browser, state, PHONE)
     page.goto(url + "/#resumen")
+    translated(page)
     settle(page, 2500)
     for name, view, tab in SHOTS:
         go(page, view, tab)
-        save_webp(page.screenshot(), out / f"{name}.webp", 1170)
+        save_webp(page.screenshot(), out / f"{name}{SFX}.webp", 1170)
         print("  ", name)
     go(page, "sueno", "hoy")
     page.click("svg.dial")
     settle(page, 1200)
-    save_webp(page.screenshot(), out / "sueno-reloj.webp", 1170)
+    save_webp(page.screenshot(), out / f"sueno-reloj{SFX}.webp", 1170)
     print("   sueno-reloj")
     page.context.close()
     for scheme, suffix in (("dark", "-dark"),):
         page = new_page(browser, state, PHONE, scheme)
         page.goto(url + "/#resumen")
+        translated(page)
         settle(page, 2500)
         for name, view, tab in (("resumen", "resumen", "gen"), ("sueno-noche", "sueno", "hoy")):
             go(page, view, tab)
-            save_webp(page.screenshot(), out / f"{name}{suffix}.webp", 1170)
+            save_webp(page.screenshot(), out / f"{name}{suffix}{SFX}.webp", 1170)
             print("  ", name + suffix)
         page.context.close()
     page = new_page(browser, state, DESKTOP)
     page.goto(url + "/#resumen")
+    translated(page)
     settle(page, 2500)
     for name, view, tab in (("desktop-resumen", "resumen", "gen"), ("desktop-peso", "peso", "evo")):
         go(page, view, tab, 1800)
-        save_webp(page.screenshot(), out / f"{name}.webp", 1600)
+        save_webp(page.screenshot(), out / f"{name}{SFX}.webp", 1600)
         print("  ", name)
     page.context.close()
 
 
 # ---------- videos ----------
-# Each tour runs twice: once recorded (screenshots during a recording spoil its frames) and once taking the stills.
+# Each video is recorded first; its poster (the first frame) is then taken apart (screenshots spoil a recording).
 
 def tour_resumen(page: Page, still) -> None:
     still()
@@ -203,7 +227,7 @@ def tour_sueno(page: Page, still) -> None:
     page.wait_for_timeout(1300)
     still()
     for _ in range(3):
-        page.click('#sheet .shnav button[aria-label="Anterior"]')
+        page.click(f'#sheet .shnav button[aria-label="{TXT["prev"]}"]')
         page.wait_for_timeout(1100)
         still()
 
@@ -286,9 +310,9 @@ def tour_historial(page: Page, still) -> None:   # History → Years, All, Attem
     still()
     swipe(page, y=600, ms=1200)
     still()
-    tap(page, '#v-historial button.lg:has-text("Pesada diaria")', 850)
+    tap(page, f'#v-historial button.lg:has-text("{TXT["daily"]}")', 850)
     still()
-    tap(page, '#v-historial button.lg:has-text("Pesada diaria")', 850)
+    tap(page, f'#v-historial button.lg:has-text("{TXT["daily"]}")', 850)
     still()
     swipe(page, y=600, ms=1200)
     still()
@@ -339,22 +363,18 @@ VIDEOS = [("video-resumen", "resumen", "gen", tour_resumen), ("video-peso", "pes
 def open_view(browser, url: str, state: Path, view: str, tab: str | None, video_dir: str | None = None) -> Page:
     page = new_page(browser, state, PHONE, video_dir=video_dir)
     page.goto(url + "/#" + view)
+    translated(page)
     settle(page, 2000)
     go(page, view, tab, 1000)
     return page
 
 
-def encode(raw: Path, base: Path, start: float, length: float) -> None:
-    """Trims the loading part and writes <base>.webm (VP9) and <base>.mp4 (H.264); without ffmpeg, the raw WebM."""
-    ff = shutil.which("ffmpeg")
-    if not ff:
-        shutil.copy(raw, base.with_suffix(".webm"))
-        return
+def encode(raw: Path, mp4: Path, start: float, length: float) -> None:
+    """Trims the loading part and writes the MP4 (H.264, no audio, ready to stream)."""
+    ff = shutil.which("ffmpeg") or sys.exit("ffmpeg is needed to encode the videos.")
     cut = ["-ss", f"{start:.2f}", "-t", f"{length:.2f}", "-i", str(raw), "-an", "-vf", "fps=30,crop=390:844:0:0,scale=780:1688:flags=lanczos"]   # the page sits in the top-left 390x844 of the recording
-    subprocess.run([ff, "-y", "-loglevel", "error", *cut, "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", "38",
-                    "-row-mt", "1", str(base.with_suffix(".webm"))], check=True)
-    subprocess.run([ff, "-y", "-loglevel", "error", *cut, "-c:v", "libx264", "-preset", "slow", "-crf", "24",
-                    "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(base.with_suffix(".mp4"))], check=True)
+    subprocess.run([ff, "-y", "-loglevel", "error", *cut, "-c:v", "libx264", "-preset", "slow", "-crf", "27",
+                    "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(mp4)], check=True)
 
 
 def videos(browser, url: str, state: Path, out: Path) -> None:
@@ -369,19 +389,14 @@ def videos(browser, url: str, state: Path, out: Path) -> None:
         length = time.monotonic() - t0 - start
         video = page.video
         page.context.close()
-        encode(Path(video.path()), out / name, start, length)
+        encode(Path(video.path()), out / f"{name}{SFX}.mp4", start, length)
         shutil.rmtree(tmp, ignore_errors=True)
-        # the stills, the same tour without recording
+        # the poster: the first frame of the tour, without recording
         page = open_view(browser, url, state, view, tab)
-        n = [0]
-
-        def still():
-            page.wait_for_timeout(250)
-            n[0] += 1
-            save_webp(page.screenshot(), out / f"{name}-{n[0]}.webp", 1170, 78)
-        tour(page, still)
+        page.wait_for_timeout(250)
+        save_webp(page.screenshot(), out / f"{name}{SFX}-1.webp", 1170, 78)
         page.context.close()
-        print(f"   {name}: {length:.1f} s, {n[0]} stills")
+        print(f"   {name}{SFX}: {length:.1f} s")
 
 
 def main() -> None:
@@ -389,20 +404,31 @@ def main() -> None:
     ap.add_argument("--url", default="http://localhost:8765")
     ap.add_argument("--out", default=str(ROOT / "src" / "frontend" / "landing" / "media"))
     ap.add_argument("--only", choices=["shots", "videos"])
+    ap.add_argument("--lang", choices=sorted(LOCALES), default="es", help="language of the app (default es)")
     a = ap.parse_args()
+    global SFX, TXT
+    SFX, TXT = ("" if a.lang == "es" else "-" + a.lang), TEXTS[a.lang]
+    COMMON["locale"] = LOCALES[a.lang]
     password = os.environ.get("DEMO_PASSWORD") or sys.exit("Set DEMO_PASSWORD (printed by tools/demo_data.py).")
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as p, tempfile.TemporaryDirectory() as tmp:
-        browser = p.chromium.launch(args=["--lang=es-ES"])
+        browser = p.chromium.launch(args=[f"--lang={LOCALES[a.lang]}"])
         state = Path(tmp) / "state.json"
-        login(browser, a.url.rstrip("/"), password, state)
-        if a.only != "videos":
-            print("Screenshots:")
-            screenshots(browser, a.url.rstrip("/"), state, out)
-        if a.only != "shots":
-            print("Videos:")
-            videos(browser, a.url.rstrip("/"), state, out)
+        url = a.url.rstrip("/")
+        login(browser, url, password, state, a.lang)
+        try:
+            if a.only != "videos":
+                print("Screenshots:")
+                screenshots(browser, url, state, out)
+            if a.only != "shots":
+                print("Videos:")
+                videos(browser, url, state, out)
+        finally:
+            if a.lang != "es":   # the demo account goes back to Spanish
+                page = new_page(browser, state, PHONE)
+                set_lang(page, url, "es")
+                page.context.close()
         browser.close()
     total = sum(f.stat().st_size for f in out.iterdir() if f.is_file())
     print(f"{out}: {total / 1e6:.1f} MB")
