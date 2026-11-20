@@ -4,7 +4,8 @@
     DATA_DIR=/path/to/empty/dir .venv/bin/python tools/demo_data.py
 
 Never point DATA_DIR at real data: the tool refuses to run if the account «demo» already exists.
-The account («demo», Alex García, Spanish) gets a random password, printed once.
+The account («demo», Alex García, Spanish) gets a random password, printed once (or DEMO_PASSWORD, for unattended
+runs such as the landing-media workflow).
 
 The data is stored the same way the real sources store it, so the app shows it exactly as with real data:
 - sheet tabs (src/backend/app/sheets/tabs.py) as Withings and Health Auto Export write them: weigh-ins with body
@@ -342,7 +343,7 @@ def main() -> None:
     demo.heart()
     demo.mood()
     demo.drop_future()
-    password = secrets.token_urlsafe(12)
+    password = os.environ.get("DEMO_PASSWORD") or secrets.token_urlsafe(12)
     with db.tx() as con:
         if users.get_by_username(con, "demo"):
             raise SystemExit("The account «demo» already exists in this DATA_DIR: use a new, empty directory.")

@@ -1,0 +1,77 @@
+name: 🎬 Landing media
+
+# Records the landing page's videos and screenshots again whenever the app's layout changes, so the landing page always
+# shows the latest version of the app: one phone video per tab of each module (read from the app: a new module or tab
+# gets its own entry), the desktop ones and the colour themes, in Spanish and English, from a SYNTHETIC demo account
+# (tools/demo_data.py; never real data). The files and their manifest.json go to the "landing-media" release, from
+# which tools/deploy.sh (tools/deploy-landing-media.sh) copies them to the NAS when their build changed.
+on:
+  push:
+    branches: [main, "[0-9]+.[0-9]+.[0-9]+"]
+    paths:
+      - "src/frontend/app/**"
+      - "src/frontend/i18n/**"
+      - "src/frontend/common/themes.css"
+      - "src/backend/app/web/page.py"
+      - "tools/landing_capture.py"
+      - "tools/demo_data.py"
+      - ".github/workflows/landing-media.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: bodylens-landing-media
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    env:
+      TZ: Europe/Madrid
+      COOKIE_SECURE: "0"
+      SCHEDULER_ENABLED: "0"
+      PUBLIC_URL: http://localhost:8765
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+      - name: Tools (ffmpeg, fonts, Playwright)
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q ffmpeg fonts-noto-color-emoji fonts-noto-cjk
+          pip install -q -e . playwright pillow
+          python -m playwright install --with-deps chromium
+          (cd src/frontend && npm ci --silent)
+      - name: Where the demo account and the media go
+        run: |
+          { echo "DEMO_PASSWORD=$(python -c 'import secrets;print(secrets.token_urlsafe(16))')"
+            echo "DATA_DIR=$RUNNER_TEMP/demo"; echo "MEDIA=$RUNNER_TEMP/media"; } >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/demo" "$RUNNER_TEMP/media"
+      - name: Record (Spanish and English)
+        run: |
+          DEMO_PASSWORD="$DEMO_PASSWORD" python tools/demo_data.py
+          (cd src/backend && python -m uvicorn app.main:app --host 127.0.0.1 --port 8765 > "$RUNNER_TEMP/server.log" 2>&1 &)
+          for i in $(seq 60); do curl -sf http://localhost:8765/healthz >/dev/null && break; sleep 1; done
+          for lang in es en; do
+            python tools/landing_capture.py --out "$MEDIA" --lang $lang
+            python tools/landing_capture.py --out "$MEDIA" --lang $lang --tabs
+          done
+          ls "$MEDIA" | wc -l; du -sh "$MEDIA"
+      - name: Server log
+        if: failure()
+        run: tail -n 100 "$RUNNER_TEMP/server.log" || true
+      - name: Publish to the landing-media release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NOTES="Videos and screenshots of the landing page, recorded from a synthetic demo account whenever the app changes (manifest.json lists modules and tabs). Not a version: tools/deploy.sh copies them to the server."
+          gh release view landing-media >/dev/null 2>&1 || gh release create landing-media --prerelease --title "Landing media (automatic)" --notes "$NOTES" --target "$GITHUB_SHA"
+          gh release upload landing-media "$MEDIA"/* --clobber
+          # files the new recording no longer makes (a removed module or tab) leave the release
+          for a in $(gh release view landing-media --json assets -q '.assets[].name'); do [ -e "$MEDIA/$a" ] || gh release delete-asset landing-media "$a" -y; done

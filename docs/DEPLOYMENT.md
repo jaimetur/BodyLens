@@ -138,8 +138,14 @@ Google Play subscriptions. It asks for the server address the first time (`https
   is over is read-only for 30 days (no new data, no synchronisation, Health Auto Export / Health Connect posts
   refused), gets three emails (at once, a week before and the day before) and is then deleted (administrators never).
 - **Landing page**: visitors who are not signed in see `src/frontend/landing/index.html` at `/`. Its screenshots and
-  videos (`src/frontend/landing/media/`) are made from a synthetic demo account with `tools/demo_data.py` and
-  `tools/landing_capture.py` (Playwright and ffmpeg on the development machine, not in the image).
+  videos are made from a synthetic demo account with `tools/demo_data.py` and `tools/landing_capture.py` (Playwright
+  and ffmpeg, not in the image): one phone video per tab of each module (`--tabs`, which also writes `manifest.json`,
+  the modules and tabs the landing page shows, read from the app), plus the hero, desktop and theme media (without
+  `--tabs`), in Spanish and English (`--lang`). The workflow **🎬 Landing media** (`.github/workflows/landing-media.yml`)
+  records them all again whenever the app's page, its translations or themes change (or by hand from Actions) and
+  leaves them in the `landing-media` release; `tools/deploy.sh` then copies them to `<DATA_DIR>/landing-media` on the
+  NAS (`tools/deploy-landing-media.sh`, only when their build changed), which the server serves before the copy in
+  `src/frontend/landing/media/`.
 
 ## Backup
 

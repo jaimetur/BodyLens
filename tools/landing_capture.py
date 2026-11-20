@@ -53,11 +53,8 @@ PHONE_VF = "fps=30,crop=390:844:0:0,scale=780:1688:flags=lanczos"   # the page s
 DESK_VF = "fps=24,crop=1440:900:0:0"
 
 # (file name, view, tab or None): phone screenshots, the top of the screen as a user sees it
-SHOTS = [("resumen", "resumen", "gen"), ("peso-evolucion", "peso", "evo"), ("peso-calendario", "peso", "cal"),
-         ("cuerpo-bascula", "composicion", None), ("cuerpo-corazon", "corazon", None), ("actividad-hoy", "actividad", "hoy"),
-         ("actividad-evolucion", "actividad", "evo"), ("sueno-noche", "sueno", "hoy"), ("sueno-saldo", "sueno", "banco"),
-         ("sueno-horario", "sueno", "hor"), ("comidas-hoy", "comidas", "hoy"), ("intimo-animo", "intimo", "animo"),
-         ("historial-intentos", "historial", "int")]
+# phone screenshots the landing page still uses (the hero's back phones); the modules show a video per tab (--tabs)
+SHOTS = [("actividad-evolucion", "actividad", "evo"), ("sueno-noche", "sueno", "hoy")]
 
 
 def evening() -> datetime:
@@ -179,22 +176,7 @@ def screenshots(browser, url: str, state: Path, out: Path) -> None:
         go(page, view, tab)
         save_webp(page.screenshot(), out / f"{name}{SFX}.webp", 1170)
         print("  ", name)
-    go(page, "sueno", "hoy")
-    page.click("svg.dial")
-    settle(page, 1200)
-    save_webp(page.screenshot(), out / f"sueno-reloj{SFX}.webp", 1170)
-    print("   sueno-reloj")
     page.context.close()
-    for scheme, suffix in (("dark", "-dark"),):
-        page = new_page(browser, state, PHONE, scheme)
-        page.goto(url + "/#resumen")
-        translated(page)
-        settle(page, 2500)
-        for name, view, tab in (("resumen", "resumen", "gen"), ("sueno-noche", "sueno", "hoy")):
-            go(page, view, tab)
-            save_webp(page.screenshot(), out / f"{name}{suffix}{SFX}.webp", 1170)
-            print("  ", name + suffix)
-        page.context.close()
     desktop_shots(browser, url, state, out)
 
 
