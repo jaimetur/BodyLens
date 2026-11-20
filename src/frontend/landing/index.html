@@ -454,7 +454,8 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
     car.querySelector('.dots').addEventListener('click', pick);
     if (tabsEl) tabsEl.addEventListener('click', pick);
     // a video moves on when it ends; a picture after a few seconds
-    track.addEventListener('ended', () => { if (seen) go(cur + 1); }, true);
+    // (in a loop: after the last one comes the first again; a single video starts over) while it is on screen
+    track.addEventListener('ended', e => { if (!seen) return; if (slides().length > 1) go(cur + 1); else { e.target.currentTime = 0; e.target.play().catch(() => {}); } }, true);
     function restart() { clearTimeout(timer); const s = slides()[cur]; if (seen && s && !s.querySelector('video') && !matchMedia('(prefers-reduced-motion: reduce)').matches) timer = setTimeout(() => go(cur + 1), 6000); }
     new IntersectionObserver(es => es.forEach(e => { seen = e.isIntersecting; mark(); }), { threshold: .35 }).observe(car);
     setTimeout(() => { dots(); mark(); }, 300);
