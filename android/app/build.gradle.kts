@@ -52,4 +52,5 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.10.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("com.android.billingclient:billing-ktx:7.1.1")
+    implementation("androidx.fragment:fragment-ktx:1.8.5")   // activity results need Fragment 1.3+ (lint)
 }
