@@ -76,6 +76,7 @@
     .join('|') + ')(?=$|[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ])', 'gi');
   function cap(src, w) { return src[0] === src[0].toUpperCase() && src[0] !== src[0].toLowerCase() ? w.charAt(0).toUpperCase() + w.slice(1) : w; }
   function words(s) {
+    if (LANG === 'es') return null;   // the page is written in Spanish: its dates stay as they are («20 de noviembre»)
     // solo en textos con cifras («19 nov», «lun 3») o que son una de esas palabras
     if (!/\d/.test(s) && !WORDS[s.toLowerCase()]) return null;
     var ch = false;

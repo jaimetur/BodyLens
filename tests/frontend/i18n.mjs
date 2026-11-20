@@ -58,4 +58,12 @@ assert.equal(w.blT('3 nov · por salud, trabajo'), '3 Nov · by health, work');
 assert.equal(w.blT('Sopa, trabajo'), 'Sopa, trabajo');
 // weekday initials of the calendars in the chosen language
 assert.equal(w.BL_DS.join(''), 'MTWTFSS');
+// in Spanish the dates of the page are left alone (the «de» is kept)
+const es = new JSDOM(`<!doctype html><html lang="es"><head>
+<script>window.BL_LANG='es';window.BL_I18N=${JSON.stringify({ 'Entrar': 'Entrar' })};</script><script>${runtime}</script></head>
+<body><p id="f">Viernes 20 de noviembre de 2026</p><p id="g">(1 de 7 · 1 h 46)</p></body></html>`, { runScripts: 'dangerously', pretendToBeVisual: true });
+await tick();
+assert.equal(es.window.document.getElementById('f').textContent, 'Viernes 20 de noviembre de 2026');
+assert.equal(es.window.document.getElementById('g').textContent, '(1 de 7 · 1 h 46)');
+assert.equal(es.window.blT('20 de noviembre'), '20 de noviembre');
 console.log('i18n.js: OK');
