@@ -134,9 +134,9 @@ section.sec{padding:100px 0;position:relative}
 footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--faint);font-size:14px}
 footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--ink)}
 /* reveal on scroll */
-.rv{opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
-.rv.in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.blob,.float{animation:none}}
+.rvjs .rv{opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+.rvjs .rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rvjs .rv{opacity:1;transform:none;transition:none}.blob,.float{animation:none}}
 </style>
 </head>
 <body>
@@ -283,6 +283,15 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
 <script>
 /* Media: screenshots (WebP) and short videos (MP4, WebM) of the demo account in /landing/media/. A video becomes a
    slideshow of its stills where no video can play. */
+// reveal on scroll, set up first and on its own: the sections are hidden only once this runs, and they show when
+// they come near the screen (IntersectionObserver, and a check on scroll as a fallback)
+(() => {
+  const els = [...document.querySelectorAll('.rv')];
+  const show = () => els.forEach(el => { if (!el.classList.contains('in') && el.getBoundingClientRect().top < innerHeight * 0.92) el.classList.add('in'); });
+  document.documentElement.classList.add('rvjs');
+  try { const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .05 }); els.forEach(el => io.observe(el)); } catch (e) {}
+  addEventListener('scroll', show, { passive: true }); addEventListener('resize', show); show(); setTimeout(show, 600);
+})();
 (() => {
   const M = '/landing/media/', V = '?v=' + (document.documentElement.dataset.build || '1');   // V: new files after each deployment
   const canPlay = (() => { try { const v = document.createElement('video'); return !!(v.canPlayType('video/mp4') || v.canPlayType('video/webm')); } catch (e) { return false; } })();
@@ -324,7 +333,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
       im.onerror = () => el.closest('.slide') && el.closest('.slide').remove(); el.appendChild(im);
     }
   };
-  document.querySelectorAll('.car').forEach(car => {
+  document.querySelectorAll('.car').forEach(car => { try {
     const names = car.dataset.slides.split(',');
     car.innerHTML = `<button class="arr l" type="button" aria-label="‹">‹</button><div class="track">${names.map(n => `<div class="slide" data-n="${n}"><div class="phone"><div class="scr"></div></div></div>`).join('')}</div><button class="arr r" type="button" aria-label="›">›</button><div class="dots"></div>`;
     const track = car.querySelector('.track');
@@ -348,7 +357,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
     new IntersectionObserver(es => es.forEach(e => { seen = e.isIntersecting; mark(); restart(); }), { threshold: .35 }).observe(car);
     setTimeout(() => { dots(); mark(); }, 300);
     new MutationObserver(() => { dots(); mark(); }).observe(track, { childList: true });
-  });
+  } catch (e) { console.error(e); } });
   // the Google Play link, once the app is published there (Administration → Google Play)
   fetch('/api/play/config').then(r => r.ok ? r.json() : null).then(c => {
     if (!c || !c.storeUrl) return;
@@ -356,9 +365,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
     document.getElementById('playTxt').textContent = (window.blT || String)('Instálala desde Google Play y suscríbete con tu cuenta de Google.');
     document.getElementById('playBtn').textContent = (window.blT || String)('Ver en Google Play');
   }).catch(() => {});
-  // reveal on scroll
-  const rv = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); rv.unobserve(e.target); } }), { threshold: .12 });
-  document.querySelectorAll('.rv').forEach(el => rv.observe(el));
   addEventListener('scroll', () => document.getElementById('top').classList.toggle('sc', scrollY > 10), { passive: true });
   document.querySelectorAll('.lang [data-l]').forEach(a => a.classList.toggle('on', a.dataset.l === document.documentElement.lang));
 })();
