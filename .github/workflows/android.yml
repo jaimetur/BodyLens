@@ -56,14 +56,15 @@ jobs:
         run: |
           cp android/app/build/outputs/apk/full/release/app-full-release.apk bodylens-android.apk
           cp android/app/build/outputs/apk/bridge/release/app-bridge-release.apk bodylens-bridge.apk
+          cp android/app/build/outputs/bundle/fullRelease/app-full-release.aab bodylens-android.aab
           TITLE="Android app (rolling build)"
-          NOTES="Latest APKs of the Android apps, rebuilt on every change in android/: bodylens-android.apk is the whole BodyLens app, bodylens-bridge.apk is BodyLens Bridge (it only sends Health Connect data). It is a rolling build (hence a pre-release); each version's files are attached to its own vX.Y.Z release."
+          NOTES="Latest APKs of the Android apps, rebuilt on every change in android/: bodylens-android.apk is the whole BodyLens app, bodylens-bridge.apk is BodyLens Bridge (it only sends Health Connect data); bodylens-android.aab is the whole app for Google Play. It is a rolling build (hence a pre-release); each version's files are attached to its own vX.Y.Z release."
           if gh release view android-latest >/dev/null 2>&1; then
             gh release edit android-latest --title "$TITLE" --notes "$NOTES" --prerelease
           else
             gh release create android-latest --prerelease --title "$TITLE" --notes "$NOTES"
           fi
-          gh release upload android-latest bodylens-android.apk bodylens-bridge.apk --clobber
+          gh release upload android-latest bodylens-android.apk bodylens-bridge.apk bodylens-android.aab --clobber
           echo "build ${{ github.run_number }} · ${GITHUB_SHA::7}" > android-build.txt
           gh release upload android-latest android-build.txt --clobber
       - name: Attach to the version release
