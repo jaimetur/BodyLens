@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">BodyLens</string>
     <string name="intro">Sends your Health Connect data (activity, heart, sleep, workouts, cycle…) to your BodyLens server every hour.</string>
     <string name="hc_missing">Health Connect is not available on this phone. Install or update it from Google Play.</string>
     <string name="hc_install">Open Health Connect in Google Play</string>
     <string name="step1">1 · Sending address</string>
     <string name="url_label">Address</string>
-    <string name="url_help">Easiest: on this phone, open BodyLens → Your account → Data sources and tap \"Set up the Android app\"; it fills this in for you. Or copy the address from there. It contains a secret key: do not share it.</string>
+    <string name="url_help">Easiest: on this phone, open BodyLens → Your account → Data sources and tap \"Set up BodyLens Bridge\"; it fills this in for you. Or copy the address from there. It contains a secret key: do not share it.</string>
     <string name="step2">2 · Permissions</string>
     <string name="perm_count">Data types allowed: %1$d of %2$d</string>
     <string name="perm_button">Grant Health Connect permissions</string>

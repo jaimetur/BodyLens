@@ -56,7 +56,8 @@ src/frontend/
   legal/                    the page that shows the legal texts
   i18n/                     translator, English catalog and one file per language
   package.json              libraries served without CDN (xlsx, jspdf, html2canvas-pro) and jsdom for the tests
-android/                    Android app: the web app in a native shell, Health Connect and Google Play subscriptions
+android/                    Android apps: BodyLens (web app in a native shell, Health Connect, Google Play subscriptions)
+                            and BodyLens Bridge (only sends Health Connect data), two flavours of the same code
 assets/branding/            icons and logo (do not change)
 tests/<module>/             tests of each module (pytest) and tests/frontend/*.mjs (page and translator in jsdom)
 help/en/                    user help, one file per module (English; translated automatically in the app)

@@ -47,21 +47,23 @@ jobs:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: gradle --no-daemon assembleRelease bundleRelease   # APK to install directly, AAB for Google Play
+        # two apps: BodyLens (the whole app: APK to install directly, AAB for Google Play) and BodyLens Bridge (APK)
+        run: gradle --no-daemon assembleFullRelease bundleFullRelease assembleBridgeRelease
       - name: Publish to the rolling android-latest pre-release
         if: ${{ !inputs.release_tag }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cp android/app/build/outputs/apk/release/app-release.apk bodylens-android.apk
+          cp android/app/build/outputs/apk/full/release/app-full-release.apk bodylens-android.apk
+          cp android/app/build/outputs/apk/bridge/release/app-bridge-release.apk bodylens-bridge.apk
           TITLE="Android app (rolling build)"
-          NOTES="Latest APK of the BodyLens Android app, rebuilt on every change in android/. It is a rolling build (hence a pre-release); each version's APK is attached to its own vX.Y.Z release."
+          NOTES="Latest APKs of the Android apps, rebuilt on every change in android/: bodylens-android.apk is the whole BodyLens app, bodylens-bridge.apk is BodyLens Bridge (it only sends Health Connect data). It is a rolling build (hence a pre-release); each version's files are attached to its own vX.Y.Z release."
           if gh release view android-latest >/dev/null 2>&1; then
             gh release edit android-latest --title "$TITLE" --notes "$NOTES" --prerelease
           else
             gh release create android-latest --prerelease --title "$TITLE" --notes "$NOTES"
           fi
-          gh release upload android-latest bodylens-android.apk --clobber
+          gh release upload android-latest bodylens-android.apk bodylens-bridge.apk --clobber
           echo "build ${{ github.run_number }} · ${GITHUB_SHA::7}" > android-build.txt
           gh release upload android-latest android-build.txt --clobber
       - name: Attach to the version release
@@ -69,6 +71,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cp android/app/build/outputs/apk/release/app-release.apk "bodylens-android-${{ inputs.release_tag }}.apk"
-          cp android/app/build/outputs/bundle/release/app-release.aab "bodylens-android-${{ inputs.release_tag }}.aab"
-          gh release upload "${{ inputs.release_tag }}" "bodylens-android-${{ inputs.release_tag }}.apk" "bodylens-android-${{ inputs.release_tag }}.aab" --clobber
+          T="${{ inputs.release_tag }}"
+          cp android/app/build/outputs/apk/full/release/app-full-release.apk "bodylens-android-$T.apk"
+          cp android/app/build/outputs/bundle/fullRelease/app-full-release.aab "bodylens-android-$T.aab"
+          cp android/app/build/outputs/apk/bridge/release/app-bridge-release.apk "bodylens-bridge-$T.apk"
+          gh release upload "$T" "bodylens-android-$T.apk" "bodylens-android-$T.aab" "bodylens-bridge-$T.apk" --clobber

@@ -27,6 +27,22 @@ android {
         }
     }
 
+    // two apps from the same code: the whole BodyLens app, and BodyLens Bridge, which only sends Health Connect data
+    // (the first app: no web app, no subscriptions). Both can be installed at the same time.
+    flavorDimensions += "app"
+    productFlavors {
+        create("full") {
+            dimension = "app"
+            applicationId = "app.bodylens.android"
+            resValue("string", "app_name", "BodyLens")
+        }
+        create("bridge") {
+            dimension = "app"
+            applicationId = "app.bodylens.bridge"
+            resValue("string", "app_name", "BodyLens Bridge")
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false

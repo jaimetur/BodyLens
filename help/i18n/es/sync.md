@@ -1,4 +1,4 @@
-<!-- en: 79ba07543b9f0b9f -->
+<!-- en: 6bfabd4ab383ab20 -->
 # Sincronización
 
 BodyLens no te pide que escribas tus datos: los recibe de tu báscula, tu móvil y tu reloj. Solo tienes que conectar
@@ -151,8 +151,10 @@ Android y una pantalla de inicio.
 Dentro de la app, **Tu cuenta → Fuentes de datos** muestra el estado de Health Connect (permisos concedidos y último
 envío) con **Enviar ahora**, **Permisos de Health Connect** y **Cambiar el servidor**.
 
-Con una versión antigua de la app que solo envía datos, pulsa **Configurar la app de Android** en **Tu cuenta →
-Fuentes de datos** desde el navegador del móvil, o copia la dirección con **Copiar la dirección** y pégala en la app.
+**BodyLens Bridge** es una segunda app, más pequeña, para quien usa BodyLens en el navegador: solo envía tus datos
+de Health Connect (`/android-bridge.apk`). Instálala, abre **Tu cuenta → Fuentes de datos** en el navegador del móvil
+y pulsa **Configurar BodyLens Bridge**: se abre ya unida a tu cuenta y te pide los permisos. O copia la dirección con
+**Copiar la dirección** y pégala en la app. No la necesitas si usas la app de BodyLens.
 
 La primera vez manda los últimos 30 días; después, cada hora, lo que haya nuevo. La app muestra la hora y el
 resultado del último envío, y en BodyLens el recuadro pasa a **recibiendo**.

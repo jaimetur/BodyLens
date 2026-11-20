@@ -1,4 +1,4 @@
-<!-- en: 621d7e0658195146 -->
+<!-- en: 39d1e0a1bb9bd82a -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -53,6 +53,7 @@
   - Todo BodyLens en el móvil: la app web del servidor en una carcasa nativa, así que cada cambio del servidor se ve en ella al momento, con lo que una página web no puede hacer sola: la dirección del servidor al empezar, una pantalla de inicio y otra sin conexión, descargas de PDF y copias, elegir archivos para importar, el botón atrás de Android (primero cierra lo que está abierto), los bordes del sistema reservados para deslizar y las barras del color del tema.
   - Al entrar, la app se une sola a la cuenta y pide los permisos de Health Connect; Tu cuenta → Fuentes de datos muestra el estado de Health Connect con **Enviar ahora**, **Permisos de Health Connect** y **Cambiar el servidor**.
   - Envía por horas pasos, distancia, pisos, energía, frecuencia cardiaca, HRV, SpO2, respiración, VO2 máx, sueño con fases, entrenamientos, ciclo y actividad sexual, a la misma dirección de envío que Health Auto Export y en el mismo formato.
+  - **BodyLens Bridge**, una segunda app hecha con el mismo código, solo envía los datos de Health Connect (para quien usa BodyLens en el navegador); se pueden tener las dos instaladas, y Tu cuenta → Fuentes de datos → **Configurar BodyLens Bridge** la abre ya unida a la cuenta (`/android-bridge.apk`).
   - El APK y el AAB para Google Play los construye GitHub Actions; el APK también se descarga desde el servidor (`/android.apk`, enlazado desde la página de presentación y Tu cuenta). `tools/android-keystore.sh` crea la clave de firma que necesita Google Play.
   - Todas las pantallas, los mensajes de «sin datos» y la ayuda explican el camino de Android al mismo nivel que el del iPhone.
 - **Datos en el servidor:**

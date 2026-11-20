@@ -108,7 +108,10 @@ every server deployment updates the app too), plus Health Connect (it posts to t
 address, `/api/ingest/hae/<token>`, in the same JSON format), downloads, the file picker, Android's back button and
 Google Play subscriptions. It asks for the server address the first time (`https://bodylens.jaimetur.cloud` by default).
 
-- Every push that changes `android/` is built by GitHub Actions (`.github/workflows/android.yml`) and the APK is left in the
+- Two apps come from the same code (Gradle flavours): `full` is BodyLens (`app.bodylens.android`) and `bridge` is
+  BodyLens Bridge (`app.bodylens.bridge`), which only sends Health Connect data; the server serves them at
+  `/android.apk` and `/android-bridge.apk`.
+- Every push that changes `android/` is built by GitHub Actions (`.github/workflows/android.yml`) and the APKs are left in the
   repository's `android-latest` release. A version release (`🚀 Release`) attaches the APK and the AAB (for Google Play).
 - `tools/deploy-android.sh` waits for that build, downloads the APK and leaves it on the NAS at
   `/volume1/docker/data/bodylens/downloads/bodylens-android.apk`; the server serves it at `/android.apk`.

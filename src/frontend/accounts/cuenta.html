@@ -95,14 +95,14 @@
           <div class="src-h"><b>Apple Salud / Android</b> <span class="small">(Health Auto Export o Health Connect)</span><span class="pill" id="hSt">—</span></div>
           <p class="small" id="hInfo"></p>
           <p id="hUrlBox" hidden><span class="code" id="hUrl"></span></p>
-          <p class="small applinks">iPhone: <a href="https://apps.apple.com/app/id1115567069" target="_blank" rel="noopener">Health Auto Export</a> (App Store) · Android: <a href="/android.apk" target="_top">BodyLens app</a> + <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata" target="_blank" rel="noopener">Health Connect</a> (Google Play) · <a href="/help#sync" target="_top">Step-by-step guide</a></p>
+          <p class="small applinks">iPhone: <a href="https://apps.apple.com/app/id1115567069" target="_blank" rel="noopener">Health Auto Export</a> (App Store) · Android: <a href="/android.apk" target="_top">BodyLens app</a> o <a href="/android-bridge.apk" target="_top">BodyLens Bridge</a> + <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata" target="_blank" rel="noopener">Health Connect</a> (Google Play) · <a href="/help#sync" target="_top">Step-by-step guide</a></p>
           <div id="hNative" hidden>
             <p class="small"><b>Health Connect (esta app):</b> <span id="hnSt">—</span></p>
             <div class="row"><button id="hnSync" type="button">Enviar ahora</button><button class="ghost" id="hnPerm" type="button">Permisos de Health Connect</button><button class="ghost" id="hnSrv" type="button">Cambiar el servidor</button><span class="msg" id="hnMsg"></span></div>
           </div>
           <div id="hAndroidSetup" hidden>
-            <p class="small"><b>Android:</b> instala <a href="/android.apk" target="_top">la app de BodyLens</a> y pulsa este botón en el mismo móvil: la app se abre ya configurada con tu dirección y solo te pide los permisos de Health Connect. Después envía tus datos cada hora ella sola.</p>
-            <div class="row"><a class="btn" id="hSetup" href="#" target="_top">Configurar la app de Android</a></div>
+            <p class="small"><b>Android:</b> la <a href="/android.apk" target="_top">app de BodyLens</a> se une sola a tu cuenta al entrar. Si prefieres usar BodyLens en el navegador, instala <a href="/android-bridge.apk" target="_top">BodyLens Bridge</a> (solo envía tus datos de Health Connect) y pulsa este botón en el mismo móvil: se abre ya configurada y solo te pide los permisos. Después envía tus datos cada hora ella sola.</p>
+            <div class="row"><a class="btn" id="hSetup" href="#" target="_top">Configurar BodyLens Bridge</a></div>
           </div>
           <p class="small" id="hAndroidHint" hidden>¿Tienes un móvil Android? Abre esta página en él para configurar la app de BodyLens con un solo toque.</p>
           <div class="row"><button class="ghost" id="hCopy" type="button" hidden>Copiar la dirección</button><button class="ghost" id="hNew" type="button">Crear mi dirección de envío</button><span class="msg" id="hMsg"></span></div>
@@ -180,8 +180,8 @@ async function loadSources() {
   const apk = !!(h.url && S.androidApk);   // the server has the app to download
   $('hAndroidSetup').hidden = !apk || !android || !!NATIVE; $('hAndroidHint').hidden = !apk || android || !!NATIVE;
   nativeStatus();
-  if (h.url) $('hSetup').href = 'intent://setup?url=' + encodeURIComponent(h.url) + '#Intent;scheme=bodylens;package=app.bodylens.android;S.browser_fallback_url='
-    + encodeURIComponent(location.origin + '/android.apk') + ';end';
+  if (h.url) $('hSetup').href = 'intent://setup?url=' + encodeURIComponent(h.url) + '#Intent;scheme=bodylens;package=app.bodylens.bridge;S.browser_fallback_url='
+    + encodeURIComponent(location.origin + '/android-bridge.apk') + ';end';   // BodyLens Bridge (the whole app links itself)
   $('hNew').textContent = h.url ? 'Cambiar la dirección' : 'Crear mi dirección de envío';
   $('hInfo').innerHTML = h.url
     ? 'Use this same address on the iPhone, as the URL of each Health Auto Export automation (REST API, JSON v2), and on Android, in the BodyLens app.' + (h.last ? ` Último envío ${when(h.last.at)}${h.last.noches ? ` · ${h.last.noches} noches` : ''}${h.last.metricas ? ` · ${h.last.metricas} métricas` : ''}.` : ' Todavía no ha llegado ningún envío.')

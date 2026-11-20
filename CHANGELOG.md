@@ -52,6 +52,7 @@
   - The whole BodyLens on the phone: the server's web app in a native shell, so every change on the server shows in it at once, with what a web page cannot do by itself: the server address on first start, a start screen and an offline screen, downloads of PDF and backups, choosing files to import, Android's back button (it first closes what is open), the system edges kept for swiping, and the bars in the colour of the theme.
   - Signing in links the app to the account on its own and asks for the Health Connect permissions; Your account → Data sources shows Health Connect's state with **Send now**, **Health Connect permissions** and **Change the server**.
   - Sends hourly steps, distance, floors, energy, heart rate, HRV, SpO2, respiration, VO2 max, sleep with stages, workouts, cycle and sexual activity, to the same sending address as Health Auto Export and in the same format.
+  - **BodyLens Bridge**, a second app from the same code, only sends Health Connect data (for those who use BodyLens in the browser); both can be installed together, and Your account → Data sources → **Set up BodyLens Bridge** opens it already linked (`/android-bridge.apk`).
   - The APK and the AAB for Google Play are built by GitHub Actions; the APK is also downloaded from the server (`/android.apk`, linked from the landing page and Your account). `tools/android-keystore.sh` creates the signing key Google Play needs.
   - Every screen, empty state and help page explains the Android path at the same level as the iPhone's.
 - **Data on the server:**

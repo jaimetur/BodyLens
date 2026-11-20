@@ -97,7 +97,7 @@ section.sec{padding:100px 0;position:relative}
 @media (hover:none){.car .arr{display:none}}
 .car .cap{text-align:center;color:var(--muted);font-size:14px;margin-top:8px;min-height:20px}
 /* downloads */
-.src.dl{text-decoration:none;display:flex;flex-direction:column;gap:8px}.src.dl .btn{margin-top:auto;align-self:flex-start}.src.dl[aria-disabled="true"]{cursor:default}
+.src.dl{text-decoration:none;display:flex;flex-direction:column;gap:8px}.src.dl p a{color:var(--ink)}.src.dl .btn{margin-top:auto;align-self:flex-start}.src.dl[aria-disabled="true"]{cursor:default}
 /* sources */
 .srcs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .src{padding:26px;border-radius:22px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line)}
@@ -239,7 +239,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
   <section class="sec" id="descarga" style="padding-top:20px"><div class="wrap">
     <div class="sh rv"><h2>Llévala <span class="grad">en el bolsillo</span></h2><p>La app de Android es igual que la web y, además, envía sola tus datos de Health Connect.</p></div>
     <div class="srcs rv">
-      <a class="src dl" style="--k:var(--good)" href="/android.apk" download><div class="dot"></div><b>Android</b><p>Descarga la app (APK) e instálala. Android te pedirá permitir apps de fuentes externas.</p><span class="btn pri">Descargar la app</span></a>
+      <div class="src dl" style="--k:var(--good)"><div class="dot"></div><b>Android</b><p>Descarga la app (APK) e instálala. Android te pedirá permitir apps de fuentes externas. ¿Solo quieres enviar tus datos de Health Connect y usar BodyLens en el navegador? <a href="/android-bridge.apk" download>BodyLens Bridge</a>.</p><a class="btn pri" href="/android.apk" download>Descargar la app</a></div>
       <a class="src dl" style="--k:var(--a)" id="playLink" aria-disabled="true"><div class="dot"></div><b>Google Play</b><p id="playTxt">Muy pronto en Google Play, con las suscripciones gestionadas por Google.</p><span class="btn sec" id="playBtn">Próximamente</span></a>
       <a class="src dl" style="--k:var(--d)" href="/login"><div class="dot"></div><b>iPhone y ordenador</b><p>Ábrela en el navegador. En el iPhone, en Safari: Compartir → Añadir a pantalla de inicio, y se abre como una app.</p><span class="btn sec">Abrir en el navegador</span></a>
     </div>

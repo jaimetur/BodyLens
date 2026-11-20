@@ -149,8 +149,10 @@ start screen.
 Inside the app, **Your account → Data sources** shows the state of Health Connect (permissions allowed and the last
 sending) with **Send now**, **Health Connect permissions** and **Change the server**.
 
-With an older version of the app that only sends data, press **Set up the Android app** in **Your account → Data
-sources** from the phone's browser, or copy the address with **Copy the address** and paste it in the app.
+**BodyLens Bridge** is a second, smaller app for those who use BodyLens in the browser: it only sends your Health
+Connect data (`/android-bridge.apk`). Install it, open **Your account → Data sources** in the phone's browser and press
+**Set up BodyLens Bridge**: it opens already linked and asks for the permissions. Or copy the address with **Copy the
+address** and paste it in the app. You do not need it if you use the BodyLens app.
 
 The first time it sends the last 30 days; then, every hour, whatever is new. The app shows the time and the result of
 the last submission, and in BodyLens the box changes to **receiving**.

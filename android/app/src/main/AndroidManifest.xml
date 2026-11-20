@@ -37,10 +37,7 @@
             android:theme="@style/Theme.BodyLens.Start"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|uiMode|density"
             android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!-- the launcher icon is set per app (src/full and src/bridge) -->
         </activity>
 
         <!-- Health Connect: permissions and sending (from Your account, or the setup link of a browser) -->
