@@ -47,7 +47,9 @@ jobs:
           sudo apt-get update -q && sudo apt-get install -y -q ffmpeg fonts-noto-color-emoji fonts-noto-cjk
           pip install -q -e . playwright pillow
           python -m playwright install --with-deps chromium
-          (cd src/frontend && npm ci --silent)
+          # the page's libraries (xlsx, jspdf, html2canvas-pro), served from src/frontend/vendor as in the image
+          (cd src/frontend && npm ci --silent && mkdir -p vendor && cp node_modules/xlsx/dist/xlsx.full.min.js \
+            node_modules/jspdf/dist/jspdf.umd.min.js node_modules/html2canvas-pro/dist/html2canvas-pro.min.js vendor/)
       - name: Where the demo account and the media go
         run: |
           { echo "DEMO_PASSWORD=$(python -c 'import secrets;print(secrets.token_urlsafe(16))')"
