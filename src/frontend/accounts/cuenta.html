@@ -33,8 +33,8 @@
           <label>Nombre y apellidos<input id="name" maxlength="80" autocomplete="name"></label>
           <label>Correo (te llegan aquí los avisos)<input id="email" type="email" autocomplete="email"></label>
           <label>Idioma<select id="lang"></select></label>
-          <label>Tamaño del texto<select id="fsize"><option value="sm">Pequeño</option><option value="md">Normal</option><option value="lg">Grande</option><option value="xl">Muy grande</option></select></label>
           <label>Tema<select id="ftheme"><option value="auto">Automático (según el dispositivo)</option><option value="light">Diurno</option><option value="dark">Nocturno</option><option value="sepia">Sepia</option><option value="ocean">Océano</option><option value="forest">Bosque</option><option value="contrast">Alto contraste</option><option value="rose">Rosa</option><option value="lavender">Lavanda</option><option value="mint">Menta</option><option value="sunset">Atardecer</option><option value="graphite">Grafito</option></select></label>
+          <label>Tamaño del texto<select id="fsize"><option value="sm">Pequeño</option><option value="md">Normal</option><option value="lg">Grande</option><option value="xl">Muy grande</option></select></label>
           <label>Bloquear perfiles con PIN tras<select id="flock"><option value="1">1 minuto sin actividad</option><option value="2">2 minutos sin actividad</option><option value="5">5 minutos sin actividad</option><option value="10">10 minutos sin actividad</option><option value="15">15 minutos sin actividad</option><option value="30">30 minutos sin actividad</option></select></label>
         </div>
         <div class="row"><button id="profGo" type="button">Guardar cambios</button><span class="msg" id="profMsg"></span></div>
@@ -60,6 +60,12 @@
           <label>Fecha de nacimiento<input id="pdBirth" type="date"></label>
         </div>
         <div class="row"><button id="pdGo" type="button">Guardar perfil</button><span class="msg" id="pdMsg"></span></div>
+      </section>
+
+      <section class="card">
+        <h2>Privacidad y condiciones</h2>
+        <p class="small">Qué datos guarda BodyLens, para qué, con quién se comparten y tus derechos.</p>
+        <p class="small"><a href="/privacy" target="_blank" rel="noopener">Política de privacidad</a> · <a href="/terms" target="_blank" rel="noopener">Condiciones de uso</a> · <a href="/delete-account" target="_blank" rel="noopener">Borrar una cuenta</a></p>
       </section>
     </div>
 
@@ -113,12 +119,6 @@
           <dt>Resultado</dt><dd id="sRes">—</dd>
         </dl>
         <div class="row"><button class="ghost" id="sGo" type="button">Sincronizar ahora</button><span class="msg" id="sMsg"></span></div>
-      </section>
-
-      <section class="card">
-        <h2>Privacidad y condiciones</h2>
-        <p class="small">Qué datos guarda BodyLens, para qué, con quién se comparten y tus derechos.</p>
-        <p class="small"><a href="/privacy" target="_blank" rel="noopener">Política de privacidad</a> · <a href="/terms" target="_blank" rel="noopener">Condiciones de uso</a> · <a href="/delete-account" target="_blank" rel="noopener">Borrar una cuenta</a></p>
       </section>
 
       <section class="card" id="subCard" hidden>

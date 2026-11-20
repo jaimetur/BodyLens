@@ -46,7 +46,9 @@ code,.code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;bac
 [hidden]{display:none!important}
 
 /* «Tu cuenta»: dos columnas (lo tuyo · tus datos), tarjetas con el estilo de la app */
-main.acct .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,480px),1fr));gap:16px;align-items:start}
+main.acct .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,480px),1fr));gap:16px;align-items:stretch}
+/* both columns end at the same height: their last card takes the remaining space */
+main.acct .col>.card:last-child{flex:1}
 main.acct .col{display:flex;flex-direction:column;gap:16px}
 main.acct .card{margin:0 0 16px;padding:20px 22px 22px;border-radius:18px}
 main.acct .col>.card{margin:0}
