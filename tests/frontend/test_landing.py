@@ -17,8 +17,8 @@ def test_landing_media_only_serves_media(client):
 
 
 def test_landing_language_by_browser_and_switch(client):
-    assert '<html lang="es">' in client.get("/", headers={"accept-language": "es-ES,es;q=0.9"}).text
-    assert '<html lang="en">' in client.get("/", headers={"accept-language": "de-DE,de;q=0.9"}).text
+    assert '<html lang="es"' in client.get("/", headers={"accept-language": "es-ES,es;q=0.9"}).text
+    assert '<html lang="en"' in client.get("/", headers={"accept-language": "de-DE,de;q=0.9"}).text
     r = client.get("/?lang=es", headers={"accept-language": "en-US"})
-    assert '<html lang="es">' in r.text and "bl_lang" in r.headers.get("set-cookie", "") or "lang" in r.headers.get("set-cookie", "")
-    assert '<html lang="es">' in client.get("/", headers={"accept-language": "en-US"}).text   # remembered
+    assert '<html lang="es"' in r.text and "bl_lang" in r.headers.get("set-cookie", "") or "lang" in r.headers.get("set-cookie", "")
+    assert '<html lang="es"' in client.get("/", headers={"accept-language": "en-US"}).text   # remembered

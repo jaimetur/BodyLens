@@ -107,7 +107,9 @@ def landing(request: Request) -> HTMLResponse:
         first = (request.headers.get("accept-language", "").split(",")[0].strip().lower()[:2])
         lang = "es" if first in ("es", "ca", "gl", "eu") else "en"
     r = _page("landing", "index.html", request=request, lang=lang)
-    r.body = r.body.replace(b'<html lang="es">', f'<html lang="{lang}">'.encode(), 1)
+    from app.core import version
+    build = version.current()["build"]
+    r.body = r.body.replace(b'<html lang="es">', f'<html lang="{lang}" data-build="{build}">'.encode(), 1)
     r.headers["content-length"] = str(len(r.body))
     r.headers["vary"] = "accept-language,cookie"
     if lang == "en":   # the description for search engines (the page's texts are translated in the browser)

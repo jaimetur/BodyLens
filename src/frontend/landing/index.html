@@ -284,9 +284,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
 /* Media: screenshots (WebP) and short videos (MP4, WebM) of the demo account in /landing/media/. A video becomes a
    slideshow of its stills where no video can play. */
 (() => {
-  const M = '/landing/media/';
+  const M = '/landing/media/', V = '?v=' + (document.documentElement.dataset.build || '1');   // V: new files after each deployment
   const canPlay = (() => { try { const v = document.createElement('video'); return !!(v.canPlayType('video/mp4') || v.canPlayType('video/webm')); } catch (e) { return false; } })();
-  const stills = n => [1, 2, 3, 4, 5, 6].map(i => `${M}${n}-${i}.webp`);
+  const stills = n => [1, 2, 3, 4, 5, 6].map(i => `${M}${n}-${i}.webp${V}`);
   document.querySelectorAll('[data-media]').forEach(el => {
     const n = el.dataset.media;
     el.innerHTML = '<div class="ph-empty"></div>';
@@ -295,7 +295,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
         const v = document.createElement('video');
         Object.assign(v, { muted: true, loop: true, playsInline: true, autoplay: true, preload: 'metadata' });
         v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.poster = stills(n)[0];
-        v.innerHTML = `<source src="${M}${n}.mp4" type="video/mp4"><source src="${M}${n}.webm" type="video/webm">`;
+        v.innerHTML = `<source src="${M}${n}.mp4${V}" type="video/mp4"><source src="${M}${n}.webm${V}" type="video/webm">`;
         el.appendChild(v);
       } else {
         const s = document.createElement('div'); s.className = 'slides';
@@ -304,7 +304,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
         let i = 0; setInterval(() => { const im = s.querySelectorAll('img'); if (!im.length) return; im[i % im.length].classList.remove('on'); i++; im[i % im.length].classList.add('on'); }, 1600);
       }
     } else {
-      const im = new Image(); im.loading = 'lazy'; im.alt = ''; im.src = M + n + '.webp'; im.onerror = () => im.remove(); el.appendChild(im);
+      const im = new Image(); im.loading = 'lazy'; im.alt = ''; im.src = M + n + '.webp' + V; im.onerror = () => im.remove(); el.appendChild(im);
     }
   });
   // videos play only while they are on screen
@@ -315,12 +315,12 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
     if (n.startsWith('video-')) {
       const v = document.createElement('video');
       Object.assign(v, { muted: true, loop: true, playsInline: true, preload: 'metadata' });   // metadata: a missing video drops its slide
-      v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.poster = M + n + '-1.webp';
-      v.innerHTML = `<source src="${M}${n}.mp4" type="video/mp4"><source src="${M}${n}.webm" type="video/webm">`;
+      v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.poster = M + n + '-1.webp' + V;
+      v.innerHTML = `<source src="${M}${n}.mp4${V}" type="video/mp4"><source src="${M}${n}.webm${V}" type="video/webm">`;
       v.lastChild.addEventListener('error', () => el.closest('.slide') && el.closest('.slide').remove());
       el.appendChild(v);
     } else {
-      const im = new Image(); im.loading = 'lazy'; im.alt = ''; im.src = M + n + '.webp';
+      const im = new Image(); im.loading = 'lazy'; im.alt = ''; im.src = M + n + '.webp' + V;
       im.onerror = () => el.closest('.slide') && el.closest('.slide').remove(); el.appendChild(im);
     }
   };
