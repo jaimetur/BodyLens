@@ -1,4 +1,4 @@
-<!-- en: 4da6aa90b32a718a -->
+<!-- en: 502033339454bc3e -->
 # Termos de utilização
 
 Última atualização: 20 de novembro de 2026.
@@ -13,11 +13,11 @@ Estes termos aplicam-se à utilização do BodyLens neste servidor, através do 
 
 ## Contas e subscrições
 
-- Uma conta pode ser criada de duas formas: por convite ou por um pedido que o administrador aprova (gratuitamente), ou com uma **subscrição paga**, neste site (pagamento com cartão, Google Pay ou Apple Pay através do Stripe) ou na app BodyLens para Android (através do Google Play).
+- Uma conta pode ser criada de duas formas: com um **código de convite** ou ligação do administrador (gratuitamente, enquanto o administrador o decidir), ou com uma **subscrição paga**, neste site (pagamento com cartão, Google Pay ou Apple Pay através do Stripe) ou na app BodyLens para Android (através do Google Play).
 - A subscrição custa **1,49 € por mês** ou **12 € por ano** (1 € por mês), impostos incluídos; a página de pagamento mostra o preço exato na tua moeda antes de pagares. Começa com um **período de teste gratuito de 7 dias**, uma vez por pessoa: se cancelares durante o teste, não é cobrado nada.
 - A subscrição renova-se automaticamente no fim de cada período até a cancelares. Podes cancelá-la a qualquer momento: em A tua conta → Subscrição (site) ou no Google Play → Pagamentos e subscrições (app). Continua ativa até ao fim do período já pago.
 - Os pagamentos, renovações e reembolsos são tratados pelo Stripe ou pelo Google Play de acordo com os seus próprios termos; o BodyLens nunca vê os dados do teu cartão. Os reembolsos seguem as suas políticas de reembolso e a lei do teu país.
-- **Se a subscrição terminar ou um pagamento não for efetuado**, deixas de poder usar a conta até a renovares e és avisado por e-mail **três vezes, com uma semana de intervalo**. Se, **sete dias após o terceiro aviso**, a subscrição continuar sem ser renovada, a conta e todos os seus dados são apagados do servidor. Antes disso podes renová-la, descarregar os teus dados (A tua conta → Dados e cópias) ou apagar tu próprio a conta.
+- **Se a subscrição ou o acesso gratuito terminar, ou um pagamento não for efetuado**, deixas de poder usar a conta até a renovares e és avisado por e-mail **três vezes, com uma semana de intervalo**. Se, **sete dias após o terceiro aviso**, a subscrição continuar sem ser renovada, a conta e todos os seus dados são apagados do servidor. Antes disso podes renová-la, descarregar os teus dados (A tua conta → Dados e cópias) ou apagar tu próprio a conta.
 
 ## Não é aconselhamento médico
 

@@ -42,7 +42,7 @@ def run_once(now: datetime | None = None) -> dict:
     now = now or _now()
     out = {"warned": 0, "deleted": 0, "renewed": 0}
     with db.ro() as con:
-        ids = [r[0] for r in con.execute("SELECT user_id FROM subscriptions UNION SELECT user_id FROM stripe_subs")]
+        ids = [r[0] for r in con.execute("SELECT user_id FROM subscriptions UNION SELECT user_id FROM stripe_subs UNION SELECT user_id FROM grants")]
     for uid in ids:
         try:
             lapsed = billing.expired(uid)

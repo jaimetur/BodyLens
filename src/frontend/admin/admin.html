@@ -56,7 +56,10 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
         <label>Correo<input id="eMail" type="email"></label>
         <label>Nueva contraseña <span class="small">(vacía = no se cambia)</span><input id="ePw" type="password" autocomplete="new-password"></label>
         <label>Repite la contraseña<input id="ePw2" type="password" autocomplete="new-password"></label>
+        <label>Acceso gratuito<select id="eFree"><option value="none">Sin acceso gratuito</option><option value="lifetime">De por vida</option><option value="date">Hasta una fecha</option></select></label>
+        <label id="eFreeL">Fin del acceso gratuito<input id="eFreeD" type="date"></label>
       </div>
+      <p class="small" id="ePlan"></p>
       <div class="row"><button id="eSave" type="button">Guardar</button><button class="ghost" id="eCancel" type="button">Cerrar</button><span class="msg" id="eMsg"></span></div>
     </div>
     <p id="uPw" hidden style="margin-top:14px"></p>
@@ -76,6 +79,10 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
     <div class="row"><button id="iGo" type="button">Crear invitación</button><span class="msg" id="iMsg"></span></div>
     <p id="iLink" hidden><span class="code" id="iUrl"></span> <button class="ghost" id="iCopy" type="button">Copiar</button></p>
     <ul class="list" id="iList"></ul>
+    <h2 style="margin-top:22px">Códigos de invitación</h2>
+    <p>Quien se suscribe con uno de estos códigos tiene cuenta gratis de por vida, sin pagar, hasta que le pongas una fecha de fin en Usuarios → Editar. Da igual cómo se escriban las mayúsculas y las tildes. Uno por línea.</p>
+    <label>Códigos<textarea id="cdList" rows="3" spellcheck="false"></textarea></label>
+    <div class="row"><button id="cdSave" type="button">Guardar</button><span class="msg" id="cdMsg"></span></div>
   </section>
 
   <section class="card" data-panel="correo" hidden>
@@ -183,7 +190,7 @@ async function load() {
   $('wState').textContent = wapp.configured ? 'Configurado: cada cuenta puede conectar su Withings en «Tu cuenta».' : 'Sin configurar.';
   D = acc;
   // usuarios
-  $('uBody').innerHTML = acc.users.map(u => `<tr><td><b>${esc(u.name)}</b> <span class="small">${esc(u.username)}</span>${u.isAdmin ? '<span class="tag adm">admin</span>' : ''}${u.partner ? `<span class="tag">pareja: ${esc(u.partner)}</span>` : ''}<br><span class="small">desde ${when(u.createdAt)}${u.sync && u.sync.lastSync ? ' · sincronizado ' + when(u.sync.lastSync) : ''}</span></td>
+  $('uBody').innerHTML = acc.users.map(u => `<tr><td><b>${esc(u.name)}</b> <span class="small">${esc(u.username)}</span>${u.isAdmin ? '<span class="tag adm">admin</span>' : ''}${u.partner ? `<span class="tag">pareja: ${esc(u.partner)}</span>` : ''}${u.plan && (u.plan.kind === 'gift' || u.plan.gift) ? `<span class="tag">${u.plan.giftUntil ? 'gratis hasta ' + new Date(u.plan.giftUntil).toLocaleDateString('es-ES') : 'gratis de por vida'}</span>` : ''}${u.plan && u.plan.kind === 'web' ? '<span class="tag">suscripción web</span>' : ''}${u.plan && u.plan.kind === 'play' ? '<span class="tag">Google Play</span>' : ''}<br><span class="small">desde ${when(u.createdAt)}${u.sync && u.sync.lastSync ? ' · sincronizado ' + when(u.sync.lastSync) : ''}</span></td>
     <td>${esc(u.email) || '<span class="small">—</span>'}</td>
     <td>${!u.active && u.requestedAt ? '<span class="tag off">pendiente</span>' : `<label class="sw" title="${u.id === acc.me ? 'No puedes desactivar tu propia cuenta' : (u.active ? 'Desactivar la cuenta' : 'Activar la cuenta')}"><input type="checkbox" data-sw="${u.id}" ${u.active ? 'checked' : ''} ${u.id === acc.me ? 'disabled' : ''}><span></span></label><span class="swl">${u.active ? 'Activa' : 'Desactivada'}</span>`}${u.mustChange ? '<br><span class="small">contraseña provisional</span>' : ''}</td>
     <td class="act"><button class="ghost" data-ed="${u.id}" type="button">Editar</button>${u.id === acc.me ? '' : `<button class="ghost" data-adm="${u.id}" type="button">${u.isAdmin ? 'Quitar admin' : 'Hacer admin'}</button>`}<button class="ghost" data-pw="${u.id}" type="button">Restablecer contraseña</button>${u.id === acc.me ? '' : `<button class="danger" data-del="${u.id}" type="button">Borrar</button>`}</td></tr>`).join('');
@@ -206,7 +213,7 @@ const byId = id => D.users.find(u => u.id === +id);
 document.addEventListener('click', async e => {
   const t = e.target.closest('button'); if (!t) return;
   try {
-    if (t.dataset.ed) { EDIT = byId(t.dataset.ed); $('uEditT').textContent = 'Editar ' + EDIT.username; $('eUser').value = EDIT.username; $('eName').value = EDIT.name; $('ePw').value = $('ePw2').value = ''; $('eMail').value = EDIT.email || ''; say($('eMsg'), ''); $('uEdit').hidden = false; $('eName').focus(); }
+    if (t.dataset.ed) { EDIT = byId(t.dataset.ed); $('uEditT').textContent = 'Editar ' + EDIT.username; $('eUser').value = EDIT.username; $('eName').value = EDIT.name; $('ePw').value = $('ePw2').value = ''; $('eMail').value = EDIT.email || ''; editPlan(); say($('eMsg'), ''); $('uEdit').hidden = false; $('eName').focus(); }
     if (t.dataset.adm) { const u = byId(t.dataset.adm); await api('PATCH', `/api/admin/accounts/${u.id}`, { isAdmin: !u.isAdmin }); await load(); }
     if (t.dataset.pw) {
       const u = byId(t.dataset.pw);
@@ -226,11 +233,22 @@ document.addEventListener('click', async e => {
       try { await api('PUT', `/api/admin/users/${t.dataset.save}/bridge`, { sheetId: v('sheetId'), appsScriptUrl: v('appsScriptUrl') }); say(m, 'Guardado.', 'ok'); } catch (err) { say(m, err.message, 'err'); } }
   } catch (err) { alert(err.message); }
 });
+// free access (invitation code or set here): for life, until a day, or none; and how the account pays
+function editPlan() {
+  const p = EDIT.plan || {}, gift = p.kind === 'gift' || p.gift;
+  $('eFree').value = !gift ? 'none' : p.giftUntil ? 'date' : 'lifetime';
+  $('eFreeD').value = p.giftUntil ? new Date(p.giftUntil).toISOString().slice(0, 10) : '';
+  $('eFreeL').hidden = $('eFree').value !== 'date';
+  const pay = p.kind === 'web' ? 'Suscripción web (Stripe)' : p.kind === 'play' ? 'Suscripción de Google Play' : '';
+  $('ePlan').textContent = pay ? `${pay}: ${p.state || '—'}${p.expiry ? ', hasta el ' + new Date(p.expiry).toLocaleDateString('es-ES') : ''}.` : '';
+}
+$('eFree').addEventListener('change', () => { $('eFreeL').hidden = $('eFree').value !== 'date'; });
 $('eSave').addEventListener('click', async () => {
   const pw = $('ePw').value;
   if (pw !== $('ePw2').value) return say($('eMsg'), 'Las dos contraseñas no coinciden.', 'err');
   try {
-    await api('PATCH', `/api/admin/accounts/${EDIT.id}`, { username: $('eUser').value, name: $('eName').value, email: $('eMail').value, password: pw || null });
+    const fv = $('eFree').value, free = fv === 'date' ? ($('eFreeD').value || 'x') : fv;
+    await api('PATCH', `/api/admin/accounts/${EDIT.id}`, { username: $('eUser').value, name: $('eName').value, email: $('eMail').value, password: pw || null, freeUntil: free });
     if (pw && EDIT.id === D.me) return location.reload();   // al cambiar tu propia contraseña se cierra tu sesión
     $('ePw').value = $('ePw2').value = ''; say($('eMsg'), pw ? 'Guardado. Sus sesiones abiertas se han cerrado.' : 'Guardado.', 'ok'); await load();
     EDIT = byId(EDIT.id); if (EDIT) $('uEditT').textContent = 'Editar ' + EDIT.username;
@@ -251,6 +269,12 @@ $('mSave').addEventListener('click', async () => {
     await api('PUT', '/api/admin/mail', { host: $('mHost').value, port: +$('mPort').value || null, security: $('mSec').value, username: $('mUser').value, password: $('mPass').value, from_address: $('mFrom').value, from_name: $('mName').value });
     say($('mMsg'), 'Guardado.', 'ok'); await load();
   } catch (e) { say($('mMsg'), e.message, 'err'); }
+});
+async function loadCodes() { try { $('cdList').value = (await api('GET', '/api/admin/codes')).codes.join('\n'); } catch (e) {} }
+loadCodes();
+$('cdSave').addEventListener('click', async () => {
+  try { const r = await api('PUT', '/api/admin/codes', { codes: $('cdList').value.split('\n') }); $('cdList').value = r.codes.join('\n'); say($('cdMsg'), 'Guardado.', 'ok'); }
+  catch (e) { say($('cdMsg'), e.message, 'err'); }
 });
 async function loadStripe() {
   try {

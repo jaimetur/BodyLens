@@ -43,6 +43,12 @@ CREATE TABLE IF NOT EXISTS subscriptions (
   checked_at INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS grants (
+  user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  code TEXT,
+  until_ms INTEGER,
+  created_at TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS stripe_subs (
   user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
   customer_id TEXT NOT NULL,

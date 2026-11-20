@@ -301,6 +301,18 @@ class Demo:
             y["d"][d.isoformat()] = {"t": t, "s": s, "app": 1}
         return docs
 
+    # ---------- tape measurements (the app's «medidas» document) ----------
+    def measurements(self) -> dict:
+        """Every three weeks since the plan started; they follow the weight (own generator: the rest stays the same)."""
+        r, e = random.Random(7), {}
+        for o in range(PLAN_START_OFFSET, 1, 21):
+            d = self.today + timedelta(days=o)
+            dw = self.weight[d] - 84
+            base = {"cintura": 90 + dw * 1.05, "cadera": 100 + dw * 0.6, "pecho": 102 + dw * 0.5, "cuello": 39 + dw * 0.15,
+                    "brazo": 33.5 + dw * 0.12, "muslo": 58 + dw * 0.3}
+            e[d.isoformat()] = {k: round((v + r.gauss(0, 0.3)) * 2) / 2 for k, v in base.items()}
+        return {"v": 1, "e": e}
+
     def drop_future(self):
         """Removes whatever would happen after the cut-off time of today."""
         for tab, rows in self.tabs.items():
@@ -341,6 +353,7 @@ def main() -> None:
         docstore.put_doc(con, u, docstore.MAIN_COLLECTION, "peso", demo.settings())
         for doc_id, data in demo.meals().items():
             docstore.put_doc(con, u, docstore.MAIN_COLLECTION, doc_id, data)
+        docstore.put_doc(con, u, docstore.MAIN_COLLECTION, "medidas", demo.measurements())
         # as if Health Auto Export had just posted (the «Update» button and the sources status expect it)
         db.set_setting(con, f"hae_last:{u.id}", {"at": db.now_iso(), "metricas": len(demo.tabs[SALUD])})
         store.mark_dirty(con, u.id)

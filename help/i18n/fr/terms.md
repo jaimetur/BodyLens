@@ -1,4 +1,4 @@
-<!-- en: 4da6aa90b32a718a -->
+<!-- en: 502033339454bc3e -->
 # Conditions d'utilisation
 
 Dernière mise à jour : 20 novembre 2026.
@@ -13,11 +13,11 @@ Ces conditions s'appliquent à l'utilisation de BodyLens sur ce serveur, via le 
 
 ## Comptes et abonnements
 
-- Un compte peut être créé de deux manières : sur invitation ou à la suite d'une demande que l'administrateur approuve (gratuitement), ou avec un **abonnement payant**, soit sur ce site web (paiement par carte, Google Pay ou Apple Pay via Stripe), soit dans l'application BodyLens pour Android (via Google Play).
+- Un compte peut être créé de deux manières : avec un **code d'invitation** ou un lien de l'administrateur (gratuitement, tant que l'administrateur le décide), ou avec un **abonnement payant**, soit sur ce site web (paiement par carte, Google Pay ou Apple Pay via Stripe), soit dans l'application BodyLens pour Android (via Google Play).
 - L'abonnement coûte **1,49 € par mois** ou **12 € par an** (1 € par mois), taxes comprises ; la page de paiement affiche le prix exact dans ta devise avant que tu paies. Il commence par un **essai gratuit de 7 jours**, une fois par personne : si tu résilies pendant l'essai, rien n'est facturé.
 - L'abonnement se renouvelle automatiquement à la fin de chaque période jusqu'à ce que tu le résilies. Tu peux le résilier à tout moment : dans Ton compte → Abonnement (site web) ou dans Google Play → Paiements et abonnements (application). Il reste actif jusqu'à la fin de la période déjà payée.
 - Les paiements, renouvellements et remboursements sont gérés par Stripe ou Google Play selon leurs propres conditions ; BodyLens ne voit jamais les données de ta carte. Les remboursements suivent leurs politiques de remboursement et la législation de ton pays.
-- **Si l'abonnement prend fin ou si un paiement n'est pas effectué**, tu ne peux plus utiliser le compte tant que tu ne l'as pas renouvelé, et tu es prévenu par e-mail **trois fois, à une semaine d'intervalle**. Si, **sept jours après le troisième avertissement**, l'abonnement n'a toujours pas été renouvelé, le compte et toutes ses données sont supprimés du serveur. Avant cela, tu peux le renouveler, télécharger tes données (Ton compte → Données et copies) ou supprimer toi-même le compte.
+- **Si l'abonnement ou l'accès gratuit prend fin, ou si un paiement n'est pas effectué**, tu ne peux plus utiliser le compte tant que tu ne l'as pas renouvelé, et tu es prévenu par e-mail **trois fois, à une semaine d'intervalle**. Si, **sept jours après le troisième avertissement**, l'abonnement n'a toujours pas été renouvelé, le compte et toutes ses données sont supprimés du serveur. Avant cela, tu peux le renouveler, télécharger tes données (Ton compte → Données et copies) ou supprimer toi-même le compte.
 
 ## Pas un conseil médical
 

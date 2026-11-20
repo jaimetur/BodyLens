@@ -1,4 +1,4 @@
-<!-- en: c1360a9474c59472 -->
+<!-- en: 55a195fc7dfdfdb0 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -70,9 +70,10 @@
   - Todos los documentos se traducen de antemano a todos los idiomas al arrancar el servidor y se revisan cada 10 minutos: solo se vuelven a traducir los documentos cuyo texto en inglés ha cambiado (su huella), así que la ayuda se abre ya traducida.
 - **Versiones** (adaptado de DriveTest Analyzer): `tools/CreateUpdateRelease.py` crea la rama de la siguiente versión con su número de versión, la versión de Android y el bloque vacío del registro de cambios (inglés y español), la confirma y la sube, o actualiza la versión y la fecha de la versión actual; el flujo **🚀 Release** publica una versión en GitHub con las notas de su bloque del registro de cambios, el código fuente y el APK de Android. El APK continuo de Android se publica como «Android app (rolling build)».
 - **Cuentas de pago:** además de las invitaciones y las peticiones aprobadas, se puede crear una cuenta con una suscripción de 1,49 € al mes o 12 € al año (1 € al mes), con 7 días de prueba gratis: en la web con Stripe (tarjeta, Google Pay o Apple Pay; la cuenta se crea cuando la página de pago confirma la suscripción) o en la app de Android con Google Play. Tu cuenta → Suscripción muestra el plan y permite gestionarlo; cuando una suscripción termina la app pide renovarla, y una cuenta que deja de pagar recibe tres avisos por correo, uno por semana, y se borra con sus datos siete días después del tercero. Administración tiene los ajustes de Google Play y de Stripe.
-- **Página de presentación** en `/` para visitantes: qué hace cada módulo, con capturas y vídeos de la app (hechos con una cuenta de demostración con datos inventados), fuentes, precios, preguntas y alta.
+- **Página de presentación** en `/` para visitantes, en inglés o español (según el idioma del navegador, con un selector EN | ES): qué hace cada módulo, con un carrusel de vídeos y capturas de la app por módulo que se pasa deslizando (hechos con una cuenta de demostración con datos inventados), fuentes, precios, preguntas y alta.
 - **Borrar mi cuenta** en Tu cuenta (con la contraseña): borra la cuenta y todos sus datos y cancela su suscripción.
 - **Páginas legales** (públicas, en todos los idiomas): política de privacidad (`/privacy`), condiciones de uso (`/terms`) y cómo borrar una cuenta (`/delete-account`), con los datos del responsable en Administración → Datos legales; enlazadas desde la página de entrada, Tu cuenta y la app.
+- **Códigos de invitación:** al darse de alta con un código (`INVITACION_AMIGOS` por defecto, en Administración → Invitaciones; dan igual mayúsculas, tildes y espacios) se crea al momento una cuenta gratis, de por vida salvo que un administrador le ponga fecha de fin en Usuarios → Editar → Acceso gratuito. Ya no se piden cuentas: la página de entrada tiene, en lugar de «Pide una», una tarjeta grande **Crear mi cuenta** que abre el alta en un diálogo, con los planes y el código de invitación.
 
 #### 🚀 Mejoras:
 - **Un único importador** (Tu cuenta → Datos y copias) para la copia completa y para el `snap.json` de la versión anterior. Si la copia tiene varios perfiles, eliges cuál importar.

@@ -9,6 +9,7 @@ Only for administrator accounts. It is in "Your account" → **Administration**.
 - **Make admin / Remove admin** and **Delete** (deletes the account and all its data).
 
 ## Access requests
+- Requests made before accounts were created with a subscription or an invitation code (no new ones arrive).
 - List of accounts requested from the sign-in screen, with name, username, email, date and message.
 - **Approve**: the account is activated and the person receives an email with the link to sign in.
 - **Reject**: the request is deleted and the person receives an email.
@@ -17,6 +18,10 @@ Only for administrator accounts. It is in "Your account" → **Administration**.
 ## Invitations
 - **Create invitation**: generates a single-use sign-up link (optional: a note to remember who it is for). The link is shown only once: copy it.
 - The list shows whether each invitation is pending, used (and by whom) or expired.
+
+## Invitation codes
+- In the Invitations tab, **Invitation codes**: one per line (`INVITACION_AMIGOS` by default). Whoever signs up with one gets a free account for life, without paying; capitals, accents and spaces do not matter.
+- **Users → Edit → Free access**: none, **For life** or **Until a date** (the end of that day). When it is over, the account is treated like an unpaid subscription: it can only renew, download its data or delete itself, it gets three warnings a week apart and is deleted seven days after the third one. The list shows each account's free access and subscription.
 
 ## Email
 - Email is sent from the mailbox configured on the server (`SMTP_*` variables). **Send me a test email** checks that it works.

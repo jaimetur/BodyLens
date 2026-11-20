@@ -12,11 +12,11 @@ These terms apply to the use of BodyLens on this server, through the website or 
 
 ## Accounts and subscriptions
 
-- An account can be created in two ways: by invitation or a request the administrator approves (free of charge), or with a **paid subscription**, either on this website (paid by card, Google Pay or Apple Pay through Stripe) or in the BodyLens app for Android (through Google Play).
+- An account can be created in two ways: with an **invitation code** or link from the administrator (free of charge, for as long as the administrator decides), or with a **paid subscription**, either on this website (paid by card, Google Pay or Apple Pay through Stripe) or in the BodyLens app for Android (through Google Play).
 - The subscription costs **€1.49 per month** or **€12 per year** (€1 per month), taxes included; the payment page shows the exact price in your currency before you pay. It starts with a **7-day free trial**, once per person: if you cancel during the trial, nothing is charged.
 - The subscription renews automatically at the end of each period until you cancel it. You can cancel it at any time: in Your account → Subscription (website) or in Google Play → Payments & subscriptions (app). It stays active until the end of the period already paid.
 - Payments, renewals and refunds are handled by Stripe or Google Play under their own terms; BodyLens never sees your card details. Refunds follow their refund policies and the law of your country.
-- **If the subscription ends or a payment is not made**, you can no longer use the account until you renew it, and you are warned by email **three times, a week apart**. If **seven days after the third warning** the subscription has still not been renewed, the account and all its data are deleted from the server. Before that you can renew, download your data (Your account → Data and backups) or delete the account yourself.
+- **If the subscription or the free access ends, or a payment is not made**, you can no longer use the account until you renew it, and you are warned by email **three times, a week apart**. If **seven days after the third warning** the subscription has still not been renewed, the account and all its data are deleted from the server. Before that you can renew, download your data (Your account → Data and backups) or delete the account yourself.
 
 ## Not medical advice
 

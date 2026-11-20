@@ -5,19 +5,17 @@ Each person has their own BodyLens account, with their data kept separate from e
 ## Signing in
 - **Sign-in screen** (`/login`): your username or the email of your account, and your password. If you fail several times in a row, you have to wait a few minutes.
 - **Session**: lasts 90 days in that browser. To sign out, go to "Your account" → **Sign out** (this also deletes the data stored in that browser).
-- **Pending account**: if your request is not approved yet, signing in tells you that you will get an email once it is.
 - **Initial account of a new deployment**: while the `admin` account keeps its default password (`admin123`), the sign-in screen shows it with a **Use** button. It disappears once you change the password.
 
 ## Creating an account with a subscription
-- On the website: the home page (`/`) shows what BodyLens does and its prices; **Start free** opens the sign-up (`/alta`). In the Android app: on the sign-in screen, **create it with a subscription**.
+- On the sign-in screen (website and Android app), the **Create my account** card opens the sign-up; on the website, the home page (`/`) shows what BodyLens does and its prices, and **Start free** opens it too (`/alta`).
 - **Plans**: €1.49 per month or €12 per year (€1 per month), both with a **7-day free trial**. On the website you pay by card, Google Pay or Apple Pay (on Stripe's secure page); in the Android app, through Google Play.
-- **Information requested**: full name, email, username and password, and accepting the [terms](/terms) and the [privacy policy](/privacy). The account is created as soon as the payment page confirms the subscription, and you are signed in.
+- **Information requested**: full name, email, username and password, an **invitation code** if you have one, and accepting the [terms](/terms) and the [privacy policy](/privacy). The account is created as soon as the payment page confirms the subscription, and you are signed in.
+- **Invitation code**: with a valid code the account is **free** and is created at once, without paying, for life unless an administrator sets an end date for it. Capitals, accents and spaces do not matter.
 - If a subscription ends or a payment fails, the app asks you to renew it (`/alta`) and you are warned by email three times, a week apart; seven days after the third warning, the account and its data are deleted.
 
 ## Requesting an account
-- On the sign-in screen, **Don't have an account? Ask for one**.
-- **Information requested**: username (lowercase letters, numbers, dot, hyphen), full name, a valid email (it cannot already belong to another account), password (at least 4 characters) and an optional message.
-- **What happens next**: the account stays pending; the administration receives an email and approves or rejects it. You get one email when you request it and another when it is decided.
+- Accounts are no longer requested: they are created with a subscription or an invitation code. Requests made before are still in Administration → Access requests.
 
 ## Signing up with an invitation
 - A `/registro?c=…` link created by the administration. It works for **one** account and expires after a few days.

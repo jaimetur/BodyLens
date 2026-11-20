@@ -1,4 +1,4 @@
-<!-- en: 4da6aa90b32a718a -->
+<!-- en: 502033339454bc3e -->
 # Nutzungsbedingungen
 
 Zuletzt aktualisiert: 20. November 2026.
@@ -13,11 +13,11 @@ Diese Bedingungen gelten für die Nutzung von BodyLens auf diesem Server, über 
 
 ## Konten und Abonnements
 
-- Ein Konto kann auf zwei Arten erstellt werden: auf Einladung oder über eine vom Administrator genehmigte Anfrage (kostenlos) oder mit einem **kostenpflichtigen Abonnement**, entweder auf dieser Website (Zahlung per Karte, Google Pay oder Apple Pay über Stripe) oder in der BodyLens-App für Android (über Google Play).
+- Ein Konto kann auf zwei Arten erstellt werden: mit einem **Einladungscode** oder Link des Administrators (kostenlos, solange der Administrator es festlegt) oder mit einem **kostenpflichtigen Abonnement**, entweder auf dieser Website (Zahlung per Karte, Google Pay oder Apple Pay über Stripe) oder in der BodyLens-App für Android (über Google Play).
 - Das Abonnement kostet **1,49 € pro Monat** oder **12 € pro Jahr** (1 € pro Monat), inklusive Steuern; die Zahlungsseite zeigt dir den genauen Preis in deiner Währung an, bevor du bezahlst. Es beginnt mit einer **7-tägigen kostenlosen Testphase**, einmal pro Person: Wenn du während der Testphase kündigst, wird nichts berechnet.
 - Das Abonnement verlängert sich am Ende jedes Zeitraums automatisch, bis du es kündigst. Du kannst es jederzeit kündigen: unter Dein Konto → Abo (Website) oder in Google Play → Zahlungen und Abos (App). Es bleibt bis zum Ende des bereits bezahlten Zeitraums aktiv.
 - Zahlungen, Verlängerungen und Erstattungen werden von Stripe oder Google Play nach deren eigenen Bedingungen abgewickelt; BodyLens sieht deine Kartendaten nie. Erstattungen richten sich nach deren Erstattungsrichtlinien und dem Recht deines Landes.
-- **Wenn das Abonnement endet oder eine Zahlung nicht erfolgt**, kannst du das Konto nicht mehr nutzen, bis du es verlängerst, und du wirst **dreimal im Abstand einer Woche** per E-Mail gewarnt. Wenn das Abonnement **sieben Tage nach der dritten Warnung** noch immer nicht verlängert wurde, werden das Konto und alle seine Daten vom Server gelöscht. Vorher kannst du verlängern, deine Daten herunterladen (Dein Konto → Daten und Kopien) oder das Konto selbst löschen.
+- **Wenn das Abonnement oder der kostenlose Zugang endet oder eine Zahlung nicht erfolgt**, kannst du das Konto nicht mehr nutzen, bis du es verlängerst, und du wirst **dreimal im Abstand einer Woche** per E-Mail gewarnt. Wenn das Abonnement **sieben Tage nach der dritten Warnung** noch immer nicht verlängert wurde, werden das Konto und alle seine Daten vom Server gelöscht. Vorher kannst du verlängern, deine Daten herunterladen (Dein Konto → Daten und Kopien) oder das Konto selbst löschen.
 
 ## Keine medizinische Beratung
 

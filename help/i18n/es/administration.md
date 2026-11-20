@@ -1,4 +1,4 @@
-<!-- en: 31b72c67d9f4c4d0 -->
+<!-- en: ba545567cd87b696 -->
 # Administración
 
 Solo para cuentas de administrador. Está en «Tu cuenta» → **Administración**.
@@ -10,6 +10,7 @@ Solo para cuentas de administrador. Está en «Tu cuenta» → **Administración
 - **Hacer admin / Quitar admin** y **Borrar** (borra la cuenta y todos sus datos).
 
 ## Peticiones de acceso
+- Peticiones hechas antes de que las cuentas se crearan con una suscripción o un código de invitación (ya no llegan nuevas).
 - Lista de las cuentas pedidas desde la pantalla de acceso, con nombre, usuario, correo, fecha y mensaje.
 - **Aprobar**: la cuenta se activa y la persona recibe un correo con el enlace para entrar.
 - **Rechazar**: la petición se borra y la persona recibe un correo.
@@ -18,6 +19,10 @@ Solo para cuentas de administrador. Está en «Tu cuenta» → **Administración
 ## Invitaciones
 - **Crear invitación**: genera un enlace de registro de un solo uso (opcional: una nota para recordar a quién va dirigido). El enlace se muestra una sola vez: cópialo.
 - La lista indica si cada invitación está pendiente, usada (y por quién) o caducada.
+
+## Códigos de invitación
+- En la pestaña Invitaciones, **Códigos de invitación**: uno por línea (`INVITACION_AMIGOS` por defecto). Quien se registra con uno tiene una cuenta gratis de por vida, sin pagar; las mayúsculas, las tildes y los espacios no importan.
+- **Usuarios → Editar → Acceso gratuito**: ninguno, **De por vida** o **Hasta una fecha** (el final de ese día). Cuando termina, la cuenta se trata como una suscripción sin pagar: solo puede renovar, descargar sus datos o borrarse, recibe tres avisos con una semana de diferencia y se borra siete días después del tercero. La lista muestra el acceso gratuito y la suscripción de cada cuenta.
 
 ## Correo
 - El correo se envía desde el buzón configurado en el servidor (variables `SMTP_*`). **Enviarme un correo de prueba** comprueba que funciona.

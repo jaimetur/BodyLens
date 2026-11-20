@@ -142,9 +142,10 @@ def login_page(request: Request):
     return _page("accounts", "login.html", request=request)
 
 
-@router.get("/solicitar", response_class=HTMLResponse)
-def request_page(request: Request):
-    return _page("accounts", "solicitar.html", request=request)
+@router.get("/solicitar")
+def request_page():
+    """Accounts are no longer requested: they are made with a subscription or an invitation code (/alta)."""
+    return RedirectResponse("/alta", status_code=303)
 
 
 @router.get("/registro", response_class=HTMLResponse)

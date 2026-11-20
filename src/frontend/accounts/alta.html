@@ -4,94 +4,106 @@
 <link rel="icon" type="image/svg+xml" href="/icon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/pages.css">
 <style>
-/* plans of the Google Play subscription */
-.plans{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.plan{display:flex;flex-direction:column;gap:2px;border:2px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;background:var(--surface)}
-.plan input{position:absolute;opacity:0;pointer-events:none}.plan b{font-size:1.25rem}.plan small{color:var(--muted)}
-.plan.on{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
-.plan em{font-style:normal;font-size:.75rem;font-weight:700;color:var(--ok)}
+/* sign-up with a subscription (or an invitation code): a colourful header, big plan cards and the account form */
+main.sub{padding-top:0}
+.hero{margin:0 -16px 18px;padding:28px 22px 26px;color:#fff;background:linear-gradient(135deg,#6d7cf0,#9a5cf0 55%,#e0607a);border-radius:0 0 26px 26px}
+html:not(.embed) .hero{margin-top:12px;border-radius:26px}
+.hero h1{margin:0;font-size:1.9rem;line-height:1.1;color:#fff}.hero p{margin:8px 0 0;opacity:.92}
+.hero .pill{display:inline-block;margin-bottom:10px;padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.2);font-weight:700;font-size:.85rem}
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px}
+.plan{position:relative;display:flex;flex-direction:column;gap:2px;border:2px solid var(--line);border-radius:18px;padding:16px 14px;cursor:pointer;background:var(--surface);transition:transform .15s,border-color .15s}
+.plan input{position:absolute;opacity:0;pointer-events:none}.plan span{font-weight:700}.plan b{font-size:1.6rem;line-height:1.1}.plan small{color:var(--muted)}
+.plan.on{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent);transform:translateY(-2px)}
+.plan em{font-style:normal;font-size:.78rem;font-weight:800;color:var(--ok)}
+.plan .best{position:absolute;top:-11px;right:10px;padding:3px 9px;border-radius:999px;background:linear-gradient(135deg,#f0a04a,#e0607a);color:#fff;font-size:.72rem;font-weight:800}
+.codebox{border:1.5px dashed var(--line);border-radius:14px;padding:12px}
 .chk{display:flex;gap:8px;align-items:flex-start;font-size:.9rem}.chk input{width:auto;margin-top:3px}
+#go{width:100%;padding:15px;font-size:1.05rem}
 </style>
 </head>
-<body><main class="narrow">
-  <div class="brand"><img src="/icon.svg" alt=""><b>BodyLens</b></div>
+<body><main class="narrow sub">
+  <div class="hero">
+    <span class="pill" id="pill" hidden>7 días gratis</span>
+    <h1 id="ttl">Crea tu cuenta</h1>
+    <p id="intro">Todo BodyLens: peso, cuerpo, actividad, sueño, comidas, ciclo y ánimo. Cancela cuando quieras.</p>
+  </div>
 
   <div class="card" id="noApp" hidden>
-    <h1>Renovar la suscripción</h1>
+    <h2>Renovar la suscripción</h2>
     <p>Tu suscripción se contrató con Google Play: renuévala desde la app de BodyLens para Android.</p>
-    <a class="btn" href="/solicitar">Pedir una cuenta</a>
   </div>
 
-  <div class="card" id="off" hidden>
-    <h1>Suscripción</h1>
-    <p id="offTxt">Las suscripciones todavía no están disponibles en este servidor. Puedes pedir una cuenta: se crea cuando la aprueba el administrador.</p>
-    <a class="btn" href="/solicitar">Pedir una cuenta</a>
-  </div>
-
-  <form class="card" id="f" hidden>
-    <h1 id="ttl">Crear tu cuenta</h1>
-    <p id="intro">Elige tu plan: los primeros 7 días son gratis y puedes cancelar cuando quieras en Google Play.</p>
-    <p id="renewTxt" hidden>Tu suscripción ha terminado. Renuévala para seguir usando BodyLens: tus datos siguen aquí.</p>
-    <div class="plans" id="plans" role="radiogroup" aria-label="Plan"></div>
+  <form class="card" id="f">
+    <div id="plansBox" hidden>
+      <div class="plans" id="plans" role="radiogroup" aria-label="Plan"></div>
+      <p class="small" id="payNote">Google Play te muestra el precio final antes de pagar. Se renueva sola hasta que la canceles en Google Play (Pagos y suscripciones → Suscripciones).</p>
+    </div>
+    <p class="small" id="offTxt" hidden>Los pagos todavía no están disponibles. Si tienes un código de invitación, crea tu cuenta con él.</p>
     <div id="acct">
       <label>Nombre y apellidos<input id="n" autocomplete="name" maxlength="80"></label>
       <label>Correo electrónico<input id="e" type="email" autocomplete="email"></label>
       <label>Usuario (para entrar)<input id="u" autocomplete="username" autocapitalize="none" spellcheck="false"></label>
       <label>Contraseña (al menos 4 caracteres)<input id="p" type="password" autocomplete="new-password"></label>
       <label>Repite la contraseña<input id="p2" type="password" autocomplete="new-password"></label>
+      <div class="codebox"><label>Código de invitación (si tienes uno)<input id="code" autocapitalize="characters" spellcheck="false" autocomplete="off"></label>
+        <p class="small" style="margin:6px 0 0">Con un código válido tu cuenta es gratis: no hace falta pagar.</p></div>
     </div>
+    <p id="renewTxt" hidden>Tu suscripción ha terminado. Renuévala para seguir usando BodyLens: tus datos siguen aquí.</p>
     <label class="chk"><input id="ok" type="checkbox"><span>Acepto las <a href="/terms" target="_blank" rel="noopener">condiciones de uso</a> y la <a href="/privacy" target="_blank" rel="noopener">política de privacidad</a>.</span></label>
-    <div class="row"><button id="go" type="submit">Empezar la prueba gratuita</button><span class="msg" id="m" aria-live="polite"></span></div>
-    <p class="small" id="payNote">Google Play te muestra el precio final antes de pagar. Se renueva sola hasta que la canceles en Google Play (Pagos y suscripciones → Suscripciones).</p>
+    <div class="row"><button id="go" type="submit">Empezar la prueba gratuita</button></div>
+    <p class="msg" id="m" aria-live="polite"></p>
     <p class="small" id="restoreP" hidden><button class="ghost" id="restore" type="button">Ya pagué en este móvil: recuperar</button></p>
   </form>
 
-  <p class="small" id="links"><a href="/login">Ya tengo cuenta</a> · <a href="/solicitar">Pedir una cuenta sin suscripción</a> · <a href="/privacy">Privacidad</a> · <a href="/terms">Condiciones</a></p>
+  <p class="small" id="links"><a href="/login" target="_top">Ya tengo cuenta</a> · <a href="/privacy" target="_blank" rel="noopener">Privacidad</a> · <a href="/terms" target="_blank" rel="noopener">Condiciones</a></p>
 </main>
 <script src="/pages.js"></script>
 <script>
 (async () => {
   const N = window.BL_NATIVE;
-  let ME = null, cfg = { enabled: false }, plan = new URLSearchParams(location.search).get('plan') === 'monthly' ? 'monthly' : 'yearly', token = null;   // token: bought but the account not made yet
+  const go = url => { TOP.location.href = url; };   // inside the sign-in dialog the whole page moves on
+  let ME = null, cfg = { enabled: false }, plan = new URLSearchParams(location.search).get('plan') === 'monthly' ? 'monthly' : 'yearly', token = null;
   try { ME = await api('GET', '/api/me'); } catch (e) {}
   const renew = !!ME;
   // in the Android app: Google Play; on the website: Stripe (card, Google Pay, Apple Pay)
   let P = [], SUB = null;
   if (renew) { try { SUB = await api('GET', '/api/play/status'); } catch (e) {} }
   const webMode = !N || (SUB && SUB.plan === 'web');
+  if (renew && SUB && SUB.plan === 'play' && !N) { $('f').hidden = true; $('noApp').hidden = false; return; }
   if (webMode) {
     try { const W = await api('GET', '/api/web/plans'); cfg = { enabled: W.enabled };
       const fmt = c => (c / 100).toLocaleString(document.documentElement.lang || 'es', { style: 'currency', currency: 'EUR', minimumFractionDigits: c % 100 ? 2 : 0 });
       P = W.plans.map(p => ({ plan: p.plan, price: fmt(p.cents), monthly: p.interval === 'year' ? fmt(Math.round(p.cents / 12)) : '', trialDays: W.trialDays })); } catch (e) {}
-    if (renew && SUB && SUB.plan === 'play') { $('noApp').hidden = false; $('noApp').querySelector('p').textContent = 'Tu suscripción ha terminado. Renuévala desde la app de BodyLens para Android: tus datos siguen aquí.'; return; }
+    $('payNote').textContent = 'Pagas con tarjeta, Google Pay o Apple Pay en la página segura de Stripe. Se renueva sola hasta que la canceles en Tu cuenta → Suscripción.';
   } else {
     try { cfg = await api('GET', '/api/play/config'); } catch (e) {}
     try { P = JSON.parse(N.billingProducts() || '[]'); } catch (e) {}
   }
-  if (!cfg.enabled || !P.length) {
-    $('off').hidden = false;
-    if (cfg.enabled && !webMode) $('offTxt').textContent = 'Google Play no muestra todavía las suscripciones de BodyLens. Inténtalo más tarde o pide una cuenta.';
-    return;
-  }
-  $('f').hidden = false;
-  if (renew) { $('ttl').textContent = 'Renovar la suscripción'; $('intro').hidden = true; $('renewTxt').hidden = false; $('acct').hidden = true; $('go').textContent = 'Renovar'; $('restoreP').hidden = webMode; $('links').hidden = true; }
-  if (webMode) { $('payNote').textContent = 'Pagas con tarjeta, Google Pay o Apple Pay en la página segura de Stripe. Se renueva sola hasta que la canceles en Tu cuenta → Suscripción.'; }
+  const paid = cfg.enabled && P.length > 0;
+  $('plansBox').hidden = !paid; $('offTxt').hidden = paid || renew;
+  $('pill').hidden = !paid;
+  if (renew) { $('ttl').textContent = 'Renovar la suscripción'; $('intro').hidden = true; $('renewTxt').hidden = false; $('acct').hidden = true; $('pill').hidden = true; $('go').textContent = 'Renovar'; $('restoreP').hidden = webMode; $('links').hidden = true; }
+  if (renew && !paid) { $('go').disabled = true; $('renewTxt').textContent = 'Los pagos todavía no están disponibles. Vuelve a intentarlo más tarde.'; }
   const name = p => p.plan === 'monthly' ? 'Mensual' : 'Anual';
   const per = p => p.plan === 'monthly' ? '/ mes' : '/ año';
   const draw = () => {
-    $('plans').innerHTML = P.map(p => `<label class="plan${p.plan === plan ? ' on' : ''}"><input type="radio" name="plan" value="${esc(p.plan)}"${p.plan === plan ? ' checked' : ''}><span>${name(p)}</span><b data-noi18n>${esc(p.price)}</b><small>${per(p)}</small>${p.plan === 'yearly' && p.monthly ? `<small data-noi18n>≈ ${esc(p.monthly)}</small><small>al mes</small>` : ''}${p.trialDays && !renew ? `<em>${p.trialDays} días gratis</em>` : ''}</label>`).join('');
+    $('plans').innerHTML = P.map(p => `<label class="plan${p.plan === plan ? ' on' : ''}">${p.plan === 'yearly' ? '<span class="best">Ahorra un 33 %</span>' : ''}<input type="radio" name="plan" value="${esc(p.plan)}"${p.plan === plan ? ' checked' : ''}><span>${name(p)}</span><b data-noi18n>${esc(p.price)}</b><small>${per(p)}</small>${p.plan === 'yearly' && p.monthly ? `<small data-noi18n>≈ ${esc(p.monthly)}</small><small>al mes</small>` : ''}${p.trialDays && !renew ? `<em>${p.trialDays} días gratis</em>` : ''}</label>`).join('');
   };
-  if (!P.some(p => p.plan === plan)) plan = P[0].plan;
+  if (P.length && !P.some(p => p.plan === plan)) plan = P[0].plan;
   draw();
+  const label = () => { if (renew) return; $('go').textContent = $('code').value.trim() ? 'Crear mi cuenta gratis' : paid ? 'Empezar la prueba gratuita' : 'Crear mi cuenta'; };
+  label();
+  $('code').addEventListener('input', label);
   $('plans').addEventListener('change', e => { plan = e.target.value; draw(); });
-  const form = () => ({ name: $('n').value, email: $('e').value, username: $('u').value.trim().toLowerCase(), password: $('p').value });
+  const form = () => ({ name: $('n').value, email: $('e').value, username: $('u').value.trim().toLowerCase(), password: $('p').value, lang: document.documentElement.lang });
+  const fail = e => { say($('m'), e.message, 'err'); $('go').disabled = false; };
   async function finish(t) {
     say($('m'), 'Creando tu cuenta…');
     try {
       if (renew) await api('POST', '/api/play/link', { token: t });
       else await api('POST', '/api/play/signup', { token: t, ...form() });
-      location.href = '/';
-    } catch (e) { say($('m'), e.message, 'err'); $('go').disabled = false; }
+      go('/');
+    } catch (e) { fail(e); }
   }
   // the app tells the result of Google Play's purchase screen
   window.blPurchase = r => {
@@ -101,6 +113,7 @@
   $('u').addEventListener('input', () => { $('u').value = $('u').value.toLowerCase(); });
   $('f').addEventListener('submit', e => {
     e.preventDefault();
+    const code = $('code').value.trim();
     if (!renew) {
       const f = form();
       if (!f.name.trim() || !f.email.trim() || !f.username || !f.password) { say($('m'), 'Rellena todos los datos de tu cuenta.', 'err'); return; }
@@ -108,10 +121,15 @@
     }
     if (!$('ok').checked) { say($('m'), 'Acepta las condiciones de uso y la política de privacidad.', 'err'); return; }
     $('go').disabled = true;
+    if (!renew && code) {   // invitation code: a free account at once, no payment
+      say($('m'), 'Creando tu cuenta…');
+      api('POST', '/api/web/signup', { ...form(), code }).then(() => go('/')).catch(fail);
+      return;
+    }
+    if (!paid) { fail(new Error('Los pagos todavía no están disponibles. Si tienes un código de invitación, escríbelo.')); return; }
     if (webMode) {   // to Stripe's checkout page; the account is made when the subscription is confirmed
       say($('m'), 'Abriendo la página de pago…');
-      const go = renew ? api('POST', '/api/web/renew', { plan }) : api('POST', '/api/web/signup', { plan, ...form(), lang: document.documentElement.lang });
-      go.then(r => { location.href = r.url; }).catch(e => { say($('m'), e.message, 'err'); $('go').disabled = false; });
+      (renew ? api('POST', '/api/web/renew', { plan }) : api('POST', '/api/web/signup', { plan, ...form() })).then(r => go(r.url)).catch(fail);
       return;
     }
     if (token) { finish(token); return; }   // already paid (e.g. the username was taken): only the account is missing

@@ -10,7 +10,7 @@ from pydantic import BaseModel
 
 from app.accounts import users
 from app.accounts.users import User, UserError, clean_email
-from app.billing import stripe
+from app.billing import codes, stripe
 from app.core import crypto, db, i18n
 from app.core.deps import admin_user, base_url, set_session_cookie, signed_in_user
 from app.core.security import password_problem
@@ -59,18 +59,33 @@ def plans():
 
 
 class SignupIn(BaseModel):
-    plan: str
+    plan: str = "yearly"
     username: str
     name: str
     email: str
     password: str
     lang: str = ""
+    code: str = ""   # an invitation code: a free account, made at once
 
 
 @router.post("/api/web/signup")
-def signup(body: SignupIn, request: Request):
+def signup(body: SignupIn, request: Request, response: Response):
     """Checks the account's details and returns the address of Stripe's checkout page; the account is made when the
-    subscription is confirmed."""
+    subscription is confirmed. With a valid invitation code the account is free and is made at once."""
+    if body.code.strip():
+        if not codes.valid(body.code):
+            raise HTTPException(400, "Ese código de invitación no es válido.")
+        lang = i18n.clean(body.lang) or i18n.request_lang(request, None)
+        try:
+            with db.tx() as con:
+                u = users.create_user(con, body.username, body.name, body.password, email=clean_email(body.email, required=True))
+                users.set_lang(con, u.id, lang)
+                codes.grant(con, u.id, codes.norm(body.code), None)
+                token = users.create_session(con, u.id)
+        except UserError as e:
+            raise HTTPException(400, str(e))
+        set_session_cookie(response, token)
+        return {"ok": True, "signedIn": True}
     if not stripe.configured():
         raise HTTPException(503, "Los pagos con tarjeta todavía no están disponibles en este servidor.")
     if body.plan not in stripe.PLANS:

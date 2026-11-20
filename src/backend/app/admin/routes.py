@@ -8,6 +8,8 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 
 from app.accounts import deletion, users
+from app.billing import codes
+from app.billing import routes as billing
 from app.accounts.users import User, UserError, clean_email
 from app.core import db
 from app.core.deps import admin_user, bad, base_url
@@ -23,7 +25,7 @@ def _user_row(con, x: User) -> dict:
     partner = users.get_user(con, x.partner_id) if x.partner_id else None
     return {**x.public(), "active": x.active, "createdAt": r["created_at"], "requestedAt": r["requested_at"],
             "partner": partner.username if partner else None, "sheetId": x.sheet_id or "",
-            "appsScriptUrl": x.apps_script_url or "", "sync": workbook.meta(x.id)}
+            "appsScriptUrl": x.apps_script_url or "", "sync": workbook.meta(x.id), "plan": billing.summary(con, x.id)}
 
 
 @router.get("/api/admin/accounts")
@@ -39,6 +41,7 @@ class AccountIn(BaseModel):
     email: str | None = None
     isAdmin: bool | None = None
     active: bool | None = None
+    freeUntil: str | None = None   # free access: "lifetime", "YYYY-MM-DD" (until the end of that day) or "none"
 
 
 @router.patch("/api/admin/accounts/{user_id}")
@@ -61,6 +64,8 @@ def edit_account(user_id: int, body: AccountIn, u: User = Depends(admin_user)):
                 users.set_email(con, user_id, body.email)
             if body.isAdmin is not None:
                 con.execute("UPDATE users SET is_admin=? WHERE id=?", (int(body.isAdmin), user_id))
+            if body.freeUntil is not None:
+                _free_until(con, user_id, body.freeUntil)
             if body.active is not None:
                 con.execute("UPDATE users SET active=?, requested_at=CASE WHEN ?=1 THEN NULL ELSE requested_at END WHERE id=?",
                             (int(body.active), int(body.active), user_id))
@@ -69,6 +74,25 @@ def edit_account(user_id: int, body: AccountIn, u: User = Depends(admin_user)):
     except UserError as e:
         bad(e)
     return {"ok": True}
+
+
+def _free_until(con, user_id: int, value: str) -> None:
+    """Free access of an account: for life, until a day (Europe/Madrid, end of the day) or none."""
+    from datetime import datetime, time as dtime
+    from zoneinfo import ZoneInfo
+    if value == "none":
+        con.execute("DELETE FROM grants WHERE user_id=?", (user_id,))
+        return
+    if value == "lifetime":
+        until = None
+    else:
+        try:
+            day = datetime.strptime(value, "%Y-%m-%d").date()
+        except ValueError:
+            raise UserError("La fecha de fin no es válida.")
+        until = int(datetime.combine(day, dtime(23, 59, 59), ZoneInfo("Europe/Madrid")).timestamp() * 1000)
+    codes.grant(con, user_id, "admin", until)
+    con.execute("DELETE FROM lapses WHERE user_id=?", (user_id,))
 
 
 class ResetIn(BaseModel):

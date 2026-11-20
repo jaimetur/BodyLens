@@ -13,7 +13,7 @@ from pydantic import BaseModel
 
 from app.accounts import users
 from app.accounts.users import User, UserError, clean_email
-from app.billing import play, web
+from app.billing import codes, play, web
 from app.core import crypto, db
 from app.core.deps import admin_user, bad, set_session_cookie, signed_in_user
 
@@ -37,12 +37,19 @@ def _save(con, user_id: int, token: str, info: dict) -> None:
 
 
 def expired(user_id: int) -> bool:
-    """True when the account is paid with a subscription (Google Play or the website) and it is over."""
+    """True when the account has a subscription or a free access with an end date, and none of them is active.
+    Accounts with none of them (created by invitation link or approved request) never expire."""
     with db.ro() as con:
+        g = con.execute("SELECT * FROM grants WHERE user_id=?", (user_id,)).fetchone()
         w = con.execute("SELECT * FROM stripe_subs WHERE user_id=?", (user_id,)).fetchone()
-    if w is not None:
-        return not web.active(user_id, w)
-    return _play_expired(user_id)
+        r = _row(con, user_id)
+    if g is not None and codes.active(g):
+        return False
+    if w is not None and web.active(user_id, w):
+        return False
+    if r is not None and not _play_expired(user_id):
+        return False
+    return g is not None or w is not None or r is not None
 
 
 def _play_expired(user_id: int) -> bool:
@@ -83,12 +90,31 @@ def cancel_for(con, user_id: int) -> None:
             pass
 
 
+def summary(con, user_id: int) -> dict:
+    """What kind of account it is, without asking Google or Stripe (for the list in Administration): free with a code
+    ("gift", with its end date or none for life), paid on the website ("web") or in the app ("play"), or neither."""
+    g = con.execute("SELECT until_ms FROM grants WHERE user_id=?", (user_id,)).fetchone()
+    w = con.execute("SELECT status, period_end_ms FROM stripe_subs WHERE user_id=?", (user_id,)).fetchone()
+    r = con.execute("SELECT state, expiry_ms FROM subscriptions WHERE user_id=?", (user_id,)).fetchone()
+    out = {"kind": "free"}
+    if r is not None:
+        out = {"kind": "play", "state": r["state"], "expiry": r["expiry_ms"]}
+    if w is not None:
+        out = {"kind": "web", "state": w["status"], "expiry": w["period_end_ms"]}
+    if g is not None:
+        out = {**out, "gift": True, "giftUntil": g["until_ms"]} if out["kind"] != "free" else {"kind": "gift", "giftUntil": g["until_ms"]}
+    return out
+
+
 def status(user_id: int) -> dict:
     with db.ro() as con:
         r = _row(con, user_id)
         w = con.execute("SELECT * FROM stripe_subs WHERE user_id=?", (user_id,)).fetchone()
         lapse = con.execute("SELECT * FROM lapses WHERE user_id=?", (user_id,)).fetchone()
+        g = con.execute("SELECT * FROM grants WHERE user_id=?", (user_id,)).fetchone()
     extra = {"warnings": lapse["warnings"], "lapsedAt": lapse["lapsed_at"]} if lapse else {}
+    if g is not None and (codes.active(g) or (w is None and r is None)):
+        return {"plan": "gift", "active": codes.active(g), "expiry": g["until_ms"], **extra}
     if w is not None:
         return {"plan": "web", "active": web.active(user_id, w), "expiry": w["period_end_ms"], "basePlan": w["plan"],
                 "state": w["status"], **extra}
@@ -176,6 +202,29 @@ class PlayIn(BaseModel):
     product: str = ""
     serviceAccount: str = ""   # the JSON key of the service account; empty = keep the stored one
     remove: bool = False
+
+
+class CodesIn(BaseModel):
+    codes: list[str]
+
+
+@router.get("/api/admin/codes")
+def get_codes(u: User = Depends(admin_user)):
+    return {"codes": codes.codes()}
+
+
+@router.put("/api/admin/codes")
+def put_codes(body: CodesIn, u: User = Depends(admin_user)):
+    clean = []
+    for c in body.codes:
+        c = c.strip()
+        if c and codes.norm(c) not in {codes.norm(x) for x in clean}:
+            if len(c) > 60:
+                raise HTTPException(400, "Un código no puede tener más de 60 caracteres.")
+            clean.append(c)
+    with db.tx() as con:
+        db.set_setting(con, "codes", clean)
+    return {"codes": codes.codes()}
 
 
 @router.get("/api/admin/play")
