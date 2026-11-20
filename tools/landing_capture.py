@@ -524,6 +524,12 @@ def encode(raw: Path, mp4: Path, start: float, length: float, vf: str = PHONE_VF
 
 def debug(page: Page, name: str) -> None:
     """When a tour fails: a screenshot and the page's text in CAPTURE_DEBUG (the landing-media workflow keeps them)."""
+    try:   # in the log too (the workflow cannot always keep files)
+        info = page.evaluate("""() => ({hash: location.hash, now: new Date().toString(), dials: document.querySelectorAll('svg.dial').length,
+            svgs: document.querySelectorAll('svg').length, w: innerWidth, text: document.body.innerText.slice(0, 1500)})""")
+        print(f"--- {name}{SFX} failed: {info}", flush=True)
+    except Exception:   # noqa: BLE001
+        pass
     d = os.environ.get("CAPTURE_DEBUG")
     if not d:
         return
