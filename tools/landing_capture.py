@@ -522,6 +522,19 @@ def encode(raw: Path, mp4: Path, start: float, length: float, vf: str = PHONE_VF
                     "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(mp4)], check=True)
 
 
+def debug(page: Page, name: str) -> None:
+    """When a tour fails: a screenshot and the page's text in CAPTURE_DEBUG (the landing-media workflow keeps them)."""
+    d = os.environ.get("CAPTURE_DEBUG")
+    if not d:
+        return
+    Path(d).mkdir(parents=True, exist_ok=True)
+    try:
+        page.screenshot(path=str(Path(d) / f"{name}{SFX}.png"), full_page=True)
+        (Path(d) / f"{name}{SFX}.txt").write_text(page.evaluate("document.body.innerText")[:20000], encoding="utf-8")
+    except Exception:   # noqa: BLE001
+        pass
+
+
 def videos(browser, url: str, state: Path, out: Path) -> None:
     for name, view, tab, tour in VIDEOS:
         # the video: the page loads off camera (trimmed), then the tour
@@ -529,7 +542,11 @@ def videos(browser, url: str, state: Path, out: Path) -> None:
         t0 = time.monotonic()
         page = open_view(browser, url, state, view, tab, tmp, prep=PREP.get(name))
         start = time.monotonic() - t0
-        tour(page, lambda: page.wait_for_timeout(120))
+        try:
+            tour(page, lambda: page.wait_for_timeout(120))
+        except Exception:
+            debug(page, name)
+            raise
         page.wait_for_timeout(500)
         length = time.monotonic() - t0 - start
         video = page.video

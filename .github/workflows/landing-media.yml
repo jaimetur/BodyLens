@@ -51,7 +51,7 @@ jobs:
       - name: Where the demo account and the media go
         run: |
           { echo "DEMO_PASSWORD=$(python -c 'import secrets;print(secrets.token_urlsafe(16))')"
-            echo "DATA_DIR=$RUNNER_TEMP/demo"; echo "MEDIA=$RUNNER_TEMP/media"; } >> "$GITHUB_ENV"
+            echo "DATA_DIR=$RUNNER_TEMP/demo"; echo "MEDIA=$RUNNER_TEMP/media"; echo "CAPTURE_DEBUG=$RUNNER_TEMP/debug"; } >> "$GITHUB_ENV"
           mkdir -p "$RUNNER_TEMP/demo" "$RUNNER_TEMP/media"
       - name: Record (Spanish and English)
         run: |
@@ -66,6 +66,14 @@ jobs:
       - name: Server log
         if: failure()
         run: tail -n 100 "$RUNNER_TEMP/server.log" || true
+      - name: What the page showed when a recording failed
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: capture-debug
+          path: ${{ runner.temp }}/debug
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Publish to the landing-media release
         env:
           GH_TOKEN: ${{ github.token }}
