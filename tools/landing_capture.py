@@ -8,6 +8,8 @@
 Needs Playwright and Pillow (`pip install playwright pillow && python -m playwright install chromium`; they are not
 project dependencies) and ffmpeg, to trim and encode the videos. Everything goes to src/frontend/landing/media/:
 screenshots as WebP, videos as MP4 (H.264) and the first frame of each video (<video>-1.webp) as its poster.
+Phone videos are 780x1688; desktop ones (video-desk-*, wide layout) 1440x900. --only desktop takes just the desktop
+screenshots and videos.
 --lang en switches the demo account to English for the capture (and back to Spanish at the end) and names every file
 with the suffix -en (resumen-en.webp, video-sueno-en.mp4, video-sueno-en-1.webp); Spanish files have no suffix.
 The browser clock is set to 20:35 of today (Madrid), the time the demo data stops (tools/demo_data.py).
@@ -33,6 +35,7 @@ ROOT = Path(__file__).resolve().parents[1]
 TZ = ZoneInfo("Europe/Madrid")
 PHONE = {"viewport": {"width": 390, "height": 844}, "device_scale_factor": 3, "is_mobile": True, "has_touch": True}
 DESKTOP = {"viewport": {"width": 1440, "height": 900}, "device_scale_factor": 2}
+DESKTOP_REC = {"viewport": {"width": 1440, "height": 900}, "device_scale_factor": 1}   # recorded at CSS size: 1x fills it
 COMMON = {"locale": "es-ES", "timezone_id": "Europe/Madrid"}
 LOCALES = {"es": "es-ES", "en": "en-GB"}
 SFX = ""   # file name suffix of the language ("-en"; none for Spanish)
@@ -40,6 +43,9 @@ SFX = ""   # file name suffix of the language ("-en"; none for Spanish)
 TEXTS = {"es": {"prev": "Anterior", "daily": "Pesada diaria"}, "en": {"prev": "Previous", "daily": "Daily weigh-in"}}
 TXT = TEXTS["es"]
 VIDEO_SIZE = {"width": 780, "height": 1688}
+DESK_VIDEO_SIZE = {"width": 1440, "height": 900}
+PHONE_VF = "fps=30,crop=390:844:0:0,scale=780:1688:flags=lanczos"   # the page sits in the top-left 390x844 of the recording
+DESK_VF = "fps=24,crop=1440:900:0:0"
 
 # (file name, view, tab or None): phone screenshots, the top of the screen as a user sees it
 SHOTS = [("resumen", "resumen", "gen"), ("peso-evolucion", "peso", "evo"), ("peso-calendario", "peso", "cal"),
@@ -150,8 +156,9 @@ def login(browser, url: str, password: str, out_state: Path, lang: str) -> None:
     ctx.close()
 
 
-def new_page(browser, state: Path, profile: dict, scheme: str = "light", video_dir: str | None = None) -> Page:
-    extra = {"record_video_dir": video_dir, "record_video_size": VIDEO_SIZE} if video_dir else {}
+def new_page(browser, state: Path, profile: dict, scheme: str = "light", video_dir: str | None = None,
+             video_size: dict = VIDEO_SIZE) -> Page:
+    extra = {"record_video_dir": video_dir, "record_video_size": video_size} if video_dir else {}
     ctx = browser.new_context(**profile, **COMMON, color_scheme=scheme, storage_state=str(state), **extra)
     page = ctx.new_page()
     page.clock.install(time=evening())
@@ -183,14 +190,25 @@ def screenshots(browser, url: str, state: Path, out: Path) -> None:
             save_webp(page.screenshot(), out / f"{name}{suffix}{SFX}.webp", 1170)
             print("  ", name + suffix)
         page.context.close()
+    desktop_shots(browser, url, state, out)
+
+
+def desktop_shots(browser, url: str, state: Path, out: Path) -> None:
     page = new_page(browser, state, DESKTOP)
     page.goto(url + "/#resumen")
     translated(page)
     settle(page, 2500)
-    for name, view, tab in (("desktop-resumen", "resumen", "gen"), ("desktop-peso", "peso", "evo")):
+    for name, view, tab in (("desktop-resumen", "resumen", "gen"), ("desktop-peso", "peso", "evo"),
+                            ("desktop-sueno", "sueno", "hoy"), ("desktop-actividad", "actividad", "evo"),
+                            ("desktop-cuerpo", "composicion", None)):
         go(page, view, tab, 1800)
         save_webp(page.screenshot(), out / f"{name}{SFX}.webp", 1600)
         print("  ", name)
+    go(page, "resumen", "gen", 1500)   # the export to PDF dialog, over the Summary
+    page.click("#pdfBtn")
+    page.wait_for_timeout(1200)
+    save_webp(page.screenshot(), out / f"desktop-pdf{SFX}.webp", 1600)
+    print("   desktop-pdf")
     page.context.close()
 
 
@@ -351,6 +369,96 @@ def tour_resumen_salud(page: Page, still) -> None:   # Summary → Body, Day to 
     still()
 
 
+# ---------- desktop tours (wide layout, with the mouse) ----------
+
+def glide(page: Page, dy: int, ms: int = 1100) -> None:
+    """A slow smooth scroll (the wheel of a desktop mouse, eased)."""
+    page.evaluate("""dy => new Promise(done => { const y0 = scrollY, t0 = performance.now(), T = 900;
+        const step = t => { const f = Math.min(1, (t - t0) / T), e = f < .5 ? 2 * f * f : 1 - (-2 * f + 2) ** 2 / 2;
+                            scrollTo(0, y0 + dy * e); f < 1 ? requestAnimationFrame(step) : done() };
+        requestAnimationFrame(step) })""", dy)
+    page.wait_for_timeout(max(0, ms - 900))
+
+
+def click(page: Page, selector: str, ms: int = 1100) -> None:
+    """A mouse click on the first visible match: the pointer travels there first."""
+    el = page.locator(selector).locator("visible=true").first
+    el.scroll_into_view_if_needed()
+    b = el.bounding_box()
+    page.mouse.move(b["x"] + b["width"] / 2, b["y"] + b["height"] / 2, steps=12)
+    page.mouse.down()
+    page.mouse.up()
+    page.wait_for_timeout(ms)
+
+
+def dtour_resumen(page: Page, still) -> None:   # Summary → General, wide layout, scrolling down and up
+    page.mouse.move(900, 500)
+    still(1300)
+    glide(page, 260, 1900)
+    glide(page, 260, 2200)
+    glide(page, -520, 1900)
+
+
+def dtour_peso(page: Page, still) -> None:   # Weight → Evolution: a point of the chart with its tooltip; Weeks, Calendar
+    still(700)
+    chart = page.locator("#chMain svg").first
+    box = chart.bounding_box()
+    glide(page, round(box["y"] - 260), 1100)
+    box = chart.bounding_box()
+    y = box["y"] + box["height"] * .45
+    page.mouse.move(box["x"] + box["width"] * .55, y, steps=10)
+    for f in (.62, .7, .78, .84):
+        page.mouse.move(box["x"] + box["width"] * f, y, steps=14)
+        page.wait_for_timeout(350)
+    page.wait_for_timeout(700)
+    glide(page, -page.evaluate("scrollY"), 1000)
+    click(page, 'nav.vtabs[data-view="peso"] a[data-tab="sem"]', 1500)
+    click(page, 'nav.vtabs[data-view="peso"] a[data-tab="cal"]', 1400)
+
+
+def dtour_sueno(page: Page, still) -> None:   # Sleep → Night: the big clock, changing night with the side arrows
+    still(1000)
+    click(page, '#v-sueno [data-sheet="dial"]', 1600)
+    for _ in range(3):
+        click(page, '.shside[data-side="0"]', 1300)
+    click(page, '.shside[data-side="1"]', 1300)
+
+
+def dtour_actividad(page: Page, still) -> None:   # Activity → Evolution (coloured tiles, steps chart), then Analysis
+    page.mouse.move(900, 500)
+    still(1100)
+    glide(page, 330, 1600)
+    glide(page, -330, 900)
+    click(page, 'nav.vtabs[data-view="actividad"] a[data-tab="ana"]', 1700)
+    glide(page, 360, 1600)
+
+
+def theme_frame(page: Page):
+    page.wait_for_function("""() => { const f = document.getElementById('emb-cuenta');
+                                       const s = f && f.contentDocument && f.contentDocument.getElementById('ftheme');
+                                       return s && s.options.length && f.contentDocument.getElementById('kName').textContent }""", timeout=20000)
+    return page.frame_locator("#emb-cuenta")
+
+
+def dtour_ajustes(page: Page, still) -> None:   # Your account: a couple of colour themes, then back to the default
+    fr = theme_frame(page)
+    still(900)
+    for theme in ("ocean", "sunset", "auto"):
+        fr.locator("#ftheme").scroll_into_view_if_needed()
+        b = fr.locator("#ftheme").bounding_box()
+        page.mouse.move(b["x"] + b["width"] / 2, b["y"] + b["height"] / 2, steps=12)
+        page.wait_for_timeout(300)
+        with page.expect_navigation(timeout=20000):
+            fr.locator("#ftheme").select_option(theme)
+        translated(page)
+        fr = theme_frame(page)
+        page.wait_for_timeout(1700)
+
+
+DESK_VIDEOS = [("video-desk-resumen", "resumen", "gen", dtour_resumen), ("video-desk-peso", "peso", "evo", dtour_peso),
+               ("video-desk-sueno", "sueno", "hoy", dtour_sueno), ("video-desk-actividad", "actividad", "evo", dtour_actividad),
+               ("video-desk-ajustes", "cuenta", None, dtour_ajustes)]
+
 VIDEOS = [("video-resumen", "resumen", "gen", tour_resumen), ("video-peso", "peso", "evo", tour_peso),
           ("video-sueno", "sueno", "hoy", tour_sueno), ("video-actividad", "actividad", "hoy", tour_actividad),
           ("video-cuerpo", "composicion", None, tour_cuerpo), ("video-corazon", "corazon", None, tour_corazon),
@@ -360,8 +468,10 @@ VIDEOS = [("video-resumen", "resumen", "gen", tour_resumen), ("video-peso", "pes
           ("video-resumen-salud", "resumen", "cue", tour_resumen_salud)]
 
 
-def open_view(browser, url: str, state: Path, view: str, tab: str | None, video_dir: str | None = None) -> Page:
-    page = new_page(browser, state, PHONE, video_dir=video_dir)
+def open_view(browser, url: str, state: Path, view: str, tab: str | None, video_dir: str | None = None,
+              desk: bool = False) -> Page:
+    page = new_page(browser, state, DESKTOP_REC if desk and video_dir else DESKTOP if desk else PHONE,
+                    video_dir=video_dir, video_size=DESK_VIDEO_SIZE if desk else VIDEO_SIZE)
     page.goto(url + "/#" + view)
     translated(page)
     settle(page, 2000)
@@ -369,11 +479,11 @@ def open_view(browser, url: str, state: Path, view: str, tab: str | None, video_
     return page
 
 
-def encode(raw: Path, mp4: Path, start: float, length: float) -> None:
+def encode(raw: Path, mp4: Path, start: float, length: float, vf: str = PHONE_VF, crf: int = 27) -> None:
     """Trims the loading part and writes the MP4 (H.264, no audio, ready to stream)."""
     ff = shutil.which("ffmpeg") or sys.exit("ffmpeg is needed to encode the videos.")
-    cut = ["-ss", f"{start:.2f}", "-t", f"{length:.2f}", "-i", str(raw), "-an", "-vf", "fps=30,crop=390:844:0:0,scale=780:1688:flags=lanczos"]   # the page sits in the top-left 390x844 of the recording
-    subprocess.run([ff, "-y", "-loglevel", "error", *cut, "-c:v", "libx264", "-preset", "slow", "-crf", "27",
+    cut = ["-ss", f"{start:.2f}", "-t", f"{length:.2f}", "-i", str(raw), "-an", "-vf", vf]
+    subprocess.run([ff, "-y", "-loglevel", "error", *cut, "-c:v", "libx264", "-preset", "slow", "-crf", str(crf),
                     "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(mp4)], check=True)
 
 
@@ -397,13 +507,45 @@ def videos(browser, url: str, state: Path, out: Path) -> None:
         save_webp(page.screenshot(), out / f"{name}{SFX}-1.webp", 1170, 78)
         page.context.close()
         print(f"   {name}{SFX}: {length:.1f} s")
+    desktop_videos(browser, url, state, out)
+
+
+def desktop_videos(browser, url: str, state: Path, out: Path) -> None:
+    theme = new_page(browser, state, DESKTOP).request.get(url + "/api/me").json()["user"].get("theme") or "auto"
+    try:
+        for name, view, tab, tour in DESK_VIDEOS:
+            tmp = tempfile.mkdtemp(prefix="bl-video-")
+            t0 = time.monotonic()
+            page = open_view(browser, url, state, view, tab, tmp, desk=True)
+            if view == "cuenta":
+                theme_frame(page)
+                page.wait_for_timeout(600)
+            start = time.monotonic() - t0
+            tour(page, lambda ms=120: page.wait_for_timeout(ms))
+            page.wait_for_timeout(500)
+            length = time.monotonic() - t0 - start
+            video = page.video
+            page.context.close()
+            encode(Path(video.path()), out / f"{name}{SFX}.mp4", start, length, DESK_VF, 26)
+            shutil.rmtree(tmp, ignore_errors=True)
+            page = open_view(browser, url, state, view, tab, desk=True)
+            if view == "cuenta":
+                theme_frame(page)
+            page.wait_for_timeout(600)
+            save_webp(page.screenshot(), out / f"{name}{SFX}-1.webp", 1600, 78)
+            page.context.close()
+            print(f"   {name}{SFX}: {length:.1f} s")
+    finally:   # the demo account keeps its own theme
+        page = new_page(browser, state, DESKTOP)
+        page.request.post(url + "/api/me/theme", data={"theme": theme}, headers={"X-BodyLens": "1"})
+        page.context.close()
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--url", default="http://localhost:8765")
     ap.add_argument("--out", default=str(ROOT / "src" / "frontend" / "landing" / "media"))
-    ap.add_argument("--only", choices=["shots", "videos"])
+    ap.add_argument("--only", choices=["shots", "videos", "desktop"])
     ap.add_argument("--lang", choices=sorted(LOCALES), default="es", help="language of the app (default es)")
     a = ap.parse_args()
     global SFX, TXT
@@ -418,10 +560,14 @@ def main() -> None:
         url = a.url.rstrip("/")
         login(browser, url, password, state, a.lang)
         try:
-            if a.only != "videos":
+            if a.only == "desktop":
+                print("Desktop:")
+                desktop_shots(browser, url, state, out)
+                desktop_videos(browser, url, state, out)
+            if a.only in (None, "shots"):
                 print("Screenshots:")
                 screenshots(browser, url, state, out)
-            if a.only != "shots":
+            if a.only in (None, "videos"):
                 print("Videos:")
                 videos(browser, url, state, out)
         finally:
