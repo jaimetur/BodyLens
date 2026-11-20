@@ -78,6 +78,44 @@ def scroll(page: Page, dy: int, ms: int = 900) -> None:
     page.wait_for_timeout(ms)
 
 
+def top(page: Page, ms: int = 700) -> None:
+    page.evaluate("window.scrollTo({top: 0, behavior: 'smooth'})")
+    page.wait_for_timeout(ms)
+
+
+def tap(page: Page, selector: str, ms: int = 1100) -> None:
+    """A finger tap on the first visible match (scrolled into view if needed)."""
+    page.locator(selector).locator("visible=true").first.tap()
+    page.wait_for_timeout(ms)
+
+
+def tab(page: Page, view: str, name: str, ms: int = 1100) -> None:
+    """Taps one of the tabs at the top of a view (scrolling up first, as a user would)."""
+    if page.evaluate("window.scrollY") > 0:
+        top(page)
+    tap(page, f'nav.vtabs[data-view="{view}"] a[data-tab="{name}"]', ms)
+
+
+def swipe(page: Page, left: bool = True, y: int = 560, ms: int = 1100) -> None:
+    """A horizontal finger swipe on the page (next tab or module to the left), with real touch events."""
+    cdp = page.context.new_cdp_session(page)
+    xs = [330, 290, 240, 190, 140, 90, 60] if left else [60, 100, 150, 200, 250, 300, 330]
+
+    def touch(kind, x):
+        cdp.send("Input.dispatchTouchEvent", {"type": kind, "touchPoints": [] if kind == "touchEnd" else [{"x": x, "y": y}]})
+    touch("touchStart", xs[0])
+    for x in xs[1:]:
+        page.wait_for_timeout(30)
+        touch("touchMove", x)
+    touch("touchEnd", xs[-1])
+    cdp.detach()
+    page.wait_for_timeout(ms)
+
+
+def close_sheet(page: Page, ms: int = 700) -> None:
+    tap(page, "#sheet .shclose", ms)
+
+
 def login(browser, url: str, password: str, out_state: Path) -> None:
     ctx = browser.new_context(**PHONE, **COMMON, color_scheme="light")
     page = ctx.new_page()
@@ -179,8 +217,123 @@ def tour_actividad(page: Page, still) -> None:
         still()
 
 
+def tour_cuerpo(page: Page, still) -> None:   # Body → Scale (body fat panel and charts), then Measurements
+    still()
+    scroll(page, 330, 850)
+    still()
+    scroll(page, 520, 900)
+    still()
+    scroll(page, 560, 900)
+    still()
+    top(page)
+    tap(page, 'nav.cuetabs a[href="#medidas"]', 1050)
+    still()
+    scroll(page, 420, 900)
+    still()
+
+
+def tour_corazon(page: Page, still) -> None:   # Body → Heart: the coloured tiles, one enlarged, the evolution charts
+    still()
+    tap(page, '[data-sheet="kpi"][data-k^="hk|rhr|"]', 1200)
+    still()
+    close_sheet(page)
+    scroll(page, 380, 900)
+    still()
+    scroll(page, 560, 900)
+    still()
+    scroll(page, 560, 900)
+    still()
+    scroll(page, 560, 900)
+    still()
+
+
+def tour_sueno_saldo(page: Page, still) -> None:   # Sleep → Balance, then Schedule
+    still()
+    scroll(page, 420, 900)
+    still()
+    scroll(page, 520, 900)
+    still()
+    tab(page, "sueno", "hor", 1050)
+    still()
+    scroll(page, 380, 900)
+    still()
+    scroll(page, 420, 900)
+    still()
+
+
+def tour_comidas(page: Page, still) -> None:   # Meals → Today: another day and its scores, then Analysis
+    still()
+    tap(page, '#v-comidas button.fwd:has-text("18")', 1050)
+    still()
+    scroll(page, 420, 900)
+    still()
+    scroll(page, 480, 900)
+    still()
+    tab(page, "comidas", "ana", 1050)
+    still()
+    scroll(page, 380, 900)
+    still()
+
+
+def tour_intimo(page: Page, still) -> None:   # Intimate → Mood: the figures and charts
+    still()
+    for dy in (600, 650, 700, 700, 700):
+        scroll(page, dy, 900)
+        still()
+
+
+def tour_historial(page: Page, still) -> None:   # History → Years, All, Attempts (swiping between them)
+    still()
+    swipe(page, y=600, ms=1200)
+    still()
+    tap(page, '#v-historial button.lg:has-text("Pesada diaria")', 850)
+    still()
+    tap(page, '#v-historial button.lg:has-text("Pesada diaria")', 850)
+    still()
+    swipe(page, y=600, ms=1200)
+    still()
+    scroll(page, 200, 850)
+    still()
+
+
+def tour_actividad_entrenos(page: Page, still) -> None:   # Activity → Workouts, then Analysis (swipe)
+    still()
+    scroll(page, 420, 900)
+    still()
+    scroll(page, 520, 900)
+    still()
+    top(page)
+    swipe(page, y=640, ms=1150)
+    still()
+    scroll(page, 420, 900)
+    still()
+    scroll(page, 520, 900)
+    still()
+
+
+def tour_resumen_salud(page: Page, still) -> None:   # Summary → Body, Day to day and Health; one card enlarged
+    still()
+    scroll(page, 330, 850)
+    still()
+    top(page)
+    swipe(page, y=640, ms=1050)
+    still()
+    swipe(page, y=640, ms=1050)
+    still()
+    tap(page, '[data-sheet="kpi"][data-k^="hk|hrv|"]', 1200)
+    still()
+    close_sheet(page)
+    scroll(page, 300, 850)
+    still()
+
+
 VIDEOS = [("video-resumen", "resumen", "gen", tour_resumen), ("video-peso", "peso", "evo", tour_peso),
-          ("video-sueno", "sueno", "hoy", tour_sueno), ("video-actividad", "actividad", "hoy", tour_actividad)]
+          ("video-sueno", "sueno", "hoy", tour_sueno), ("video-actividad", "actividad", "hoy", tour_actividad),
+          ("video-cuerpo", "composicion", None, tour_cuerpo), ("video-corazon", "corazon", None, tour_corazon),
+          ("video-sueno-saldo", "sueno", "banco", tour_sueno_saldo), ("video-comidas", "comidas", "hoy", tour_comidas),
+          ("video-intimo", "intimo", "animo", tour_intimo), ("video-historial", "historial", "anios", tour_historial),
+          ("video-actividad-entrenos", "actividad", "wo", tour_actividad_entrenos),
+          ("video-resumen-salud", "resumen", "cue", tour_resumen_salud)]
 
 
 def open_view(browser, url: str, state: Path, view: str, tab: str | None, video_dir: str | None = None) -> Page:
@@ -197,10 +350,10 @@ def encode(raw: Path, base: Path, start: float, length: float) -> None:
     if not ff:
         shutil.copy(raw, base.with_suffix(".webm"))
         return
-    cut = ["-ss", f"{start:.2f}", "-t", f"{length:.2f}", "-i", str(raw), "-an", "-vf", "fps=30,scale=780:-2"]
+    cut = ["-ss", f"{start:.2f}", "-t", f"{length:.2f}", "-i", str(raw), "-an", "-vf", "fps=30,crop=390:844:0:0,scale=780:1688:flags=lanczos"]   # the page sits in the top-left 390x844 of the recording
     subprocess.run([ff, "-y", "-loglevel", "error", *cut, "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", "38",
                     "-row-mt", "1", str(base.with_suffix(".webm"))], check=True)
-    subprocess.run([ff, "-y", "-loglevel", "error", *cut, "-c:v", "libx264", "-preset", "slow", "-crf", "26",
+    subprocess.run([ff, "-y", "-loglevel", "error", *cut, "-c:v", "libx264", "-preset", "slow", "-crf", "24",
                     "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(base.with_suffix(".mp4"))], check=True)
 
 
@@ -211,7 +364,7 @@ def videos(browser, url: str, state: Path, out: Path) -> None:
         t0 = time.monotonic()
         page = open_view(browser, url, state, view, tab, tmp)
         start = time.monotonic() - t0
-        tour(page, lambda: page.wait_for_timeout(250))
+        tour(page, lambda: page.wait_for_timeout(120))
         page.wait_for_timeout(500)
         length = time.monotonic() - t0 - start
         video = page.video
