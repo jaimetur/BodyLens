@@ -215,14 +215,18 @@ def pages_js():
 
 @router.get("/landing/media/{name}")
 def landing_media(name: str):
-    """Screenshots and videos of the landing page (demo account, synthetic data)."""
+    """Screenshots, videos and their manifest for the landing page (demo account, synthetic data). They are recorded
+    by GitHub Actions whenever the app's layout changes and copied to <DATA_DIR>/landing-media when deploying
+    (tools/deploy-landing-media.sh); the ones in the repository are the fallback."""
     import re
-    if not re.fullmatch(r"[a-z0-9-]+\.(webp|png|jpg|mp4|webm)", name):
+    if not re.fullmatch(r"[a-z0-9-]+\.(webp|png|jpg|mp4|webm|json)", name):
         raise HTTPException(404)
-    p = config.settings.frontend_dir / "landing" / "media" / name
-    if not p.is_file():
-        raise HTTPException(404)
-    return FileResponse(p, headers={"Cache-Control": "public, max-age=86400"})
+    for base in (config.settings.data_dir / "landing-media", config.settings.frontend_dir / "landing" / "media"):
+        p = base / name
+        if p.is_file():
+            cache = "no-cache" if name.endswith(".json") else "public, max-age=86400"
+            return FileResponse(p, headers={"Cache-Control": cache})
+    raise HTTPException(404)
 
 
 @router.get("/native.js")

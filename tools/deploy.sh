@@ -53,4 +53,6 @@ for i in $(seq 1 30); do
   [ "$S" = healthy ] && break; sleep 4
 done
 echo "Desplegado $SHA en $HOST ($([ "$IMAGE" = 1 ] && echo 'imagen nueva' || ([ "$BACKEND" = 1 ] && echo 'en caliente, con reinicio' || echo 'en caliente, sin reinicio'))): $S"
-[ "$S" = healthy ]
+[ "$S" = healthy ] || exit 1
+# the landing page's videos (recorded by GitHub Actions): copied only when they changed; a failure does not undo the deploy
+tools/deploy-landing-media.sh || echo "Landing media not updated (see above)." >&2
