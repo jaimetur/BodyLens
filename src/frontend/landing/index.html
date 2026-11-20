@@ -96,6 +96,8 @@ section.sec{padding:100px 0;position:relative}
 .car .arr:hover{background:rgba(255,255,255,.18)}.car .arr.l{left:0}.car .arr.r{right:0}
 @media (hover:none){.car .arr{display:none}}
 .car .cap{text-align:center;color:var(--muted);font-size:14px;margin-top:8px;min-height:20px}
+/* downloads */
+.src.dl{text-decoration:none;display:flex;flex-direction:column;gap:8px}.src.dl .btn{margin-top:auto;align-self:flex-start}.src.dl[aria-disabled="true"]{cursor:default}
 /* sources */
 .srcs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .src{padding:26px;border-radius:22px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line)}
@@ -140,7 +142,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
 <body>
 <header class="top" id="top"><div class="wrap">
   <a class="logo" href="#"><img src="/icon.svg" alt="">BodyLens</a>
-  <nav aria-label="Secciones"><a href="#modulos">Funciones</a><a href="#fuentes">Conexiones</a><a href="#precios">Precios</a><a href="#preguntas">Preguntas</a></nav>
+  <nav aria-label="Secciones"><a href="#modulos">Funciones</a><a href="#fuentes">Conexiones</a><a href="#descarga">Descargar</a><a href="#precios">Precios</a><a href="#preguntas">Preguntas</a></nav>
   <span class="lang" role="group" aria-label="Language" data-noi18n><a href="?lang=en" data-l="en">EN</a><a href="?lang=es" data-l="es">ES</a></span>
   <a class="btn sec" href="/login">Entrar</a>
 </div></header>
@@ -153,7 +155,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
         <span class="eyebrow"><i></i>Nuevo: app para Android y web</span>
         <h1>Tu salud,<br><span class="grad">en una sola app</span></h1>
         <p class="lead">Peso, cuerpo, actividad, sueño, corazón, comidas, ciclo y ánimo, con gráficos claros y conclusiones de tus propios datos. Sin anuncios y sin vender tus datos.</p>
-        <div class="cta"><a class="btn pri" href="#precios">Prueba 7 días gratis</a><a class="btn sec" href="#modulos">Ver cómo funciona</a></div>
+        <div class="cta"><a class="btn pri" href="#precios">Prueba 7 días gratis</a><a class="btn sec" href="#descarga">Descargar para Android</a><a class="btn sec" href="#modulos">Ver cómo funciona</a></div>
         <div class="chips"><span class="chip">Withings</span><span class="chip">Apple Salud</span><span class="chip">Health Connect</span><span class="chip">10 idiomas</span></div>
       </div>
       <div class="stack">
@@ -232,6 +234,15 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
   <section class="sec" style="padding-top:20px"><div class="wrap">
     <div class="sh rv"><h2>También <span class="grad">en grande</span></h2><p>La misma app en el ordenador, con todo el espacio para tus gráficos.</p></div>
     <div class="rv"><div class="laptop"><div class="scr" data-media="desktop-resumen"></div></div><div class="base"></div></div>
+  </div></section>
+
+  <section class="sec" id="descarga" style="padding-top:20px"><div class="wrap">
+    <div class="sh rv"><h2>Llévala <span class="grad">en el bolsillo</span></h2><p>La app de Android es igual que la web y, además, envía sola tus datos de Health Connect.</p></div>
+    <div class="srcs rv">
+      <a class="src dl" style="--k:var(--good)" href="/android.apk" download><div class="dot"></div><b>Android</b><p>Descarga la app (APK) e instálala. Android te pedirá permitir apps de fuentes externas.</p><span class="btn pri">Descargar la app</span></a>
+      <a class="src dl" style="--k:var(--a)" id="playLink" aria-disabled="true"><div class="dot"></div><b>Google Play</b><p id="playTxt">Muy pronto en Google Play, con las suscripciones gestionadas por Google.</p><span class="btn sec" id="playBtn">Próximamente</span></a>
+      <a class="src dl" style="--k:var(--d)" href="/login"><div class="dot"></div><b>iPhone y ordenador</b><p>Ábrela en el navegador. En el iPhone, en Safari: Compartir → Añadir a pantalla de inicio, y se abre como una app.</p><span class="btn sec">Abrir en el navegador</span></a>
+    </div>
   </div></section>
 
   <section class="sec" id="precios"><div class="wrap">
@@ -338,6 +349,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
     setTimeout(() => { dots(); mark(); }, 300);
     new MutationObserver(() => { dots(); mark(); }).observe(track, { childList: true });
   });
+  // the Google Play link, once the app is published there (Administration → Google Play)
+  fetch('/api/play/config').then(r => r.ok ? r.json() : null).then(c => {
+    if (!c || !c.storeUrl) return;
+    const a = document.getElementById('playLink'); a.href = c.storeUrl; a.target = '_blank'; a.rel = 'noopener'; a.removeAttribute('aria-disabled');
+    document.getElementById('playTxt').textContent = (window.blT || String)('Instálala desde Google Play y suscríbete con tu cuenta de Google.');
+    document.getElementById('playBtn').textContent = (window.blT || String)('Ver en Google Play');
+  }).catch(() => {});
   // reveal on scroll
   const rv = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); rv.unobserve(e.target); } }), { threshold: .12 });
   document.querySelectorAll('.rv').forEach(el => rv.observe(el));

@@ -140,7 +140,8 @@ def _verified(token: str) -> dict:
 def config():
     """Whether this server accepts accounts paid with a subscription (the app shows the option only then)."""
     s = play.settings()
-    return {"enabled": play.configured(), "package": s["package"], "product": s["product"]}
+    return {"enabled": play.configured(), "package": s["package"], "product": s["product"],
+            "storeUrl": (db.get_setting("play", {}) or {}).get("storeUrl", "")}
 
 
 class SignupIn(BaseModel):
@@ -202,6 +203,7 @@ class PlayIn(BaseModel):
     product: str = ""
     serviceAccount: str = ""   # the JSON key of the service account; empty = keep the stored one
     remove: bool = False
+    storeUrl: str | None = None   # the app's page in Google Play, once published (the landing page links it)
 
 
 class CodesIn(BaseModel):
@@ -234,7 +236,8 @@ def get_play(u: User = Depends(admin_user)):
     with db.ro() as con:
         n = con.execute("SELECT COUNT(*) FROM subscriptions").fetchone()[0]
     return {"package": s["package"], "product": s["product"], "configured": play.configured(),
-            "serviceAccount": sa.get("client_email", ""), "subscriptions": n}
+            "serviceAccount": sa.get("client_email", ""), "subscriptions": n,
+            "storeUrl": (db.get_setting("play", {}) or {}).get("storeUrl", "")}
 
 
 @router.put("/api/admin/play")
@@ -242,7 +245,12 @@ def put_play(body: PlayIn, u: User = Depends(admin_user)):
     import json
     stored = db.get_setting("play", {}) or {}
     new = {"package": body.package.strip() or play.DEFAULT_PACKAGE, "product": body.product.strip() or play.DEFAULT_PRODUCT,
-           "sa": stored.get("sa")}
+           "sa": stored.get("sa"), "storeUrl": stored.get("storeUrl", "")}
+    if body.storeUrl is not None:
+        url = body.storeUrl.strip()
+        if url and not url.startswith("https://play.google.com/"):
+            raise HTTPException(400, "El enlace tiene que ser de https://play.google.com/…")
+        new["storeUrl"] = url
     if body.remove:
         new["sa"] = None
     elif body.serviceAccount.strip():

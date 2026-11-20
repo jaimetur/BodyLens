@@ -144,6 +144,7 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
       <label>Paquete de la app<input id="gpPkg" placeholder="app.bodylens.android"></label>
       <label>Suscripción (ID del producto)<input id="gpProd"></label>
       <label>Clave de la cuenta de servicio (contenido del fichero JSON)<textarea id="gpSa" rows="4" spellcheck="false" placeholder="(sin cambios)"></textarea></label>
+      <label>Enlace de la app en Google Play (cuando esté publicada; la página de inicio lo muestra)<input id="gpUrl" type="url"></label>
     </div>
     <div class="row"><button id="gpSave" type="button">Guardar</button><button class="ghost danger-t" id="gpDel" type="button">Quitar la clave</button><span class="msg" id="gpMsg"></span></div>
     <p class="small" id="gpState"></p>
@@ -296,13 +297,13 @@ $('stDel').addEventListener('click', async () => {
 async function loadPlay() {
   try {
     const g = await api('GET', '/api/admin/play');
-    $('gpPkg').value = g.package; $('gpProd').value = g.product; $('gpSa').value = '';
+    $('gpPkg').value = g.package; $('gpProd').value = g.product; $('gpSa').value = ''; $('gpUrl').value = g.storeUrl || '';
     $('gpState').textContent = g.configured ? `Configurado con ${g.serviceAccount}. Cuentas con suscripción: ${g.subscriptions}.` : 'Sin configurar: la app no ofrece suscribirse.';
   } catch (e) {}
 }
 loadPlay();
 $('gpSave').addEventListener('click', async () => {
-  try { await api('PUT', '/api/admin/play', { package: $('gpPkg').value, product: $('gpProd').value, serviceAccount: $('gpSa').value }); say($('gpMsg'), 'Guardado.', 'ok'); await loadPlay(); }
+  try { await api('PUT', '/api/admin/play', { package: $('gpPkg').value, product: $('gpProd').value, serviceAccount: $('gpSa').value, storeUrl: $('gpUrl').value }); say($('gpMsg'), 'Guardado.', 'ok'); await loadPlay(); }
   catch (e) { say($('gpMsg'), e.message, 'err'); }
 });
 $('gpDel').addEventListener('click', async () => {

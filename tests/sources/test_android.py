@@ -56,7 +56,7 @@ def test_envio_de_android(env, make_user):
 def test_descarga_del_apk(client, make_user, login, env):
     from app.core import config
     make_user("jaimetur")
-    assert client.get("/android.apk", follow_redirects=False).headers["location"] == "/login?next=/android.apk"
+    assert client.get("/android.apk").status_code == 404        # public (the landing page links it), but not there yet
     c = login("jaimetur")
     assert c.get("/android.apk").status_code == 404
     assert c.get("/api/sources").json()["androidApk"] is False
@@ -65,4 +65,5 @@ def test_descarga_del_apk(client, make_user, login, env):
     (p / "bodylens-android.apk").write_bytes(b"PK\x03\x04apk")
     r = c.get("/android.apk")
     assert r.status_code == 200 and r.content == b"PK\x03\x04apk" and "android.package-archive" in r.headers["content-type"]
+    assert client.get("/android.apk").status_code == 200        # without signing in too
     assert c.get("/api/sources").json()["androidApk"] is True

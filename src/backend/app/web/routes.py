@@ -127,9 +127,7 @@ def android_apk_path():
 
 @router.get("/android.apk")
 def android_apk(request: Request):
-    """La app de Android (Health Connect). La deja ahí el despliegue (tools/deploy-android.sh); solo con sesión."""
-    if not optional_user(request):
-        return RedirectResponse("/login?next=/android.apk", status_code=303)
+    """The Android app, for anyone (the landing page links it): tools/deploy-android.sh leaves it there."""
     p = android_apk_path()
     if not p.exists():
         raise HTTPException(404, "La app de Android todavía no está disponible en este servidor.")
