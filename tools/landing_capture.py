@@ -9,7 +9,10 @@ Needs Playwright and Pillow (`pip install playwright pillow && python -m playwri
 project dependencies) and ffmpeg, to trim and encode the videos. Everything goes to src/frontend/landing/media/:
 screenshots as WebP, videos as MP4 (H.264) and the first frame of each video (<video>-1.webp) as its poster.
 Phone videos are 780x1688; desktop ones (video-desk-*, wide layout) 1440x900. --only desktop takes just the desktop
-screenshots and videos. video-temas and video-desk-temas show the Summary going through every colour theme (switched in
+screenshots and videos. --tabs records instead one phone video per tab of each module of the app (read from the page:
+tab-<module>-<tab>.mp4 and its poster tab-<module>-<tab>.webp, scrolling the whole tab) and writes manifest.json, the
+list of modules, tabs and desktop media the landing page shows (run it for es and en: each run adds its names).
+video-temas and video-desk-temas show the Summary going through every colour theme (switched in
 the page, without saving the setting of the account).
 --lang en switches the demo account to English for the capture (and back to Spanish at the end) and names every file
 with the suffix -en (resumen-en.webp, video-sueno-en.mp4, video-sueno-en-1.webp); Spanish files have no suffix.
@@ -19,6 +22,7 @@ from __future__ import annotations
 
 import argparse
 import io
+import json
 import os
 import shutil
 import subprocess
@@ -590,11 +594,113 @@ def desktop_videos(browser, url: str, state: Path, out: Path) -> None:
         page.context.close()
 
 
+# ---------- one video per tab of each module (--tabs) and the manifest the landing page reads ----------
+
+TAB_VF = "fps=20,crop=390:844:0:0,scale=480:1038:flags=lanczos"   # smaller than the tours: there are many of them
+TAB_PX_S = 380        # scrolling speed (CSS px per second), faster for long tabs so a video stays under ~20 s
+TAB_MAX_S = 15      # longest scroll; plus the pauses at the top and at the bottom
+# the desktop carousel of the landing page (the desktop videos and screenshots, in this order)
+DESKTOP_SLIDES = [("video-desk-resumen", "Resumen", "Summary"), ("desktop-resumen", "Resumen", "Summary"),
+                  ("video-desk-peso", "Peso", "Weight"), ("desktop-peso", "Peso", "Weight"),
+                  ("video-desk-sueno", "Sueño", "Sleep"), ("desktop-sueno", "Sueño", "Sleep"),
+                  ("video-desk-actividad", "Actividad", "Activity"), ("desktop-actividad", "Actividad", "Activity"),
+                  ("desktop-cuerpo", "Cuerpo", "Body"), ("video-desk-temas", "Temas", "Themes")]
+
+
+def app_tabs(page: Page) -> list[dict]:
+    """The modules of the app's tab bar and the tabs of each one, read from the page (so new modules or tabs are
+    picked up). A module's tabs are its «vtabs» (data-tab) or, for a group of views like Body, the views of its bar
+    (its id is then the Spanish title of the view, «cuerpo», which the page does not translate)."""
+    return page.evaluate("""() => [...document.querySelectorAll('#tabNav a[href^="#"]')].map(a => {
+        const view = a.getAttribute('href').slice(1), v = document.getElementById('v-' + view);
+        const nav = v && v.querySelector('nav.cuetabs');
+        const id = nav && !nav.dataset.view ? ((v && v.dataset.title) || view).normalize('NFD')
+                     .replace(/[\\u0300-\\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '') : view;
+        const tabs = nav ? [...nav.querySelectorAll('a[href^="#"]')].map(t => ({
+            view: t.getAttribute('href').slice(1), tab: t.dataset.tab || null,
+            id: t.dataset.tab || t.getAttribute('href').slice(1), name: t.textContent.trim() })) : [{ view, tab: null, id: view, name: '' }];
+        return { id, view, name: v && v.dataset.title ? (window.blT || String)(v.dataset.title) : a.textContent.trim(), tabs };
+      })""")
+
+
+def tour_tab(page: Page) -> None:
+    """From the top of the tab to its bottom, smoothly, with a pause at each end."""
+    page.wait_for_timeout(1200)
+    h = page.evaluate("Math.max(0, document.scrollingElement.scrollHeight - innerHeight)")
+    if h > 40:
+        ms = round(1000 * min(TAB_MAX_S, max(1.5, h / TAB_PX_S)))
+        page.evaluate("""([h, T]) => new Promise(done => { const t0 = performance.now();
+            const step = t => { const f = Math.min(1, (t - t0) / T), e = f < .5 ? 2 * f * f : 1 - (-2 * f + 2) ** 2 / 2;
+                                scrollTo(0, h * (.15 * f + .85 * e)); f < 1 ? requestAnimationFrame(step) : done() };
+            requestAnimationFrame(step) })""", [h, ms])
+    page.wait_for_timeout(1300)
+
+
+def open_tab(browser, url: str, state: Path, mod: dict, t: dict, video_dir: str | None = None) -> Page:
+    page = new_page(browser, state, PHONE, video_dir=video_dir)
+    page.goto(url + "/#" + t["view"])
+    translated(page)
+    settle(page, 2000)
+    go(page, t["view"], t["tab"] if t["tab"] and page.locator(f'nav.vtabs[data-view="{t["view"]}"] a[data-tab="{t["tab"]}"]').count() else None, 1200)
+    return page
+
+
+def tab_videos(browser, url: str, state: Path, out: Path, lang: str) -> None:
+    probe = new_page(browser, state, PHONE)
+    probe.goto(url + "/#resumen")
+    translated(probe)
+    settle(probe, 2500)
+    mods = app_tabs(probe)
+    probe.context.close()
+    man_path = out / "manifest.json"
+    try:
+        old = json.loads(man_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        old = {}
+    names = {m["id"]: m for m in old.get("modules", [])}
+    modules = []
+    for mod in mods:
+        prev = names.get(mod["id"], {})
+        ptabs = {t["id"]: t for t in prev.get("tabs", [])}
+        tabs = []
+        for t in mod["tabs"]:
+            file = f"tab-{mod['id']}-{t['id']}"
+            tmp = tempfile.mkdtemp(prefix="bl-video-")
+            t0 = time.monotonic()
+            page = open_tab(browser, url, state, mod, t, tmp)
+            start = time.monotonic() - t0
+            tour_tab(page)
+            length = time.monotonic() - t0 - start
+            video = page.video
+            page.context.close()
+            encode(Path(video.path()), out / f"{file}{SFX}.mp4", start, length, TAB_VF, 32)
+            shutil.rmtree(tmp, ignore_errors=True)
+            page = open_tab(browser, url, state, mod, t)   # the poster: the top of the tab, as the video starts
+            page.wait_for_timeout(300)
+            save_webp(page.screenshot(), out / f"{file}{SFX}.webp", 480, 72)
+            page.context.close()
+            print(f"   {file}{SFX}: {length:.1f} s")
+            tabs.append({"id": t["id"], "file": file, "name": {**ptabs.get(t["id"], {}).get("name", {}), lang: t["name"] or mod["name"]}})
+        modules.append({"id": mod["id"], "name": {**prev.get("name", {}), lang: mod["name"]}, "tabs": tabs})
+    desktop = []
+    for file, es, en in DESKTOP_SLIDES:
+        kind = "video" if file.startswith("video-") else "image"
+        for sfx in ("", "-en"):   # the landing page asks for <file>.webp as a video's poster
+            src, dst = out / f"{file}{sfx}-1.webp", out / f"{file}{sfx}.webp"
+            if kind == "video" and src.exists() and (not dst.exists() or dst.stat().st_mtime < src.stat().st_mtime):
+                shutil.copyfile(src, dst)
+        desktop.append({"file": file, "kind": kind, "name": {"es": es, "en": en}})
+    man = {"build": datetime.now(TZ).strftime("%Y%m%d%H%M"), "modules": modules, "desktop": desktop}
+    man_path.write_text(json.dumps(man, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    print(f"   {man_path.name}: {sum(len(m['tabs']) for m in modules)} tabs in {len(modules)} modules")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--url", default="http://localhost:8765")
     ap.add_argument("--out", default=str(ROOT / "src" / "frontend" / "landing" / "media"))
     ap.add_argument("--only", choices=["shots", "videos", "desktop"])
+    ap.add_argument("--tabs", action="store_true", help="only a video per tab of each module, and manifest.json")
     ap.add_argument("--lang", choices=sorted(LOCALES), default="es", help="language of the app (default es)")
     a = ap.parse_args()
     global SFX, TXT
@@ -609,14 +715,17 @@ def main() -> None:
         url = a.url.rstrip("/")
         login(browser, url, password, state, a.lang)
         try:
-            if a.only == "desktop":
+            if a.tabs:
+                print("Tabs:")
+                tab_videos(browser, url, state, out, a.lang)
+            elif a.only == "desktop":
                 print("Desktop:")
                 desktop_shots(browser, url, state, out)
                 desktop_videos(browser, url, state, out)
-            if a.only in (None, "shots"):
+            if not a.tabs and a.only in (None, "shots"):
                 print("Screenshots:")
                 screenshots(browser, url, state, out)
-            if a.only in (None, "videos"):
+            if not a.tabs and a.only in (None, "videos"):
                 print("Videos:")
                 videos(browser, url, state, out)
         finally:

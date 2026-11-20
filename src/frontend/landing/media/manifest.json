@@ -1,0 +1,399 @@
+{
+ "build": "202611200444",
+ "modules": [
+  {
+   "id": "resumen",
+   "name": {
+    "es": "Resumen",
+    "en": "Summary"
+   },
+   "tabs": [
+    {
+     "id": "gen",
+     "file": "tab-resumen-gen",
+     "name": {
+      "es": "General",
+      "en": "General"
+     }
+    },
+    {
+     "id": "cue",
+     "file": "tab-resumen-cue",
+     "name": {
+      "es": "Cuerpo",
+      "en": "Body"
+     }
+    },
+    {
+     "id": "vida",
+     "file": "tab-resumen-vida",
+     "name": {
+      "es": "Día a día",
+      "en": "Day by day"
+     }
+    },
+    {
+     "id": "sal",
+     "file": "tab-resumen-sal",
+     "name": {
+      "es": "Salud",
+      "en": "Health"
+     }
+    },
+    {
+     "id": "ana",
+     "file": "tab-resumen-ana",
+     "name": {
+      "es": "Análisis",
+      "en": "Analysis"
+     }
+    }
+   ]
+  },
+  {
+   "id": "peso",
+   "name": {
+    "es": "Peso",
+    "en": "Weight"
+   },
+   "tabs": [
+    {
+     "id": "evo",
+     "file": "tab-peso-evo",
+     "name": {
+      "es": "Evolución",
+      "en": "Progress"
+     }
+    },
+    {
+     "id": "sem",
+     "file": "tab-peso-sem",
+     "name": {
+      "es": "Semanas",
+      "en": "Weeks"
+     }
+    },
+    {
+     "id": "cal",
+     "file": "tab-peso-cal",
+     "name": {
+      "es": "Calendario",
+      "en": "Calendar"
+     }
+    }
+   ]
+  },
+  {
+   "id": "cuerpo",
+   "name": {
+    "es": "Cuerpo",
+    "en": "Body"
+   },
+   "tabs": [
+    {
+     "id": "composicion",
+     "file": "tab-cuerpo-composicion",
+     "name": {
+      "es": "Báscula",
+      "en": "Scale"
+     }
+    },
+    {
+     "id": "medidas",
+     "file": "tab-cuerpo-medidas",
+     "name": {
+      "es": "Medidas",
+      "en": "Measurements"
+     }
+    },
+    {
+     "id": "corazon",
+     "file": "tab-cuerpo-corazon",
+     "name": {
+      "es": "Corazón",
+      "en": "Heart"
+     }
+    },
+    {
+     "id": "bienestar",
+     "file": "tab-cuerpo-bienestar",
+     "name": {
+      "es": "Bienestar",
+      "en": "Wellbeing"
+     }
+    }
+   ]
+  },
+  {
+   "id": "actividad",
+   "name": {
+    "es": "Actividad",
+    "en": "Activity"
+   },
+   "tabs": [
+    {
+     "id": "hoy",
+     "file": "tab-actividad-hoy",
+     "name": {
+      "es": "Hoy",
+      "en": "Today"
+     }
+    },
+    {
+     "id": "evo",
+     "file": "tab-actividad-evo",
+     "name": {
+      "es": "Evolución",
+      "en": "Progress"
+     }
+    },
+    {
+     "id": "wo",
+     "file": "tab-actividad-wo",
+     "name": {
+      "es": "Entrenos",
+      "en": "Workouts"
+     }
+    },
+    {
+     "id": "ana",
+     "file": "tab-actividad-ana",
+     "name": {
+      "es": "Análisis",
+      "en": "Analysis"
+     }
+    }
+   ]
+  },
+  {
+   "id": "sueno",
+   "name": {
+    "es": "Sueño",
+    "en": "Sleep"
+   },
+   "tabs": [
+    {
+     "id": "hoy",
+     "file": "tab-sueno-hoy",
+     "name": {
+      "es": "Noche",
+      "en": "Night"
+     }
+    },
+    {
+     "id": "banco",
+     "file": "tab-sueno-banco",
+     "name": {
+      "es": "Saldo",
+      "en": "Balance"
+     }
+    },
+    {
+     "id": "evo",
+     "file": "tab-sueno-evo",
+     "name": {
+      "es": "Evolución",
+      "en": "Progress"
+     }
+    },
+    {
+     "id": "hor",
+     "file": "tab-sueno-hor",
+     "name": {
+      "es": "Horario",
+      "en": "Schedule"
+     }
+    },
+    {
+     "id": "ana",
+     "file": "tab-sueno-ana",
+     "name": {
+      "es": "Análisis",
+      "en": "Analysis"
+     }
+    }
+   ]
+  },
+  {
+   "id": "comidas",
+   "name": {
+    "es": "Comidas",
+    "en": "Meals"
+   },
+   "tabs": [
+    {
+     "id": "hoy",
+     "file": "tab-comidas-hoy",
+     "name": {
+      "es": "Hoy",
+      "en": "Today"
+     }
+    },
+    {
+     "id": "reg",
+     "file": "tab-comidas-reg",
+     "name": {
+      "es": "Registro",
+      "en": "Log"
+     }
+    },
+    {
+     "id": "ana",
+     "file": "tab-comidas-ana",
+     "name": {
+      "es": "Análisis",
+      "en": "Analysis"
+     }
+    }
+   ]
+  },
+  {
+   "id": "intimo",
+   "name": {
+    "es": "Íntimo",
+    "en": "Intimate"
+   },
+   "tabs": [
+    {
+     "id": "ciclo",
+     "file": "tab-intimo-ciclo",
+     "name": {
+      "es": "Ciclo",
+      "en": "Cycle"
+     }
+    },
+    {
+     "id": "sexo",
+     "file": "tab-intimo-sexo",
+     "name": {
+      "es": "Sexualidad",
+      "en": "Sexuality"
+     }
+    },
+    {
+     "id": "animo",
+     "file": "tab-intimo-animo",
+     "name": {
+      "es": "Ánimo",
+      "en": "Mood"
+     }
+    }
+   ]
+  },
+  {
+   "id": "historial",
+   "name": {
+    "es": "Historial de pesos",
+    "en": "Weight history"
+   },
+   "tabs": [
+    {
+     "id": "anios",
+     "file": "tab-historial-anios",
+     "name": {
+      "es": "Años",
+      "en": "Years"
+     }
+    },
+    {
+     "id": "todo",
+     "file": "tab-historial-todo",
+     "name": {
+      "es": "Todo",
+      "en": "All"
+     }
+    },
+    {
+     "id": "int",
+     "file": "tab-historial-int",
+     "name": {
+      "es": "Intentos",
+      "en": "Attempts"
+     }
+    }
+   ]
+  }
+ ],
+ "desktop": [
+  {
+   "file": "video-desk-resumen",
+   "kind": "video",
+   "name": {
+    "es": "Resumen",
+    "en": "Summary"
+   }
+  },
+  {
+   "file": "desktop-resumen",
+   "kind": "image",
+   "name": {
+    "es": "Resumen",
+    "en": "Summary"
+   }
+  },
+  {
+   "file": "video-desk-peso",
+   "kind": "video",
+   "name": {
+    "es": "Peso",
+    "en": "Weight"
+   }
+  },
+  {
+   "file": "desktop-peso",
+   "kind": "image",
+   "name": {
+    "es": "Peso",
+    "en": "Weight"
+   }
+  },
+  {
+   "file": "video-desk-sueno",
+   "kind": "video",
+   "name": {
+    "es": "Sueño",
+    "en": "Sleep"
+   }
+  },
+  {
+   "file": "desktop-sueno",
+   "kind": "image",
+   "name": {
+    "es": "Sueño",
+    "en": "Sleep"
+   }
+  },
+  {
+   "file": "video-desk-actividad",
+   "kind": "video",
+   "name": {
+    "es": "Actividad",
+    "en": "Activity"
+   }
+  },
+  {
+   "file": "desktop-actividad",
+   "kind": "image",
+   "name": {
+    "es": "Actividad",
+    "en": "Activity"
+   }
+  },
+  {
+   "file": "desktop-cuerpo",
+   "kind": "image",
+   "name": {
+    "es": "Cuerpo",
+    "en": "Body"
+   }
+  },
+  {
+   "file": "video-desk-temas",
+   "kind": "video",
+   "name": {
+    "es": "Temas",
+    "en": "Themes"
+   }
+  }
+ ]
+}
