@@ -13,6 +13,7 @@
     <string name="step3">3 · Sending</string>
     <string name="auto_label">Send automatically every hour</string>
     <string name="send_now">Send now</string>
+    <string name="close">Close</string>
     <string name="sending">Sending…</string>
     <string name="never">Nothing has been sent yet.</string>
     <string name="last_run">Last attempt: %1$s · %2$s</string>

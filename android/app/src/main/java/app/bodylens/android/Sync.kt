@@ -7,6 +7,8 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
 import java.time.Duration
@@ -44,7 +46,8 @@ object Sync {
         }
     }
 
-    private fun post(url: String, body: String) {
+    /** On a background thread: Android does not allow network calls on the screen's thread. */
+    private suspend fun post(url: String, body: String) = withContext(Dispatchers.IO) {
         val c = URL(url).openConnection() as HttpURLConnection
         try {
             c.requestMethod = "POST"

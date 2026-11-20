@@ -23,6 +23,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,7 +58,9 @@ class HealthActivity : ComponentActivity() {
         applySetup(intent)
         setContent {
             MaterialTheme(colorScheme = lightColorScheme(primary = Color(0xFF3B7BF2))) {
-                Surface(Modifier.fillMaxSize()) { Screen(setupTick.value) }
+                // opened from the app (not as BodyLens Bridge's own screen): a button closes it and goes back to the app
+                val close: (() -> Unit)? = if (isTaskRoot) null else ({ finish() })
+                Surface(Modifier.fillMaxSize()) { Screen(setupTick.value, close) }
             }
         }
     }
@@ -81,7 +84,7 @@ class HealthActivity : ComponentActivity() {
 }
 
 @Composable
-private fun Screen(setupTick: Int) {
+private fun Screen(setupTick: Int, onClose: (() -> Unit)?) {
     val context = LocalContext.current
     val prefs = remember { Prefs(context) }
     val scope = rememberCoroutineScope()
@@ -128,7 +131,10 @@ private fun Screen(setupTick: Int) {
         Modifier.safeDrawingPadding().verticalScroll(rememberScrollState()).padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        Text("BodyLens", fontSize = 30.sp, fontWeight = FontWeight.ExtraBold)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("BodyLens", fontSize = 30.sp, fontWeight = FontWeight.ExtraBold, modifier = Modifier.weight(1f))
+            if (onClose != null) TextButton(onClick = onClose) { Text(stringResource(R.string.close), fontSize = 16.sp) }
+        }
         Text(stringResource(R.string.intro))
 
         if (!available) {

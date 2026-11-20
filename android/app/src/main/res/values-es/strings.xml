@@ -13,6 +13,7 @@
     <string name="step3">3 · Envío</string>
     <string name="auto_label">Enviar automáticamente cada hora</string>
     <string name="send_now">Enviar ahora</string>
+    <string name="close">Cerrar</string>
     <string name="sending">Enviando…</string>
     <string name="never">Todavía no se ha enviado nada.</string>
     <string name="last_run">Último intento: %1$s · %2$s</string>
