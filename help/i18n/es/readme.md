@@ -1,4 +1,4 @@
-<!-- en: e697812e2015a16d -->
+<!-- en: cbe2d9a83147a659 -->
 # BodyLens
 
 **BodyLens** es una app web de salud personal, multiusuario y autoalojada. Reúne el peso y la composición corporal
@@ -33,7 +33,7 @@ servidor, los datos llegan solos y cada persona ve únicamente los suyos.
 
 - **Varias cuentas**, cada una con sus propios datos, con acceso mediante usuario y contraseña.
 - **Alta:** peticiones de acceso desde la página de entrada, aprobadas por un administrador (con avisos por correo),
-  enlaces de invitación de un solo uso, o una **suscripción de pago** (1,49 €/mes o 12 €/año, 7 días gratis): en la
+  enlaces de invitación de un solo uso, o una **suscripción de pago** (1,50 €/mes o 12 €/año, 7 días gratis): en la
   web con Stripe (tarjeta, Google Pay, Apple Pay) o en la app de Android con Google Play. La suscripción se puede
   cambiar entre mensual y anual o dar de baja sin borrar la cuenta; una cuenta cuya suscripción termina queda en solo
   lectura 30 días (con tres avisos por correo) y después se borra.

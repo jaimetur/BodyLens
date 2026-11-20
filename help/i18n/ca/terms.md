@@ -1,4 +1,4 @@
-<!-- en: af3d7c7d59c47122 -->
+<!-- en: a9811e2cf12182bf -->
 # Condicions d'ús
 
 Darrera actualització: 20 de novembre de 2026.
@@ -14,7 +14,7 @@ Aquestes condicions s'apliquen a l'ús de BodyLens en aquest servidor, mitjança
 ## Comptes i subscripcions
 
 - Un compte es pot crear de dues maneres: amb un **codi d'invitació** o un enllaç de l'administrador (gratuïtament, mentre l'administrador ho decideixi), o amb una **subscripció de pagament**, ja sigui en aquest web (pagament amb targeta, Google Pay o Apple Pay mitjançant Stripe) o a l'app de BodyLens per a Android (mitjançant Google Play).
-- La subscripció costa **1,49 € al mes** o **12 € a l'any** (1 € al mes), impostos inclosos; la pàgina de pagament mostra el preu exacte a la teva moneda abans que paguis. Comença amb una **prova gratuïta de 7 dies**, una vegada per persona: si cancel·les durant la prova, no es cobra res.
+- La subscripció costa **1,50 € al mes** o **12 € a l'any** (1 € al mes), impostos inclosos; la pàgina de pagament mostra el preu exacte a la teva moneda abans que paguis. Comença amb una **prova gratuïta de 7 dies**, una vegada per persona: si cancel·les durant la prova, no es cobra res.
 - La subscripció es renova automàticament al final de cada període fins que la cancel·lis. Pots cancel·lar-la en qualsevol moment: a El teu compte → Subscripció (web) o a Google Play → Pagaments i subscripcions (app). Continua activa fins al final del període ja pagat.
 - Els pagaments, les renovacions i els reemborsaments els gestiona Stripe o Google Play segons les seves pròpies condicions; BodyLens mai no veu les dades de la teva targeta. Els reemborsaments segueixen les seves polítiques de reemborsament i la legislació del teu país.
 - **Pots donar-te de baixa o canviar entre el pla mensual i l'anual** quan vulguis a El teu compte → Subscripció, sense esborrar el teu compte: una subscripció donada de baixa continua activa fins al final del període pagat, i un canvi de pla s'aplica des de la renovació següent. **Si la subscripció o l'accés gratuït acaba, o no es paga**, el compte queda **en només lectura durant 30 dies**: pots entrar i veure i descarregar les teves dades, però no afegir-ne de noves, i s'aturen la sincronització i les dades que envien les teves fonts. Se t'avisa per correu electrònic tres vegades (en acabar, una setmana abans de l'esborrat i el dia anterior). Si **passats aquests 30 dies** la subscripció continua sense renovar-se, el compte i totes les seves dades s'esborren del servidor. Abans pots renovar-la, descarregar les teves dades (El teu compte → Dades i còpies) o esborrar el compte tu mateix.

@@ -17,7 +17,7 @@ import requests
 from app.core import crypto, db
 
 API = "https://api.stripe.com/v1"
-PLANS = {"monthly": ("month", 149, "bodylens_monthly_149"), "yearly": ("year", 1200, "bodylens_yearly_1200")}   # cents, EUR
+PLANS = {"monthly": ("month", 150, "bodylens_monthly_150"), "yearly": ("year", 1200, "bodylens_yearly_1200")}   # cents, EUR
 TRIAL_DAYS = 7
 ACTIVE = {"active", "trialing", "past_due"}   # past_due: Stripe is still retrying the payment
 

@@ -1,4 +1,4 @@
-<!-- en: ce7f4b9752fa8ea0 -->
+<!-- en: d112bd88731fc8ea -->
 # Cuentas y acceso
 
 Cada persona tiene su propia cuenta de BodyLens, con sus datos separados de los de los demás. Entras con tu nombre de usuario (o tu correo) y tu contraseña.
@@ -10,7 +10,7 @@ Cada persona tiene su propia cuenta de BodyLens, con sus datos separados de los 
 
 ## Crear una cuenta con una suscripción
 - En la pantalla de acceso (web y app de Android), la tarjeta **Crear mi cuenta** abre el registro; en la web, la página de inicio (`/`) muestra qué hace BodyLens y sus precios, y **Empezar gratis** también lo abre (`/alta`).
-- **Planes**: 1,49 € al mes o 12 € al año (1 € al mes), los dos con **7 días de prueba gratis**. En la web se paga con tarjeta, Google Pay o Apple Pay (en la página segura de Stripe); en la app de Android, con Google Play.
+- **Planes**: 1,50 € al mes o 12 € al año (1 € al mes), los dos con **7 días de prueba gratis**. En la web se paga con tarjeta, Google Pay o Apple Pay (en la página segura de Stripe); en la app de Android, con Google Play.
 - **Datos que se piden**: nombre y apellidos, correo, usuario y contraseña, un **código de invitación** si tienes uno, y aceptar las [condiciones](/terms) y la [política de privacidad](/privacy). La cuenta se crea en cuanto la página de pago confirma la suscripción, y entras con ella.
 - **Código de invitación**: con un código válido la cuenta es **gratis** y se crea al momento, sin pagar, durante el tiempo que dé el código (1, 3 o 6 meses, un año, hasta una fecha o de por vida); la administración puede cambiarle la fecha de fin después. Las mayúsculas, las tildes y los espacios no importan.
 - Si una suscripción termina (te diste de baja, falló un pago o se acabó tu tiempo gratis), la cuenta queda **en solo lectura durante 30 días**: puedes entrar y ver y descargar tus datos, pero no añadir datos nuevos, y se detienen la sincronización y los datos que envían tus fuentes (Withings, Apple Salud, Health Connect). Una barra roja abajo en la app lo indica y muestra el día en que se borrará la cuenta, con **Renovar** (`/alta`). Se te avisa por correo tres veces (al terminar, una semana antes del borrado y el día anterior); si en 30 días no se renueva, la cuenta y sus datos se borran.

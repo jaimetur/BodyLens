@@ -35,7 +35,7 @@ Only for administrator accounts. It is in "Your account" → **Administration**.
 - While it is not set, the app does not offer to subscribe.
 
 ## Web payments (Stripe)
-- For accounts paid on the website (card, Google Pay, Apple Pay), at €1.49 per month or €12 per year with a 7-day free trial.
+- For accounts paid on the website (card, Google Pay, Apple Pay), at €1.50 per month or €12 per year with a 7-day free trial.
 - Paste your Stripe **secret key**: the server creates the BodyLens product and its two prices in Stripe if they do not exist yet. Then create a webhook in Stripe (Developers → Webhooks) with the address shown here and the events `checkout.session.completed` and `customer.subscription.*`, and paste its **signing secret**.
 - A test key (`sk_test_…`) lets you try everything with Stripe's test cards; switch to the live key to charge for real.
 - Accounts that stop paying get three emails, a week apart, and are deleted seven days after the third one; the administrators are never deleted this way.

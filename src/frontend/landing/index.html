@@ -332,8 +332,8 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
   <section class="sec" id="precios"><div class="wrap">
     <div class="sh rv"><h2>Un precio <span class="grad">sencillo</span></h2><p>Todas las funciones en los dos planes. Empieza con 7 días gratis y cancela cuando quieras.</p></div>
     <div class="prices rv">
-      <div class="price"><h3>Mensual</h3><div class="amt" data-noi18n>1,49 €<small>/ mes</small></div><ul><li>Todos los módulos</li><li>Web y app de Android</li><li>7 días gratis</li></ul><a class="btn sec" href="/alta?plan=monthly">Empezar gratis</a></div>
-      <div class="price best"><span class="badge">Ahorra un 33 %</span><h3>Anual</h3><div class="amt" data-noi18n>12 €<small>/ año</small></div><span class="eq">Solo 1 € al mes</span><ul><li>Todos los módulos</li><li>Web y app de Android</li><li>7 días gratis</li></ul><a class="btn pri" href="/alta?plan=yearly">Empezar gratis</a></div>
+      <div class="price"><h3>Mensual</h3><div class="amt"><span class="pm" data-noi18n data-en="€1.50">1,50 €</span><small>/ mes</small></div><ul><li>Todos los módulos</li><li>Web y app de Android</li><li>7 días gratis</li></ul><a class="btn sec" href="/alta?plan=monthly">Empezar gratis</a></div>
+      <div class="price best"><span class="badge">Ahorra un 33 %</span><h3>Anual</h3><div class="amt"><span class="pm" data-noi18n data-en="€12">12 €</span><small>/ año</small></div><span class="eq">Solo 1 € al mes</span><ul><li>Todos los módulos</li><li>Web y app de Android</li><li>7 días gratis</li></ul><a class="btn pri" href="/alta?plan=yearly">Empezar gratis</a></div>
     </div>
     <p class="pnote">Paga con tarjeta, Google Pay o Apple Pay. Si cancelas durante la prueba, no se cobra nada. En Android, también desde la app con Google Play.</p>
   </div></section>
@@ -477,6 +477,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
     box.innerHTML = TH.map(([id, name]) => `<div class="thm" data-theme="${id}"><div class="tw"><div class="sb"><i></i><i></i><i></i><i></i><i></i></div><div class="mn"><div class="hr"><small>${(window.blT || String)('Peso')}</small>84.3 kg<u></u></div><div class="ts"><div class="tl">${bars('--weight', [70, 55, 80, 62, 90, 74])}</div><div class="tl">${bars('--slp', [60, 85, 50, 78, 66, 92])}</div></div></div></div><p>${(window.blT || String)(name)}</p></div>`).join('');
   })();
   const lang = document.documentElement.lang === 'en' ? 'en' : 'es';
+  if (lang === 'en') document.querySelectorAll('.pm[data-en]').forEach(el => { el.textContent = el.dataset.en; });   // prices written the English way
   const nm = o => (o && (o[lang] || o.es || o.en)) || '';
   fetch(M + 'manifest.json' + V).then(r => r.ok ? r.json() : null).catch(() => null).then(man => {
     const box = document.querySelector('#modulos .wrap');
