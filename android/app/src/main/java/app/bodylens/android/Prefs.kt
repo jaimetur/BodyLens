@@ -32,10 +32,10 @@ class Prefs(context: Context) {
         get() = sp.getString("server", "") ?: ""
         set(v) = sp.edit().putString("server", v.trim().trimEnd('/')).apply()
 
-    /** Health Connect permissions were already asked for once after linking (not asked again on their own). */
-    var askedPerms: Boolean
-        get() = sp.getBoolean("askedPerms", false)
-        set(v) = sp.edit().putBoolean("askedPerms", v).apply()
+    /** When the app last opened the Health Connect screen on its own (to install it or give the permissions); 0 = never. */
+    var askedAt: Long
+        get() = sp.getLong("askedAt", 0L)
+        set(v) = sp.edit().putLong("askedAt", v).apply()
 
     var lastMessage: String
         get() = sp.getString("lastMessage", "") ?: ""

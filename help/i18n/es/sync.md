@@ -1,4 +1,4 @@
-<!-- en: 6bfabd4ab383ab20 -->
+<!-- en: 42c5b6fc87534c19 -->
 # Sincronización
 
 BodyLens no te pide que escribas tus datos: los recibe de tu báscula, tu móvil y tu reloj. Solo tienes que conectar
@@ -14,6 +14,12 @@ cada servicio una vez. Todo se configura en **Tu cuenta → Fuentes de datos**, 
 
 Puedes conectar varios: Apple Salud o Android son la fuente principal de sueño, actividad y corazón; Withings trae tus
 pesadas y tu composición corporal y rellena los huecos.
+
+Si a tu cuenta le llegan datos **de Apple Salud y de Android a la vez**, una de las dos manda y la otra solo rellena
+los días y tipos de datos que le falten a la primera (sueño: noches enteras; entrenamientos: la misma sesión no se
+duplica). Elígela en **Tu cuenta → Fuentes de datos → Fuente que manda**: **Automática** (la opción por defecto:
+Android, salvo que la mayoría de tus datos lleguen de Apple Salud), **Apple Salud** o **Android (Health Connect)**. La
+elección se aplica a los datos que llegan a partir de ese momento.
 
 ## Withings, paso a paso
 
@@ -144,12 +150,15 @@ Android y una pantalla de inicio.
 1. La primera vez, la app te pide la **dirección del servidor** (la misma con la que abres BodyLens en el navegador;
    ya viene rellenada). Pulsa **Continuar**.
 2. Entra con tu usuario y contraseña de BodyLens (o crea una cuenta: mira [Cuentas](accounts.md)).
-3. La app se une sola a tu cuenta y te pide los permisos de Health Connect: permite todos los tipos de datos y
-   también **leer datos en segundo plano**, para que pueda enviar con la app cerrada.
+3. La app se une sola a tu cuenta y abre ella sola su pantalla de Health Connect. Si falta Health Connect o está
+   desactualizado, la pantalla te lo indica y **Abrir Health Connect en Google Play** lo instala; al volver, la app te
+   pide los permisos. Permite todos los tipos de datos y también **leer datos en segundo plano**, para que pueda
+   enviar con la app cerrada. Si la dejas sin permisos, la app te lo recuerda como mucho una vez por semana.
 4. Ya está: envía tus datos al momento y después cada hora ella sola.
 
 Dentro de la app, **Tu cuenta → Fuentes de datos** muestra el estado de Health Connect (permisos concedidos y último
-envío) con **Enviar ahora**, **Permisos de Health Connect** y **Cambiar el servidor**.
+envío) con **Enviar ahora**, **Permisos de Health Connect** y **Cambiar el servidor**. La pantalla de Health Connect
+tiene un botón **Cerrar** para volver a la app.
 
 **BodyLens Bridge** es una segunda app, más pequeña, para quien usa BodyLens en el navegador: solo envía tus datos
 de Health Connect (`/android-bridge.apk`). Instálala, abre **Tu cuenta → Fuentes de datos** en el navegador del móvil

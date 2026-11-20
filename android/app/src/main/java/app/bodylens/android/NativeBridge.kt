@@ -54,8 +54,16 @@ class NativeBridge(private val activity: MainActivity) {
         prefs.url = u
         if (first) prefs.auto = true
         Sync.schedule(activity, prefs.auto)
-        if (!prefs.askedPerms && HealthConnectClient.getSdkStatus(activity) == HealthConnectClient.SDK_AVAILABLE) {
-            prefs.askedPerms = true
+        // Health Connect missing or without any permission: the app opens its screen on its own (to install it, or to
+        // give the permissions), at once the first time and then at most once a week
+        val sdk = HealthConnectClient.getSdkStatus(activity)
+        if (sdk == HealthConnectClient.SDK_UNAVAILABLE || System.currentTimeMillis() - prefs.askedAt < 7 * 24 * 3600_000L) return
+        activity.scope().launch {
+            val none = sdk != HealthConnectClient.SDK_AVAILABLE || try {
+                HealthConnectClient.getOrCreate(activity).permissionController.getGrantedPermissions().intersect(HealthReader.PERMISSIONS).isEmpty()
+            } catch (_: Exception) { true }
+            if (!none) return@launch
+            prefs.askedAt = System.currentTimeMillis()
             activity.runOnUiThread {
                 activity.startActivity(Intent(activity, HealthActivity::class.java)
                     .setData(android.net.Uri.parse("bodylens://setup?url=" + android.net.Uri.encode(u))))

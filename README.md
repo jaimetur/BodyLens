@@ -49,6 +49,8 @@ server, the data arrives on its own, and every person sees only their own data.
   and ECG are fetched every few minutes, and at once when Withings notifies a new measurement.
 - **Apple Health:** the iPhone app *Health Auto Export* posts to a personal address of each account.
 - **Android:** the BodyLens Android app (in `android/`) reads Health Connect and posts every hour in the same format.
+  When an account gets both, the main source it chooses (Apple Health, Android, or automatic) rules and the other one
+  only fills gaps.
 - **Daily backup** of the database at 03:30 (the last 30 are kept).
 
 ## How it is built

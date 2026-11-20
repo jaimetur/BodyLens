@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="intro">Envía tus datos de Health Connect (actividad, corazón, sueño, entrenamientos, ciclo…) a tu servidor de BodyLens cada hora.</string>
-    <string name="hc_missing">Health Connect no está disponible en este teléfono. Instálalo o actualízalo desde Google Play.</string>
+    <string name="hc_missing">Para enviar tus datos, BodyLens necesita Health Connect. Instálalo o actualízalo desde Google Play (es gratis); después la app te pedirá los permisos.</string>
+    <string name="hc_unsupported">Este móvil no puede usar Health Connect (necesita Android 9 o posterior).</string>
     <string name="hc_install">Abrir Health Connect en Google Play</string>
     <string name="step1">1 · Dirección de envío</string>
     <string name="url_label">Dirección</string>

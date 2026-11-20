@@ -140,8 +140,40 @@ def a_metros(v, u):
 
 # ---------- doPost ----------
 
-def ingest(con, user_id: int, body) -> dict:
-    """Procesa un envío de Health Auto Export y guarda en las pestañas. Devuelve el resumen (como doPost)."""
+HC = "Health Connect"   # source of the data sent by the Android app (its rows: keys ending in "|hc", workouts "hk-hc-…")
+
+
+def es_hc(v) -> bool:
+    """A key, sleep source or workout id of data sent by the Android app."""
+    t = V.js_str(v)
+    return t.endswith("|hc") or t.startswith(HC) or t.startswith("hk-hc-")
+
+
+def _preferir(rows: list, origen, android_rules: bool | None) -> list:
+    """Of rows from both sources, those of the account's main source if there are any (the other one fills gaps)."""
+    if android_rules is None:
+        return rows
+    manda = [r for r in rows if es_hc(origen(r)) == android_rules]
+    return manda or rows
+
+
+def _priorizar(con, user_id: int, tab, nuevas: dict, i_nombre: int, i_clave: int, android: bool, android_rules: bool):
+    """Per kind of data and day: the main source's rows rule. Returns the new rows to keep and what to remove from
+    the stored ones (rows of the other source for those same kinds and days)."""
+    grupo = lambda r: (V.js_str(r[i_nombre]), V.day_key(r[0]))   # noqa: E731
+    if android == android_rules:
+        nuevos = {grupo(r) for r in nuevas.values()}
+        return nuevas, (lambda r: len(r) > i_clave and es_hc(r[i_clave]) != android and grupo(r) in nuevos)
+    guardadas = store.read_rows(con, user_id, tab).values()
+    con_datos = {grupo(r) for r in guardadas if len(r) > i_clave and es_hc(r[i_clave]) == android_rules}
+    return {k: r for k, r in nuevas.items() if grupo(r) not in con_datos}, None
+
+
+def ingest(con, user_id: int, body, android: bool = False, android_rules: bool = False) -> dict:
+    """Procesa un envío de Health Auto Export y guarda en las pestañas. Devuelve el resumen (como doPost).
+    `android`: the post comes from the Android app (Health Connect); `android_rules`: Android is the account's main
+    health source (the other source only fills gaps, see priority.py)."""
+    hc = "|hc" if android else ""
     d = body.get("data", body) if isinstance(body, dict) else {}
     if not isinstance(d, dict):
         d = {}
@@ -164,7 +196,7 @@ def ingest(con, user_id: int, body) -> dict:
                        "k": x.get("kind") or "", "l": x.get("labels") or [], "a": x.get("associations") or []}
             else:
                 val = next((x[c] for c in ("severity", "value", "qty", "valence") if nn(x.get(c))), 1)
-            k = f"{tipo}|{ini.ms}"
+            k = f"{tipo}|{ini.ms}{hc}"
             fin = fecha(x.get("end") or x.get("endDate")) or ini
             registros[k] = [ini.local, fin.local, tipo, cell(val), k]
     for mt in d.get("metrics") or []:
@@ -191,7 +223,7 @@ def ingest(con, user_id: int, body) -> dict:
                 continue
             if es_log:   # actividad sexual, ciclo, síntomas…: uno por momento
                 val = next((x[c] for c in ("qty", "value", "Avg") if nn(x.get(c))), 1)
-                k = f"{nombre}|{f.ms}"
+                k = f"{nombre}|{f.ms}{hc}"
                 fin = fecha(x.get("endDate") or x.get("end")) or f
                 registros[k] = [f.local, fin.local, nombre, cell(val), k]
                 continue
@@ -201,8 +233,11 @@ def ingest(con, user_id: int, body) -> dict:
             if val is None and mn == "":
                 continue
             if usada:
-                k = f"{clave}|{f.ms}"
-                filas[k] = [f.local, clave, "" if val is None else val, mn, mx, unidad, x.get("source") or "", k]
+                k = f"{clave}|{f.ms}{hc}"
+                fuente = x.get("source") or ""
+                if android:
+                    fuente = f"{HC} · {fuente}" if fuente else HC
+                filas[k] = [f.local, clave, "" if val is None else val, mn, mx, unidad, fuente, k]
                 continue
             # el resto se guarda resumido por día
             dia = f.local.strftime("%Y-%m-%d")
@@ -215,7 +250,7 @@ def ingest(con, user_id: int, body) -> dict:
         for dia, a in diario.items():
             suma = bool(re.search(r"count|step|energy|distance|flights|time|minutes|stand|calories|kcal", nombre)
                         or re.fullmatch(r"count|kcal|km|m|min|kJ", unidad))
-            k = f"{nombre}|{dia}"
+            k = f"{nombre}|{dia}{hc}"
             filas[k] = [V.day_as_date(dia), nombre, r2(a["s"]) if suma else r2(a["s"] / a["n"]), a["mn"], a["mx"],
                         unidad, "día", k]
     for g in d.get("ecg") or []:
@@ -248,14 +283,19 @@ def ingest(con, user_id: int, body) -> dict:
             tipo = "lowhr" if hr and sum(hr) / len(hr) < 60 else "highhr"
         k = f"{tipo}|{ini.ms}"
         avisos[k] = [ini.local, fin.local, tipo, f"umbral {n['threshold']}" if nn(n.get("threshold")) else "", k]
+    quitar_salud = quitar_reg = None
     if filas:
-        store.save_rows(con, user_id, SALUD, filas)
+        filas, quitar_salud = _priorizar(con, user_id, SALUD, filas, 1, 7, android, android_rules)
+    if registros:
+        registros, quitar_reg = _priorizar(con, user_id, REGISTROS, registros, 2, 4, android, android_rules)
+    if filas or quitar_salud:
+        store.save_rows(con, user_id, SALUD, filas, remove=quitar_salud)
     if ecgs:
         store.save_rows(con, user_id, ECG, ecgs)
     if avisos:
         store.save_rows(con, user_id, AVISOS, avisos)
-    if registros:
-        store.save_rows(con, user_id, REGISTROS, registros)
+    if registros or quitar_reg:
+        store.save_rows(con, user_id, REGISTROS, registros, remove=quitar_reg)
     res = {"ok": True, "metricas": len(filas), "ecg": len(ecgs), "avisos": len(avisos), "registros": len(registros)}
     # Salud como fuente principal: actividad del día, noches y siestas, entrenamientos
     try:
@@ -264,14 +304,14 @@ def ingest(con, user_id: int, body) -> dict:
         res["errorActividad"] = str(e)
     try:
         for mt in sueno_mts:
-            r = sueno_desde_salud(con, user_id, mt)
+            r = sueno_desde_salud(con, user_id, mt, android, android_rules)
             res["noches"] = res.get("noches", 0) + r["noches"]
             res["siestas"] = res.get("siestas", 0) + r["siestas"]
     except Exception as e:  # noqa: BLE001
         res["errorSueno"] = str(e)
     try:
         if d.get("workouts"):
-            res["entrenos"] = entrenos_desde_salud(con, user_id, d["workouts"])
+            res["entrenos"] = entrenos_desde_salud(con, user_id, d["workouts"], android, android_rules)
     except Exception as e:  # noqa: BLE001
         res["errorEntrenos"] = str(e)
     return res
@@ -326,7 +366,7 @@ def actividad_desde_salud(con, user_id: int, dias: list) -> int:
 
 # ---------- sueño ----------
 
-def sueno_desde_salud(con, user_id: int, mt: dict) -> dict:
+def sueno_desde_salud(con, user_id: int, mt: dict, android: bool = False, android_rules: bool | None = None) -> dict:
     datos = mt.get("data") or []
     if not datos:
         return {"noches": 0, "siestas": 0}
@@ -339,6 +379,8 @@ def sueno_desde_salud(con, user_id: int, mt: dict) -> dict:
                  "core" if re.search(r"core|light|ligero|b.sico|principal", fase) else "awake" if re.search(r"awake|despiert", fase) else
                  "inbed" if re.search(r"in ?bed|en cama", fase) else "asleep")
             src = x.get("source") or ""
+            if android:
+                src = f"{HC} · {src}" if src else HC
             k = f"{src}|{f}|{ini.ms}"
             tramos[k] = [ini.local, fin.local, f, src, k]
         elif x.get("sleepStart") or x.get("inBedStart") or nn(x.get("totalSleep")) or nn(x.get("asleep")):
@@ -364,7 +406,7 @@ def sueno_desde_salud(con, user_id: int, mt: dict) -> dict:
         store.save_rows(con, user_id, FASES, tramos, remove=quitar)
         for t in tramos.values():
             dias[dia_de_noche(ms_of(t[1]))] = True
-        return guardar_noches_salud(con, user_id, list(dias))
+        return guardar_noches_salud(con, user_id, list(dias), android_rules)
     # resumido: cada noche tal cual (salvo los días hechos con tramos, que son más fieles)
     con_tramos = {dia_de_noche(ms_of(r[1])) for r in store.read_rows(con, user_id, FASES).values() if isinstance(r[1], datetime)}
     noches = {}
@@ -450,7 +492,7 @@ def hipnograma(tramos: list, ini: int, fin: int, k: str) -> str:
     return ";".join(f"{a}~{b}~{c}" for a, b, c in out)
 
 
-def rellenar_fases(con, user_id: int) -> int:
+def rellenar_fases(con, user_id: int, android_rules: bool | None = None) -> int:
     """Fills in (or brings up to date) the «Fases» column of the Apple Health nights with the stored phases."""
     from bisect import bisect_left
     rows = store.read_rows(con, user_id, SUENO)
@@ -467,7 +509,7 @@ def rellenar_fases(con, user_id: int) -> int:
     for key, r in falta.items():
         ini, fin = ms_of(r[1]), ms_of(r[2])
         i = bisect_left(starts, ini - 12 * 3600000)
-        cerca = [t for t in todos[i:bisect_left(starts, fin)] if t[1] > ini]
+        cerca = _preferir([t for t in todos[i:bisect_left(starts, fin)] if t[1] > ini], lambda t: t[3], android_rules)
         h = hipnograma(cerca, ini, fin, V.day_key(r[0]))
         if h and h != V.js_str(r[15] if len(r) > 15 else ""):
             nuevas[key] = list(r[:15]) + [""] * (15 - len(r[:15])) + [h]
@@ -476,7 +518,7 @@ def rellenar_fases(con, user_id: int) -> int:
     return len(nuevas)
 
 
-def guardar_noches_salud(con, user_id: int, dias: list) -> dict:
+def guardar_noches_salud(con, user_id: int, dias: list, android_rules: bool | None = None) -> dict:
     """guardarNochesSalud_: rehace las noches y siestas de los días indicados con los tramos guardados."""
     if not dias:
         return {"noches": 0, "siestas": 0}
@@ -488,7 +530,7 @@ def guardar_noches_salud(con, user_id: int, dias: list) -> dict:
     for k in dias:
         fin_v = ms_at(k, "17:00")
         ini_v = fin_v - 24 * 3600000
-        dentro = [r for r in todos if ini_v < r[1] <= fin_v]
+        dentro = _preferir([r for r in todos if ini_v < r[1] <= fin_v], lambda r: r[3], android_rules)
         if not dentro:
             continue
         por_fuente: dict = {}
@@ -611,7 +653,7 @@ def guardar_noches_salud(con, user_id: int, dias: list) -> dict:
 
 # ---------- entrenamientos ----------
 
-def entrenos_desde_salud(con, user_id: int, ws: list) -> int:
+def entrenos_desde_salud(con, user_id: int, ws: list, android: bool = False, android_rules: bool = False) -> int:
     if not ws:
         return 0
 
@@ -632,7 +674,7 @@ def entrenos_desde_salud(con, user_id: int, ws: list) -> int:
         ini, fin = fecha(w.get("start")), fecha(w.get("end"))
         if not ini or not fin:
             continue
-        wid = "hk-" + V.js_str(w.get("id") or ini.ms // 1000)
+        wid = ("hk-hc-" if android else "hk-") + V.js_str(w.get("id") or ini.ms // 1000)
         dur = num(w["duration"]) / 60 if nn(w.get("duration")) else (fin.ms - ini.ms) / MIN
         en = w.get("activeEnergyBurned") or w.get("activeEnergy")
         kcal = a_kcal(q(en), en.get("units") if isinstance(en, dict) else "") if q(en) is not None else suma(w.get("activeEnergy"))
@@ -648,9 +690,18 @@ def entrenos_desde_salud(con, user_id: int, ws: list) -> int:
                       jr(dist) if dist else "", jr(fc_med) if fc_med else "", jr(fc_min) if fc_min else "",
                       jr(fc_max) if fc_max else "", r1(q(w.get("intensity"))) if q(w.get("intensity")) is not None else ""]
         rangos.append(ini.ms)
+    if android != android_rules and filas:
+        # the other source only fills gaps: not the sessions the main source already has (starting < 10 min apart)
+        suyas = [ms_of(r[2]) for r in store.read_rows(con, user_id, ENTRENOS).values()
+                 if V.js_str(r[0]).startswith("hk-") and es_hc(r[0]) == android_rules and isinstance(r[2], datetime)]
+        filas = {k: r for k, r in filas.items() if not any(abs(ms_of(r[2]) - t) < 10 * MIN for t in suyas)}
+        rangos = [ms_of(r[2]) for r in filas.values()]
 
-    def quitar(r):   # fuera la copia de Withings del mismo entreno (empieza a menos de 10 minutos)
-        if V.js_str(r[0]).startswith("hk-") or not isinstance(r[2], datetime):
+    def quitar(r):   # fuera la copia de Withings del mismo entreno (empieza a menos de 10 minutos), y la de la otra fuente de salud
+        if not isinstance(r[2], datetime):
+            return False
+        wid = V.js_str(r[0])
+        if wid.startswith("hk-") and (android != android_rules or es_hc(wid) == android):
             return False
         t = ms_of(r[2])
         return any(abs(t - x) < 10 * MIN for x in rangos)

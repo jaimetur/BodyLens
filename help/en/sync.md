@@ -15,6 +15,12 @@ Which ones do you need?
 You can connect several: Apple Health or Android are the main source for sleep, activity and heart; Withings brings
 your weigh-ins and body composition and fills the gaps.
 
+If your account gets data **both from Apple Health and from Android**, one of them rules and the other one only fills
+the days and kinds of data the first one is missing (sleep: whole nights; workouts: the same session is not
+duplicated). Choose it in **Your account → Data sources → Main source**: **Automatic** (the default: Android, unless
+most of your data comes from Apple Health), **Apple Health** or **Android (Health Connect)**. The choice applies to the
+data that arrives from then on.
+
 ## Withings, step by step
 
 1. Open BodyLens and go to **Your account → Data sources**.
@@ -142,12 +148,15 @@ start screen.
 1. The first time, the app asks for your **server address** (the one you open BodyLens at in the browser; it comes
    filled in). Press **Continue**.
 2. Sign in with your BodyLens username and password (or create an account: see [Accounts](accounts.md)).
-3. The app links itself to your account and asks for the Health Connect permissions: allow all the data types, and
-   also **read data in the background**, so it can send with the app closed.
+3. The app links itself to your account and opens its Health Connect screen on its own. If Health Connect is missing
+   or out of date, the screen tells you and **Open Health Connect in Google Play** installs it; when you come back,
+   the app asks for the permissions. Allow all the data types, and also **read data in the background**, so it can
+   send with the app closed. If you leave it without permissions, the app reminds you at most once a week.
 4. That's all: it sends your data at once, and then every hour on its own.
 
 Inside the app, **Your account → Data sources** shows the state of Health Connect (permissions allowed and the last
-sending) with **Send now**, **Health Connect permissions** and **Change the server**.
+sending) with **Send now**, **Health Connect permissions** and **Change the server**. The Health Connect screen has a
+**Close** button to go back to the app.
 
 **BodyLens Bridge** is a second, smaller app for those who use BodyLens in the browser: it only sends your Health
 Connect data (`/android-bridge.apk`). Install it, open **Your account → Data sources** in the phone's browser and press

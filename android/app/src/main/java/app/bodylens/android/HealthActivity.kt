@@ -52,6 +52,13 @@ class HealthActivity : ComponentActivity() {
     /** Bumped when a setup link (bodylens://setup?url=…) brings the sending address, so the screen asks for the
      *  permissions and sends at once. */
     private val setupTick = mutableStateOf(0)
+    /** Bumped each time the screen comes back (e.g. from Google Play after installing Health Connect). */
+    private val resumeTick = mutableStateOf(0)
+
+    override fun onResume() {
+        super.onResume()
+        resumeTick.value += 1
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +67,7 @@ class HealthActivity : ComponentActivity() {
             MaterialTheme(colorScheme = lightColorScheme(primary = Color(0xFF3B7BF2))) {
                 // opened from the app (not as BodyLens Bridge's own screen): a button closes it and goes back to the app
                 val close: (() -> Unit)? = if (isTaskRoot) null else ({ finish() })
-                Surface(Modifier.fillMaxSize()) { Screen(setupTick.value, close) }
+                Surface(Modifier.fillMaxSize()) { Screen(setupTick.value, resumeTick.value, close) }
             }
         }
     }
@@ -84,7 +91,7 @@ class HealthActivity : ComponentActivity() {
 }
 
 @Composable
-private fun Screen(setupTick: Int, onClose: (() -> Unit)?) {
+private fun Screen(setupTick: Int, resumeTick: Int, onClose: (() -> Unit)?) {
     val context = LocalContext.current
     val prefs = remember { Prefs(context) }
     val scope = rememberCoroutineScope()
@@ -93,8 +100,10 @@ private fun Screen(setupTick: Int, onClose: (() -> Unit)?) {
     var busy by remember { mutableStateOf(false) }
     var status by remember { mutableStateOf(statusText(context, prefs)) }
     var granted by remember { mutableStateOf<Set<String>>(emptySet()) }
-    val sdk = remember { HealthConnectClient.getSdkStatus(context) }
+    var sdk by remember { mutableStateOf(HealthConnectClient.getSdkStatus(context)) }
     val available = sdk == HealthConnectClient.SDK_AVAILABLE
+    // opened by the setup link while Health Connect was missing: ask for the permissions once it is installed
+    var askWhenInstalled by remember { mutableStateOf(false) }
 
     suspend fun refreshGranted() {
         if (available) granted = HealthConnectClient.getOrCreate(context).permissionController.getGrantedPermissions()
@@ -117,12 +126,22 @@ private fun Screen(setupTick: Int, onClose: (() -> Unit)?) {
         refreshGranted()
         Sync.schedule(context, prefs.auto && prefs.url.isNotEmpty())
     }
+    LaunchedEffect(resumeTick) {
+        val was = available
+        sdk = HealthConnectClient.getSdkStatus(context)
+        if (sdk != HealthConnectClient.SDK_AVAILABLE) return@LaunchedEffect
+        refreshGranted()
+        if (!was && askWhenInstalled && granted.intersect(HealthReader.PERMISSIONS).isEmpty()) {
+            askWhenInstalled = false
+            askPermissions.launch(HealthReader.PERMISSIONS + HealthReader.BACKGROUND)
+        }
+    }
     // opened from the setup link: address saved, so ask for every permission (or send, if they are already granted)
     LaunchedEffect(setupTick) {
         if (setupTick == 0) return@LaunchedEffect
         url = prefs.url; auto = prefs.auto
         refreshGranted()
-        if (!available) return@LaunchedEffect
+        if (!available) { askWhenInstalled = true; return@LaunchedEffect }
         if (!granted.containsAll(HealthReader.PERMISSIONS)) askPermissions.launch(HealthReader.PERMISSIONS + HealthReader.BACKGROUND)
         else sendNow()
     }
@@ -138,10 +157,13 @@ private fun Screen(setupTick: Int, onClose: (() -> Unit)?) {
         Text(stringResource(R.string.intro))
 
         if (!available) {
-            Text(stringResource(R.string.hc_missing), color = MaterialTheme.colorScheme.error)
-            Button(onClick = {
-                context.startActivity(Intent(Intent.ACTION_VIEW,
-                    Uri.parse("market://details?id=com.google.android.apps.healthdata")))
+            Text(stringResource(if (sdk == HealthConnectClient.SDK_UNAVAILABLE) R.string.hc_unsupported else R.string.hc_missing),
+                color = MaterialTheme.colorScheme.error)
+            if (sdk != HealthConnectClient.SDK_UNAVAILABLE) Button(onClick = {
+                // Google Play's page of Health Connect (install or update), which then opens its set-up
+                val play = "details?id=com.google.android.apps.healthdata&url=healthconnect%3A%2F%2Fonboarding"
+                try { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://$play"))) }
+                catch (_: Exception) { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/$play"))) }
             }) { Text(stringResource(R.string.hc_install)) }
         }
 

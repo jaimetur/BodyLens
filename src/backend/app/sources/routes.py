@@ -16,7 +16,7 @@ from app.accounts.users import User, get_user
 from app.core import crypto, db
 from app.core.deps import base_url, current_user, optional_user
 from app.sheets import service as sheets
-from app.sources import hae, withings
+from app.sources import hae, priority, withings
 
 router = APIRouter()
 log = logging.getLogger("bodylens.sources")
@@ -144,9 +144,12 @@ async def _ingest(request: Request, token: str):
         return {"ok": False, "error": "json"}
     await ensure_server(u)
 
+    # the Android app (Health Connect) posts the same JSON; each account says which of the two sources rules
+    android = "BodyLens-Android" in request.headers.get("user-agent", "")
+
     def work():
         with db.tx() as con:
-            return hae.ingest(con, u.id, body)
+            return hae.ingest(con, u.id, body, android, priority.count_post(con, u.id, android))
     res = await asyncio.to_thread(work)
     _note(u.id, "hae_last", {"at": db.now_iso(), **{k: v for k, v in res.items() if k != "ok"}})
     await sheets.rebuild_async(u.id)
@@ -179,7 +182,18 @@ def sources(request: Request, u: User = Depends(current_user)):
         "hae": {"url": f"{base_url(request)}/api/ingest/hae/{hae_tok['token']}" if hae_tok else None,
                 "last": db.get_setting(f"hae_last:{u.id}")},
         "androidApk": _apk_exists(),
+        "healthPrimary": priority.state(u.id),
     }
+
+
+@router.post("/api/sources/primary")
+async def set_primary(request: Request, u: User = Depends(current_user)):
+    """The health source that rules in the account (apple, android or auto); the other one only fills gaps."""
+    try:
+        mode = (await request.json()).get("mode")
+        return priority.set_mode(u.id, mode)
+    except (ValueError, AttributeError):
+        raise HTTPException(400, "Opción no válida.")
 
 
 def _apk_exists() -> bool:

@@ -105,6 +105,8 @@
             <div class="row"><a class="btn" id="hSetup" href="#" target="_top">Configurar BodyLens Bridge</a></div>
           </div>
           <p class="small" id="hAndroidHint" hidden>¿Tienes un móvil Android? Abre esta página en él para configurar la app de BodyLens con un solo toque.</p>
+          <label class="prim">Fuente que manda<select id="hPrim"><option value="auto">Automática</option><option value="apple">Apple Salud</option><option value="android">Android (Health Connect)</option></select></label>
+          <p class="small"><span id="hPrimNow"></span> Si te llegan datos de las dos, la que manda tiene prioridad y la otra solo rellena los días y tipos de datos que le falten. <span class="msg" id="hpMsg"></span></p>
           <div class="row"><button class="ghost" id="hCopy" type="button" hidden>Copiar la dirección</button><button class="ghost" id="hNew" type="button">Crear mi dirección de envío</button><span class="msg" id="hMsg"></span></div>
         </div>
         <dl class="kv" style="margin-top:12px">
@@ -188,6 +190,9 @@ async function loadSources() {
   nativeStatus();
   if (h.url) $('hSetup').href = 'intent://setup?url=' + encodeURIComponent(h.url) + '#Intent;scheme=bodylens;package=app.bodylens.bridge;S.browser_fallback_url='
     + encodeURIComponent(location.origin + '/android-bridge.apk') + ';end';   // BodyLens Bridge (the whole app links itself)
+  const P = S.healthPrimary || {};
+  $('hPrim').value = P.mode || 'auto';
+  $('hPrimNow').textContent = P.mode === 'auto' ? (P.rules === 'apple' ? 'Ahora manda Apple Salud porque la mayoría de tus datos llegan de ahí.' : 'Manda Android salvo que la mayoría de tus datos lleguen de Apple Salud.') : '';
   $('hNew').textContent = h.url ? 'Cambiar la dirección' : 'Crear mi dirección de envío';
   $('hInfo').innerHTML = h.url
     ? 'Use this same address on the iPhone, as the URL of each Health Auto Export automation (REST API, JSON v2), and on Android, in the BodyLens app.' + (h.last ? ` Último envío ${when(h.last.at)}${h.last.noches ? ` · ${h.last.noches} noches` : ''}${h.last.metricas ? ` · ${h.last.metricas} métricas` : ''}.` : ' Todavía no ha llegado ningún envío.')
@@ -287,6 +292,10 @@ act($('pAsk'), $('pMsg'), async () => {
 act($('pUnlink'), $('pMsg2'), async () => { if (!confirm('¿Separar las cuentas? Cada uno se queda con una copia de lo compartido.')) throw new Error('Cancelado.'); await api('POST', '/api/partner/unlink'); }, 'Cuentas separadas.');
 act($('pwGo'), $('pwMsg'), async () => { if ($('pw1').value !== $('pw2').value) throw new Error('Las dos contraseñas nuevas no coinciden.'); await api('POST', '/api/me/password', { current: $('pw0').value, new: $('pw1').value }); $('pw0').value = $('pw1').value = $('pw2').value = ''; }, 'Contraseña cambiada.');
 act($('wOff'), $('wMsg'), async () => { if (!confirm('¿Desconectar Withings? Dejarán de llegar las pesadas hasta que lo vuelvas a conectar.')) throw new Error('Cancelado.'); await api('POST', '/api/sources/withings/disconnect'); }, 'Desconectado.');
+$('hPrim').addEventListener('change', async () => {
+  try { await api('POST', '/api/sources/primary', { mode: $('hPrim').value }); say($('hpMsg'), 'Guardado.', 'ok'); loadSources(); }
+  catch (e) { say($('hpMsg'), e.message, 'err'); }
+});
 act($('hNew'), $('hMsg'), async () => { if ($('hUrl').textContent && !confirm('Si cambias la dirección, la anterior deja de funcionar y tendrás que ponerla otra vez en Health Auto Export (iPhone) o en la app de BodyLens (Android). ¿Seguir?')) throw new Error('Cancelado.'); await api('POST', '/api/sources/hae/token'); }, 'Dirección creada: cópiala en Health Auto Export (iPhone) o en la app de BodyLens (Android).');
 $('hCopy').addEventListener('click', () => { navigator.clipboard && navigator.clipboard.writeText($('hUrl').textContent); say($('hMsg'), 'Copiada.', 'ok'); });
 act($('sGo'), $('sMsg'), async () => { const r = await api('POST', '/api/sync'); if (!r.ok) throw new Error(r.message); }, 'Sincronizado.');

@@ -1,4 +1,4 @@
-<!-- en: cbe2d9a83147a659 -->
+<!-- en: b957af6df5d7cb2c -->
 # BodyLens
 
 **BodyLens** es una app web de salud personal, multiusuario y autoalojada. Reúne el peso y la composición corporal
@@ -51,6 +51,8 @@ servidor, los datos llegan solos y cada persona ve únicamente los suyos.
   y el ECG se consultan cada pocos minutos, y al instante cuando Withings avisa de una medición nueva.
 - **Apple Salud:** la app de iPhone *Health Auto Export* envía los datos a una dirección personal de cada cuenta.
 - **Android:** la app BodyLens para Android (en `android/`) lee Health Connect y envía cada hora en el mismo formato.
+  Si a una cuenta le llegan las dos, manda la fuente que elija (Apple Salud, Android o automática) y la otra solo
+  rellena huecos.
 - **Copia de seguridad diaria** de la base de datos a las 03:30 (se conservan las últimas 30).
 
 ## Cómo está construida
