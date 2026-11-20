@@ -5,13 +5,15 @@
 <link rel="stylesheet" href="/pages.css">
 <style>
 /* sign-in: the whole height of the phone, with the subscription well in sight */
-main.login{min-height:100dvh;display:flex;flex-direction:column;justify-content:center;gap:16px;padding-top:max(20px,env(safe-area-inset-top));padding-bottom:max(20px,env(safe-area-inset-bottom))}
-main.login .brand{margin-bottom:4px}main.login .brand img{width:52px;height:52px}main.login .brand b{font-size:1.9rem}
-main.login .card{margin:0}main.login input{font-size:1.05rem;padding:14px}main.login #go{width:100%;padding:15px;font-size:1.05rem}
-.subcta{position:relative;overflow:hidden;border:0;border-radius:22px;padding:22px;color:#fff;text-align:left;cursor:pointer;width:100%;font:inherit;
+main.login{min-height:100dvh;display:flex;flex-direction:column;justify-content:center;gap:12px;padding-top:max(20px,env(safe-area-inset-top));padding-bottom:max(20px,env(safe-area-inset-bottom))}
+main.login .brand{margin-bottom:0}main.login .brand img{width:40px;height:40px}main.login .brand b{font-size:1.5rem}
+main.login .card{margin:0;padding:18px}main.login .card h1{margin:0 0 4px}main.login label{margin-top:8px}main.login input{font-size:1.05rem;padding:12px}main.login #go{width:100%;padding:13px;font-size:1.05rem}main.login .row{margin-top:12px}
+@media (max-height:820px){main.login .card>p:first-of-type{display:none}}
+main.login p.small{margin:0}.foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.foot label{display:flex;align-items:center;gap:6px;margin:0}.foot select{width:auto;padding:6px 8px}
+.subcta{position:relative;overflow:hidden;border:0;border-radius:20px;padding:16px 18px;color:#fff;text-align:left;cursor:pointer;width:100%;font:inherit;
   background:linear-gradient(135deg,#6d7cf0,#9a5cf0 55%,#e0607a);box-shadow:0 18px 40px -18px #6d7cf0;animation:glow 3.5s ease-in-out infinite}
-.subcta b{display:block;font-size:1.45rem;line-height:1.15}.subcta span{display:block;opacity:.92;margin-top:4px}
-.subcta i{display:inline-block;margin-top:14px;padding:11px 20px;border-radius:999px;background:#fff;color:#4b3fc8;font-style:normal;font-weight:800}
+.subcta b{display:block;font-size:1.25rem;line-height:1.15}.subcta span{display:block;opacity:.92;margin-top:3px;font-size:.95rem}
+.subcta i{display:inline-block;margin-top:10px;padding:9px 18px;border-radius:999px;background:#fff;color:#4b3fc8;font-style:normal;font-weight:800}
 .subcta::after{content:"";position:absolute;inset:-40%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.35),transparent 40%);animation:shine 6s linear infinite}
 @keyframes glow{50%{box-shadow:0 22px 50px -14px #9a5cf0}}@keyframes shine{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.subcta,.subcta::after{animation:none}}
@@ -38,9 +40,8 @@ main.login .card{margin:0}main.login input{font-size:1.05rem;padding:14px}main.l
     <ul class="list" id="hintList"></ul>
     <p class="small">Entra con ella y cámbiale la contraseña en «Tu cuenta»: este aviso desaparecerá.</p>
   </div>
-  <button type="button" class="subcta" id="subGo"><b>¿Aún no tienes cuenta?</b><span>Suscríbete desde 1 € al mes. Los primeros 7 días son gratis. ¿Tienes un código de invitación? Úsalo aquí.</span><i>Crear mi cuenta</i></button>
-  <p class="small"><a href="/help">Ayuda</a> · <a href="/privacy">Privacidad</a> · <a href="/terms">Condiciones</a></p>
-  <p class="small langp"><label>🌐 <select id="langPick" aria-label="Language"></select></label></p>
+  <button type="button" class="subcta" id="subGo"><b>¿Aún no tienes cuenta?</b><span>Desde 1 € al mes · 7 días gratis · ¿Tienes un código de invitación? Úsalo aquí.</span><i>Crear mi cuenta</i></button>
+  <p class="small foot"><span><a href="/help">Ayuda</a> · <a href="/privacy">Privacidad</a> · <a href="/terms">Condiciones</a></span><label>🌐 <select id="langPick" aria-label="Language"></select></label></p>
 </main>
 <div class="subdlg" id="subDlg" hidden role="dialog" aria-modal="true" aria-label="Suscripción"><div><button type="button" class="x" id="subX" aria-label="Cerrar">✕</button><iframe id="subFrame" title="Suscripción"></iframe></div></div>
 <script src="/pages.js"></script>
