@@ -17,13 +17,6 @@ main.login p.small{margin:0}.foot{display:flex;justify-content:space-between;ali
 .subcta::after{content:"";position:absolute;inset:-40%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.35),transparent 40%);animation:shine 6s linear infinite}
 @keyframes glow{50%{box-shadow:0 22px 50px -14px #9a5cf0}}@keyframes shine{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.subcta,.subcta::after{animation:none}}
-.subdlg{position:fixed;inset:0;z-index:50;background:rgba(5,8,14,.6);display:flex;align-items:flex-end;justify-content:center}
-.subdlg[hidden]{display:none}
-.subdlg>div{position:relative;width:min(560px,100%);height:min(94dvh,860px);border-radius:24px 24px 0 0;overflow:hidden;background:var(--bg);animation:up .35s cubic-bezier(.2,.8,.2,1)}
-@media (min-width:700px){.subdlg{align-items:center}.subdlg>div{border-radius:24px}}
-.subdlg iframe{border:0;width:100%;height:100%;display:block}
-.subdlg button.x{position:absolute;top:10px;right:10px;z-index:2;width:38px;height:38px;border-radius:50%;border:0;background:rgba(0,0,0,.35);color:#fff;font-size:1rem}
-@keyframes up{from{transform:translateY(40px);opacity:0}}
 </style></head>
 <body><main class="narrow login">
   <div class="brand"><img src="/icon.svg" alt=""><b>BodyLens</b></div>
@@ -43,7 +36,6 @@ main.login p.small{margin:0}.foot{display:flex;justify-content:space-between;ali
   <button type="button" class="subcta" id="subGo"><b>¿Aún no tienes cuenta?</b><span>Desde 1 € al mes · 7 días gratis · ¿Tienes un código de invitación? Úsalo aquí.</span><i>Crear mi cuenta</i></button>
   <p class="small foot"><span><a href="/help">Ayuda</a> · <a href="/privacy">Privacidad</a> · <a href="/terms">Condiciones</a></span><label>🌐 <select id="langPick" aria-label="Language"></select></label></p>
 </main>
-<div class="subdlg" id="subDlg" hidden role="dialog" aria-modal="true" aria-label="Suscripción"><div><button type="button" class="x" id="subX" aria-label="Cerrar">✕</button><iframe id="subFrame" title="Suscripción"></iframe></div></div>
 <script src="/pages.js"></script>
 <script>
 (async () => {
@@ -54,14 +46,8 @@ main.login p.small{margin:0}.foot{display:flex;justify-content:space-between;ali
   } catch (e) { }
 })();
 document.addEventListener('click', e => { const b = e.target.closest('[data-u]'); if (b) { $('u').value = b.dataset.u; $('p').value = b.dataset.p; $('p').focus(); } });
-// the subscription dialog: the sign-up page in a sheet over the sign-in
-$('subGo').addEventListener('click', () => { $('subFrame').src = '/alta?embed=1'; $('subDlg').hidden = false; document.body.style.overflow = 'hidden'; });
-const closeSub = () => { $('subDlg').hidden = true; $('subFrame').src = 'about:blank'; document.body.style.overflow = ''; };
-$('subX').addEventListener('click', closeSub);
-$('subDlg').addEventListener('click', e => { if (e.target === $('subDlg')) closeSub(); });
-window.blBack = () => { if (!$('subDlg').hidden) { closeSub(); return true; } return false; };
-// Google Play tells the result to this page (the app's main frame): it goes on to the dialog
-window.blPurchase = r => { try { $('subFrame').contentWindow.blPurchase(r); } catch (e) {} };
+// the sign-up opens as a sheet (a page of its own: an iframe does not size or scroll well on the iPhone)
+$('subGo').addEventListener('click', () => { location.href = '/alta'; });
 $('f').addEventListener('submit', async e => {
   e.preventDefault(); $('go').disabled = true; say($('m'), 'Entrando…');
   try { const r = await api('POST', '/api/login', { username: $('u').value, password: $('p').value }); location.replace(r.mustChange ? '/cuenta?cambiar=1' : safeNext()); }
