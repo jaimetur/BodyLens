@@ -166,8 +166,9 @@ couple link is chosen by the user between two BodyLens accounts.
 
 ## 6. Reviewer account (App access)
 
-Google's reviewers need to sign in. Create on `https://bodylens.jtgcloud.com` an account only for them (for
-example `playreview`) with synthetic data, and give its username and password in **App access**. Instructions to
+Google's reviewers need to sign in. The server has an account only for them: username **`playreview`** (Alex García,
+synthetic data made with `tools/demo_data.py`, English, free access for life). Its password is not in the repository;
+give it, with the username, in **App access**. Instructions to
 paste:
 
 ```
