@@ -40,7 +40,7 @@ def display_css(user) -> str:
     return out + f"<style>{rule(z)}@media (max-width:700px){{{rule(zp)}}}</style>"
 
 
-def _page(*parts: str, request: Request | None = None) -> HTMLResponse:
+def _page(*parts: str, request: Request | None = None, lang: str | None = None) -> HTMLResponse:
     """Página del servidor con sus estilos y scripts marcados con la versión (el navegador no usa copias viejas)
     y con el idioma de quien la ve."""
     from app.core import version
@@ -48,9 +48,10 @@ def _page(*parts: str, request: Request | None = None) -> HTMLResponse:
     html = config.settings.frontend_dir.joinpath(*parts).read_text(encoding="utf-8")
     html = html.replace('href="/pages.css"', f'href="/pages.css?v={v}"').replace('src="/pages.js"', f'src="/pages.js?v={v}"')
     u = optional_user(request) if request is not None else None
-    lang = i18n.request_lang(request, u) if request is not None else i18n.DEFAULT
+    lang = lang or (i18n.request_lang(request, u) if request is not None else i18n.DEFAULT)
     css = display_css(u)
-    html = html.replace("<meta charset=\"utf-8\">", "<meta charset=\"utf-8\">" + i18n_tags(lang) + css, 1)
+    html = html.replace("<meta charset=\"utf-8\">", "<meta charset=\"utf-8\">" + i18n_tags(lang) + css
+                        + f'<script src="/native.js?v={v}"></script>', 1)
     return HTMLResponse(html, headers={"Cache-Control": "no-cache"})
 
 
@@ -79,10 +80,45 @@ def _front(*parts: str, **kw) -> FileResponse:
 def index(request: Request):
     u = optional_user(request)
     if not u:
-        return RedirectResponse("/login", status_code=303)
+        # visitors see the landing page; the Android app goes straight to signing in
+        if "BodyLensApp/" in request.headers.get("user-agent", ""):
+            return RedirectResponse("/login", status_code=303)
+        return landing(request)
     if u.must_change:
         return RedirectResponse("/cuenta?cambiar=1", status_code=303)
+    from app.billing.routes import expired
+    if expired(u.id):   # the Google Play subscription is over: the renewal page
+        return RedirectResponse("/alta", status_code=303)
     return HTMLResponse(page.page(u.public(), i18n_tags(u.lang) + display_css(u)), headers={"Cache-Control": "no-store"})
+
+
+LANDING_LANGS = ("en", "es")
+
+
+def landing(request: Request) -> HTMLResponse:
+    """The landing page in English or Spanish: the one chosen with its EN | ES switch (remembered in the language
+    cookie), else the one of the visitor's browser (Spanish for Spanish and the languages of Spain, English otherwise)."""
+    asked = request.query_params.get("lang")
+    lang = asked if asked in LANDING_LANGS else None
+    if not lang:
+        c = request.cookies.get(i18n.COOKIE)
+        lang = c if c in LANDING_LANGS else None
+    if not lang:
+        first = (request.headers.get("accept-language", "").split(",")[0].strip().lower()[:2])
+        lang = "es" if first in ("es", "ca", "gl", "eu") else "en"
+    r = _page("landing", "index.html", request=request, lang=lang)
+    r.body = r.body.replace(b'<html lang="es">', f'<html lang="{lang}">'.encode(), 1)
+    r.headers["content-length"] = str(len(r.body))
+    r.headers["vary"] = "accept-language,cookie"
+    if lang == "en":   # the description for search engines (the page's texts are translated in the browser)
+        import re
+        m = re.search(rb'<meta name="description-en" content="([^"]*)">', r.body)
+        if m:
+            r.body = re.sub(rb'<meta name="description" content="[^"]*">', b'<meta name="description" content="' + m.group(1) + b'">', r.body, count=1)
+            r.headers["content-length"] = str(len(r.body))
+    if asked in LANDING_LANGS:
+        r.set_cookie(i18n.COOKIE, lang, max_age=5 * 365 * 86400, samesite="lax")
+    return r
 
 
 def android_apk_path():
@@ -123,6 +159,18 @@ def account_page(request: Request):
     return _page("accounts", "cuenta.html", request=request)
 
 
+@router.get("/alta", response_class=HTMLResponse)
+def subscribe_page(request: Request):
+    """New account with a Google Play subscription (in the Android app), or renewing one that is over."""
+    return _page("accounts", "alta.html", request=request)
+
+
+@router.get("/bienvenida", response_class=HTMLResponse)
+def welcome_page(request: Request):
+    """Back from Stripe's checkout page."""
+    return _page("accounts", "bienvenida.html", request=request)
+
+
 @router.get("/help", response_class=HTMLResponse)
 def help_page(request: Request):
     """Public: the help can be read without signing in."""
@@ -152,6 +200,23 @@ def pages_css():
 @router.get("/pages.js")
 def pages_js():
     return _front("common", "pages.js", media_type="text/javascript", headers={"Cache-Control": "no-cache"})
+
+
+@router.get("/landing/media/{name}")
+def landing_media(name: str):
+    """Screenshots and videos of the landing page (demo account, synthetic data)."""
+    import re
+    if not re.fullmatch(r"[a-z0-9-]+\.(webp|png|jpg|mp4|webm)", name):
+        raise HTTPException(404)
+    p = config.settings.frontend_dir / "landing" / "media" / name
+    if not p.is_file():
+        raise HTTPException(404)
+    return FileResponse(p, headers={"Cache-Control": "public, max-age=86400"})
+
+
+@router.get("/native.js")
+def native_js():
+    return _front("common", "native.js", media_type="text/javascript", headers={"Cache-Control": "no-cache"})
 
 
 @router.get("/manifest.webmanifest")

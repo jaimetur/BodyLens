@@ -3544,6 +3544,15 @@ function whlMark(){if(!WHL)return;const L=$('whlList'),i=Math.max(0,Math.min(WHL
 $('whlList').addEventListener('scroll',whlMark,{passive:true});
 $('whlList').addEventListener('click',e=>{const d=e.target.closest('#whlList div');if(!d)return;const i=[...$('whlList').children].indexOf(d);$('whlList').scrollTo({top:i*44,behavior:'smooth'})});
 function whlClose(){$('whl').hidden=true;WHL=null}
+/* ---------- inside the Android app ---------- */
+// Android's back: closes what is open (wheel, enlarged card, export, profile menu); false lets the app go back a page
+window.blBack=()=>{if(!$('whl').hidden){whlClose();return true}if(!$('sheet').hidden){closeSheet();return true}
+  if(!$('expDlg').hidden){closeExport();return true}const m=$('pfMenu');if(m&&!m.hidden){closeProfMenu();return true}return false};
+// signed in to the app: it links itself to the account's sending address (making one if there is none) for Health Connect
+(async()=>{const N=window.BL_NATIVE;if(!N||!window.BODYLENS_SERVER)return;try{
+  const S=await fetch('/api/sources',{credentials:'same-origin'}).then(r=>r.ok?r.json():null);if(!S||!S.hae)return;
+  let url=S.hae.url;if(!url){const r=await fetch('/api/sources/hae/token',{method:'POST',credentials:'same-origin',headers:{'X-BodyLens':'1'}});if(r.ok)url=(await r.json()).url}
+  if(url)N.setIngestUrl(url)}catch(e){}})();
 document.addEventListener('click',e=>{const b=e.target.closest('[data-whl]');if(!b||!WHL)return;whlMark();const {el,vals,dec,idx}=WHL,a=b.dataset.whl;
   if(a==='ok'){el.value=vals[idx].toFixed(dec);el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))}
   whlClose();el.readOnly=false;if(a==='kbd'){el.dataset.kb='1';el.focus()}else el.blur()});

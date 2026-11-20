@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BodyLens · Privacidad y condiciones</title><meta name="theme-color" content="#3B7BF2">
+<link rel="icon" type="image/svg+xml" href="/icon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/pages.css">
+<style>
+/* public legal pages (privacy, terms, deleting an account): the text is a help document in the reader's language */
+.lnav{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.9rem}.lnav a{color:var(--muted)}.lnav a.on{color:var(--ink);font-weight:700}
+.who dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:6px 0 0;font-size:.92rem}.who dt{color:var(--muted)}.who dd{margin:0;overflow-wrap:anywhere}
+.md{line-height:1.65;font-size:16px;overflow-wrap:break-word}.md h1{font-size:28px;margin:0 0 10px}.md h2{font-size:19px;margin:26px 0 8px}
+.md ul,.md ol{padding-left:22px}.md li{margin:4px 0}
+</style>
+</head>
+<body><main class="narrow">
+  <div class="brand"><img src="/icon.svg" alt=""><b>BodyLens</b></div>
+  <nav class="lnav" aria-label="Páginas legales"><a href="/privacy" data-p="privacy">Política de privacidad</a><a href="/terms" data-p="terms">Condiciones de uso</a><a href="/delete-account" data-p="delete-account">Borrar una cuenta</a><a href="/login">Entrar</a></nav>
+  <section class="card who">
+    <h2>Responsable de los datos</h2>
+    <dl>
+      <dt>Responsable</dt><dd id="lCtl" data-noi18n>—</dd>
+      <dt>Contacto</dt><dd id="lMail" data-noi18n>—</dd>
+      <dt id="lAddrT" hidden>Dirección</dt><dd id="lAddr" data-noi18n hidden></dd>
+      <dt>Servidor</dt><dd id="lSrv" data-noi18n>—</dd>
+    </dl>
+  </section>
+  <article class="card md" id="doc" data-noi18n><p class="small">…</p></article>
+  <p class="small langp"><label>🌐 <select id="langPick" aria-label="Language"></select></label></p>
+</main>
+<script src="/pages.js"></script>
+<script>
+(async () => {
+  const doc = location.pathname.replace(/^\//, '') || 'privacy';
+  document.querySelectorAll('.lnav [data-p]').forEach(a => a.classList.toggle('on', a.dataset.p === doc));
+  try {
+    const L = await api('GET', '/api/legal');
+    $('lCtl').textContent = L.controller || (window.blT || String)('El administrador de este servidor de BodyLens');
+    $('lMail').innerHTML = L.email ? `<a href="mailto:${esc(L.email)}">${esc(L.email)}</a>` : '—';
+    $('lAddr').textContent = L.address || ''; $('lAddr').hidden = $('lAddrT').hidden = !L.address;
+    $('lSrv').textContent = L.server || location.origin;
+  } catch (e) {}
+  try {
+    const r = await api('GET', '/api/help/' + encodeURIComponent(doc));
+    $('doc').innerHTML = r.html; document.title = 'BodyLens · ' + r.title;
+  } catch (e) { $('doc').textContent = e.message; }
+})();
+</script>
+</body></html>

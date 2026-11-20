@@ -1,6 +1,6 @@
 def test_pages_need_login(client):
     r = client.get("/", follow_redirects=False)
-    assert r.status_code == 303 and r.headers["location"] == "/login"
+    assert r.status_code == 200 and 'id="precios"' in r.text and "BODYLENS_USER" not in r.text   # the landing, not the app
     assert client.get("/api/me").status_code == 401
     assert client.get("/api/docs/bascula").status_code == 401
 

@@ -3,6 +3,7 @@
 English is the only source (under settings.docs_dir):
   help/en/README.md        help index, shown as the Help home
   help/en/<module>.md      help of each module
+  help/en/legal/<doc>.md   privacy policy, terms of use and account deletion (public pages, not in the help index)
   README.md, CHANGELOG.md  project README and changelog
 Other languages are translated automatically from these files (app.help.translate).
 """
@@ -15,6 +16,7 @@ from pathlib import Path
 from app.core import config
 
 NAME = re.compile(r"^[a-z0-9_-]{1,40}$")
+LEGAL = ("privacy", "terms", "delete-account")   # public legal pages (help/en/legal/), not in the help index
 
 
 def root() -> Path:
@@ -29,6 +31,8 @@ def resolve(doc: str) -> Path | None:
         p = root() / "README.md"
     elif doc == "changelog":
         p = root() / "CHANGELOG.md"
+    elif doc in LEGAL:
+        p = root() / "help" / "en" / "legal" / f"{doc}.md"
     elif NAME.match(doc) and doc.upper() not in ("README", "CHANGELOG"):
         p = root() / "help" / "en" / f"{doc}.md"
     else:
@@ -56,7 +60,7 @@ def module_names() -> list[str]:
 
 
 def all_docs() -> list[str]:
-    return ["home", *module_names(), "readme", "changelog"]
+    return ["home", *module_names(), "readme", "changelog", *(d for d in LEGAL if resolve(d))]
 
 
 def title_of(md: str) -> str:
@@ -70,6 +74,8 @@ def _link(m: re.Match) -> str:
     text, url = m.group(1), m.group(2)
     if re.match(r"^https?://", url):
         return f'<a href="{url}" target="_blank" rel="noopener">{text}</a>'
+    if re.match(r"^/[a-z0-9-]+$", url):   # a page of this server (e.g. /privacy)
+        return f'<a href="{url}" target="_top">{text}</a>'
     name = url.split("#")[0].split("/")[-1]
     if re.match(r"^README(_[A-Z]{2})?\.md$", name):
         return f'<a href="#" data-doc="readme">{text}</a>'

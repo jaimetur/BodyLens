@@ -48,10 +48,11 @@
   - Sleep by segments (AutoSleep plus Apple Watch, wake-ups and naps, night from 5 pm to 5 pm).
   - Daily activity, workouts, ECG, alerts and records (cycle, mood, symptoms…).
   - Health takes precedence over Withings, which only fills gaps.
-- **Android app (Health Connect):**
+- **Android app:**
+  - The whole BodyLens on the phone: the server's web app in a native shell, so every change on the server shows in it at once, with what a web page cannot do by itself: the server address on first start, a start screen and an offline screen, downloads of PDF and backups, choosing files to import, Android's back button (it first closes what is open), the system edges kept for swiping, and the bars in the colour of the theme.
+  - Signing in links the app to the account on its own and asks for the Health Connect permissions; Your account → Data sources shows Health Connect's state with **Send now**, **Health Connect permissions** and **Change the server**.
   - Sends hourly steps, distance, floors, energy, heart rate, HRV, SpO2, respiration, VO2 max, sleep with stages, workouts, cycle and sexual activity, to the same sending address as Health Auto Export and in the same format.
-  - The APK is built by GitHub Actions and downloaded from Your account (`/android.apk`).
-  - One-tap setup: Your account → Data sources → **Set up the Android app**, on the phone, opens the app already linked to the account; it only asks for the Health Connect permissions and sends at once, then every hour.
+  - The APK and the AAB for Google Play are built by GitHub Actions; the APK is also downloaded from Your account (`/android.apk`). `tools/android-keystore.sh` creates the signing key Google Play needs.
   - Every screen, empty state and help page explains the Android path at the same level as the iPhone's.
 - **Data on the server:**
   - The sheet's tabs become tables on the server, and the workbook the page reads is generated from them.
@@ -67,6 +68,10 @@
   - Spanish comes already translated with the app (`help/i18n/es/`), so it needs no translator.
   - Every document is translated in advance into every language when the server starts, and checked again every 10 minutes: only documents whose English text changed (their fingerprint) are translated again, so the help opens already translated.
 - **Releases** (adapted from DriveTest Analyzer): `tools/CreateUpdateRelease.py` creates the next version's branch with its version, Android version and empty changelog release (English and Spanish), commits and pushes it, or updates the current release's version and date; the **🚀 Release** workflow publishes a version on GitHub with the notes of its changelog block, the source code and the Android APK. The rolling Android APK is published as "Android app (rolling build)".
+- **Paid accounts:** besides invitations and approved requests, an account can be created with a subscription of €1.49 per month or €12 per year (€1 per month), with a 7-day free trial: on the website through Stripe (card, Google Pay or Apple Pay; the account is made when the payment page confirms the subscription) or in the Android app through Google Play. Your account → Subscription shows the plan and lets you manage it; when a subscription ends the app asks to renew it, and an account that stops paying is warned by email three times, a week apart, and deleted with its data seven days after the third warning. Administration has the Google Play and Stripe settings.
+- **Landing page** at `/` for visitors: what each module does, with screenshots and videos of the app (made from a demo account with synthetic data), sources, prices, questions and sign-up.
+- **Delete my account** in Your account (with the password): deletes the account and all its data and cancels its subscription.
+- **Legal pages** (public, in every language): privacy policy (`/privacy`), terms of use (`/terms`) and how to delete an account (`/delete-account`), with the controller's details set in Administration → Legal details; linked from the sign-in page, Your account and the app.
 
 #### 🚀 Enhancements:
 - **A single importer** (Your account → Data and backups) for the full backup and for the previous version's `snap.json`. If the backup has several profiles, you choose which one to import.

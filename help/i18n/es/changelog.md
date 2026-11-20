@@ -1,4 +1,4 @@
-<!-- en: 556117765db095bd -->
+<!-- en: c1360a9474c59472 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -49,10 +49,11 @@
   - Sueño por segmentos (AutoSleep más Apple Watch, despertares y siestas, noche de 17:00 a 17:00).
   - Actividad diaria, entrenamientos, ECG, avisos y registros (ciclo, ánimo, síntomas…).
   - Salud tiene prioridad sobre Withings, que solo rellena huecos.
-- **App para Android (Health Connect):**
+- **App para Android:**
+  - Todo BodyLens en el móvil: la app web del servidor en una carcasa nativa, así que cada cambio del servidor se ve en ella al momento, con lo que una página web no puede hacer sola: la dirección del servidor al empezar, una pantalla de inicio y otra sin conexión, descargas de PDF y copias, elegir archivos para importar, el botón atrás de Android (primero cierra lo que está abierto), los bordes del sistema reservados para deslizar y las barras del color del tema.
+  - Al entrar, la app se une sola a la cuenta y pide los permisos de Health Connect; Tu cuenta → Fuentes de datos muestra el estado de Health Connect con **Enviar ahora**, **Permisos de Health Connect** y **Cambiar el servidor**.
   - Envía por horas pasos, distancia, pisos, energía, frecuencia cardiaca, HRV, SpO2, respiración, VO2 máx, sueño con fases, entrenamientos, ciclo y actividad sexual, a la misma dirección de envío que Health Auto Export y en el mismo formato.
-  - El APK lo construye GitHub Actions y se descarga desde Tu cuenta (`/android.apk`).
-  - Configuración de un toque: Tu cuenta → Fuentes de datos → **Configurar la app de Android**, en el móvil, abre la app ya unida a la cuenta; solo pide los permisos de Health Connect y envía al momento y después cada hora.
+  - El APK y el AAB para Google Play los construye GitHub Actions; el APK también se descarga desde Tu cuenta (`/android.apk`). `tools/android-keystore.sh` crea la clave de firma que necesita Google Play.
   - Todas las pantallas, los mensajes de «sin datos» y la ayuda explican el camino de Android al mismo nivel que el del iPhone.
 - **Datos en el servidor:**
   - Las pestañas de la hoja pasan a ser tablas del servidor, y el libro que lee la página se genera a partir de ellas.
@@ -68,6 +69,10 @@
   - El español viene ya traducido con la app (`help/i18n/es/`), así que no necesita traductor.
   - Todos los documentos se traducen de antemano a todos los idiomas al arrancar el servidor y se revisan cada 10 minutos: solo se vuelven a traducir los documentos cuyo texto en inglés ha cambiado (su huella), así que la ayuda se abre ya traducida.
 - **Versiones** (adaptado de DriveTest Analyzer): `tools/CreateUpdateRelease.py` crea la rama de la siguiente versión con su número de versión, la versión de Android y el bloque vacío del registro de cambios (inglés y español), la confirma y la sube, o actualiza la versión y la fecha de la versión actual; el flujo **🚀 Release** publica una versión en GitHub con las notas de su bloque del registro de cambios, el código fuente y el APK de Android. El APK continuo de Android se publica como «Android app (rolling build)».
+- **Cuentas de pago:** además de las invitaciones y las peticiones aprobadas, se puede crear una cuenta con una suscripción de 1,49 € al mes o 12 € al año (1 € al mes), con 7 días de prueba gratis: en la web con Stripe (tarjeta, Google Pay o Apple Pay; la cuenta se crea cuando la página de pago confirma la suscripción) o en la app de Android con Google Play. Tu cuenta → Suscripción muestra el plan y permite gestionarlo; cuando una suscripción termina la app pide renovarla, y una cuenta que deja de pagar recibe tres avisos por correo, uno por semana, y se borra con sus datos siete días después del tercero. Administración tiene los ajustes de Google Play y de Stripe.
+- **Página de presentación** en `/` para visitantes: qué hace cada módulo, con capturas y vídeos de la app (hechos con una cuenta de demostración con datos inventados), fuentes, precios, preguntas y alta.
+- **Borrar mi cuenta** en Tu cuenta (con la contraseña): borra la cuenta y todos sus datos y cancela su suscripción.
+- **Páginas legales** (públicas, en todos los idiomas): política de privacidad (`/privacy`), condiciones de uso (`/terms`) y cómo borrar una cuenta (`/delete-account`), con los datos del responsable en Administración → Datos legales; enlazadas desde la página de entrada, Tu cuenta y la app.
 
 #### 🚀 Mejoras:
 - **Un único importador** (Tu cuenta → Datos y copias) para la copia completa y para el `snap.json` de la versión anterior. Si la copia tiene varios perfiles, eliges cuál importar.

@@ -6,10 +6,12 @@ used languages a careful translation can be kept in the repository instead: its 
 was made from (<!-- en: <hash> -->), so the app uses it only while that English has not changed.
 
 Usage:
-  python3 tools/help_i18n.py check            lists, for each language folder, the documents missing or stale
+  python3 tools/help_i18n.py check            lists the documents missing (Spanish keeps all of them; other languages
+                                              only the legal pages) or stale
   python3 tools/help_i18n.py stamp <lang> [doc…]   marks the files as made from the current English
                                                   (run it after translating or updating them)
-Document names: home (help/en/README.md), readme (README.md), changelog (CHANGELOG.md) and each help/en/<module>.md.
+Document names: home (help/en/README.md), readme (README.md), changelog (CHANGELOG.md), each help/en/<module>.md and
+the legal pages privacy, terms and delete-account (help/en/legal/).
 """
 from __future__ import annotations
 
@@ -38,8 +40,10 @@ def check() -> int:
             src = docs.source(doc)
             p = d / f"{doc}.md"
             if not p.exists():
-                print(f"{lang}/{doc}: missing")
-                bad += 1
+                # Spanish keeps every document; other languages only the ones reviewed by hand (the legal pages)
+                if lang == "es":
+                    print(f"{lang}/{doc}: missing")
+                    bad += 1
             elif translate.bundled(lang, doc, src) is None:
                 print(f"{lang}/{doc}: stale (the English changed) or not stamped")
                 bad += 1

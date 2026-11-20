@@ -47,7 +47,7 @@ jobs:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: gradle --no-daemon assembleRelease
+        run: gradle --no-daemon assembleRelease bundleRelease   # APK to install directly, AAB for Google Play
       - name: Publish to the rolling android-latest pre-release
         if: ${{ !inputs.release_tag }}
         env:
@@ -70,4 +70,5 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           cp android/app/build/outputs/apk/release/app-release.apk "bodylens-android-${{ inputs.release_tag }}.apk"
-          gh release upload "${{ inputs.release_tag }}" "bodylens-android-${{ inputs.release_tag }}.apk" --clobber
+          cp android/app/build/outputs/bundle/release/app-release.aab "bodylens-android-${{ inputs.release_tag }}.aab"
+          gh release upload "${{ inputs.release_tag }}" "bodylens-android-${{ inputs.release_tag }}.apk" "bodylens-android-${{ inputs.release_tag }}.aab" --clobber

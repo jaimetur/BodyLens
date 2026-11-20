@@ -115,8 +115,12 @@ AutoSleep (for example, if AutoSleep missed part of the night), the watch wins. 
 
 On Android, health apps (Samsung Health, Google Fit, Fitbit, a Wear OS watch…) keep their data in **Health
 Connect**, Android's health data store (the equivalent of Apple Health on the iPhone). Health Connect only keeps the
-data on the phone; the **BodyLens Android app** is what reads it there and sends it to your account every hour (the
+data on the phone; the **BodyLens app for Android** reads it there and sends it to your account every hour (the
 equivalent of Health Auto Export on the iPhone, but already set up for BodyLens: no automations to create).
+
+The BodyLens app is the whole of BodyLens on your phone: it shows the same app as the browser (every change on the
+server appears in it at once) and adds Health Connect, downloads of your PDF and backups, Android's back button and a
+start screen.
 
 ### 1. Make sure your data reaches Health Connect
 
@@ -128,22 +132,25 @@ equivalent of Health Auto Export on the iPhone, but already set up for BodyLens:
 
 ### 2. Install the BodyLens app
 
-1. On the phone, open BodyLens in the browser and sign in.
-2. Go to **Your account → Data sources**, box **Apple Health / Android**. If you have no sending address yet, press
-   **Create my sending address**.
-3. Tap the link to download **the BodyLens app** (`/android.apk`) and open the downloaded file.
-4. Android warns that it comes from outside Google Play: allow installing apps from your browser and install it.
+- From **Google Play**, once it is published there; or
+- from your server: open BodyLens in the phone's browser, go to **Your account → Data sources** and tap the link to
+  download **the BodyLens app** (`/android.apk`). Android warns that it comes from outside Google Play: allow
+  installing apps from your browser.
 
-### 3. Set it up (one tap)
+### 3. Open it and sign in
 
-1. On the same phone, in BodyLens (the browser), go to **Your account → Data sources**, box **Apple Health /
-   Android**, and press **Set up the Android app**.
-2. The BodyLens app opens already linked to your account and asks for the Health Connect permissions: allow all the
-   data types, and also **read data in the background**, so it can send with the app closed.
-3. That's all: it sends your data at once, and then every hour on its own.
+1. The first time, the app asks for your **server address** (the one you open BodyLens at in the browser; it comes
+   filled in). Press **Continue**.
+2. Sign in with your BodyLens username and password (or create an account: see [Accounts](accounts.md)).
+3. The app links itself to your account and asks for the Health Connect permissions: allow all the data types, and
+   also **read data in the background**, so it can send with the app closed.
+4. That's all: it sends your data at once, and then every hour on its own.
 
-If the button does not open the app (for example, on an older Android), copy the address with **Copy the address**,
-paste it in the app's **Sending address**, press **Grant Health Connect permissions** and then **Send now**.
+Inside the app, **Your account → Data sources** shows the state of Health Connect (permissions allowed and the last
+sending) with **Send now**, **Health Connect permissions** and **Change the server**.
+
+With an older version of the app that only sends data, press **Set up the Android app** in **Your account → Data
+sources** from the phone's browser, or copy the address with **Copy the address** and paste it in the app.
 
 The first time it sends the last 30 days; then, every hour, whatever is new. The app shows the time and the result of
 the last submission, and in BodyLens the box changes to **receiving**.

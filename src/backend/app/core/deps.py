@@ -20,10 +20,26 @@ def optional_user(request: Request) -> User | None:
         return users.session_user(con, session_token(request))
 
 
-def current_user(request: Request) -> User:
+def signed_in_user(request: Request) -> User:
+    """Whoever is signed in, even if their subscription is over (to renew it, download their data or delete it)."""
     u = optional_user(request)
     if not u:
         raise HTTPException(401, "Inicia sesión.")
+    return u
+
+
+# what an account whose Google Play subscription is over can still do
+EXPIRED_OK = ("/api/me", "/api/logout", "/api/me/delete", "/api/play/")
+
+
+def current_user(request: Request) -> User:
+    u = signed_in_user(request)
+    path = request.url.path
+    if path == "/api/me" or path.startswith(EXPIRED_OK[1:]) or (request.method == "GET" and path.startswith("/api/data")):
+        return u
+    from app.billing.routes import expired   # here: billing's routes use these dependencies
+    if expired(u.id):
+        raise HTTPException(402, "Tu suscripción ha terminado. Renuévala en la app de BodyLens para Android.")
     return u
 
 

@@ -25,7 +25,8 @@ I18N = FRONT / "i18n"
 NEW = I18N / "new.json"
 
 PAGES = [*sorted((FRONT / "app").glob("app_*.html")), *sorted((FRONT / "accounts").glob("*.html")),
-         FRONT / "admin" / "admin.html", FRONT / "help" / "help.html", FRONT / "common" / "pages.js", FRONT / "compat" / "claude-shim.js"]
+         FRONT / "admin" / "admin.html", FRONT / "help" / "help.html", FRONT / "common" / "pages.js", FRONT / "compat" / "claude-shim.js",
+         FRONT / "landing" / "index.html", FRONT / "legal" / "legal.html"]
 
 LETTER = re.compile(r"[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]")
 SPANISH = re.compile(r"[áéíóúüñÁÉÍÓÚÜÑ¿¡]")

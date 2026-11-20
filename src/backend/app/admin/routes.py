@@ -7,11 +7,10 @@ import secrets
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 
-from app.accounts import users
+from app.accounts import deletion, users
 from app.accounts.users import User, UserError, clean_email
 from app.core import db
 from app.core.deps import admin_user, bad, base_url
-from app.data import docstore
 from app.mail import mailer
 from app.sync import workbook
 from app.web.page import esc
@@ -106,22 +105,11 @@ def delete_account(user_id: int, u: User = Depends(admin_user)):
         x = users.get_user(con, user_id)
         if not x:
             raise HTTPException(404, "No existe esa cuenta.")
-        if x.is_admin and x.active:
-            try:
-                users.ensure_other_admin(con, user_id)
-            except UserError as e:
-                raise HTTPException(400, str(e))
-        if x.partner_id:
-            docstore.unlink_partner(con, x)
-        con.execute("DELETE FROM invites WHERE used_by=?", (user_id,))
-        con.execute("UPDATE invites SET created_by=NULL WHERE created_by=?", (user_id,))
-        con.execute("DELETE FROM users WHERE id=?", (user_id,))
-    try:
-        p = workbook.path_for(user_id)
-        if p.exists():
-            p.unlink()
-    except OSError:
-        pass
+        try:
+            deletion.delete_account(con, x)
+        except UserError as e:
+            raise HTTPException(400, str(e))
+    deletion.delete_files(user_id)
     return {"ok": True}
 
 

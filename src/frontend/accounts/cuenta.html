@@ -96,6 +96,10 @@
           <p class="small" id="hInfo"></p>
           <p id="hUrlBox" hidden><span class="code" id="hUrl"></span></p>
           <p class="small applinks">iPhone: <a href="https://apps.apple.com/app/id1115567069" target="_blank" rel="noopener">Health Auto Export</a> (App Store) · Android: <a href="/android.apk" target="_top">BodyLens app</a> + <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata" target="_blank" rel="noopener">Health Connect</a> (Google Play) · <a href="/help#sync" target="_top">Step-by-step guide</a></p>
+          <div id="hNative" hidden>
+            <p class="small"><b>Health Connect (esta app):</b> <span id="hnSt">—</span></p>
+            <div class="row"><button id="hnSync" type="button">Enviar ahora</button><button class="ghost" id="hnPerm" type="button">Permisos de Health Connect</button><button class="ghost" id="hnSrv" type="button">Cambiar el servidor</button><span class="msg" id="hnMsg"></span></div>
+          </div>
           <div id="hAndroidSetup" hidden>
             <p class="small"><b>Android:</b> instala <a href="/android.apk" target="_top">la app de BodyLens</a> y pulsa este botón en el mismo móvil: la app se abre ya configurada con tu dirección y solo te pide los permisos de Health Connect. Después envía tus datos cada hora ella sola.</p>
             <div class="row"><a class="btn" id="hSetup" href="#" target="_top">Configurar la app de Android</a></div>
@@ -109,6 +113,26 @@
           <dt>Resultado</dt><dd id="sRes">—</dd>
         </dl>
         <div class="row"><button class="ghost" id="sGo" type="button">Sincronizar ahora</button><span class="msg" id="sMsg"></span></div>
+      </section>
+
+      <section class="card">
+        <h2>Privacidad y condiciones</h2>
+        <p class="small">Qué datos guarda BodyLens, para qué, con quién se comparten y tus derechos.</p>
+        <p class="small"><a href="/privacy" target="_blank" rel="noopener">Política de privacidad</a> · <a href="/terms" target="_blank" rel="noopener">Condiciones de uso</a> · <a href="/delete-account" target="_blank" rel="noopener">Borrar una cuenta</a></p>
+      </section>
+
+      <section class="card" id="subCard" hidden>
+        <h2>Suscripción</h2>
+        <p id="subTxt"></p>
+        <div class="row"><a class="btn ghost" id="subManage" href="#" target="_blank" rel="noopener">Gestionar la suscripción en Google Play</a></div>
+        <p class="small" id="subHelp">Para cancelarla o cambiar de plan: Google Play → Pagos y suscripciones → Suscripciones. Sigue activa hasta el final del periodo pagado.</p>
+      </section>
+
+      <section class="card" id="delCard">
+        <h2>Borrar mi cuenta</h2>
+        <p class="small">Borra tu cuenta y <b>todos tus datos</b> de este servidor: pesadas, actividad, sueño, comidas, ciclo, ánimo y ajustes. No se puede deshacer. Si tienes pareja vinculada, conserva su copia de lo compartido. Antes, si quieres, guarda una copia en Datos y copias.</p>
+        <div class="fgrid"><label>Tu contraseña<input id="delPw" type="password" autocomplete="current-password"></label></div>
+        <div class="row"><button class="danger" id="delGo" type="button">Borrar mi cuenta</button><span class="msg" id="delMsg"></span></div>
       </section>
 
     </div>
@@ -154,7 +178,8 @@ async function loadSources() {
   // one-tap setup of the Android app: the link opens it with the address (or downloads the app if it is missing)
   const android = /Android/i.test(navigator.userAgent);
   const apk = !!(h.url && S.androidApk);   // the server has the app to download
-  $('hAndroidSetup').hidden = !apk || !android; $('hAndroidHint').hidden = !apk || android;
+  $('hAndroidSetup').hidden = !apk || !android || !!NATIVE; $('hAndroidHint').hidden = !apk || android || !!NATIVE;
+  nativeStatus();
   if (h.url) $('hSetup').href = 'intent://setup?url=' + encodeURIComponent(h.url) + '#Intent;scheme=bodylens;package=app.bodylens.android;S.browser_fallback_url='
     + encodeURIComponent(location.origin + '/android.apk') + ';end';
   $('hNew').textContent = h.url ? 'Cambiar la dirección' : 'Crear mi dirección de envío';
@@ -162,6 +187,47 @@ async function loadSources() {
     ? 'Use this same address on the iPhone, as the URL of each Health Auto Export automation (REST API, JSON v2), and on Android, in the BodyLens app.' + (h.last ? ` Último envío ${when(h.last.at)}${h.last.noches ? ` · ${h.last.noches} noches` : ''}${h.last.metricas ? ` · ${h.last.metricas} métricas` : ''}.` : ' Todavía no ha llegado ningún envío.')
     : 'Create your sending address: it is the same for the iPhone (Health Auto Export) and for Android (the BodyLens app). With it, your sleep, activity, heart rate and the rest arrive straight at the server.';
 }
+// inside the Android app: its Health Connect status and buttons; the steps to install the app are not needed there
+const NATIVE = (() => { try { return window.BodyLensNative || (parent !== window && parent.BodyLensNative) || null; } catch (e) { return null; } })();
+function nativeStatus() {
+  if (!NATIVE) return;
+  let s = {}; try { s = JSON.parse(NATIVE.healthStatus()); } catch (e) {}
+  $('hNative').hidden = false;
+  $('hnSt').textContent = !s.available ? 'Health Connect no está disponible en este móvil.'
+    : !s.configured ? 'sin enlazar todavía' : `${s.granted} de ${s.total} tipos de datos permitidos`
+      + (s.lastRun ? ` · último envío ${new Date(s.lastRun).toLocaleString('es-ES')}${s.lastMessage ? ': ' + s.lastMessage : ''}` : '');
+}
+if (NATIVE) {
+  document.documentElement.classList.add('inapp');
+  $('hnSync').addEventListener('click', () => { say($('hnMsg'), '…'); NATIVE.syncNow(); });
+  $('hnPerm').addEventListener('click', () => NATIVE.openHealth());
+  $('hnSrv').addEventListener('click', () => { if (confirm('¿Cambiar el servidor de BodyLens de esta app?')) NATIVE.changeServer(); });
+  addEventListener('bl-native-sync', e => { const d = e.detail || {}; say($('hnMsg'), d.message || '', d.ok ? 'ok' : 'err'); nativeStatus(); });
+  try { parent.addEventListener('bl-native-sync', e => dispatchEvent(new CustomEvent('bl-native-sync', { detail: e.detail }))); } catch (e) {}
+}
+async function loadSub() {
+  let s = null; try { s = await api('GET', '/api/play/status'); } catch (e) { return; }
+  if (!s || (s.plan !== 'play' && s.plan !== 'web')) return;
+  $('subCard').hidden = false;
+  const plan = s.basePlan === 'monthly' ? 'mensual' : s.basePlan === 'yearly' ? 'anual' : '';
+  const until = s.expiry ? new Date(s.expiry).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : '—';
+  $('subTxt').textContent = s.active ? `Plan ${plan} de Google Play, activo hasta el ${until} (se renueva solo si no lo cancelas).` : `Tu suscripción terminó el ${until}.`;
+  if (s.plan === 'web') {   // paid on the website: Stripe's page to change the card, see invoices or cancel
+    $('subManage').textContent = 'Gestionar el pago y la suscripción'; $('subManage').removeAttribute('target');
+    $('subHelp').textContent = 'Cambia la tarjeta, descarga tus facturas o cancela la suscripción. Sigue activa hasta el final del periodo pagado.';
+    $('subManage').onclick = async e => { e.preventDefault(); try { const r = await api('POST', '/api/web/portal'); TOP.location.href = r.url; } catch (err) { alert(err.message); } };
+  } else $('subManage').href = `https://play.google.com/store/account/subscriptions?sku=${encodeURIComponent(s.product)}&package=${encodeURIComponent(s.package)}`;
+  if (s.warnings) $('subTxt').textContent += ` Te hemos avisado ${s.warnings} de 3 veces: si no la renuevas, tu cuenta y tus datos se borrarán.`;
+  if (!s.active) { const a = document.createElement('a'); a.className = 'btn'; a.href = '/alta'; a.target = '_top'; a.textContent = 'Renovar'; $('subManage').parentElement.prepend(a); }
+}
+loadSub();
+$('delGo').addEventListener('click', async () => {
+  if (!$('delPw').value) { say($('delMsg'), 'Escribe tu contraseña.', 'err'); return; }
+  if (!confirm('¿Borrar tu cuenta y todos tus datos? No se puede deshacer.')) return;
+  $('delGo').disabled = true; say($('delMsg'), '…');
+  try { await api('POST', '/api/me/delete', { password: $('delPw').value }); top.location.href = '/login'; }
+  catch (e) { say($('delMsg'), e.message, 'err'); $('delGo').disabled = false; }
+});
 const act = (btn, msg, fn, okText) => btn.addEventListener('click', async () => {
   btn.disabled = true; say(msg, '…');
   try { await fn(); say(msg, okText || 'Hecho.', 'ok'); await load(); } catch (e) { say(msg, e.message, 'err'); } finally { btn.disabled = false; }

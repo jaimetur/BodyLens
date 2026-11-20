@@ -1,4 +1,4 @@
-<!-- en: 367c03f6868aa2c5 -->
+<!-- en: 31b72c67d9f4c4d0 -->
 # Administración
 
 Solo para cuentas de administrador. Está en «Tu cuenta» → **Administración**.
@@ -21,6 +21,19 @@ Solo para cuentas de administrador. Está en «Tu cuenta» → **Administración
 
 ## Correo
 - El correo se envía desde el buzón configurado en el servidor (variables `SMTP_*`). **Enviarme un correo de prueba** comprueba que funciona.
+
+## Datos legales
+- El responsable de los datos (tu nombre o tu marca), un correo de contacto para privacidad y, si quieres, una dirección postal. Aparecen al principio de las páginas públicas [política de privacidad](/privacy), [condiciones de uso](/terms) y [borrar una cuenta](/delete-account), que Google Play pide para publicar la app.
+
+## Google Play
+- Para las cuentas que pagan con una suscripción en la app de Android. Pega la **clave JSON de una cuenta de servicio** con acceso a la Play Console; el servidor la usa para comprobar cada compra con Google y para cancelar la suscripción de una cuenta que se borra. El paquete (`app.bodylens.android`) y el ID de la suscripción (`bodylens`) vienen rellenados.
+- Mientras no esté configurado, la app no ofrece suscribirse.
+
+## Pagos web (Stripe)
+- Para las cuentas que pagan en la web (tarjeta, Google Pay, Apple Pay), a 1,49 € al mes o 12 € al año con 7 días de prueba gratis.
+- Pega tu **clave secreta** de Stripe: el servidor crea en Stripe el producto de BodyLens y sus dos precios si aún no existen. Después crea un webhook en Stripe (Developers → Webhooks) con la dirección que se muestra aquí y los eventos `checkout.session.completed` y `customer.subscription.*`, y pega su **secreto de firma**.
+- Una clave de prueba (`sk_test_…`) permite probarlo todo con las tarjetas de prueba de Stripe; cambia a la clave real para cobrar de verdad.
+- Las cuentas que dejan de pagar reciben tres correos, con una semana de diferencia, y se borran siete días después del tercero; las cuentas de administrador nunca se borran así.
 
 ## Cuenta `admin` por defecto
 - Cada despliegue nuevo crea una vez la cuenta `admin`, con la contraseña `admin123`, que aparece en la pantalla de acceso hasta que se cambia. **Cámbiala** nada más desplegar; si la borras, no se vuelve a crear.

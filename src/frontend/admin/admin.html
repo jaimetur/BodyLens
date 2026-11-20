@@ -38,6 +38,9 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
     <button type="button" data-tab="withings">Withings</button>
     <button type="button" data-tab="translator">Translator</button>
     <button type="button" data-tab="copias">Copias</button>
+    <button type="button" data-tab="legal">Datos legales</button>
+    <button type="button" data-tab="play">Google Play</button>
+    <button type="button" data-tab="stripe">Pagos web (Stripe)</button>
     <button type="button" data-tab="fuentes" hidden>Fuentes de datos</button>
   </div>
 
@@ -113,6 +116,41 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
     </div>
     <div class="row"><button id="tSave" type="button">Save</button><button class="ghost" id="tNow" type="button">Translate now</button><button class="ghost danger-t" id="tDel" type="button">Remove the key</button><span class="msg" id="tMsg"></span></div>
     <p class="small" id="tState"></p>
+  </section>
+
+  <section class="card" data-panel="stripe" hidden>
+    <h2>Pagos web (Stripe)</h2>
+    <p>Para las suscripciones desde la web (tarjeta, Google Pay y Apple Pay) con 7 días gratis: 1,49 €/mes o 12 €/año. Al guardar la clave, el servidor crea en Stripe el producto y los dos precios si aún no existen.</p>
+    <div class="edit">
+      <label>Clave secreta de Stripe<input id="stKey" type="password" autocomplete="new-password" spellcheck="false" placeholder="(sin cambios)"></label>
+      <label>Secreto de firma del webhook<input id="stHook" type="password" autocomplete="new-password" spellcheck="false" placeholder="(sin cambios)"></label>
+    </div>
+    <p class="small">Dirección del webhook en Stripe (Desarrolladores → Webhooks), con los eventos <code>checkout.session.completed</code> y <code>customer.subscription.*</code>: <span class="code" id="stUrl" data-noi18n></span></p>
+    <div class="row"><button id="stSave" type="button">Guardar</button><button class="ghost danger-t" id="stDel" type="button">Quitar las claves</button><span class="msg" id="stMsg"></span></div>
+    <p class="small" id="stState"></p>
+  </section>
+
+  <section class="card" data-panel="play" hidden>
+    <h2>Google Play</h2>
+    <p>Para las cuentas con suscripción de la app de Android: el servidor comprueba cada compra con Google usando una cuenta de servicio con acceso a la Play Console. Mientras no esté configurado, la app no ofrece suscribirse.</p>
+    <div class="edit">
+      <label>Paquete de la app<input id="gpPkg" placeholder="app.bodylens.android"></label>
+      <label>Suscripción (ID del producto)<input id="gpProd"></label>
+      <label>Clave de la cuenta de servicio (contenido del fichero JSON)<textarea id="gpSa" rows="4" spellcheck="false" placeholder="(sin cambios)"></textarea></label>
+    </div>
+    <div class="row"><button id="gpSave" type="button">Guardar</button><button class="ghost danger-t" id="gpDel" type="button">Quitar la clave</button><span class="msg" id="gpMsg"></span></div>
+    <p class="small" id="gpState"></p>
+  </section>
+
+  <section class="card" data-panel="legal" hidden>
+    <h2>Datos legales</h2>
+    <p>Aparecen arriba de las páginas públicas de <a href="/privacy" target="_blank" rel="noopener">política de privacidad</a>, <a href="/terms" target="_blank" rel="noopener">condiciones de uso</a> y <a href="/delete-account" target="_blank" rel="noopener">borrar una cuenta</a>, que pide Google Play para publicar la app.</p>
+    <div class="edit">
+      <label>Responsable de los datos (tu nombre o el de tu marca)<input id="lgCtl" maxlength="120"></label>
+      <label>Correo de contacto para privacidad<input id="lgMail" type="email"></label>
+      <label>Dirección postal (opcional)<input id="lgAddr" maxlength="200"></label>
+    </div>
+    <div class="row"><button id="lgSave" type="button">Guardar</button><span class="msg" id="lgMsg"></span></div>
   </section>
 
   <section class="card" data-panel="copias" hidden>
@@ -213,6 +251,45 @@ $('mSave').addEventListener('click', async () => {
     await api('PUT', '/api/admin/mail', { host: $('mHost').value, port: +$('mPort').value || null, security: $('mSec').value, username: $('mUser').value, password: $('mPass').value, from_address: $('mFrom').value, from_name: $('mName').value });
     say($('mMsg'), 'Guardado.', 'ok'); await load();
   } catch (e) { say($('mMsg'), e.message, 'err'); }
+});
+async function loadStripe() {
+  try {
+    const s = await api('GET', '/api/admin/stripe');
+    $('stUrl').textContent = s.webhookUrl; $('stKey').value = ''; $('stHook').value = '';
+    $('stState').textContent = s.configured ? `Configurado (${s.live ? 'modo real' : 'modo de prueba'})${s.webhookSet ? '' : ', falta el secreto del webhook'}. Cuentas con suscripción web: ${s.subscriptions}.` : 'Sin configurar: la web no ofrece suscribirse.';
+  } catch (e) {}
+}
+loadStripe();
+$('stSave').addEventListener('click', async () => {
+  say($('stMsg'), '…');
+  try { await api('PUT', '/api/admin/stripe', { secret: $('stKey').value, webhook: $('stHook').value }); say($('stMsg'), 'Guardado.', 'ok'); await loadStripe(); }
+  catch (e) { say($('stMsg'), e.message, 'err'); }
+});
+$('stDel').addEventListener('click', async () => {
+  if (!confirm('¿Quitar las claves de Stripe? Las suscripciones web no podrán comprobarse hasta que las vuelvas a poner.')) return;
+  try { await api('PUT', '/api/admin/stripe', { remove: true }); say($('stMsg'), 'Quitadas.', 'ok'); await loadStripe(); } catch (e) { say($('stMsg'), e.message, 'err'); }
+});
+async function loadPlay() {
+  try {
+    const g = await api('GET', '/api/admin/play');
+    $('gpPkg').value = g.package; $('gpProd').value = g.product; $('gpSa').value = '';
+    $('gpState').textContent = g.configured ? `Configurado con ${g.serviceAccount}. Cuentas con suscripción: ${g.subscriptions}.` : 'Sin configurar: la app no ofrece suscribirse.';
+  } catch (e) {}
+}
+loadPlay();
+$('gpSave').addEventListener('click', async () => {
+  try { await api('PUT', '/api/admin/play', { package: $('gpPkg').value, product: $('gpProd').value, serviceAccount: $('gpSa').value }); say($('gpMsg'), 'Guardado.', 'ok'); await loadPlay(); }
+  catch (e) { say($('gpMsg'), e.message, 'err'); }
+});
+$('gpDel').addEventListener('click', async () => {
+  if (!confirm('¿Quitar la clave de Google Play? Las cuentas con suscripción no podrán renovarse hasta que la vuelvas a poner.')) return;
+  try { await api('PUT', '/api/admin/play', { remove: true }); say($('gpMsg'), 'Quitada.', 'ok'); await loadPlay(); } catch (e) { say($('gpMsg'), e.message, 'err'); }
+});
+async function loadLegal() { try { const L = await api('GET', '/api/admin/legal'); $('lgCtl').value = L.controller; $('lgMail').value = L.email; $('lgAddr').value = L.address; } catch (e) {} }
+loadLegal();
+$('lgSave').addEventListener('click', async () => {
+  try { await api('PUT', '/api/admin/legal', { controller: $('lgCtl').value, email: $('lgMail').value, address: $('lgAddr').value }); say($('lgMsg'), 'Guardado.', 'ok'); }
+  catch (e) { say($('lgMsg'), e.message, 'err'); }
 });
 $('bNow').addEventListener('click', async () => {
   $('bNow').disabled = true; say($('bMsg'), 'Copiando…');

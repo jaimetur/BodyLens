@@ -4,7 +4,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel
 
-from app.accounts import users
+from app.accounts import deletion, users
 from app.accounts.users import User, UserError
 from app.core import config, db, i18n
 from app.core.deps import (COOKIE, admin_user, bad, base_url, client_ip, current_user, session_token,
@@ -133,6 +133,26 @@ def change_password(body: PasswordIn, response: Response, u: User = Depends(curr
     except UserError as e:
         bad(e)
     set_session_cookie(response, token)
+    return {"ok": True}
+
+
+class DeleteMeIn(BaseModel):
+    password: str
+
+
+@router.post("/api/me/delete")
+def delete_me(body: DeleteMeIn, response: Response, u: User = Depends(current_user)):
+    """Deletes your own account and all its data, after checking your password (Google Play asks every app with
+    accounts to offer this)."""
+    try:
+        with db.tx() as con:
+            if not users.authenticate(con, u.username, body.password):
+                raise UserError("La contraseña no es correcta.")
+            deletion.delete_account(con, u)
+    except UserError as e:
+        bad(e)
+    deletion.delete_files(u.id)
+    response.delete_cookie(COOKIE, path="/")
     return {"ok": True}
 
 

@@ -1,4 +1,4 @@
-<!-- en: 394333181808a381 -->
+<!-- en: 79ba07543b9f0b9f -->
 # Sincronización
 
 BodyLens no te pide que escribas tus datos: los recibe de tu báscula, tu móvil y tu reloj. Solo tienes que conectar
@@ -120,6 +120,10 @@ guarda los datos en el móvil; la **app de BodyLens para Android** es la que los
 hora (el equivalente de Health Auto Export en el iPhone, pero ya preparada para BodyLens: sin automatizaciones que
 crear).
 
+La app de BodyLens es todo BodyLens en tu móvil: muestra la misma app que el navegador (cada cambio en el servidor
+aparece en ella al momento) y añade Health Connect, las descargas de tu PDF y de las copias, el botón de atrás de
+Android y una pantalla de inicio.
+
 ### 1. Asegúrate de que tus datos llegan a Health Connect
 
 1. Health Connect viene con Android 14 y posteriores (en **Ajustes → Seguridad y privacidad → Privacidad → Health
@@ -130,22 +134,25 @@ crear).
 
 ### 2. Instala la app de BodyLens
 
-1. En el móvil, abre BodyLens en el navegador y entra con tu cuenta.
-2. Ve a **Tu cuenta → Fuentes de datos**, recuadro **Apple Salud / Android**. Si aún no tienes dirección de envío,
-   pulsa **Crear mi dirección de envío**.
-3. Toca el enlace para descargar **la app de BodyLens** (`/android.apk`) y abre el fichero descargado.
-4. Android avisa de que viene de fuera de Google Play: permite instalar apps desde tu navegador e instálala.
+- Desde **Google Play**, cuando esté publicada allí; o
+- desde tu servidor: abre BodyLens en el navegador del móvil, ve a **Tu cuenta → Fuentes de datos** y toca el enlace
+  para descargar **la app de BodyLens** (`/android.apk`). Android avisa de que viene de fuera de Google Play: permite
+  instalar apps desde tu navegador.
 
-### 3. Configúrala (un toque)
+### 3. Ábrela y entra
 
-1. En el mismo móvil, en BodyLens (el navegador), ve a **Tu cuenta → Fuentes de datos**, recuadro **Apple Salud /
-   Android**, y pulsa **Configurar la app de Android**.
-2. La app de BodyLens se abre ya unida a tu cuenta y te pide los permisos de Health Connect: permite todos los tipos
-   de datos y también **leer datos en segundo plano**, para que pueda enviar con la app cerrada.
-3. Ya está: envía tus datos al momento y después cada hora ella sola.
+1. La primera vez, la app te pide la **dirección del servidor** (la misma con la que abres BodyLens en el navegador;
+   ya viene rellenada). Pulsa **Continuar**.
+2. Entra con tu usuario y contraseña de BodyLens (o crea una cuenta: mira [Cuentas](accounts.md)).
+3. La app se une sola a tu cuenta y te pide los permisos de Health Connect: permite todos los tipos de datos y
+   también **leer datos en segundo plano**, para que pueda enviar con la app cerrada.
+4. Ya está: envía tus datos al momento y después cada hora ella sola.
 
-Si el botón no abre la app (por ejemplo, en un Android antiguo), copia la dirección con **Copiar la dirección**,
-pégala en **Dirección de envío** de la app, pulsa **Dar permisos de Health Connect** y después **Enviar ahora**.
+Dentro de la app, **Tu cuenta → Fuentes de datos** muestra el estado de Health Connect (permisos concedidos y último
+envío) con **Enviar ahora**, **Permisos de Health Connect** y **Cambiar el servidor**.
+
+Con una versión antigua de la app que solo envía datos, pulsa **Configurar la app de Android** en **Tu cuenta →
+Fuentes de datos** desde el navegador del móvil, o copia la dirección con **Copiar la dirección** y pégala en la app.
 
 La primera vez manda los últimos 30 días; después, cada hora, lo que haya nuevo. La app muestra la hora y el
 resultado del último envío, y en BodyLens el recuadro pasa a **recibiendo**.

@@ -25,7 +25,8 @@ Google Sheet (Apps Script) is only left for accounts not moved yet and will be r
   app translates them automatically into each account's language (Claude API, `src/backend/app/help/translate.py`,
   cached until the English text changes).
 - **Exception: Spanish.** It is the language most users use, so its translation of every document is kept in the
-  repository (`help/i18n/es/`) and needs no translator. When you change an English document, update its Spanish
+  repository (`help/i18n/es/`) and needs no translator. The legal pages (`help/en/legal/`) are kept translated by hand
+  in **every** language (`help/i18n/<lang>/`), because legal texts must not depend on a machine translation. When you change an English document, update its Spanish
   translation and run `python3 tools/help_i18n.py stamp es <doc>`; `tools/help_i18n.py check` (also run by `pytest`)
   fails while one is out of date.
 
@@ -44,17 +45,22 @@ src/backend/app/            FastAPI server (package `app`), one subpackage per m
   sources/                  Withings (OAuth) and Apple Health / Android (posts in Health Auto Export format)
   sync/                     synchronisation, Google bridge and scheduler
   mail/                     outgoing email (SMTP)
+  billing/                  paid accounts: Google Play and Stripe subscriptions, unpaid-account warnings and deletion
+  legal/                    public legal pages (privacy, terms, deleting an account) and their admin details
   web/                      assembly of the app page and static files
 src/frontend/
   app/app_a|b|c.html        the app (the artifact's HTML: styles+views, core, interface)
   compat/claude-shim.js     window.claude layer against the server API
-  accounts/ admin/ common/  sign-in, access request, registration, "Your account" and Administration pages
+  accounts/ admin/ common/  sign-in, access request, registration, subscription, "Your account" and Administration pages
+  landing/                  the public landing page (/) and its media (screenshots and videos of a demo account)
+  legal/                    the page that shows the legal texts
   i18n/                     translator, English catalog and one file per language
   package.json              libraries served without CDN (xlsx, jspdf, html2canvas-pro) and jsdom for the tests
-android/                    Android app (Health Connect → server)
+android/                    Android app: the web app in a native shell, Health Connect and Google Play subscriptions
 assets/branding/            icons and logo (do not change)
 tests/<module>/             tests of each module (pytest) and tests/frontend/*.mjs (page and translator in jsdom)
 help/en/                    user help, one file per module (English; translated automatically in the app)
+help/en/legal/              privacy policy, terms of use and deleting an account (public pages)
 docker/                     Dockerfile, compose.yml (NAS), compose.hot.yml, compose.dev.yml, entrypoint
 docs/DEPLOYMENT.md          deployment on the NAS
 tools/                      deployment, development server and translation tools

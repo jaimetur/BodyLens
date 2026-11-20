@@ -18,6 +18,9 @@ from app.core.deps import CSRF_HEADER
 from app.couples import routes as couples_routes
 from app.data import routes as data_routes
 from app.mail import routes as mail_routes
+from app.legal import routes as legal_routes
+from app.billing import routes as billing_routes
+from app.billing import web as billing_web
 from app.help import routes as help_routes
 from app.sources import routes as sources_routes
 from app.sync import routes as sync_routes
@@ -73,6 +76,8 @@ async def lifespan(app: FastAPI):
     if s.scheduler_enabled:
         from app.help import translate
         tasks.append(asyncio.create_task(translate.prewarm_loop()))
+        from app.billing import dunning
+        tasks.append(asyncio.create_task(dunning.loop()))
     yield
     for t in tasks:
         t.cancel()
@@ -112,5 +117,6 @@ def healthz():
 
 # el orden importa: las páginas y ficheros estáticos (con la ruta comodín /{name}) van al final
 for r in (accounts_routes.router, access_requests.router, admin_routes.router, couples_routes.router, data_routes.router,
-          sync_routes.router, sources_routes.router, mail_routes.router, help_routes.router, web_routes.router):
+          sync_routes.router, sources_routes.router, mail_routes.router, help_routes.router, legal_routes.router, billing_routes.router, billing_web.router,
+          web_routes.router):
     app.include_router(r)

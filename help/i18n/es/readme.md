@@ -1,4 +1,4 @@
-<!-- en: 53bd019478a02664 -->
+<!-- en: c1eb3337405653bc -->
 # BodyLens
 
 **BodyLens** es una app web de salud personal, multiusuario y autoalojada. Reúne el peso y la composición corporal
@@ -21,20 +21,28 @@ servidor, los datos llegan solos y cada persona ve únicamente los suyos.
 - **Íntimo:** ciclo (con previsión), actividad sexual y ánimo, visibles solo para los perfiles que tienen el módulo Íntimo.
 - **Ayuda** dentro de la app: la ayuda de cada módulo, este README y el registro de cambios, en tu idioma.
 - **Informe en PDF** del periodo elegido y **copias de seguridad completas** en JSON y CSV.
-- **Interfaz:** temas claro y oscuro, pensada para el móvil (se instala como app desde el navegador), gestos de
-  deslizamiento, diseño para pantallas anchas de hasta 1600 px.
+- **Interfaz:** 12 temas de color, pensada para el móvil (se instala como app desde el navegador), gestos de
+  deslizamiento entre pestañas, diseño para pantallas anchas de hasta 1600 px.
+- **App de Android:** todo BodyLens en el móvil (la misma app web en una carcasa nativa, así que cada cambio del
+  servidor se ve en ella al momento), con Health Connect, descargas y suscripciones de Google Play.
+- **Página de presentación** para visitantes en `/`, con capturas y vídeos de cada módulo, precios y alta.
 - **Idiomas:** inglés (por defecto), español, catalán, francés, italiano, alemán, portugués, neerlandés, chino y
   japonés. Cada cuenta elige el suyo; los correos llegan en el idioma de quien los recibe.
 
 ### Cuentas
 
 - **Varias cuentas**, cada una con sus propios datos, con acceso mediante usuario y contraseña.
-- **Alta:** peticiones de acceso desde la página de entrada, aprobadas por un administrador (con avisos por correo), o
-  enlaces de invitación de un solo uso.
+- **Alta:** peticiones de acceso desde la página de entrada, aprobadas por un administrador (con avisos por correo),
+  enlaces de invitación de un solo uso, o una **suscripción de pago** (1,49 €/mes o 12 €/año, 7 días gratis): en la
+  web con Stripe (tarjeta, Google Pay, Apple Pay) o en la app de Android con Google Play. Las cuentas que dejan de
+  pagar reciben tres avisos por correo y después se borran.
+- **Borrar mi cuenta** desde *Tu cuenta*, y páginas públicas de política de privacidad, condiciones de uso y borrado
+  de cuentas.
 - **Parejas:** dos cuentas se pueden unir para compartir y editar juntas los registros de ciclo e intimidad.
 - **Perfiles:** cada cuenta puede tener varios perfiles (con PIN opcional), que se gestionan en *Tu cuenta*.
 - **Administración:** usuarios (usuario, nombre, correo, contraseña, interruptor de activo, rol de administrador), peticiones
-  de acceso, invitaciones, correo (SMTP), credenciales de la app de Withings, copias de seguridad y fuentes de datos.
+  de acceso, invitaciones, correo (SMTP), credenciales de la app de Withings, traductor, copias de seguridad, datos legales,
+  Google Play y Stripe.
 
 ### Datos que llegan solos
 
@@ -86,7 +94,7 @@ src/frontend/
   compat/               window.claude layer
   accounts/ admin/ common/   sign-in, request, registration, Your account and Administration pages
   i18n/                 translator, English catalog and one file per language
-android/                Android app (Health Connect → server)
+android/                Android app (web app in a native shell, Health Connect, Google Play)
 assets/branding/        icons and logo
 tests/<module>/         tests (pytest) and tests/frontend/*.mjs (page and translator in jsdom)
 help/en/                user help, one file per module (English; translated automatically in the app)

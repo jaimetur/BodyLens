@@ -32,6 +32,37 @@ CREATE TABLE IF NOT EXISTS users (
   nav TEXT NOT NULL DEFAULT '{}',
   created_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS subscriptions (
+  user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  token_hash TEXT NOT NULL UNIQUE,
+  token_enc TEXT NOT NULL,
+  product_id TEXT NOT NULL,
+  base_plan TEXT,
+  state TEXT,
+  expiry_ms INTEGER NOT NULL DEFAULT 0,
+  checked_at INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS stripe_subs (
+  user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  customer_id TEXT NOT NULL,
+  subscription_id TEXT NOT NULL UNIQUE,
+  plan TEXT,
+  status TEXT NOT NULL,
+  period_end_ms INTEGER NOT NULL DEFAULT 0,
+  updated_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS pending_signups (
+  id TEXT PRIMARY KEY,
+  data TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS lapses (
+  user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  lapsed_at TEXT NOT NULL,
+  warnings INTEGER NOT NULL DEFAULT 0,
+  last_warning_at TEXT
+);
 CREATE TABLE IF NOT EXISTS sessions (
   token_hash TEXT PRIMARY KEY,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,

@@ -1,4 +1,4 @@
-<!-- en: 0cceeec03c6f9564 -->
+<!-- en: 31196482e064876d -->
 # Cuentas y acceso
 
 Cada persona tiene su propia cuenta de BodyLens, con sus datos separados de los de los demás. Entras con tu nombre de usuario (o tu correo) y tu contraseña.
@@ -8,6 +8,12 @@ Cada persona tiene su propia cuenta de BodyLens, con sus datos separados de los 
 - **Sesión**: dura 90 días en ese navegador. Para salir, ve a «Tu cuenta» → **Cerrar sesión** (esto también borra los datos guardados en ese navegador).
 - **Cuenta pendiente**: si tu petición aún no está aprobada, al entrar te avisa de que recibirás un correo cuando lo esté.
 - **Cuenta inicial de un despliegue nuevo**: mientras la cuenta `admin` conserve su contraseña por defecto (`admin123`), la pantalla de acceso la muestra con un botón **Usar**. Desaparece en cuanto cambias la contraseña.
+
+## Crear una cuenta con una suscripción
+- En la web: la página de inicio (`/`) muestra qué hace BodyLens y sus precios; **Empezar gratis** abre el registro (`/alta`). En la app de Android: en la pantalla de acceso, **créala con una suscripción**.
+- **Planes**: 1,49 € al mes o 12 € al año (1 € al mes), los dos con **7 días de prueba gratis**. En la web se paga con tarjeta, Google Pay o Apple Pay (en la página segura de Stripe); en la app de Android, con Google Play.
+- **Datos que se piden**: nombre y apellidos, correo, usuario y contraseña, y aceptar las [condiciones](/terms) y la [política de privacidad](/privacy). La cuenta se crea en cuanto la página de pago confirma la suscripción, y entras con ella.
+- Si una suscripción termina o un pago falla, la app te pide renovarla (`/alta`) y se te avisa por correo tres veces, con una semana de diferencia; siete días después del tercer aviso, la cuenta y sus datos se borran.
 
 ## Pedir una cuenta
 - En la pantalla de acceso, **¿No tienes cuenta? Pídela**.
@@ -31,7 +37,11 @@ Cada persona tiene su propia cuenta de BodyLens, con sus datos separados de los 
 - **Contraseña**: pide la actual; al cambiarla se cierra tu sesión en los demás dispositivos.
 - **Pareja** y **Sincronización**: mira [pareja](couples.md) y [sincronización](sync.md). Importar copias está en Tu cuenta → Datos y copias ([importar](import.md)).
 - **Administración**: solo para cuentas de administrador; mira [administración](administration.md).
+- **Suscripción** (cuentas con suscripción): el plan, hasta cuándo está activa y **Gestionar**: en la web, la página de Stripe para cambiar la tarjeta, descargar facturas o cancelar; en la app, las suscripciones de Google Play. Si se te ha avisado de un pago fallido, indica cuántos avisos llevas, con **Renovar**.
+- **Privacidad y condiciones**: enlaces a la [política de privacidad](/privacy), las [condiciones de uso](/terms) y [cómo borrar una cuenta](/delete-account).
+- **Borrar mi cuenta**: escribe tu contraseña y confirma. Tu cuenta y todos sus datos se borran al momento y se cancela cualquier suscripción. No se puede deshacer: descarga antes una copia en Datos y copias si quieres conservar tus datos.
 
 ## Privacidad
+- La [política de privacidad](/privacy) explica con detalle qué se guarda y por qué.
 - Solo tú puedes ver tus datos. Los datos del **ciclo** y de intimidad los ve también tu pareja si habéis unido vuestras cuentas.
 - Las contraseñas se guardan cifradas (argon2); nadie puede leerlas.

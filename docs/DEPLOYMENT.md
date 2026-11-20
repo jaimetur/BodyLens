@@ -101,18 +101,40 @@ python3 tools/CreateUpdateRelease.py --update 0.1.0 2026-11-20
 2. **Each account** connects its own sources in Your account → Data sources: step by step in the help, section
    *Sync* (also inside the app, in Help).
 
-## Android app (Health Connect)
+## Android app
 
-The code is in `android/` (Kotlin + Jetpack Compose). It reads Health Connect and posts to the same Health Auto
-Export address (`/api/ingest/hae/<token>`) with the same JSON format, so the server cannot tell where it comes from.
+The code is in `android/` (Kotlin). It is the whole of BodyLens: a native shell that shows the server's web app (so
+every server deployment updates the app too), plus Health Connect (it posts to the account's Health Auto Export
+address, `/api/ingest/hae/<token>`, in the same JSON format), downloads, the file picker, Android's back button and
+Google Play subscriptions. It asks for the server address the first time (`https://bodylens.jaimetur.cloud` by default).
 
 - Every push that changes `android/` is built by GitHub Actions (`.github/workflows/android.yml`) and the APK is left in the
-  repository's `android-latest` release.
+  repository's `android-latest` release. A version release (`🚀 Release`) attaches the APK and the AAB (for Google Play).
 - `tools/deploy-android.sh` waits for that build, downloads the APK and leaves it on the NAS at
-  `/volume1/docker/data/bodylens/downloads/bodylens-android.apk`; the app serves it at `/android.apk` (when signed in).
-- Signing: without secrets it is signed with a debug key (fine to install it, but each CI build has a different key and
-  you would have to uninstall to update). To always sign the same way, store in the repository secrets
-  `ANDROID_KEYSTORE_B64` (the `.jks` in base64), `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` and `ANDROID_KEY_PASSWORD`.
+  `/volume1/docker/data/bodylens/downloads/bodylens-android.apk`; the server serves it at `/android.apk`.
+- **Signing**: Google Play needs every version signed with the same key. Run `tools/android-keystore.sh` once on your
+  computer: it creates the key (`~/bodylens-upload.jks`) and stores it in the repository secrets
+  (`ANDROID_KEYSTORE_B64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`). Keep the `.jks`
+  and its password safe. Without the secrets, CI signs with a throwaway debug key (fine to try the APK, not for Play).
+
+## Subscriptions, payments and legal pages
+
+- **Legal pages** (public): `/privacy`, `/terms` and `/delete-account`. Their texts are `help/en/legal/*.md`, with
+  reviewed translations in `help/i18n/<lang>/`. Who is responsible for the data is set in Administration → Legal
+  details.
+- **Google Play** (subscriptions in the app): in the Play Console create the subscription `bodylens` with the base
+  plans `monthly` (€1.49) and `yearly` (€12), each with a 7-day free-trial offer. Create a service account in Google
+  Cloud, give it access in Play Console → Users and permissions (view financial data, manage orders and
+  subscriptions) and paste its JSON key in Administration → Google Play.
+- **Stripe** (subscriptions on the website): paste the secret key in Administration → Web payments (Stripe); the server
+  creates the product and the prices (€1.49/month, €12/year). Create the webhook with the address shown there and the
+  events `checkout.session.completed` and `customer.subscription.*`, and paste its signing secret. Enable Google Pay
+  and Apple Pay in Stripe → Settings → Payment methods (Apple Pay also needs the domain verified in Stripe).
+- **Unpaid accounts**: every 6 hours the server checks paid accounts; one whose subscription is over gets three emails,
+  a week apart, and is deleted seven days after the third one (administrators never).
+- **Landing page**: visitors who are not signed in see `src/frontend/landing/index.html` at `/`. Its screenshots and
+  videos (`src/frontend/landing/media/`) are made from a synthetic demo account with `tools/demo_data.py` and
+  `tools/landing_capture.py` (Playwright and ffmpeg on the development machine, not in the image).
 
 ## Backup
 

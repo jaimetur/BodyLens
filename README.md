@@ -20,20 +20,27 @@ server, the data arrives on its own, and every person sees only their own data.
 - **Intimate:** cycle (with forecast), sexual activity and mood, visible only to the profiles that have the Intimate module.
 - **Help** inside the app: the help of every module, this README and the changelog, in your language.
 - **PDF report** of the chosen period and **full backups** in JSON and CSV.
-- **Interface:** light and dark themes, designed for the phone (installs as an app from the browser), swipe
-  gestures, wide-screen layout up to 1600 px.
+- **Interface:** 12 colour themes, designed for the phone (installs as an app from the browser), swipe gestures
+  between tabs, wide-screen layout up to 1600 px.
+- **Android app:** the whole BodyLens on the phone (the same web app in a native shell, so every server change shows
+  in it at once), with Health Connect, downloads and Google Play subscriptions.
+- **Landing page** for visitors at `/`, with screenshots and videos of each module, prices and sign-up.
 - **Languages:** English (default), Spanish, Catalan, French, Italian, German, Portuguese, Dutch, Chinese and
   Japanese. Each account picks its own; emails arrive in the recipient’s language.
 
 ### Accounts
 
 - **Several accounts**, each with its own data, signed in with username and password.
-- **Sign-up:** access requests from the sign-in page, approved by an administrator (with email notices), or
-  single-use invitation links.
+- **Sign-up:** access requests from the sign-in page, approved by an administrator (with email notices), single-use
+  invitation links, or a **paid subscription** (€1.49/month or €12/year, 7-day free trial): on the website through
+  Stripe (card, Google Pay, Apple Pay) or in the Android app through Google Play. Accounts that stop paying are warned
+  three times by email and then deleted.
+- **Delete my account** from *Your account*, and public pages for the privacy policy, the terms of use and deleting
+  an account.
 - **Couples:** two accounts can be linked to share and edit the cycle and intimacy records together.
 - **Profiles:** each account can keep several profiles (with an optional PIN), managed in *Your account*.
 - **Administration:** users (username, name, email, password, active switch, admin role), access requests,
-  invitations, email (SMTP), Withings app credentials, backups and data sources.
+  invitations, email (SMTP), Withings app credentials, translator, backups, legal details, Google Play and Stripe.
 
 ### Data that arrives on its own
 
@@ -85,7 +92,7 @@ src/frontend/
   compat/               window.claude layer
   accounts/ admin/ common/   sign-in, request, registration, Your account and Administration pages
   i18n/                 translator, English catalog and one file per language
-android/                Android app (Health Connect → server)
+android/                Android app (web app in a native shell, Health Connect, Google Play)
 assets/branding/        icons and logo
 tests/<module>/         tests (pytest) and tests/frontend/*.mjs (page and translator in jsdom)
 help/en/                user help, one file per module (English; translated automatically in the app)
