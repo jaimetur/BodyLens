@@ -3687,4 +3687,65 @@ applyIntimoVis();
 let rT,lastW=0;new ResizeObserver(en=>{const w=Math.round(en[0].contentRect.width);if(Math.abs(w-lastW)<8)return;lastW=w;clearTimeout(rT);rT=setTimeout(renderView,150)}).observe(document.querySelector('.inner'));
 document.addEventListener('click',e=>{const b=e.target.closest('[data-slpcol]');if(!b)return;UI.slpCol=b.dataset.slpcol;saveUI();renderView()});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-actmet]');if(!b)return;UI.actMet=b.dataset.actmet;saveUI();if(LIFE)renderDay(LIFE)});
+
+/* ---------- phones: compact bar with the tabs while scrolling, bottom bar with 4 modules + More, folded period, swipe dots ---------- */
+(()=>{const MQ=matchMedia('(max-width:899px)'),mob=()=>MQ.matches,modOf=v=>SUBV[v]||v,tn=$('tabNav'),ab=document.querySelector('.appbar');
+  // the tabs of a module: its own tabs, the parts of Body, or the tabs of a page shown inside the app (Administration)
+  function partsOf(v){const nav=document.querySelector(`.vtabs[data-view="${v}"]`);
+    if(nav&&!nav.hidden)return [...nav.querySelectorAll('a[data-tab]')].filter(a=>!a.classList.contains('nomod')).map(a=>({l:a.textContent.trim(),go:v+'|'+a.dataset.tab,on:VIEW===v&&curTab(v)===a.dataset.tab}));
+    if(v==='composicion'){const n=document.querySelector('#v-composicion .cuetabs');return n?[...n.querySelectorAll('a[href^="#"]')].filter(a=>!a.classList.contains('nomod')).map(a=>{const h=a.getAttribute('href');return {l:a.textContent.trim(),href:h,on:'#'+VIEW===h}}):[]}
+    if(SRV_V.some(([id])=>id===v)){try{const d=$('emb-'+v).contentDocument;return [...d.querySelectorAll('.tabs button[data-tab]')].filter(b=>!b.hidden).map((b,i)=>({l:(b.firstChild&&b.firstChild.textContent||b.textContent).trim(),fb:i,on:b.classList.contains('on')}))}catch(e){return []}}
+    return []}
+  const chip=p=>p.go?`<a href="#${p.go.split('|')[0]}" data-go="${p.go}" class="${p.on?'on':''}">${esc(p.l)}</a>`:p.href?`<a href="${p.href}" class="${p.on?'on':''}">${esc(p.l)}</a>`:`<a href="#" data-fb="${p.fb}" class="${p.on?'on':''}">${esc(p.l)}</a>`;
+  // a tab of the page shown inside the app: its own button does it
+  document.addEventListener('click',e=>{const a=e.target.closest('[data-fb]');if(!a)return;e.preventDefault();try{const b=[...$('emb-'+VIEW).contentDocument.querySelectorAll('.tabs button[data-tab]')].filter(x=>!x.hidden)[+a.dataset.fb];if(b)b.click()}catch(_){}scrollTo(0,0);setTimeout(sync,50)});
+  // 1. compact bar: when the title and the tabs scroll away, a thin bar with the module and its tabs stays at the top
+  const bar=document.createElement('div');bar.className='cnbar';bar.innerHTML='<button type="button" class="cnbar-t" aria-label="Arriba"></button><nav class="cnbar-n" aria-label="Apartados"></nav>';document.body.append(bar);
+  bar.querySelector('.cnbar-t').addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
+  let shown=false;
+  function cbarDraw(){bar.querySelector('.cnbar-t').textContent=$('viewTitle').textContent;const ps=partsOf(modOf(VIEW)),n=bar.querySelector('.cnbar-n');n.innerHTML=ps.length>1?ps.map(chip).join(''):'';
+    const on=n.querySelector('a.on');if(on)n.scrollLeft=on.offsetLeft-(n.clientWidth-on.offsetWidth)/2}
+  function cbarCheck(){let on=false;if(mob()&&!document.body.classList.contains('locked')){const t=document.querySelector('.view:not([hidden]) .cuetabs');const el=t&&t.getClientRects().length?t:ab;on=el.getBoundingClientRect().bottom<0}
+    if(on&&!shown)try{cbarDraw()}catch(e){}shown=on;bar.classList.toggle('on',on)}
+  addEventListener('scroll',cbarCheck,{passive:true});addEventListener('resize',cbarCheck);
+  // 2. bottom bar: with more than 5 modules, 4 of them (chosen in «Más») and «Más», which opens every module with its tabs
+  const more=document.createElement('a');more.className='tab';more.id='tabMore';more.href='#';more.hidden=true;
+  more.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg><span>Más</span>';tn.append(more);
+  const visMods=()=>[...tn.querySelectorAll('.tab[data-v]')].filter(a=>!a.hidden&&!a.classList.contains('nomod'));
+  function favs(){const vis=visMods().map(a=>a.dataset.v);let f=Array.isArray(UI.favs)?UI.favs.filter(v=>vis.includes(v)).slice(0,4):[];if(!f.length)f=vis.slice(0,4);return f}
+  function barApply(){const vis=visMods();if(vis.length<=5){tn.querySelectorAll('.tab.xfav').forEach(a=>a.classList.remove('xfav'));more.hidden=true;return}
+    const f=favs();for(const a of tn.querySelectorAll('.tab[data-v]'))a.classList.toggle('xfav',!f.includes(a.dataset.v));more.hidden=false;
+    const n=f.length+1;tn.dataset.n=n;document.body.classList.toggle('tabbig',n<=4);document.body.classList.toggle('tabmid',n===5||n===6);moreMark()}
+  function moreMark(){const cur=modOf(VIEW),inBar=[...tn.querySelectorAll('.tab[data-v]:not(.xfav)')].some(a=>a.dataset.v===cur&&!a.classList.contains('nomod'));
+    if(!more.hidden&&!inBar)more.setAttribute('aria-current','page');else more.removeAttribute('aria-current')}
+  {const f=applyModVis;applyModVis=function(){const r=f.apply(this,arguments);try{barApply()}catch(e){}return r}}
+  const mp=document.createElement('div');mp.className='morep';mp.hidden=true;mp.setAttribute('role','dialog');mp.setAttribute('aria-modal','true');document.body.append(mp);let EDIT=false;
+  const lbl=v=>{const s=document.querySelector(`#railNav a[data-v="${v}"] span`)||document.querySelector(`#tabNav a[data-v="${v}"] span`);return s?s.textContent.trim():v};
+  function moreDraw(){const f=favs(),cur=modOf(VIEW);
+    const rows=visMods().map(a=>{const v=a.dataset.v,ps=partsOf(v),fav=f.includes(v);
+      return `<div class="mrow"><div class="mrow-h${v===cur?' cur':''}"><a href="#${v}" data-mgo="${v}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[v]||''}</svg><span>${esc(lbl(v))}</span></a>${EDIT?`<button type="button" class="mstar${fav?' on':''}" data-fav="${v}" aria-pressed="${fav}">${fav?'En la barra':'Añadir'}</button>`:''}</div>${!EDIT&&ps.length>1?`<div class="mchips">${ps.map(chip).join('')}</div>`:''}</div>`}).join('');
+    const extra=EDIT?'':SRV_V.map(([v])=>{const a=document.querySelector(`#railNav a[data-v="${v}"]`);return a&&getComputedStyle(a).display!=='none'?`<a href="#${v}">${esc(lbl(v))}</a>`:''}).join('');
+    mp.innerHTML=`<div class="morep-b"><div class="morep-h"><b>Todos los módulos</b><button type="button" data-medit>${EDIT?'Listo':'Editar la barra'}</button></div>${EDIT?'<p class="morep-p">Elige hasta 4 módulos para la barra de abajo; los demás quedan en «Más».</p>':''}${rows}${extra?`<div class="mfoot">${extra}</div>`:''}</div>`}
+  more.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();EDIT=false;moreDraw();mp.hidden=false});
+  mp.addEventListener('click',e=>{if(e.target===mp){mp.hidden=true;return}
+    if(e.target.closest('[data-medit]')){EDIT=!EDIT;moreDraw();return}
+    const s=e.target.closest('[data-fav]');if(s){let f=favs();const v=s.dataset.fav;if(f.includes(v)){if(f.length>1)f=f.filter(x=>x!==v)}else{if(f.length>=4)f.shift();f.push(v)}UI.favs=f;saveUI();barApply();moreDraw();return}
+    const g=e.target.closest('[data-mgo]');if(g){e.preventDefault();e.stopPropagation();mp.hidden=true;const t=tn.querySelector(`.tab[data-v="${g.dataset.mgo}"]`);if(t)t.click();return}
+    if(e.target.closest('a'))mp.hidden=true});
+  // 3. period: folded to the one in use; a tap opens the others
+  const rf=$('rangeFloat');
+  rf.addEventListener('click',e=>{if(!mob())return;const b=e.target.closest('button[data-r]');if(!b)return;if(!rf.classList.contains('rfopen')){e.stopPropagation();e.preventDefault();rf.classList.add('rfopen');return}setTimeout(()=>rf.classList.remove('rfopen'),0)},true);
+  document.addEventListener('click',e=>{if(rf.classList.contains('rfopen')&&!rf.contains(e.target))rf.classList.remove('rfopen')});
+  // 4. on changing tab, dots show where you are among the module's tabs; the first time, a hint says you can swipe
+  const dots=document.createElement('div');dots.className='swdots';dots.setAttribute('aria-hidden','true');document.body.append(dots);let DK='',DT=null;
+  function dotsShow(){if(!mob())return;const k=VIEW+'|'+curTab(VIEW);if(k===DK)return;const first=!DK;DK=k;const ps=partsOf(modOf(VIEW));if(first||ps.length<2||!SWIPE_ORDER.includes(VIEW))return;
+    dots.innerHTML=ps.map(p=>`<i class="${p.on?'on':''}"></i>`).join('');const r=(!rf.hidden?rf:tn).getBoundingClientRect();dots.style.bottom=Math.round(innerHeight-r.top+10)+'px';
+    dots.classList.add('on');clearTimeout(DT);DT=setTimeout(()=>dots.classList.remove('on'),1300)}
+  let HT=null;function hint(){HT=null;if(!mob()||UI.swHint||LOCK||document.body.classList.contains('locked')||!SWIPE_ORDER.includes(VIEW)||partsOf(modOf(VIEW)).length<2)return;UI.swHint=1;saveUI();
+    const h=document.createElement('div');h.className='swhint';h.setAttribute('role','status');h.innerHTML='<svg viewBox="0 0 36 22" aria-hidden="true"><path d="M3 11h30M8 6l-5 5 5 5M28 6l5 5-5 5"/></svg><span>Desliza a los lados para cambiar de pestaña</span>';document.body.append(h);
+    const close=()=>h.remove();setTimeout(()=>addEventListener('touchstart',close,{capture:true,once:true}),400);setTimeout(close,5000)}
+  function sync(){try{if(shown)cbarDraw();moreMark();dotsShow();if(!UI.swHint&&!HT)HT=setTimeout(hint,2500)}catch(e){}}
+  {const f=applyVTabs;applyVTabs=function(){const r=f.apply(this,arguments);sync();return r}}
+  addEventListener('hashchange',()=>setTimeout(()=>{sync();cbarCheck()},0));
+  try{barApply()}catch(e){}sync()})();
 </script>

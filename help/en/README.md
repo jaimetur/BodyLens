@@ -18,6 +18,13 @@ One file per module. The sections of the app are those in the navigation bar; th
 On a phone, each tab starts with a chart or its figures; the explanation of a chart waits behind the **ⓘ** next to its title (tap the title to show or hide it), and the cards to enter data by hand are at the end of the tab.
 On touch screens, swipe sideways to go to the next or previous tab; past the last tab of a module you go on to the next module (and before the first, back to the previous one).
 
+On a phone:
+
+- The **bottom bar** shows 4 modules and **More**, which opens every module with its tabs: tap a tab to go straight to it. **Edit the bar** (in More) chooses the 4 modules of the bar. With 5 modules or fewer, the bar shows them all.
+- When you scroll down, the title and the tabs give way to a **thin bar** at the top with the module and its tabs, so they are always at hand; tap the module name to go back to the top. Administration shows its tabs there too.
+- The **period** (1 week, 1 month…) shows only the one in use; tap it to choose another.
+- When you change tab, a few **dots** show where you are among the module's tabs.
+
 ## Your account and the server
 | Module | What it is |
 |---|---|

@@ -9,6 +9,7 @@
 .tabs button{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
 .tabs button.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
 .tabs b{display:inline-block;min-width:18px;padding:0 5px;margin-left:6px;border-radius:9px;background:var(--bad);color:#fff;font-size:12px}
+@media (max-width:760px){.tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 0 12px}.tabs::-webkit-scrollbar{display:none}.tabs button{flex:none;padding:8px 14px;font-size:14px}}
 table{width:100%;border-collapse:collapse;font-size:14px}
 th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em;padding:8px 6px;border-bottom:1px solid var(--line)}
 td{padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:top}
@@ -186,7 +187,8 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
 <script src="/pages.js"></script>
 <script>
 let D = null, EDIT = null;
-const show = t => { document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t)); document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== t); history.replaceState(null, '', '#' + t); };
+const show = t => { document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t)); document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== t); history.replaceState(null, '', '#' + t);
+  const on = document.querySelector('.tabs button.on'); if (on) { const c = on.parentElement; c.scrollTo({ left: on.offsetLeft - c.offsetLeft - (c.clientWidth - on.offsetWidth) / 2, behavior: 'smooth' }); } };
 document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => show(b.dataset.tab)));
 show((location.hash || '#usuarios').slice(1).replace(/[^a-z]/g, '') || 'usuarios');
 

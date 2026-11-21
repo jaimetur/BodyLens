@@ -1,4 +1,4 @@
-<!-- en: 2fff68986e826b93 -->
+<!-- en: 189206e239d418f3 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -101,8 +101,9 @@
 - **Deslizar entre pestañas:** en pantallas táctiles, deslizar el dedo a un lado pasa a la pestaña siguiente o anterior del módulo (los apartados de Cuerpo cuentan como sus pestañas); después de la última pestaña pasa al módulo siguiente, y antes de la primera, a la última pestaña del anterior.
 - **Sin zoom en el móvil:** la app y sus páginas (acceso, Tu cuenta, Administración, Ayuda) ya no se amplían al pellizcar, al tocar dos veces seguidas (también en el teclado del PIN) ni al entrar en un campo; si un navegador la amplía igualmente (Brave, por ejemplo), vuelve a su tamaño normal y se puede reducir pellizcando.
 - **Las pestañas empiezan por la primera tras el bloqueo:** cuando sale el bloqueo con PIN (al volver a abrir la app, tras el tiempo de inactividad o al bloquear el perfil), cada módulo vuelve a abrirse en su primera pestaña; se mantiene el módulo en el que estabas.
-- **Pantalla del PIN:** cabe en la pantalla sin barras de desplazamiento (las teclas crecen con el espacio libre, hasta un tamaño mayor que antes, y se reducen en pantallas bajas) y tiene **Entrar con otro usuario**, que cierra la sesión y vuelve a la pantalla de acceso.
+- **Pantalla del PIN:** cabe en la pantalla sin barras de desplazamiento (las teclas son más grandes y están más separadas, crecen con el espacio libre y solo se reducen en pantallas muy bajas) y tiene **Entrar con otro usuario**, que cierra la sesión y vuelve a la pantalla de acceso.
 - **Ayuda, Tu cuenta y Administración dentro de la app se desplazan como una sola página:** en el móvil la página que se ve dentro de la app ya no se desplaza por su cuenta, así que al deslizar siempre se mueve el contenido.
+- **Navegación más fácil en el móvil:** la barra de abajo muestra 4 módulos a tu elección y **Más**, que abre todos los módulos con sus pestañas para ir directamente a cualquiera; al bajar por la página, una barra fina arriba mantiene el módulo y sus pestañas (también las de Administración, ahora en una sola fila que se desliza); el periodo muestra solo el que está en uso y se abre con un toque; unos puntos indican dónde estás al cambiar de pestaña, y la primera vez un aviso explica que se puede deslizar a los lados. Los botones de cerrar y las flechas de los paneles son más grandes y se ven mejor.
 #### 🐛 Correcciones:
 - **Seguridad:** el registro de accesos ya no guarda la dirección de subida de Apple Salud, los códigos OAuth ni las invitaciones.
 - **Withings:** la dirección de retorno acepta las pruebas y los avisos de Withings (POST y HEAD).
