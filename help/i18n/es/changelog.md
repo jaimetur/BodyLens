@@ -1,4 +1,4 @@
-<!-- en: 6fbe9775320e1884 -->
+<!-- en: 1955ec322de1d033 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -99,6 +99,7 @@
 - **Móvil:** cada pestaña muestra un gráfico o un panel de cifras completo sin desplazarte: la explicación de cada tarjeta con gráfico espera tras una ⓘ junto a su título (toca el título), las tarjetas para apuntar datos a mano van al final de la pestaña, las tarjetas de cifras (también los récords y rachas de Actividad) tienen colores y minigráficos, y el avatar del perfil es más grande.
 - **Tarjetas ampliadas:** deslizar el dedo a un lado en el móvil o la tableta, o las flechas de cada lado en el ordenador, pasa al día anterior o al siguiente.
 - **Deslizar entre pestañas:** en pantallas táctiles, deslizar el dedo a un lado pasa a la pestaña siguiente o anterior del módulo (los apartados de Cuerpo cuentan como sus pestañas); después de la última pestaña pasa al módulo siguiente, y antes de la primera, a la última pestaña del anterior.
+- **Sin zoom en el móvil:** la app y sus páginas (acceso, Tu cuenta, Administración, Ayuda) ya no se amplían al pellizcar, al tocar dos veces seguidas (también en el teclado del PIN) ni al entrar en un campo.
 #### 🐛 Correcciones:
 - **Seguridad:** el registro de accesos ya no guarda la dirección de subida de Apple Salud, los códigos OAuth ni las invitaciones.
 - **Withings:** la dirección de retorno acepta las pruebas y los avisos de Withings (POST y HEAD).

@@ -4,6 +4,9 @@ const EMBED = window.top !== window || new URLSearchParams(location.search).has(
 if (EMBED) document.documentElement.classList.add('embed');
 const TOP = EMBED ? window.top : window;
 const $ = id => document.getElementById(id);
+// no zoom on phones: pinch, which iOS allows even with user-scalable=no (double tap: touch-action in pages.css)
+['gesturestart', 'gesturechange'].forEach(t => document.addEventListener(t, e => e.preventDefault(), { passive: false }));
+document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preventDefault() }, { passive: false });
 async function api(method, url, body) {
   const opt = { method, headers: { 'X-BodyLens': '1' }, credentials: 'same-origin' };
   if (body !== undefined) { opt.headers['Content-Type'] = 'application/json'; opt.body = JSON.stringify(body); }

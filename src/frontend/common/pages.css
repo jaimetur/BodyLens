@@ -2,6 +2,7 @@
 :root{--bg:#eef1f5;--surface:#fff;--raised:#f5f7fa;--ink:#121a26;--muted:#5a6677;--line:#dde3ea;--accent:#3B7BF2;--accent2:#5B5BF0;--bad:#d64545;--ok:#1f9d6b;color-scheme:light}
 @media (prefers-color-scheme:dark){:root{--bg:#0e131b;--surface:#161d28;--raised:#1c2531;--ink:#e8edf4;--muted:#9aa6b8;--line:#2a3442;--accent:#5b93f5;--accent2:#7474f5;--bad:#ff7070;--ok:#48c08f;color-scheme:dark}}
 *{box-sizing:border-box}
+html{touch-action:manipulation}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Instrument Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom)}
 main{max-width:1500px;margin:0 auto;padding:28px clamp(0px,2vw,24px) 48px}
 main.narrow{max-width:520px}

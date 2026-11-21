@@ -64,7 +64,12 @@ REPLACEMENTS: list[tuple] = [
 ]
 
 # lo que no tiene sentido en el servidor (copia publicada en la página, ID de la hoja) se oculta
+# no zoom on phones: double tap (touch-action) and pinch, which iOS allows even with user-scalable=no
+NO_ZOOM_JS = ("['gesturestart','gesturechange'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));"
+              "document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault()},{passive:false});")
+
 SERVER_CSS = (
+    "html{touch-action:manipulation}"
     "section.card:has(#pubBtn),label[for=cfFile],#fileSave,#fileMsg{display:none!important}"
     "#pfMenu .pfm-out{color:#e5484d!important;border-top:1px solid var(--line)!important;margin-top:4px;font-weight:600}"
     "#pfMenu .pfm-out svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;"
@@ -112,7 +117,7 @@ def page(user_public: dict, lang_tags: str = "") -> str:
     admin_css = "" if user_public.get("isAdmin") else ".bl-admin{display:none!important}"
     head = (
         f'<!doctype html><html lang="{user_public.get("lang", "es")}"><head><meta charset="utf-8">{lang_tags}'
-        '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
+        '<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">'
         '<meta name="theme-color" content="#3B7BF2">'
         '<meta name="apple-mobile-web-app-capable" content="yes">'
         '<meta name="apple-mobile-web-app-title" content="BodyLens">'
@@ -122,7 +127,7 @@ def page(user_public: dict, lang_tags: str = "") -> str:
         '<link rel="apple-touch-icon" href="/apple-touch-icon.png">'
         f"<style>{SERVER_CSS}{admin_css}</style>"
         f"<script>window.BODYLENS_SERVER=true;window.BODYLENS_USER={boot};"
-        f"window.BODYLENS_BUILD={json.dumps(version.current()['build'])};</script>"
+        f"window.BODYLENS_BUILD={json.dumps(version.current()['build'])};{NO_ZOOM_JS}</script>"
         '<script src="/claude-shim.js"></script>'
         '<script src="/native.js"></script>'   # inside the Android app: files to the app (does nothing elsewhere)
         "</head><body>"
