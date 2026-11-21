@@ -1,4 +1,4 @@
-<!-- en: fc95fa761089950e -->
+<!-- en: 1644f07f7502d870 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -101,6 +101,7 @@
 - **Deslizar entre pestañas:** en pantallas táctiles, deslizar el dedo a un lado pasa a la pestaña siguiente o anterior del módulo (los apartados de Cuerpo cuentan como sus pestañas); después de la última pestaña pasa al módulo siguiente, y antes de la primera, a la última pestaña del anterior.
 - **Sin zoom en el móvil:** la app y sus páginas (acceso, Tu cuenta, Administración, Ayuda) ya no se amplían al pellizcar, al tocar dos veces seguidas (también en el teclado del PIN) ni al entrar en un campo; si un navegador la amplía igualmente (Brave, por ejemplo), vuelve a su tamaño normal y se puede reducir pellizcando.
 - **Las pestañas empiezan por la primera tras el bloqueo:** cuando sale el bloqueo con PIN (al volver a abrir la app, tras el tiempo de inactividad o al bloquear el perfil), cada módulo vuelve a abrirse en su primera pestaña; se mantiene el módulo en el que estabas.
+- **Pantalla del PIN:** cabe en la pantalla sin desplazarse (las teclas se hacen más pequeñas en pantallas bajas) y tiene **Entrar con otro usuario**, que cierra la sesión y vuelve a la pantalla de acceso.
 #### 🐛 Correcciones:
 - **Seguridad:** el registro de accesos ya no guarda la dirección de subida de Apple Salud, los códigos OAuth ni las invitaciones.
 - **Withings:** la dirección de retorno acepta las pruebas y los avisos de Withings (POST y HEAD).

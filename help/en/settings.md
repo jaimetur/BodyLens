@@ -72,7 +72,7 @@ The following three sections are tabs of **Your account**, not of Goals, plan an
 - **The PIN decides the profile:** on the lock screen, the PIN you type opens the profile that has it. So each person can enter with their own PIN and see only the modules of their profile.
 - **Shared PIN:** if several profiles have the same PIN, entering with it opens them together and you see the modules of all of them. When you set a PIN that another profile already has, the panel tells you so.
 - **Which profile opens:** the order of the list decides it. When you open the app, if the **first profile** (the main one) has no PIN, you go straight into it; if it has a PIN, the lock screen asks for it and the PIN typed decides which profile opens. After 5 failed attempts you have to wait 30 seconds.
-- The lock screen also lets you **Sign in with another profile**.
+- The lock screen also lets you **Sign in with another profile**, or **Sign in with another user** to go back to the sign-in page (it signs you out).
 - **Lock profile** (in the profile menu) asks for the PIN again. A profile with a PIN also **locks itself after some minutes without activity** (1 by default; it is changed in Your account → Account → Profile).
 - **Each profile reopens where it was:** entering a profile shows the section it had open last time, and its tabs until the PIN lock shows (then every module starts again from its first tab).
 - Cycle and intimacy no longer have a PIN of their own: who sees them depends on whether the profile has the **Intimate** module.

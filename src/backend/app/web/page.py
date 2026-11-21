@@ -59,6 +59,10 @@ REPLACEMENTS: list[tuple] = [
     # initials of breakfast, lunch and dinner in the meals list: the first letter of each name in the account's language
     ("[[0,'D'],[1,'A'],[2,'C']]",
      "[[0,'Desayuno'],[1,'Almuerzo'],[2,'Cena']].map(([i,n])=>[i,(window.blT?blT(n):n).charAt(0).toUpperCase()])"),
+    # lock screen: sign in with another user (back to the sign-in page), except when asking for the private PIN
+    ("'<button type=\"button\" class=\"lk-x\" data-lkx>Cancelar</button>'}</div>`}",
+     "'<button type=\"button\" class=\"lk-x\" data-lkx>Cancelar</button>'}${L.mode!=='priv'&&window.BODYLENS_SERVER?"
+     "'<button type=\"button\" class=\"lk-user\" data-blout>Entrar con otro usuario</button>':''}</div>`}"),
     # mensajes de descarga (aparecen dos veces)
     ("'Esta vista no permite descargar archivos. Abre la app en claude.ai.'", "'No se pudo preparar la descarga.'", 2),
 ]
@@ -70,6 +74,7 @@ NO_ZOOM_JS = "(()=>{const vv=window.visualViewport,zoomed=()=>!!vv&&vv.scale>1.0
 
 SERVER_CSS = (
     "html{touch-action:manipulation}"
+    ".lk-user{border:0;background:none;color:var(--accent);font:inherit;font-size:.88rem;font-weight:600;padding:6px 10px;cursor:pointer}"
     "section.card:has(#pubBtn),label[for=cfFile],#fileSave,#fileMsg{display:none!important}"
     "#pfMenu .pfm-out{color:#e5484d!important;border-top:1px solid var(--line)!important;margin-top:4px;font-weight:600}"
     "#pfMenu .pfm-out svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;"

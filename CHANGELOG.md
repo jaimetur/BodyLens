@@ -100,6 +100,7 @@
 - **Swiping between tabs:** on touch screens a sideways swipe moves to the next or previous tab of the module (the parts of Body count as its tabs); past the last tab it goes on to the next module, and before the first, back to the last tab of the previous one.
 - **No zoom on phones:** the app and its pages (sign-in, Your account, Administration, Help) no longer zoom when pinched, when tapping twice (the PIN pad included) or when a field gets the focus; a page that a browser zooms anyway (Brave, for example) goes back to its normal size and can be pinched back out.
 - **Tabs start from the first after the lock:** when the PIN lock shows (the app is opened again, after the idle time or when locking the profile), every module opens again on its first tab; the module in use is kept.
+- **PIN screen:** it fits on the screen without scrolling (the keys shrink on short screens) and has **Sign in with another user**, which signs out and goes back to the sign-in page.
 #### 🐛 Bug fixes:
 - **Security:** the access log no longer stores the Apple Health upload address, OAuth codes or invitations.
 - **Withings:** the callback address accepts Withings' tests and notices (POST and HEAD).
