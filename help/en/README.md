@@ -21,7 +21,7 @@ On touch screens, swipe sideways to go to the next or previous tab; past the las
 On a phone:
 
 - The **bottom bar** shows 4 modules and **More**, which opens every module with its tabs: tap a tab to go straight to it, or close it with ✕ or by swiping it down. **Edit the bar** (in More) chooses the 4 modules of the bar. With 5 modules or fewer, the bar shows them all.
-- The **tabs of each module** are at the bottom, in a strip just above the bottom bar, within reach of your thumb.
+- The **tabs of each module** are at the bottom, in a strip just above the dark bottom bar of modules, within reach of your thumb.
 - When you scroll down, the title gives way to a **thin bar** at the top with the module's name; tap it to go back to the top. In Administration that bar also shows its tabs.
 - The **period** (1 week, 1 month…) shows only the one in use; tap it to choose another.
 - When you change tab, a few **dots** show where you are among the module's tabs.
