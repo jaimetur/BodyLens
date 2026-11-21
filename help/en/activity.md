@@ -14,7 +14,7 @@ If you do not wear a watch or connect your phone, you can keep your activity by 
 
 ## Tabs
 
-- **Today**, **Progress**, **Workouts** and **Analysis**. The app remembers the last one you opened.
+- **Today**, **Progress**, **Workouts** and **Analysis**. The app remembers the last one you opened, until the PIN lock shows: then it starts again from the first.
 - On phones, the explanation of a chart card is behind the **ⓘ** next to its title (tap the title to show it), and the cards to add data by hand move to the end of their tab.
 
 ## Period

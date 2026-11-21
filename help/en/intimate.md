@@ -12,7 +12,7 @@ A private section for tracking the menstrual cycle, sexual activity and mood. Wh
 
 ## Tabs
 
-- **Cycle**, **Sexuality** and **Mood**. The app remembers the last one you opened.
+- **Cycle**, **Sexuality** and **Mood**. The app remembers the last one you opened, until the PIN lock shows: then it starts again from the first.
 - On a phone, the explanation of a chart card waits behind the **ⓘ** next to its title (tap the title to show or hide it).
 
 ## Cycle

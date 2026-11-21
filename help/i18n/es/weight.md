@@ -1,11 +1,11 @@
-<!-- en: 3f590ef3b86c5cab -->
+<!-- en: 57386ab4eb2cdb72 -->
 # Peso
 
 Sirve para seguir la evolución de tu peso frente al plan de pérdida: tendencia, ritmo, semanas, días de la semana, calendario de pesadas e hitos. Las pesadas vienen de la báscula **Withings**; también puedes añadir pesadas manuales.
 
 ## Pestañas
 
-- **Evolución**, **Semanas** y **Calendario**. La app recuerda la última que abriste.
+- **Evolución**, **Semanas** y **Calendario**. La app recuerda la última que abriste hasta que sale el bloqueo con PIN: entonces vuelve a empezar por la primera.
 - En el móvil, la explicación de una tarjeta con gráfico está tras la ⓘ junto a su título: toca el título para verla.
 
 ## Periodo

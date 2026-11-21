@@ -4,7 +4,7 @@ Use it to see how you sleep: last night, your sleep balance, progress, schedule 
 
 ## Tabs
 
-- **Night**, **Balance**, **Progress**, **Schedule** and **Analysis**. The app remembers the last one you opened.
+- **Night**, **Balance**, **Progress**, **Schedule** and **Analysis**. The app remembers the last one you opened, until the PIN lock shows: then it starts again from the first.
 - On a phone, the explanation of a chart card waits behind the **ⓘ** next to its title (tap the title to show or hide it), and **Add a night by hand** goes to the end of the Night tab.
 
 ## Period

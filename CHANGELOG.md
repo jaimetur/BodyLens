@@ -99,6 +99,7 @@
 - **Enlarged cards:** a sideways swipe on phones and tablets, or the arrows at each side on a computer, goes to the previous or next day.
 - **Swiping between tabs:** on touch screens a sideways swipe moves to the next or previous tab of the module (the parts of Body count as its tabs); past the last tab it goes on to the next module, and before the first, back to the last tab of the previous one.
 - **No zoom on phones:** the app and its pages (sign-in, Your account, Administration, Help) no longer zoom when pinched, when tapping twice (the PIN pad included) or when a field gets the focus.
+- **Tabs start from the first after the lock:** when the PIN lock shows (the app is opened again, after the idle time or when locking the profile), every module opens again on its first tab; the module in use is kept.
 #### 🐛 Bug fixes:
 - **Security:** the access log no longer stores the Apple Health upload address, OAuth codes or invitations.
 - **Withings:** the callback address accepts Withings' tests and notices (POST and HEAD).

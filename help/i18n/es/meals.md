@@ -1,11 +1,11 @@
-<!-- en: 4b69152650836674 -->
+<!-- en: 21ad9894649e523d -->
 # Comidas
 
 Sirve para apuntar lo que comes cada día y puntuarlo, y para ver cuánto debería afectar a tu peso según una fórmula, comparado con lo que marca la báscula al día siguiente. Los pesos vienen de la báscula **Withings**; las comidas las escribes tú.
 
 ## Pestañas
 
-- **Hoy**, **Registro** y **Análisis**. La app recuerda la última que abriste.
+- **Hoy**, **Registro** y **Análisis**. La app recuerda la última que abriste hasta que sale el bloqueo con PIN: entonces vuelve a empezar por la primera.
 - En el móvil, la explicación de cada tarjeta con gráfico espera tras la **ⓘ** junto a su título (toca el título para verla u ocultarla).
 
 ## Periodo

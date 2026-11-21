@@ -4,7 +4,7 @@ Use it to follow the progress of your weight against the weight-loss plan: trend
 
 ## Tabs
 
-- **Progress**, **Weeks** and **Calendar**. The app remembers the last one you opened.
+- **Progress**, **Weeks** and **Calendar**. The app remembers the last one you opened, until the PIN lock shows: then it starts again from the first.
 - On phones, the explanation of a chart card is behind the ⓘ next to its title: tap the title to show it.
 
 ## Period

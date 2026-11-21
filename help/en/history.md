@@ -4,7 +4,7 @@ Use it to see your whole weight journey, year by year, and to compare your weigh
 
 ## Tabs
 
-- **Years**, **All** and **Attempts**. The app remembers the last one you opened.
+- **Years**, **All** and **Attempts**. The app remembers the last one you opened, until the PIN lock shows: then it starts again from the first.
 - On phones, the explanation of a chart card is behind the ⓘ next to its title: tap the title to show it.
 
 ## Period

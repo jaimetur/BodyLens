@@ -1,4 +1,4 @@
-<!-- en: 14a66b66d8193a8e -->
+<!-- en: 9338371ffebd3191 -->
 # Actividad
 
 Sirve para ver cuánto te mueves: pasos, calorías activas, minutos de ejercicio, frecuencia cardiaca y entrenamientos, y cómo se relacionan con tu peso.
@@ -15,7 +15,7 @@ Si no llevas reloj ni conectas el móvil, puedes llevar tu actividad a mano con 
 
 ## Pestañas
 
-- **Hoy**, **Evolución**, **Entrenos** y **Análisis**. La app recuerda la última que abriste.
+- **Hoy**, **Evolución**, **Entrenos** y **Análisis**. La app recuerda la última que abriste hasta que sale el bloqueo con PIN: entonces vuelve a empezar por la primera.
 - En el móvil, la explicación de una tarjeta con gráfico está tras la **ⓘ** junto a su título (toca el título para verla), y las tarjetas para apuntar datos a mano pasan al final de su pestaña.
 
 ## Periodo

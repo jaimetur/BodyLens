@@ -1,11 +1,11 @@
-<!-- en: e519b5ea7d06ecf4 -->
+<!-- en: 3ea43931b86e089b -->
 # Sueño
 
 Sirve para ver cómo duermes: la última noche, tu saldo de sueño, la evolución, el horario y el análisis. Incluye siestas, fases del sueño y comparaciones con tu peso.
 
 ## Pestañas
 
-- **Noche**, **Saldo**, **Evolución**, **Horario** y **Análisis**. La app recuerda la última que abriste.
+- **Noche**, **Saldo**, **Evolución**, **Horario** y **Análisis**. La app recuerda la última que abriste hasta que sale el bloqueo con PIN: entonces vuelve a empezar por la primera.
 - En el móvil, la explicación de cada tarjeta con gráfico espera tras la **ⓘ** junto a su título (toca el título para verla u ocultarla), y **Apuntar una noche a mano** va al final de la pestaña Noche.
 
 ## Periodo

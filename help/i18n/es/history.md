@@ -1,11 +1,11 @@
-<!-- en: 08aa0fc2bae46841 -->
+<!-- en: b5df5938882028f7 -->
 # Historial
 
 Sirve para ver todo tu recorrido de peso, año a año, y para comparar tus intentos de pérdida a lo largo del tiempo. Las pesadas vienen de la báscula **Withings** y de las pesadas manuales o históricas que hayas importado.
 
 ## Pestañas
 
-- **Años**, **Todo** e **Intentos**. La app recuerda la última que abriste.
+- **Años**, **Todo** e **Intentos**. La app recuerda la última que abriste hasta que sale el bloqueo con PIN: entonces vuelve a empezar por la primera.
 - En el móvil, la explicación de una tarjeta con gráfico está tras la ⓘ junto a su título: toca el título para verla.
 
 ## Periodo

@@ -4,7 +4,7 @@ Use it to record what you eat each day and score it, and to see how much it shou
 
 ## Tabs
 
-- **Today**, **Log** and **Analysis**. The app remembers the last one you opened.
+- **Today**, **Log** and **Analysis**. The app remembers the last one you opened, until the PIN lock shows: then it starts again from the first.
 - On a phone, the explanation of a chart card waits behind the **ⓘ** next to its title (tap the title to show or hide it).
 
 ## Period

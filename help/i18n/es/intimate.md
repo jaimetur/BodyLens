@@ -1,4 +1,4 @@
-<!-- en: 6b5ea39e6676744d -->
+<!-- en: 5cc932139a062ccb -->
 # Ciclo e intimidad
 
 Una sección privada para seguir el ciclo menstrual, la actividad sexual y el ánimo. Quién la ve depende de los módulos del perfil.
@@ -13,7 +13,7 @@ Una sección privada para seguir el ciclo menstrual, la actividad sexual y el á
 
 ## Pestañas
 
-- **Ciclo**, **Sexualidad** y **Ánimo**. La app recuerda la última que abriste.
+- **Ciclo**, **Sexualidad** y **Ánimo**. La app recuerda la última que abriste hasta que sale el bloqueo con PIN: entonces vuelve a empezar por la primera.
 - En el móvil, la explicación de cada tarjeta con gráfico espera tras la **ⓘ** junto a su título (toca el título para verla u ocultarla).
 
 ## Ciclo
