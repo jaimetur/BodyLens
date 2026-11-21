@@ -1,4 +1,4 @@
-<!-- en: 7ab5c5f263381d13 -->
+<!-- en: e950bb18eaa399e0 -->
 # Ayuda de BodyLens
 
 Un fichero por módulo. Las secciones de la app son las de la barra de navegación; las de la cuenta están en «Tu cuenta».
@@ -21,7 +21,7 @@ En pantallas táctiles, desliza el dedo a un lado para ir a la pestaña siguient
 
 En el móvil:
 
-- La **barra de abajo** muestra 4 módulos y **Más**, que abre todos los módulos con sus pestañas: toca una pestaña para ir directamente a ella. **Editar la barra** (en Más) elige los 4 módulos de la barra. Con 5 módulos o menos, la barra los muestra todos.
+- La **barra de abajo** muestra 4 módulos y **Más**, que abre todos los módulos con sus pestañas: toca una pestaña para ir directamente a ella, o ciérralo con ✕ o deslizándolo hacia abajo. **Editar la barra** (en Más) elige los 4 módulos de la barra. Con 5 módulos o menos, la barra los muestra todos.
 - Al bajar por la página, el título y las pestañas dejan paso a una **barra fina** arriba con el módulo y sus pestañas, para tenerlas siempre a mano; toca el nombre del módulo para volver arriba. Administración también muestra ahí sus pestañas.
 - El **periodo** (1 sem, 1 mes…) muestra solo el que está en uso; tócalo para elegir otro.
 - Al cambiar de pestaña, unos **puntos** indican en cuál estás entre las del módulo.

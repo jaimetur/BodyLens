@@ -3725,9 +3725,15 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-actmet]');
     const rows=visMods().map(a=>{const v=a.dataset.v,ps=partsOf(v),fav=f.includes(v);
       return `<div class="mrow"><div class="mrow-h${v===cur?' cur':''}"><a href="#${v}" data-mgo="${v}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[v]||''}</svg><span>${esc(lbl(v))}</span></a>${EDIT?`<button type="button" class="mstar${fav?' on':''}" data-fav="${v}" aria-pressed="${fav}">${fav?'En la barra':'Añadir'}</button>`:''}</div>${!EDIT&&ps.length>1?`<div class="mchips">${ps.map(chip).join('')}</div>`:''}</div>`}).join('');
     const extra=EDIT?'':SRV_V.map(([v])=>{const a=document.querySelector(`#railNav a[data-v="${v}"]`);return a&&getComputedStyle(a).display!=='none'?`<a href="#${v}">${esc(lbl(v))}</a>`:''}).join('');
-    mp.innerHTML=`<div class="morep-b"><div class="morep-h"><b>Todos los módulos</b><button type="button" data-medit>${EDIT?'Listo':'Editar la barra'}</button></div>${EDIT?'<p class="morep-p">Elige hasta 4 módulos para la barra de abajo; los demás quedan en «Más».</p>':''}${rows}${extra?`<div class="mfoot">${extra}</div>`:''}</div>`}
+    mp.innerHTML=`<div class="morep-b"><i class="morep-g" aria-hidden="true"></i><div class="morep-h"><b>Todos los módulos</b><button type="button" data-medit>${EDIT?'Listo':'Editar la barra'}</button><button type="button" class="morep-x" data-mclose aria-label="Cerrar">✕</button></div>${EDIT?'<p class="morep-p">Elige hasta 4 módulos para la barra de abajo; los demás quedan en «Más».</p>':''}${rows}${extra?`<div class="mfoot">${extra}</div>`:''}</div>`}
   more.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();EDIT=false;moreDraw();mp.hidden=false});
-  mp.addEventListener('click',e=>{if(e.target===mp){mp.hidden=true;return}
+  // swipe down from the top of the panel (or from its handle) to close it
+  {let y0=null,dy=0;const box=()=>mp.querySelector('.morep-b');
+    mp.addEventListener('touchstart',e=>{const b=box();y0=e.touches.length===1&&b&&(b.scrollTop<=0||e.target.closest('.morep-g,.morep-h'))?e.touches[0].clientY:null;dy=0},{passive:true});
+    mp.addEventListener('touchmove',e=>{if(y0==null)return;dy=e.touches[0].clientY-y0;const b=box();if(dy>0&&b){b.style.transition='none';b.style.transform=`translateY(${dy}px)`}},{passive:true});
+    mp.addEventListener('touchend',()=>{if(y0==null)return;y0=null;const b=box();if(!b)return;b.style.transition='transform .2s ease';
+      if(dy>90){b.style.transform='translateY(100%)';setTimeout(()=>{mp.hidden=true;b.style.transform='';b.style.transition=''},200)}else b.style.transform=''})}
+  mp.addEventListener('click',e=>{if(e.target===mp||e.target.closest('[data-mclose]')){mp.hidden=true;return}
     if(e.target.closest('[data-medit]')){EDIT=!EDIT;moreDraw();return}
     const s=e.target.closest('[data-fav]');if(s){let f=favs();const v=s.dataset.fav;if(f.includes(v)){if(f.length>1)f=f.filter(x=>x!==v)}else{if(f.length>=4)f.shift();f.push(v)}UI.favs=f;saveUI();barApply();moreDraw();return}
     const g=e.target.closest('[data-mgo]');if(g){e.preventDefault();e.stopPropagation();mp.hidden=true;const t=tn.querySelector(`.tab[data-v="${g.dataset.mgo}"]`);if(t)t.click();return}
