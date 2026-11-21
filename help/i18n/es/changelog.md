@@ -1,4 +1,4 @@
-<!-- en: 3e3584f74c2c1a7d -->
+<!-- en: fc95fa761089950e -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -99,7 +99,7 @@
 - **Móvil:** cada pestaña muestra un gráfico o un panel de cifras completo sin desplazarte: la explicación de cada tarjeta con gráfico espera tras una ⓘ junto a su título (toca el título), las tarjetas para apuntar datos a mano van al final de la pestaña, las tarjetas de cifras (también los récords y rachas de Actividad) tienen colores y minigráficos, y el avatar del perfil es más grande.
 - **Tarjetas ampliadas:** deslizar el dedo a un lado en el móvil o la tableta, o las flechas de cada lado en el ordenador, pasa al día anterior o al siguiente.
 - **Deslizar entre pestañas:** en pantallas táctiles, deslizar el dedo a un lado pasa a la pestaña siguiente o anterior del módulo (los apartados de Cuerpo cuentan como sus pestañas); después de la última pestaña pasa al módulo siguiente, y antes de la primera, a la última pestaña del anterior.
-- **Sin zoom en el móvil:** la app y sus páginas (acceso, Tu cuenta, Administración, Ayuda) ya no se amplían al pellizcar, al tocar dos veces seguidas (también en el teclado del PIN) ni al entrar en un campo.
+- **Sin zoom en el móvil:** la app y sus páginas (acceso, Tu cuenta, Administración, Ayuda) ya no se amplían al pellizcar, al tocar dos veces seguidas (también en el teclado del PIN) ni al entrar en un campo; si un navegador la amplía igualmente (Brave, por ejemplo), vuelve a su tamaño normal y se puede reducir pellizcando.
 - **Las pestañas empiezan por la primera tras el bloqueo:** cuando sale el bloqueo con PIN (al volver a abrir la app, tras el tiempo de inactividad o al bloquear el perfil), cada módulo vuelve a abrirse en su primera pestaña; se mantiene el módulo en el que estabas.
 #### 🐛 Correcciones:
 - **Seguridad:** el registro de accesos ya no guarda la dirección de subida de Apple Salud, los códigos OAuth ni las invitaciones.

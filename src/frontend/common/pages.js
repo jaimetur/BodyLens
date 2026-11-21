@@ -4,9 +4,9 @@ const EMBED = window.top !== window || new URLSearchParams(location.search).has(
 if (EMBED) document.documentElement.classList.add('embed');
 const TOP = EMBED ? window.top : window;
 const $ = id => document.getElementById(id);
-// no zoom on phones: pinch, which iOS allows even with user-scalable=no (double tap: touch-action in pages.css)
-['gesturestart', 'gesturechange'].forEach(t => document.addEventListener(t, e => e.preventDefault(), { passive: false }));
-document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preventDefault() }, { passive: false });
+// no zoom on phones: pinch, which iOS allows even with user-scalable=no (double tap: touch-action in pages.css); a page
+// that a browser zoomed anyway (some ignore the limits) goes back to its normal size, and can always be pinched back out
+(()=>{const vv=window.visualViewport,zoomed=()=>!!vv&&vv.scale>1.01;for(const t of ['gesturestart','gesturechange'])document.addEventListener(t,e=>{if(!zoomed()&&!(e.scale<1))e.preventDefault()},{passive:false});document.addEventListener('touchmove',e=>{if(e.touches.length>1&&!zoomed())e.preventDefault()},{passive:false});let T;const unzoom=()=>{if(!zoomed())return;const m=document.querySelector('meta[name=viewport]');if(!m)return;const c=m.content;m.content='width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover';setTimeout(()=>{m.content=c},80)};if(vv)vv.addEventListener('resize',()=>{clearTimeout(T);T=setTimeout(unzoom,400)});addEventListener('pageshow',unzoom);document.addEventListener('visibilitychange',()=>{if(!document.hidden)unzoom()});window.blUnzoom=unzoom})();
 async function api(method, url, body) {
   const opt = { method, headers: { 'X-BodyLens': '1' }, credentials: 'same-origin' };
   if (body !== undefined) { opt.headers['Content-Type'] = 'application/json'; opt.body = JSON.stringify(body); }

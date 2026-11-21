@@ -64,9 +64,9 @@ REPLACEMENTS: list[tuple] = [
 ]
 
 # lo que no tiene sentido en el servidor (copia publicada en la página, ID de la hoja) se oculta
-# no zoom on phones: double tap (touch-action) and pinch, which iOS allows even with user-scalable=no
-NO_ZOOM_JS = ("['gesturestart','gesturechange'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));"
-              "document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault()},{passive:false});")
+# no zoom on phones: double tap (touch-action) and pinch, which iOS allows even with user-scalable=no; a page that a
+# browser zoomed anyway (some ignore the limits) goes back to its normal size, and can always be pinched back out
+NO_ZOOM_JS = "(()=>{const vv=window.visualViewport,zoomed=()=>!!vv&&vv.scale>1.01;for(const t of ['gesturestart','gesturechange'])document.addEventListener(t,e=>{if(!zoomed()&&!(e.scale<1))e.preventDefault()},{passive:false});document.addEventListener('touchmove',e=>{if(e.touches.length>1&&!zoomed())e.preventDefault()},{passive:false});let T;const unzoom=()=>{if(!zoomed())return;const m=document.querySelector('meta[name=viewport]');if(!m)return;const c=m.content;m.content='width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover';setTimeout(()=>{m.content=c},80)};if(vv)vv.addEventListener('resize',()=>{clearTimeout(T);T=setTimeout(unzoom,400)});addEventListener('pageshow',unzoom);document.addEventListener('visibilitychange',()=>{if(!document.hidden)unzoom()});window.blUnzoom=unzoom})();"
 
 SERVER_CSS = (
     "html{touch-action:manipulation}"

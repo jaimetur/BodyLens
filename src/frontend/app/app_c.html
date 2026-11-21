@@ -102,7 +102,7 @@ function resetTabs(){try{const top=h=>{const v=(h||'').slice(1);return SUBV[v]?'
   for(const b of Object.values(UI.byProf||{}))if(b&&typeof b==='object'){delete b.vt;delete b.lastSub;b.h=top(b.h);b.t=Date.now()}
   UI.vt={};UI.lastSub={};try{localStorage.setItem('bascula:ui',JSON.stringify(UI))}catch(e){}navPush();
   const h=top(location.hash);if(h!==location.hash)location.hash=h;else{applyVTabs();renderView()}}catch(e){}}
-function showLock(p,then,mode){if(!mode)resetTabs();LOCK={p,buf:'',then,tries:0,until:0,mode:mode||''};drawLock();$('lock').hidden=false;document.body.classList.add('locked')}
+function showLock(p,then,mode){if(!mode)resetTabs();try{window.blUnzoom&&blUnzoom()}catch(e){}LOCK={p,buf:'',then,tries:0,until:0,mode:mode||''};drawLock();$('lock').hidden=false;document.body.classList.add('locked')}
 function hideLock(){$('lock').hidden=true;LOCK=null;document.body.classList.toggle('locked',!unlocked(PROF()))}
 function drawLock(){const L=LOCK,p=L.p,cur=p.id===SEL&&!unlocked(PROF());const others=PROFS.filter(q=>q.id!==p.id);
   $('lock').innerHTML=`<div class="lk"><div class="lk-logo">${(document.querySelector('.bl-ic')||{}).outerHTML||''}<span>Body<em>Lens</em></span></div><i class="lk-av" style="background:${p.col}">${esc(initials(p.name))}</i><h2>${esc(p.name)}</h2><p class="lk-msg" aria-live="polite">${L.msg||(L.mode==='priv'?'Introduce tu PIN privado para abrir Íntimo':'Introduce tu PIN')}</p>
