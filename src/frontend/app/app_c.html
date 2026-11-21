@@ -283,7 +283,7 @@ const SRV_V=window.BODYLENS_SERVER?[['cuenta','Tu cuenta'],...(window.BODYLENS_U
 if(SRV_V.length){const v=VIEWS.find(x=>x[0]==='ajustes');if(v)v[1]='Objetivos, plan y comidas';const s=document.getElementById('v-ajustes');if(s)s.dataset.title=v?v[1]:s.dataset.title}
 if(SRV_V.length){VIEWS.push(...SRV_V);
   Object.assign(ICON,{cuenta:'<circle cx="12" cy="8" r="3.6"/><path d="M5 20a7 7 0 0 1 14 0"/>',admin:'<path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6z"/><path d="M9 12l2 2 4-4"/>',help:'<circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.7"/><circle cx="12" cy="17" r=".6"/>'});
-  $('v-ajustes').insertAdjacentHTML('afterend',SRV_V.map(([id,l])=>`<section class="view srvview" id="v-${id}" data-title="${l}" hidden><iframe class="srvframe" id="emb-${id}" title="${l}"></iframe></section>`).join(''))}
+  $('v-ajustes').insertAdjacentHTML('afterend',SRV_V.map(([id,l])=>`<section class="view srvview" id="v-${id}" data-title="${l}" hidden><iframe class="srvframe" id="emb-${id}" title="${l}" scrolling="no"></iframe></section>`).join(''))}
 function srvShow(v){const f=$('emb-'+v);if(!f)return;
   if(!f.dataset.on){f.dataset.on='1';f.addEventListener('load',()=>{try{const d=f.contentDocument;if(d.defaultView.blFitFrame)d.defaultView.blFitFrame()}catch(e){}});
     f.src='/'+v+'?embed=1'+(v==='admin'&&location.hash.includes(':')?'#'+location.hash.split(':')[1]:'')}}

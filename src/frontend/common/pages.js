@@ -62,4 +62,6 @@ if (EMBED && window.frameElement) {
   const m = document.querySelector('main');
   if (m) new ResizeObserver(blFitFrame).observe(m);
   addEventListener('load', blFitFrame);
+  addEventListener('resize', blFitFrame);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(blFitFrame);
 }
