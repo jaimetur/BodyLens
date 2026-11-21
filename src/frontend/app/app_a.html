@@ -847,10 +847,10 @@ body.hasbt .view:not([hidden]) .cuetabs{position:absolute!important;width:1px;he
 .btabs a.on{background:var(--ink);color:var(--surface)}
 body.hasbt .main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))!important}body.hasbt .main.hasfloat{padding-bottom:calc(206px + env(safe-area-inset-bottom,0px))!important}
 body.locked .btabs,body.pdfx .btabs{display:none!important}
-/* the module bar is dark, so it reads apart from the tabs strip above it (in every theme) */
-.tabbar{background:color-mix(in srgb,var(--surface) 8%,#0d121c);border-top-color:transparent;box-shadow:0 -4px 16px rgba(0,0,0,.12)}
-.tabbar .tab{color:rgba(232,238,247,.62)}
-.tabbar .tab[aria-current="page"]{color:#fff;background:rgba(255,255,255,.12)}
+/* the tabs strip takes the colour of the module, so it reads apart from the module bar below (in every theme) */
+.btabs{--mc:var(--weight);background:color-mix(in srgb,var(--mc) 14%,var(--surface));border-top:1px solid color-mix(in srgb,var(--mc) 30%,transparent)}
+.btabs a{color:color-mix(in srgb,var(--mc) 70%,var(--ink))}
+.btabs a.on{background:var(--mc);color:#fff}
 }
 </style>
 

@@ -3753,7 +3753,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-actmet]');
   // 5. the tabs of the module in a strip just above the bottom bar, within reach of the thumb
   const bt=document.createElement('nav');bt.className='btabs';bt.hidden=true;bt.setAttribute('aria-label','Apartados');document.body.append(bt);
   function btDraw(){const ps=mob()&&SWIPE_ORDER.includes(VIEW)?partsOf(modOf(VIEW)):[],on=ps.length>1;document.body.classList.toggle('hasbt',on);bt.hidden=!on;
-    if(!on){rf.style.bottom='';return}bt.innerHTML=ps.map(p=>chip(p).replace('">','">'+(p.ic||'')+'<span>').replace(/<\/a>$/,'</span></a>')).join('');bt.style.bottom=Math.round(tn.getBoundingClientRect().height)+'px';
+    if(!on){rf.style.bottom='';return}bt.style.setProperty('--mc','var(--'+({resumen:'weight',peso:'weight',composicion:'mus',actividad:'act',sueno:'slp',comidas:'fat',intimo:'nap',historial:'wat'}[modOf(VIEW)]||'weight')+')');bt.innerHTML=ps.map(p=>chip(p).replace('">','">'+(p.ic||'')+'<span>').replace(/<\/a>$/,'</span></a>')).join('');bt.style.bottom=Math.round(tn.getBoundingClientRect().height)+'px';
     rf.style.bottom=Math.round(tn.getBoundingClientRect().height+bt.offsetHeight+10)+'px';const a=bt.querySelector('a.on');if(a)bt.scrollLeft=a.offsetLeft-(bt.clientWidth-a.offsetWidth)/2}
   addEventListener('resize',()=>{try{btDraw()}catch(e){}});
   function sync(){try{btDraw();if(shown)cbarDraw();moreMark();dotsShow();if(!UI.swHint&&!HT)HT=setTimeout(hint,2500)}catch(e){}}
