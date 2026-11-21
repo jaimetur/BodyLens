@@ -842,7 +842,8 @@ body.locked .cnbar,body.pdfx .cnbar,body.locked .swdots,body.pdfx .swdots{displa
 body.hasbt .view:not([hidden]) .cuetabs{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);padding:0;margin:0;border:0;white-space:nowrap}
 .btabs{position:fixed;left:0;right:0;z-index:24;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:6px max(10px,env(safe-area-inset-right,0px)) 6px max(10px,env(safe-area-inset-left,0px));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line)}
 .btabs::-webkit-scrollbar{display:none}.btabs[hidden]{display:none}
-.btabs a{flex:1 0 auto;display:flex;align-items:center;justify-content:center;min-height:38px;padding:0 12px;border-radius:999px;text-decoration:none;color:var(--muted);font-size:.84rem;font-weight:600;white-space:nowrap}
+.btabs a{flex:1 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:48px;padding:4px 10px;border-radius:14px;text-decoration:none;color:var(--muted);font-size:.74rem;font-weight:600;white-space:nowrap}
+.btabs a svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .btabs a.on{background:var(--ink);color:var(--surface)}
 body.hasbt .main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))!important}body.hasbt .main.hasfloat{padding-bottom:calc(206px + env(safe-area-inset-bottom,0px))!important}
 body.locked .btabs,body.pdfx .btabs{display:none!important}
