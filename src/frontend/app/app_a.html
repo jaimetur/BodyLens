@@ -524,7 +524,7 @@ table.yrs td b{display:block;font-weight:600}table.yrs td small{display:block;fo
 .mdq-at{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:-2px 0 10px;font-size:.82rem;color:var(--muted)}
 .mdq-at input{font:inherit;font-size:16px;padding:6px 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);margin-left:6px}
 .mdpick{cursor:pointer}.mdpick:hover{outline:2px solid var(--weight);outline-offset:-2px}
-.srvframe{display:block;width:100%;min-height:480px;border:0;background:transparent;color-scheme:normal}
+.srvframe{display:block;width:100%;min-height:480px;border:0;background:transparent}
 .frows{display:flex;flex-direction:column;gap:12px}
 /* cada concepto en su fila: lo escrito a la izquierda y su puntuación a la derecha, a la altura de la caja de texto */
 .frow{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:6px 24px;align-items:end}
@@ -856,7 +856,7 @@ body.mopen .btabs,body.mopen .rangefloat,body.mopen .swdots,body.mopen .cnbar{vi
 .swhint svg{width:36px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;animation:swh 1.1s ease-in-out infinite}
 @keyframes swh{0%,100%{transform:translateX(-6px)}50%{transform:translateX(6px)}}
 /* the tabs of the module go to a strip just above the bottom bar, within reach of the thumb (the top ones stay for the swipe and the PDF, out of sight) */
-body.hasbt .view:not([hidden]) .cuetabs{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);padding:0;margin:0;border:0;white-space:nowrap}
+body.hasbt .view:not([hidden]) .cuetabs,body.hasbt #v-cuenta>.ajtabs,body.hasbt #v-ajustes #ajTabs{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);padding:0;margin:0;border:0;white-space:nowrap}
 .btabs{position:fixed;left:0;right:0;z-index:24;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:6px max(10px,env(safe-area-inset-right,0px)) 6px max(10px,env(safe-area-inset-left,0px));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line)}
 .btabs::-webkit-scrollbar{display:none}.btabs[hidden]{display:none}
 .btabs a{flex:1 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:48px;padding:4px 10px;border-radius:14px;text-decoration:none;color:var(--muted);font-size:.74rem;font-weight:600;white-space:nowrap}

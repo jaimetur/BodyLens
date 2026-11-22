@@ -7,7 +7,9 @@
 <style>
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
 .tabs button{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
-.tabs button.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.tabs button{display:inline-flex;align-items:center;gap:7px}.tabs button svg{flex:none;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.tabs button.on{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 10px color-mix(in srgb,var(--accent) 35%,transparent)}.tabs button.on svg{stroke-width:2.3}
+.bltabs .tabs{display:none}
 .tabs b{display:inline-block;min-width:18px;padding:0 5px;margin-left:6px;border-radius:9px;background:var(--bad);color:#fff;font-size:12px}
 @media (max-width:760px){.tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 0 12px}.tabs::-webkit-scrollbar{display:none}.tabs button{flex:none;padding:8px 14px;font-size:14px}}
 table{width:100%;border-collapse:collapse;font-size:14px}
@@ -41,17 +43,17 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
   <div class="top"><a class="brand" href="/"><img src="/icon.svg" alt=""><b>BodyLens · Administración</b></a><span><a class="btn ghost" href="/cuenta">Tu cuenta</a> <a class="btn ghost" href="/">Volver a la app</a></span></div>
 
   <div class="tabs" role="tablist">
-    <button type="button" data-tab="usuarios" class="on">Usuarios</button>
-    <button type="button" data-tab="peticiones">Peticiones de acceso<b id="nReq" hidden></b></button>
-    <button type="button" data-tab="invitaciones">Invitaciones</button>
-    <button type="button" data-tab="correo">Correo</button>
-    <button type="button" data-tab="withings">Withings</button>
-    <button type="button" data-tab="translator">Translator</button>
-    <button type="button" data-tab="copias">Copias</button>
-    <button type="button" data-tab="legal">Datos legales</button>
-    <button type="button" data-tab="play">Google Play</button>
-    <button type="button" data-tab="stripe">Pagos web (Stripe)</button>
-    <button type="button" data-tab="fuentes" hidden>Fuentes de datos</button>
+    <button type="button" data-tab="usuarios" class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18.5 14.8c1.6.8 2.6 2.5 3 5.2"/></svg><span>Usuarios</span></button>
+    <button type="button" data-tab="peticiones"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M19 8v6M16 11h6"/></svg><span>Peticiones de acceso</span><b id="nReq" hidden></b></button>
+    <button type="button" data-tab="invitaciones"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9.5L12 3l9 6.5V20H3z"/><path d="M3 9.5l9 6 9-6"/></svg><span>Invitaciones</span></button>
+    <button type="button" data-tab="correo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/></svg><span>Correo</span></button>
+    <button type="button" data-tab="withings"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="4"/><path d="M8 10a4 4 0 0 1 8 0"/><path d="M12 10l1.6-2.2"/></svg><span>Withings</span></button>
+    <button type="button" data-tab="translator"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h9M8.5 3v2M11 5c-.8 4-3.5 7-7 8.5M6.5 8.5c1.3 2 3.2 3.6 5.5 4.5"/><path d="M13 21l4-10 4 10M14.5 17.5h5"/></svg><span>Translator</span></button>
+    <button type="button" data-tab="copias"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="7.5" ry="2.8"/><path d="M4.5 5.5v13c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-13"/><path d="M4.5 12c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8"/></svg><span>Copias</span></button>
+    <button type="button" data-tab="legal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg><span>Datos legales</span></button>
+    <button type="button" data-tab="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.2v15.6a.9.9 0 0 0 1.4.8l12.3-7.8a.9.9 0 0 0 0-1.6L7.9 3.4a.9.9 0 0 0-1.4.8z"/></svg><span>Google Play</span></button>
+    <button type="button" data-tab="stripe"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6.5 15h4"/></svg><span>Pagos web (Stripe)</span></button>
+    <button type="button" data-tab="fuentes" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3v5M15 3v5M6.5 8h11v3a5.5 5.5 0 0 1-11 0z"/><path d="M12 16.5V21"/></svg><span>Fuentes de datos</span></button>
   </div>
 
   <section class="card" data-panel="usuarios">
@@ -188,7 +190,8 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
 <script>
 let D = null, EDIT = null;
 const show = t => { document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t)); document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== t); history.replaceState(null, '', '#' + t);
-  const on = document.querySelector('.tabs button.on'); if (on) { const c = on.parentElement; c.scrollTo({ left: on.offsetLeft - c.offsetLeft - (c.clientWidth - on.offsetWidth) / 2, behavior: 'smooth' }); } };
+  const on = document.querySelector('.tabs button.on'); if (on) { const c = on.parentElement; c.scrollTo({ left: on.offsetLeft - c.offsetLeft - (c.clientWidth - on.offsetWidth) / 2, behavior: 'smooth' }); }
+  try { if (parent !== window && parent.blSync) parent.blSync(); } catch (e) {} };
 document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => show(b.dataset.tab)));
 show((location.hash || '#usuarios').slice(1).replace(/[^a-z]/g, '') || 'usuarios');
 

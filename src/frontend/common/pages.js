@@ -2,6 +2,15 @@
 // dentro de la app (sección «Tu cuenta» o «Administración») la página va sin cabecera y a todo el ancho
 const EMBED = window.top !== window || new URLSearchParams(location.search).has('embed');
 if (EMBED) document.documentElement.classList.add('embed');
+// inside the app (phones): a sideways swipe changes tab, as in the app's own modules
+if (EMBED) {
+  let sx = 0, sy = 0, st = 0, ok = false;
+  const scrolls = n => { for (; n && n !== document.body; n = n.parentElement) if (n.scrollWidth > n.clientWidth + 2 && /auto|scroll/.test(getComputedStyle(n).overflowX)) return true; return false; };
+  addEventListener('touchstart', e => { const t = e.touches[0]; ok = e.touches.length === 1 && !e.target.closest('input,select,textarea,dialog,[data-noswipe]') && !scrolls(e.target); sx = t.clientX; sy = t.clientY; st = Date.now(); }, { passive: true });
+  addEventListener('touchend', e => { if (!ok) return; ok = false; const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+    if (Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 2 || Date.now() - st > 700) return;
+    try { if (parent.blStripSwipe) parent.blStripSwipe(dx < 0); } catch (_) {} }, { passive: true });
+}
 const TOP = EMBED ? window.top : window;
 const $ = id => document.getElementById(id);
 // no zoom on phones: pinch, which iOS allows even with user-scalable=no (double tap: touch-action in pages.css); a page

@@ -1460,6 +1460,7 @@ const SWIPE_ORDER=['resumen','peso','composicion','medidas','corazon','bienestar
     if(Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*2||Date.now()-st>700)return;
     const fw=dx<0,anim=sec=>requestAnimationFrame(()=>{sec.classList.remove('swl','swr');void sec.offsetWidth;sec.classList.add(fw?'swl':'swr')});
     // first through the tabs of the module; past the last (or before the first) tab, on to the next (previous) module
+    if(window.blStripSwipe&&blStripSwipe(fw))return;   // «Tu cuenta» and Administration: through the tabs of the bottom strip
     const nav=document.querySelector(`.vtabs[data-view="${VIEW}"]`),tabs=nav&&!nav.hidden?[...nav.querySelectorAll('a[data-tab]')].filter(a=>a.getClientRects().length):[];
     const ti=tabs.findIndex(a=>a.dataset.tab===curTab(VIEW)),tj=ti+(fw?1:-1);
     if(ti>=0&&tj>=0&&tj<tabs.length){tabs[tj].click();anim($('v-'+VIEW));return}
@@ -3696,16 +3697,22 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-slpcol]');
 document.addEventListener('click',e=>{const b=e.target.closest('[data-actmet]');if(!b)return;UI.actMet=b.dataset.actmet;saveUI();if(LIFE)renderDay(LIFE)});
 
 /* ---------- phones: compact bar with the tabs while scrolling, bottom bar with 4 modules + More, folded period, swipe dots ---------- */
-(()=>{const MQ=matchMedia('(max-width:899px)'),mob=()=>MQ.matches,modOf=v=>SUBV[v]||v,tn=$('tabNav'),ab=document.querySelector('.appbar');
+(()=>{const MQ=matchMedia('(max-width:899px)'),mob=()=>MQ.matches,modOf=v=>v==='ajustes'&&SRV_V.length&&AJ_PF.includes(AJT)?'cuenta':(SUBV[v]||v),tn=$('tabNav'),ab=document.querySelector('.appbar');
   // the tabs of a module: its own tabs, the parts of Body, or the tabs of a page shown inside the app (Administration)
   function partsOf(v){const nav=document.querySelector(`.vtabs[data-view="${v}"]`);
     if(nav&&!nav.hidden)return [...nav.querySelectorAll('a[data-tab]')].filter(a=>!a.classList.contains('nomod')).map(a=>({l:a.textContent.trim(),go:v+'|'+a.dataset.tab,on:VIEW===v&&curTab(v)===a.dataset.tab,ic:(a.querySelector('svg')||{}).outerHTML||''}));
     if(v==='composicion'){const n=document.querySelector('#v-composicion .cuetabs');return n?[...n.querySelectorAll('a[href^="#"]')].filter(a=>!a.classList.contains('nomod')).map(a=>{const h=a.getAttribute('href');return {l:a.textContent.trim(),href:h,on:'#'+VIEW===h,ic:(a.querySelector('svg')||{}).outerHTML||''}}):[]}
-    if(SRV_V.some(([id])=>id===v)){try{const d=$('emb-'+v).contentDocument;return [...d.querySelectorAll('.tabs button[data-tab]')].filter(b=>!b.hidden).map((b,i)=>({l:(b.firstChild&&b.firstChild.textContent||b.textContent).trim(),fb:i,on:b.classList.contains('on')}))}catch(e){return []}}
+    // «Tu cuenta»: the account page and the profiles parts of Ajustes (Perfiles, Datos y copias)
+    if(v==='cuenta'&&SRV_V.length){const bs=[...document.querySelectorAll('#v-cuenta>.ajtabs button')],pf=VIEW==='ajustes'&&AJ_PF.includes(AJT);
+      return bs.map(b=>{const k=b.dataset.acpf||'cuenta';return {l:(b.querySelector('span')||b).textContent.trim(),ac:k,on:k==='cuenta'?VIEW==='cuenta':pf&&AJT===k,ic:(b.querySelector('svg')||{}).outerHTML||''}})}
+    if(SRV_V.some(([id])=>id===v)){try{const d=$('emb-'+v).contentDocument;return [...d.querySelectorAll('.tabs button[data-tab]')].filter(b=>!b.hidden).map((b,i)=>({l:(b.querySelector('span')||b.firstChild||b).textContent.trim(),fb:i,on:b.classList.contains('on'),ic:(b.querySelector('svg')||{}).outerHTML||''}))}catch(e){return []}}
     return []}
-  const chip=p=>p.go?`<a href="#${p.go.split('|')[0]}" data-go="${p.go}" class="${p.on?'on':''}">${esc(p.l)}</a>`:p.href?`<a href="${p.href}" class="${p.on?'on':''}">${esc(p.l)}</a>`:`<a href="#" data-fb="${p.fb}" class="${p.on?'on':''}">${esc(p.l)}</a>`;
+  const chip=p=>p.go?`<a href="#${p.go.split('|')[0]}" data-go="${p.go}" class="${p.on?'on':''}">${esc(p.l)}</a>`:p.href?`<a href="${p.href}" class="${p.on?'on':''}">${esc(p.l)}</a>`:p.ac?`<a href="#" data-acgo="${p.ac}" class="${p.on?'on':''}">${esc(p.l)}</a>`:`<a href="#" data-fb="${p.fb}" class="${p.on?'on':''}">${esc(p.l)}</a>`;
   // a tab of the page shown inside the app: its own button does it
   document.addEventListener('click',e=>{const a=e.target.closest('[data-fb]');if(!a)return;e.preventDefault();try{const b=[...$('emb-'+VIEW).contentDocument.querySelectorAll('.tabs button[data-tab]')].filter(x=>!x.hidden)[+a.dataset.fb];if(b)b.click()}catch(_){}scrollTo(0,0);setTimeout(sync,50)});
+  // a tab of «Tu cuenta»: the account page, or a profiles part of Ajustes
+  document.addEventListener('click',e=>{const a=e.target.closest('[data-acgo]');if(!a)return;e.preventDefault();const k=a.dataset.acgo;
+    if(k==='cuenta')location.hash='cuenta';else{UI.ajTabPf=k;saveUI();if(VIEW==='ajustes')showAj(k);else{PFNAV=true;location.hash='ajustes'}}scrollTo(0,0);setTimeout(sync,50)});
   // 1. compact bar: when the title and the tabs scroll away, a thin bar with the module and its tabs stays at the top
   const bar=document.createElement('div');bar.className='cnbar';bar.innerHTML='<button type="button" class="cnbar-t" aria-label="Arriba"></button><nav class="cnbar-n" aria-label="Apartados"></nav>';document.body.append(bar);
   bar.querySelector('.cnbar-t').addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
@@ -3792,10 +3799,16 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-actmet]');
     const close=()=>h.remove();setTimeout(()=>addEventListener('touchstart',close,{capture:true,once:true}),400);setTimeout(close,5000)}
   // 5. the tabs of the module in a strip just above the bottom bar, within reach of the thumb
   const bt=document.createElement('nav');bt.className='btabs';bt.hidden=true;bt.setAttribute('aria-label','Apartados');document.body.append(bt);
-  function btDraw(){const ps=mob()&&SWIPE_ORDER.includes(VIEW)?partsOf(modOf(VIEW)):[],on=ps.length>1;document.body.classList.toggle('hasbt',on);bt.hidden=!on;
+  // «Tu cuenta» and Administration (a page shown inside the app) put their tabs in the strip too; a swipe goes through them
+  const STRIP=['cuenta','admin'];
+  window.blStripSwipe=fw=>{if(!STRIP.includes(modOf(VIEW))||bt.hidden)return false;const as=[...bt.querySelectorAll('a')],i=as.findIndex(a=>a.classList.contains('on')),j=i+(fw?1:-1);
+    if(i>=0&&j>=0&&j<as.length)as[j].click();return true};
+  function btDraw(){const m=modOf(VIEW),ps=mob()&&(SWIPE_ORDER.includes(VIEW)||STRIP.includes(m))?partsOf(m):[],on=ps.length>1;
+    try{const d=$('emb-admin')&&$('emb-admin').contentDocument;if(d&&d.documentElement)d.documentElement.classList.toggle('bltabs',on&&m==='admin')}catch(e){}document.body.classList.toggle('hasbt',on);bt.hidden=!on;
     if(!on){rf.style.bottom='';return}bt.style.setProperty('--mc','var(--'+({resumen:'weight',peso:'weight',composicion:'mus',actividad:'act',sueno:'slp',comidas:'fat',intimo:'nap',historial:'wat'}[modOf(VIEW)]||'weight')+')');bt.innerHTML=ps.map(p=>chip(p).replace('">','">'+(p.ic||'')+'<span>').replace(/<\/a>$/,'</span></a>')).join('');bt.style.bottom=Math.round(tn.getBoundingClientRect().height)+'px';
     rf.style.bottom=Math.round(tn.getBoundingClientRect().height+bt.offsetHeight+10)+'px';const a=bt.querySelector('a.on');if(a)bt.scrollLeft=a.offsetLeft-(bt.clientWidth-a.offsetWidth)/2}
   addEventListener('resize',()=>{try{btDraw()}catch(e){}});
+  window.blSync=()=>sync();
   function sync(){try{btDraw();if(shown)cbarDraw();moreMark();useCount();dotsShow();if(!UI.swHint&&!HT)HT=setTimeout(hint,2500)}catch(e){}}
   {const f=applyVTabs;applyVTabs=function(){const r=f.apply(this,arguments);sync();return r}}
   addEventListener('hashchange',()=>setTimeout(()=>{sync();cbarCheck()},0));
