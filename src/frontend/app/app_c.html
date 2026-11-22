@@ -666,6 +666,8 @@ REDRAW.main=()=>{if(M&&!M.empty&&VIEW==='peso')renderMain()};
 // o: c colour of the tile, s values for a mini chart (oldest first), p share (0–1) for a small bar
 function kvViz(o){let vs=(o.s||[]).filter(v=>v!=null&&isFinite(v));if(vs.length>60){const n=Math.ceil(vs.length/60);vs=vs.filter((_,i)=>i%n===0)}
   return vs.length>=3?sparkSvg(vs.map(v=>({v})),o.c||'var(--muted)'):o.p!=null?`<i class="kvp"><i style="width:${Math.max(0,Math.min(1,o.p))*100}%"></i></i>`:''}
+// a plain figure tile («.nst», «.htile»): a mini chart (o.s, oldest first) or a bar (o.p, 0–1) in the colour of the tile
+const tviz=o=>o?kvViz({c:'var(--kc)',...o}):'';
 function kvCell(label,val,unit,note,cls,o){o=o||{};const viz=kvViz(o);
   return `<div${o.c?` class="kvc" style="--kc:${o.c}"`:''}><small>${label}</small><b class="${cls||''}">${val}${unit?`<span style="font-size:.55em;color:var(--muted);font-weight:600"> ${unit}</span>`:''}</b><em>${note||''}</em>${viz}</div>`}
 /* ---------- peso por semana: rango de la semana (mín–máx), mediana y cambio frente a la anterior ---------- */
@@ -700,7 +702,7 @@ function renderWeekly(){const host=$('chWk');const g={};for(const p of M.all){co
     tip.innerHTML=`<b>Semana del ${fmtK(x.k,true)}</b><div class="r"><span>Mediana</span><span>${fmtN(x.med,1)} kg</span></div><div class="r"><span>Cambio</span><span>${x.d!=null?sgn(x.d,1)+' kg':'—'}</span></div><div class="r"><span>Mín – máx</span><span>${fmtN(x.min,1)}–${fmtN(x.max,1)}</span></div><div class="r"><span>Pesadas</span><span>${x.n}</span></div>`;tip.hidden=false;placeTip(tip,svg,w,X(i))},()=>{tip.hidden=true;band.style.opacity=0});
   const ch=W.filter(x=>x.d!=null),down=ch.filter(x=>x.d<-0.05).length,up=ch.filter(x=>x.d>0.05).length;const best=ch.reduce((a,x)=>!a||x.d<a.d?x:a,null),worst=ch.reduce((a,x)=>!a||x.d>a.d?x:a,null);
   const tot=W[W.length-1].med-W[0].med;
-  $('wkTxt').innerHTML=`<div class="nstats">${[['Semanas bajando',`${down} de ${ch.length}`,`${up} subiendo`],['Cambio medio',ch.length?sgn(mean(ch.map(x=>x.d)),2)+' kg/sem':'—',`total ${sgn(tot,1)} kg`],['Mejor semana',best?sgn(best.d,1)+' kg':'—',best?'del '+fmtK(best.k,true):''],['Peor semana',worst?sgn(worst.d,1)+' kg':'—',worst?'del '+fmtK(worst.k,true):'']].map(([l,v,n])=>`<div class="nst"><small>${l}</small><b>${v}</b><em>${n}</em></div>`).join('')}</div>`}
+  $('wkTxt').innerHTML=`<div class="nstats">${[['Semanas bajando',`${down} de ${ch.length}`,`${up} subiendo`,{p:ch.length?down/ch.length:null}],['Cambio medio',ch.length?sgn(mean(ch.map(x=>x.d)),2)+' kg/sem':'—',`total ${sgn(tot,1)} kg`,{s:W.map(x=>x.med)}],['Mejor semana',best?sgn(best.d,1)+' kg':'—',best?'del '+fmtK(best.k,true):''],['Peor semana',worst?sgn(worst.d,1)+' kg':'—',worst?'del '+fmtK(worst.k,true):'']].map(([l,v,n,o])=>`<div class="nst"><small>${l}</small><b>${v}</b><em>${n}</em>${tviz(o)}</div>`).join('')}</div>`}
 $('rngWk').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;wkRange=+b.dataset.r;UI.wkRange=wkRange;saveUI();if(M&&!M.empty)renderWeekly()});
 
 /* ---------- panel principal de Peso: dónde estás, cómo vas frente al plan y cuánto te queda ---------- */
@@ -737,12 +739,12 @@ function renderPesoDash(){const host=$('pesoDash');if(!host)return;if(!M||M.empt
     <div class="wd-chips">${chips.map(([l,v])=>`<div class="wd-chip"><small>${l}</small><b style="color:${col(v)}">${v!=null?sgn(v,1):'—'}</b></div>`).join('')}</div>
     ${spark}
     <div class="nstats">
-      <div class="nst"><small>Llevas perdido</small><b style="color:${col(-lost)}">${sgn(-lost,1)} kg</b><em>de ${fmtN(span,1)} kg · desde ${fmtK(cfg.startDate,true)}</em></div>
+      <div class="nst"><small>Llevas perdido</small><b style="color:${col(-lost)}">${sgn(-lost,1)} kg</b><em>de ${fmtN(span,1)} kg · desde ${fmtK(cfg.startDate,true)}</em>${tviz({p:prog})}</div>
       <div class="nst"><small>Te faltan</small><b>${fmtN(left,1)} kg</b><em>${M.eta(goal)?`meta a tu ritmo: ${fmtK(M.eta(goal),true)}`:'sin estimación al ritmo actual'}</em></div>
-      <div class="nst"><small>Próximo hito</small><b>${next?fmtN(next.kg,next.kg%1?1:0)+' kg':'—'}</b><em>${next?`faltan ${fmtN(Math.max(0,tNow-next.kg),1)} kg${next.etaK?` · ${fmtK(next.etaK,true)}`:''}`:'todos conseguidos'}</em></div>
-      <div class="nst"><small>Ritmo 4 semanas</small><b style="color:${col(r28?r28.perWeek:null)}">${r28?sgn(r28.perWeek,2):'—'}</b><em>kg por semana</em></div>
+      <div class="nst"><small>Próximo hito</small><b>${next?fmtN(next.kg,next.kg%1?1:0)+' kg':'—'}</b><em>${next?`faltan ${fmtN(Math.max(0,tNow-next.kg),1)} kg${next.etaK?` · ${fmtK(next.etaK,true)}`:''}`:'todos conseguidos'}</em>${tviz({p:next?(()=>{const pk=(milestones.filter(m=>m.hitK).pop()||{kg:start}).kg;return pk>next.kg?Math.max(0,Math.min(1,(pk-tNow)/(pk-next.kg))):null})():1})}</div>
+      <div class="nst"><small>Ritmo 4 semanas</small><b style="color:${col(r28?r28.perWeek:null)}">${r28?sgn(r28.perWeek,2):'—'}</b><em>kg por semana</em>${tviz({s:all.filter(x=>diffK(x.k,lastK)<=28&&x.trend!=null).map(x=>x.trend)})}</div>
       ${bmi!=null?`<div class="nst"><small>IMC</small><b>${fmtN(bmi,1)}</b><em>${bmiCat(bmi)}</em></div>`:''}
-      ${fat!=null?`<div class="nst"><small>Grasa corporal</small><b>${fmtN(fat,1)} %</b><em>${stats.grasaKg?fmtN(stats.grasaKg.v,1)+' kg de grasa':''}</em></div>`:''}
+      ${fat!=null?`<div class="nst"><small>Grasa corporal</small><b>${fmtN(fat,1)} %</b><em>${stats.grasaKg?fmtN(stats.grasaKg.v,1)+' kg de grasa':''}</em>${tviz({s:all.filter(x=>x.fp!=null).slice(-30).map(x=>x.fp)})}</div>`:''}
     </div>`}
 function renderPeso(){
   renderQuickManual();renderPesoDash();renderMain();renderWeekly();
@@ -2030,10 +2032,11 @@ function renderActExtra(L,W,rows,wos){const today=d2k(new Date()),am=x=>(x.mod||
   const wc=L.wo.filter(x=>x.k>=mon&&x.k<=today),wp=L.wo.filter(x=>x.k>=addK(mon,-7)&&x.k<=addK(today,-7));
   $('actWeekLead').textContent=`Del lunes ${fmtK(mon)} a hoy (${n} ${n===1?'día':'días'}), comparado con los mismos días de la semana pasada.`;
   const cmp=(a,b,dec,u)=>b?cmpTxt(a,b,dec,u,1):'';
-  const kv=[kvCell('Pasos',fmtInt(sum(cur,a=>a.steps)),'',cmp(sum(cur,a=>a.steps),sum(prv,a=>a.steps),0,'')),
-    kvCell('Distancia',fmtN(sum(cur,a=>a.dist)/1000,1),'km',cmp(sum(cur,a=>a.dist)/1000,sum(prv,a=>a.dist)/1000,1,'km')),
-    kvCell('Minutos activos',fmtInt(sum(cur,am)),'min',cmp(sum(cur,am),sum(prv,am),0,'min')),
-    kvCell('Entrenamientos',String(wc.length),'',`${fmtInt(sum(wc,x=>x.dur))} min · semana pasada ${wp.length}`)].join('');
+  const l28=L.act.filter(a=>a.k>addK(today,-28)&&a.k<=today);   // mini charts: the last 4 weeks, day by day
+  const kv=[kvCell('Pasos',fmtInt(sum(cur,a=>a.steps)),'',cmp(sum(cur,a=>a.steps),sum(prv,a=>a.steps),0,''),'',{c:'var(--act)',s:l28.map(a=>a.steps)}),
+    kvCell('Distancia',fmtN(sum(cur,a=>a.dist)/1000,1),'km',cmp(sum(cur,a=>a.dist)/1000,sum(prv,a=>a.dist)/1000,1,'km'),'',{c:'var(--wat)',s:l28.map(a=>a.dist)}),
+    kvCell('Minutos activos',fmtInt(sum(cur,am)),'min',cmp(sum(cur,am),sum(prv,am),0,'min'),'',{c:'var(--ph-awake)',s:l28.map(am)}),
+    kvCell('Entrenamientos',String(wc.length),'',`${fmtInt(sum(wc,x=>x.dur))} min · semana pasada ${wp.length}`,'',{c:'var(--mus)',p:Math.min(1,wc.length/Math.max(1,wp.length,3))})].join('');
   let days='';for(let i=0;i<7;i++){const k=addK(mon,i),a=byK[k],p=a&&a.steps!=null?Math.min(1,a.steps/STEP_GOAL):0;
     days+=`<div class="${k>today?'fut':''}${k===today?' t':''}"><small>${DS[i]}</small><span class="wr">${ringsSvg([{p,color:p>=1?'var(--act)':'var(--act-soft)'}],'','')}</span><b>${a&&a.steps!=null?fmtN(a.steps/1000,1)+'k':'—'}</b></div>`}
   const hit=cur.filter(a=>a.steps>=STEP_GOAL).length;
@@ -2503,7 +2506,9 @@ function renderNight(L){const host=$('nightCard');const all=L.slp;if(!all.length
     if(ns.length){const m=mean(ns.map(x=>x.asleep)),mp=pn.length?mean(pn.map(x=>x.asleep)):null,hits=ns.filter(x=>x.asleep>=SLEEP_GOAL*60).length,sc=mean(ns.map(x=>nightScore(x,usual.bed)).filter(v=>v!=null)),bd=median(ns.map(x=>x.bed).filter(v=>v!=null)),scp=pn.length?mean(pn.map(x=>nightScore(x,usual.bed))):null;
       strip+=`<div class="pbcap wkcap"><span>Horas de media <b>${fmtDur(m)}</b>${mp!=null?` <em class="wkd">${m>=mp?'+':'−'}${fmtDur(Math.abs(m-mp))} vs. semana anterior</em>`:''}</span><span>Calificación media <b style="color:${scoreCol(sc)}">${sc!=null?fmtInt(sc):'—'}</b>${scp!=null&&sc!=null?` <em class="wkd">${Math.round(sc)===Math.round(scp)?'igual que la':(sc>scp?'+':'−')+Math.abs(Math.round(sc)-Math.round(scp))+' vs.'} semana anterior</em>`:''}</span><span>Objetivo de ${fmtN(SLEEP_GOAL,SLEEP_GOAL%1?1:0)} h cumplido <b>${hits} de ${ns.length}</b> noches</span>${bd!=null?`<span>Te acuestas hacia las <b>${fmtClock(bd)}</b></span>`:''}</div>`}}
   const PH=[['deep','Profundo','var(--ph-deep)'],['light','Ligero','var(--ph-light)'],['rem','REM','var(--ph-rem)'],['awake','Despierto','var(--ph-awake)']];const ptot=PH.reduce((t,[k])=>t+(s[k]||0),0);
-  const stat=(l,v,n)=>`<div class="nst"><small>${l}</small><b>${v}</b>${n?`<em>${n}</em>`:''}</div>`;
+  const stat=(l,v,n,o)=>`<div class="nst"><small>${l}</small><b>${v}</b>${n?`<em>${n}</em>`:''}${tviz(o)}</div>`;
+  // mini charts: the last two weeks up to this night
+  const hkS=f=>({s:(LIFE&&LIFE.hk||[]).filter(x=>x.k<=s.k&&x.k>addK(s.k,-14)&&x[f]!=null).sort((a,b)=>a.k<b.k?-1:1).map(x=>x[f])}),slS=f=>({s:all.filter(x=>x.k<=s.k&&x.k>addK(s.k,-14)&&x[f]!=null).map(x=>x[f])});
   host.innerHTML=`<div class="nhead"><div><div class="nlbl">${DSN[dowIdx(addK(s.k,-1))]} ${k2d(addK(s.k,-1)).getDate()} → ${DSN[dowIdx(s.k)]} ${k2d(s.k).getDate()} ${MS[k2d(s.k).getMonth()]}</div>
       ${(()=>{const bySc=slpByScore()&&sc!=null,col=bySc?scoreCol(sc):durCol(s.asleep),pg=s.asleep/(SLEEP_GOAL*60);
         const ring=bySc?ringsSvg([{p:sc/100,color:col}],String(sc),'de 100',{big:1,color:col}):ringsSvg([{p:Math.min(1,pg),color:col}],fmtInt(pg*100)+'%',`de ${fmtN(SLEEP_GOAL,SLEEP_GOAL%1?1:0)} h`,{big:1,color:col});
@@ -2516,8 +2521,8 @@ function renderNight(L){const host=$('nightCard');const all=L.slp;if(!all.length
     ${ptot?`<div class="cbar mid">${PH.filter(([k])=>s[k]>0).map(([k,l,c])=>`<span style="flex:${s[k]};background:${c}" title="${l}: ${fmtDur(s[k])}">${s[k]/ptot>0.12?fmtDur(s[k]):''}</span>`).join('')}</div>
       <div class="legend">${PH.map(([k,l,c])=>`<span><i class="sw" style="background:${c}"></i>${l} ${fmtDur(s[k])}</span>`).join('')}</div>`:''}
     ${(()=>{const hr=(LIFE&&LIFE.hk||[]).find(x=>x.k===s.k);if(!hr||(hr.spo2N==null&&hr.hrvN==null&&hr.rr==null))return '';
-      return `<div class="nstats" style="margin-bottom:10px">${stat('SpO2 nocturna',hr.spo2N!=null?fmtN(hr.spo2N,1)+' %':'—',hr.spo2min!=null?'mín. '+fmtN(hr.spo2min,0)+' %':'')}${stat('VFC nocturna',hr.hrvN!=null?fmtInt(hr.hrvN)+' ms':(hr.hrv!=null?fmtInt(hr.hrv)+' ms':'—'),'variabilidad del pulso')}${stat('Respiración',hr.rr!=null?fmtN(hr.rr,1)+' rpm':'—',hr.rrmin!=null?fmtN(hr.rrmin,0)+'–'+fmtN(hr.rrmax,0)+' rpm':'')}${stat('Alteraciones resp.',hr.bdist!=null?fmtN(hr.bdist,1)+'/h':'—',hr.temp!=null?'muñeca '+fmtN(hr.temp,1)+' °C':'')}</div>`})()}
-    <div class="nstats">${stat('FC durmiendo',s.hrAvg!=null?fmtInt(s.hrAvg)+' lpm':'—',s.hrMin!=null?'mín. '+fmtInt(s.hrMin):'')}${stat('Despertares',s.wakeups!=null?String(s.wakeups):'—',s.awake!=null?fmtDur(s.awake)+' despierto':'')}${(()=>{const t=schedFor(s.k),db=s.bed!=null?clockDiff(s.bed,t.bed):null,dw=s.wake!=null?clockDiff(s.wake,t.wake):null,f=d=>d==null?'—':Math.abs(d)<5?'En hora':(d>0?'+':'−')+fmtDur(Math.abs(d));
+      return `<div class="nstats" style="margin-bottom:10px">${stat('SpO2 nocturna',hr.spo2N!=null?fmtN(hr.spo2N,1)+' %':'—',hr.spo2min!=null?'mín. '+fmtN(hr.spo2min,0)+' %':'',hkS('spo2N'))}${stat('VFC nocturna',hr.hrvN!=null?fmtInt(hr.hrvN)+' ms':(hr.hrv!=null?fmtInt(hr.hrv)+' ms':'—'),'variabilidad del pulso',hkS('hrvN'))}${stat('Respiración',hr.rr!=null?fmtN(hr.rr,1)+' rpm':'—',hr.rrmin!=null?fmtN(hr.rrmin,0)+'–'+fmtN(hr.rrmax,0)+' rpm':'',hkS('rr'))}${stat('Alteraciones resp.',hr.bdist!=null?fmtN(hr.bdist,1)+'/h':'—',hr.temp!=null?'muñeca '+fmtN(hr.temp,1)+' °C':'',hkS('bdist'))}</div>`})()}
+    <div class="nstats">${stat('FC durmiendo',s.hrAvg!=null?fmtInt(s.hrAvg)+' lpm':'—',s.hrMin!=null?'mín. '+fmtInt(s.hrMin):'',slS('hrAvg'))}${stat('Despertares',s.wakeups!=null?String(s.wakeups):'—',s.awake!=null?fmtDur(s.awake)+' despierto':'',slS('wakeups'))}${(()=>{const t=schedFor(s.k),db=s.bed!=null?clockDiff(s.bed,t.bed):null,dw=s.wake!=null?clockDiff(s.wake,t.wake):null,f=d=>d==null?'—':Math.abs(d)<5?'En hora':(d>0?'+':'−')+fmtDur(Math.abs(d));
       return stat('Al dormirte',f(db),`objetivo ${fmtClock(t.bed)}${db!=null&&Math.abs(db)>=5?(db>0?' · más tarde':' · antes'):''}`)+stat('Al despertarte',f(dw),`objetivo ${fmtClock(t.wake)}${dw!=null&&Math.abs(dw)>=5?(dw>0?' · más tarde':' · antes'):''}`)})()}</div>
     ${(()=>{const C=bankCtx();if(!C)return '';const b=C.bal,even=Math.abs(b)<15;return `<a class="bklink" href="#sueno" data-go="sueno|banco"><span>Saldo de sueño</span><b class="${b>=-15?'ok':'ko'}">${even?'En equilibrio':(b>0?'+':'−')+fmtDur(Math.abs(b))}</b><em>${even?'':b>0?'de superávit':'de deuda'} · ver análisis →</em></a>`})()}
     ${noteBox(s.k)}`;
@@ -2951,9 +2956,9 @@ function renderBankTab(){const host=$('bankTab');if(!host)return;const C=bankCtx
   const PB=Math.max(14,P);let best=0,run=0;for(let i=PB-1;i>=0;i--){const s=byK[addK(last,-i)];if(s&&s.asleep+napMin(s.k)>=G){run++;best=Math.max(best,run)}else run=0}
   const b90=[];for(let i=PB-1;i>=0;i--){const k=addK(last,-i);b90.push({k,v:bankAt(byK,k)})}const indebt=b90.filter(x=>x.v<-60).length,worst=b90.reduce((a,b)=>b.v<a.v?b:a);
   const nap30=(()=>{let t=0;for(let i=0;i<P;i++)t+=napMin(addK(last,-i));return t})();
-  const T=[['Media dormida',fmtDur(mean(in30.map(s=>s.asleep))),`objetivo ${fmtN(SLEEP_GOAL,SLEEP_GOAL%1?1:0)} h`],['Noches en el objetivo',`${ok30} de ${in30.length}`,'en el periodo'],['Racha actual',`${cur} ${cur===1?'noche':'noches'}`,`récord del periodo: ${best}`],
-    ['Días con deuda',`${fmtInt(indebt/b90.length*100)} %`,'más de 1 h de deuda'],['Peor saldo',`−${fmtDur(Math.abs(Math.min(0,worst.v)))}`,fmtK(worst.k,true)],['Siestas',fmtDur(nap30),'aportadas en el periodo']];
-  h+=`<section class="card"><h2>En cifras</h2><p class="lead">En ${PL}.</p><div class="hc-grid cyg">${T.map(([l,v,s])=>`<div class="htile"><small>${l}</small><b>${v}</b><small>${s}</small></div>`).join('')}</div></section>`;
+  const T=[['Media dormida',fmtDur(mean(in30.map(s=>s.asleep))),`objetivo ${fmtN(SLEEP_GOAL,SLEEP_GOAL%1?1:0)} h`,{s:in30.map(s=>s.asleep)}],['Noches en el objetivo',`${ok30} de ${in30.length}`,'en el periodo',{p:in30.length?ok30/in30.length:null}],['Racha actual',`${cur} ${cur===1?'noche':'noches'}`,`récord del periodo: ${best}`,{p:best?cur/best:null}],
+    ['Días con deuda',`${fmtInt(indebt/b90.length*100)} %`,'más de 1 h de deuda',{p:indebt/b90.length}],['Peor saldo',`−${fmtDur(Math.abs(Math.min(0,worst.v)))}`,fmtK(worst.k,true),{s:b90.map(x=>x.v)}],['Siestas',fmtDur(nap30),'aportadas en el periodo',{s:Array.from({length:P},(_,i)=>napMin(addK(last,i-P+1)))}]];
+  h+=`<section class="card"><h2>En cifras</h2><p class="lead">En ${PL}.</p><div class="hc-grid cyg">${T.map(([l,v,s,o])=>`<div class="htile"><small>${l}</small><b>${v}</b><small>${s}</small>${tviz(o)}</div>`).join('')}</div></section>`;
   // 5. por día de la semana (90 días)
   const bW=[];for(let i=Math.max(28,P)-1;i>=0;i--)bW.push({k:addK(last,-i)});const dw=[0,1,2,3,4,5,6].map(d=>{const v=bW.map(x=>x.k).filter(k=>dowIdx(k)===d&&byK[k]).map(k=>nightBal(C,k));return {d,v:v.length?mean(v):null}});const m2=Math.max(30,...dw.map(x=>Math.abs(x.v||0)));
   const wd=dw.filter(x=>x.v!=null).reduce((a,b)=>b.v<a.v?b:a,{v:Infinity});
@@ -3189,7 +3194,7 @@ function renderMood(){const host=$('intMood');if(!host)return;const today=d2k(ne
     ['Días desagradables',dR.length?fmtInt(bad/dR.length*100)+' %':'—',`${bad} días`],['Registros',String(inR.length),`${inR.filter(m=>m.day).length} del día · ${inR.filter(m=>!m.day).length} de momentos`],
     ['Frente al periodo anterior',avg!=null&&pavg!=null?(Math.abs(avg-pavg)<.05?'Igual':avg>pavg?'Mejor':'Peor'):'—',avg!=null&&pavg!=null?`${sgn((avg-pavg)*3,1)} puntos`:'sin datos para comparar'],
     ['Racha agradable',(()=>{let r=0;for(let i=dk.length-1;i>=0&&days[dk[i]]>=.14;i--)r++;return r+(r===1?' día':' días')})(),'seguidos hasta el último registro']];
-  $('intMoodKv').innerHTML=`<h2>En cifras</h2><p class="lead">En ${PL}.</p><div class="hc-grid cyg">${T.map(([l,v,s])=>`<div class="htile"><small>${l}</small><b>${v}</b><small>${s}</small></div>`).join('')}</div>`;
+  $('intMoodKv').innerHTML=`<h2>En cifras</h2><p class="lead">En ${PL}.</p><div class="hc-grid cyg">${T.map(([l,v,s,o])=>`<div class="htile"><small>${l}</small><b>${v}</b><small>${s}</small>${tviz(o)}</div>`).join('')}</div>`;
   // 3. evolución: valor de cada día y media de 7 días
   const pts=dR.map(k=>({k,v:days[k]*3})),ma=[];for(const k of dR){const w=dk.filter(x=>x<=k&&x>addK(k,-7));ma.push({k,v:mean(w.map(x=>days[x]))*3})}
   $('intMoodEvo').innerHTML=`<h2>Evolución</h2><p class="lead">Cada punto es tu ánimo de un día (de −3, muy desagradable, a +3, muy agradable); la línea es la media de 7 días.</p><div class="chart" id="chMood"></div>`;
@@ -3324,7 +3329,7 @@ function renderIntimo2(){const today=d2k(new Date()),E=logsOf(INT_T),C=cycleCalc
       <div class="cyt-l"><span style="left:0">${fK(cur.start)}</span><span style="left:${pc(cur.ov)+.5/L*100}%">Ovulación</span><span style="right:0">${fK(next)}</span></div></div>`;
     const T=[['Próxima regla',fK(next),late?'retrasada':dd(today,next)],['Ovulación',fK(nxt.ov),dd(today,nxt.ov)],['Ventana fértil',`${fK(nxt.fs)} – ${fK(nxt.fe)}`,nxt.fs<=today?'ahora':dd(today,nxt.fs)],
       ['Ciclo medio',L+' días',C.min?`entre ${C.min} y ${C.max}`:'sin datos suficientes'],['Regla media',plen+' días',`últimos ${Math.min(6,C.per.length)} periodos`],['Última regla',`${fK(last.start)}${last.end!==last.start?' – '+fK(last.end):''}`,`${diffK(last.start,last.end)+1} días`]];
-    h+=`<div class="hc-grid cyg">${T.map(([l,v,s])=>`<div class="htile"><small>${l}</small><b>${v}</b><small>${s}</small></div>`).join('')}</div>`;
+    h+=`<div class="hc-grid cyg">${T.map(([l,v,s,o])=>`<div class="htile"><small>${l}</small><b>${v}</b><small>${s}</small>${tviz(o)}</div>`).join('')}</div>`;
     // calendario
     const m0=INT_M||today.slice(0,7),first=m0+'-01',dow=dowIdx(first),dim=new Date(+m0.slice(0,4),+m0.slice(5,7),0).getDate();
     const per=new Set();for(const p of C.per)for(let k=p.start;k<=p.end;k=addK(k,1))per.add(k);
@@ -3723,8 +3728,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-actmet]');
     if(on&&!shown)try{cbarDraw()}catch(e){}shown=on;bar.classList.toggle('on',on)}
   addEventListener('scroll',cbarCheck,{passive:true});addEventListener('resize',cbarCheck);
   // 2. bottom bar: with more than 5 modules, 4 of them and «Más», a menu with every module. The 4 are the ones used most on this
-  //    device (counted per profile and worked out once per visit, so the bar does not move while you use it), or the ones chosen in
-  //    «Más» → «Editar la barra»
+  //    device (counted per profile, updated as you move between modules), or the ones chosen in «Más» → «Editar la barra»
   const MC={resumen:'weight',peso:'weight',composicion:'mus',actividad:'act',sueno:'slp',comidas:'fat',intimo:'nap',historial:'wat'};
   const more=document.createElement('a');more.className='tab';more.id='tabMore';more.href='#';more.hidden=true;
   more.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg><span>Más</span>';tn.append(more);
@@ -3738,7 +3742,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-actmet]');
     const f=Array.isArray(bcfg().favs)?bcfg().favs.filter(v=>vis.includes(v)).slice(0,4):[];return f.length?f:vis.slice(0,4)}
   // each module opened adds 1 to its count, and the older counts fade a little, so what you use lately weighs more
   let LASTM='';function useCount(){const m=modOf(VIEW);if(!m||m===LASTM||document.body.classList.contains('locked'))return;LASTM=m;
-    const u={...(bcfg().use||{})};for(const k in u)u[k]=Math.round(u[k]*970)/1000;u[m]=(u[m]||0)+1;bset({use:u})}
+    const u={...(bcfg().use||{})};for(const k in u)u[k]=Math.round(u[k]*970)/1000;u[m]=(u[m]||0)+1;bset({use:u});
+    if(isAuto()){const n=topUsed();if(n.join()!==(AUTOF||[]).join()){AUTOF=n;barApply()}}}   // the bar follows the use at once
   function barApply(){const vis=visMods();if(vis.length<=5){tn.querySelectorAll('.tab.xfav').forEach(a=>a.classList.remove('xfav'));more.hidden=true;return}
     const f=favs();for(const a of tn.querySelectorAll('.tab[data-v]'))a.classList.toggle('xfav',!f.includes(a.dataset.v));more.hidden=false;
     const n=f.length+1;tn.dataset.n=n;document.body.classList.toggle('tabbig',n<=4);document.body.classList.toggle('tabmid',n===5||n===6);moreMark()}
@@ -3805,7 +3810,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-actmet]');
     if(i>=0&&j>=0&&j<as.length)as[j].click();return true};
   function btDraw(){const m=modOf(VIEW),ps=mob()&&(SWIPE_ORDER.includes(VIEW)||STRIP.includes(m))?partsOf(m):[],on=ps.length>1;
     try{const d=$('emb-admin')&&$('emb-admin').contentDocument;if(d&&d.documentElement)d.documentElement.classList.toggle('bltabs',on&&m==='admin')}catch(e){}document.body.classList.toggle('hasbt',on);bt.hidden=!on;
-    if(!on){rf.style.bottom='';return}bt.style.setProperty('--mc','var(--'+({resumen:'weight',peso:'weight',composicion:'mus',actividad:'act',sueno:'slp',comidas:'fat',intimo:'nap',historial:'wat'}[modOf(VIEW)]||'weight')+')');bt.innerHTML=ps.map(p=>chip(p).replace('">','">'+(p.ic||'')+'<span>').replace(/<\/a>$/,'</span></a>')).join('');bt.style.bottom=Math.round(tn.getBoundingClientRect().height)+'px';
+    if(!on){rf.style.bottom='';return}bt.style.setProperty('--mc','var(--'+({resumen:'weight',peso:'weight',composicion:'mus',actividad:'act',sueno:'slp',comidas:'fat',intimo:'nap',historial:'wat',cuenta:'good',admin:'bad'}[modOf(VIEW)]||'weight')+')');bt.innerHTML=ps.map(p=>chip(p).replace('">','">'+(p.ic||'')+'<span>').replace(/<\/a>$/,'</span></a>')).join('');bt.style.bottom=Math.round(tn.getBoundingClientRect().height)+'px';
     rf.style.bottom=Math.round(tn.getBoundingClientRect().height+bt.offsetHeight+10)+'px';const a=bt.querySelector('a.on');if(a)bt.scrollLeft=a.offsetLeft-(bt.clientWidth-a.offsetWidth)/2}
   addEventListener('resize',()=>{try{btDraw()}catch(e){}});
   window.blSync=()=>sync();
