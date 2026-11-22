@@ -24,7 +24,7 @@ On a phone:
 - The **tabs of each module** are at the bottom, in a strip tinted with the module's colour, just above the bottom bar of modules, within reach of your thumb. **Your account** and **Administration** show theirs there too, with their icons, and a sideways swipe goes through them.
 - When you scroll down, the title gives way to a **thin bar** at the top with the module's name; tap it to go back to the top. In Administration that bar also shows its tabs.
 - The **period** (1 week, 1 month…) shows only the one in use; tap it to choose another.
-- **What's new** and **About BodyLens** are at the end of **More** and in the profile menu (your initials).
+- **Help**, **What's new** and **About BodyLens** are together at the end of **More**; the last two are also in the profile menu (your initials). **About BodyLens** shows the version, its date, the author and links to the documentation.
 - The **panels** that open over the page (a card's details, the meal dialogs, Export to PDF) close with their ✕ or by swiping them down from the top.
 - When you change tab, a few **dots** show where you are among the module's tabs.
 

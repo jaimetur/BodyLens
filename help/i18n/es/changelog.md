@@ -1,4 +1,4 @@
-<!-- en: 9b2bac38ec224526 -->
+<!-- en: 1d517627e0d2adc5 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -107,7 +107,7 @@
 - **Los campos de datos a mano ya no se abren sin querer en el móvil:** la rueda para elegir el valor solo se abre con un toque deliberado, no al rozar un campo mientras desplazas, al deslizar el dedo sobre él ni al tocarlo con la página aún en movimiento.
 - **Los paneles se cierran deslizando hacia abajo en el móvil:** el detalle de una tarjeta, los diálogos de Comidas y Exportar a PDF se cierran al deslizarlos hacia abajo desde arriba, como el menú **Más**.
 - **Apuntar el ánimo como en la app Salud:** tras la cara, la app pregunta qué emociones lo describen mejor (sugeridas según lo agradable que sea) y qué está influyendo más, las dos cosas opcionales, y si es un momento o el ánimo de todo el día.
-- **Novedades y Acerca de BodyLens en los menús:** al final de **Más** y en el menú del perfil, abren esos documentos de la Ayuda.
+- **Novedades y Acerca de BodyLens en los menús:** junto a Ayuda al final de **Más**, y en el menú del perfil. **Acerca de BodyLens** es un panel con el nombre, la versión, su fecha, el autor y enlaces a la documentación; Tu cuenta y Administración muestran sus iconos en verde y rojo en **Más**.
 
 #### 🐛 Correcciones:
 - **Seguridad:** el registro de accesos ya no guarda la dirección de subida de Apple Salud, los códigos OAuth ni las invitaciones.

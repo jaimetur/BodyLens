@@ -132,7 +132,8 @@ def page(user_public: dict, lang_tags: str = "") -> str:
         '<link rel="apple-touch-icon" href="/apple-touch-icon.png">'
         f"<style>{SERVER_CSS}{admin_css}</style>"
         f"<script>window.BODYLENS_SERVER=true;window.BODYLENS_USER={boot};"
-        f"window.BODYLENS_BUILD={json.dumps(version.current()['build'])};{NO_ZOOM_JS}</script>"
+        f"window.BODYLENS_BUILD={json.dumps(version.current()['build'])};"
+        f"window.BODYLENS_RELEASE={json.dumps(version.release())};{NO_ZOOM_JS}</script>"
         '<script src="/claude-shim.js"></script>'
         '<script src="/native.js"></script>'   # inside the Android app: files to the app (does nothing elsewhere)
         "</head><body>"

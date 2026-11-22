@@ -1,4 +1,4 @@
-<!-- en: d896e1d5104f1560 -->
+<!-- en: ff686bef4a3e264d -->
 # Ayuda de BodyLens
 
 Un fichero por módulo. Las secciones de la app son las de la barra de navegación; las de la cuenta están en «Tu cuenta».
@@ -25,7 +25,7 @@ En el móvil:
 - Las **pestañas de cada módulo** están abajo, en una franja teñida del color del módulo, justo encima de la barra de módulos, al alcance del pulgar. **Tu cuenta** y **Administración** también muestran ahí las suyas, con sus iconos, y deslizando a un lado se pasa de una a otra.
 - Al bajar por la página, el título deja paso a una **barra fina** arriba con el nombre del módulo; tócala para volver arriba. En Administración esa barra también muestra sus pestañas.
 - El **periodo** (1 sem, 1 mes…) muestra solo el que está en uso; tócalo para elegir otro.
-- **Novedades** y **Acerca de BodyLens** están al final de **Más** y en el menú del perfil (tus iniciales).
+- **Ayuda**, **Novedades** y **Acerca de BodyLens** están juntas al final de **Más**; las dos últimas también en el menú del perfil (tus iniciales). **Acerca de BodyLens** muestra la versión, su fecha, el autor y enlaces a la documentación.
 - Los **paneles** que se abren sobre la página (el detalle de una tarjeta, los diálogos de Comidas, Exportar a PDF) se cierran con su ✕ o deslizándolos hacia abajo desde arriba.
 - Al cambiar de pestaña, unos **puntos** indican en cuál estás entre las del módulo.
 

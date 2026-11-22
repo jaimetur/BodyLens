@@ -788,6 +788,12 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
 .mdw .mdq-r button.on{border-color:var(--ink);background:var(--raised)}.mdw .mdq-r small{display:none}
 .mdw-f{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}.mdw-f .btn{min-width:110px}
 .mdw-dots{display:flex;gap:6px;justify-content:center}.mdw-dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}.mdw-dots i.on{background:var(--ink)}
+.about{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:6px 4px 0}.about img{width:84px;height:84px;border-radius:22px;box-shadow:var(--shadow)}
+.about-e{margin:8px 0 0;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}.about h2{margin:0;font-family:var(--display);font-size:2rem;letter-spacing:.02em}
+.about-s{margin:0 0 6px;color:var(--muted);font-size:.9rem;max-width:34ch}
+.about dl{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;margin:6px 0;padding:14px 16px;width:100%;max-width:440px;text-align:left;background:var(--raised);border-radius:14px;font-size:.88rem}
+.about dt{color:var(--muted)}.about dd{margin:0;min-width:0;overflow-wrap:anywhere}.about dd small{color:var(--muted)}.about a{color:var(--weight)}
+.about-c{margin:4px 0 0;color:var(--muted);font-size:.78rem}.about-f{margin-top:8px}.about-f .btn{min-width:140px}
 .mdq{margin-top:16px}.mdq-r{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.mdq-r button{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:1px solid transparent;border-radius:12px;padding:6px 2px;cursor:pointer;color:var(--muted);font:inherit}
 .mdq-r button:hover{border-color:var(--line);background:var(--surface)}.mdq-r small{font-size:.6rem;line-height:1.15;text-align:center}.mdq-r svg{max-width:100%}
 .mdcal i.md{color:var(--ink);font-weight:700}.mdg{gap:18px}.mdbar{display:grid;grid-template-columns:minmax(0,7.5rem) 1fr 2.6rem;gap:8px;align-items:center;font-size:.82rem;padding:3px 0}.mdbar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1308,6 +1314,7 @@ body.locked .btabs,body.pdfx .btabs{display:none!important}
 
   <div class="sheet" id="sheet" hidden role="dialog" aria-modal="true"><button type="button" class="shside l" data-side="0" aria-label="Anterior" hidden>‹</button><button type="button" class="shside r" data-side="1" aria-label="Siguiente" hidden>›</button><div class="shbox"><button type="button" class="shclose" data-close aria-label="Cerrar">✕</button><div id="sheetBody"></div></div></div>
   <div class="rangefloat" id="rangeFloat" hidden><div class="seg" role="group" aria-label="Periodo" id="rngFloat"></div></div>
+  <div class="sheet" id="aboutDlg" hidden role="dialog" aria-modal="true" aria-labelledby="aboutT"><div class="shbox"><button type="button" class="shclose" data-aboutclose aria-label="Cerrar">✕</button><div id="aboutBody" class="about"></div></div></div>
   <div class="sheet" id="moodDlg" hidden role="dialog" aria-modal="true" aria-label="Estado de ánimo"><div class="shbox"><button type="button" class="shclose" data-mdclose aria-label="Cerrar">✕</button><div id="moodDlgBody" class="pldlg mdw"></div></div></div>
   <div class="sheet" id="plDlg" hidden role="dialog" aria-modal="true"><div class="shbox"><button type="button" class="shclose" data-plcancel aria-label="Cerrar">✕</button><div id="plDlgBody" class="pldlg"></div></div></div>
   <div class="sheet" id="expDlg" hidden role="dialog" aria-modal="true" aria-label="Exportar a PDF"><div class="shbox"><button type="button" class="shclose" data-xclose aria-label="Cerrar">✕</button><h2 style="margin:0">Exportar a PDF</h2><div id="expBody"></div></div></div>

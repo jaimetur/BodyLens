@@ -174,3 +174,11 @@ def test_bundled_translations_up_to_date():
     root = Path(__file__).resolve().parents[2]
     r = subprocess.run([sys.executable, str(root / "tools" / "help_i18n.py"), "check"], capture_output=True, text=True)
     assert r.returncode == 0, r.stdout
+
+
+def test_release_comes_from_the_changelog(docs_dir):
+    from app.core import version
+    (docs_dir / "CHANGELOG.md").write_text("# CHANGELOG\n\n## Release: v2.3.1\n### Release Date: 2026-12-01\n- x\n\n## Release: v2.3.0\n### Release Date: 2026-11-01\n")
+    assert version.release() == {"version": "2.3.1", "releaseDate": "2026-12-01"}
+    (docs_dir / "CHANGELOG.md").unlink()
+    assert version.release() == {"version": None, "releaseDate": None}

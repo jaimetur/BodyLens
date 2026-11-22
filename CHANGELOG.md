@@ -106,7 +106,7 @@
 - **Manual-entry fields on phones no longer open by mistake:** the value wheel opens only with a deliberate tap, not when the finger touches a field while scrolling, slides on it or lands while the page is still moving.
 - **Panels close with a swipe down on phones:** a card's details, the meal dialogs and Export to PDF close when swiped down from their top, like the **More** menu.
 - **Logging the mood as in Apple Health:** after the face, the app asks which emotions describe it best (suggested by how pleasant it is) and what is having the biggest impact, both optional, and whether it is a moment or the mood of the whole day.
-- **What's new and About BodyLens in the menus:** at the end of **More** and in the profile menu, they open those documents of Help.
+- **What's new and About BodyLens in the menus:** with Help at the end of **More**, and in the profile menu. **About BodyLens** is a panel with the name, version, release date, author and links to the documentation; Your account and Administration show their icons in green and red in **More**.
 
 #### 🐛 Bug fixes:
 - **Security:** the access log no longer stores the Apple Health upload address, OAuth codes or invitations.
