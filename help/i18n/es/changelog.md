@@ -1,4 +1,4 @@
-<!-- en: 71283a8d5e429d22 -->
+<!-- en: e66e75a83aa1ce4a -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -105,6 +105,8 @@
 - **Ayuda, Tu cuenta y Administración dentro de la app se desplazan como una sola página:** en el móvil la página que se ve dentro de la app ya no se desplaza por su cuenta, así que al deslizar siempre se mueve el contenido.
 - **Navegación más fácil en el móvil:** la barra de abajo muestra los 4 módulos que más usas (o los que elijas en **Editar la barra**, quitando con − y añadiendo con +) y **Más**, un menú con todos los módulos, cuya flecha despliega sus pestañas para ir directamente a una, que se cierra al volver a tocar **Más**, con su botón ✕ o deslizándolo hacia abajo; las pestañas de cada módulo, con sus iconos, están abajo, en una franja justo encima de la barra de abajo, teñida del color del módulo para distinguirlas (también en Tu cuenta, en verde, y Administración, en rojo, cuyas pestañas también se recorren deslizando); al bajar por la página, una barra fina arriba mantiene el nombre del módulo (y las pestañas de Administración, ahora en una sola fila que se desliza, con iconos y la pestaña actual resaltada en color); el periodo muestra solo el que está en uso y se abre con un toque; unos puntos indican dónde estás al cambiar de pestaña, y la primera vez un aviso explica que se puede deslizar a los lados. Los botones de cerrar y las flechas de los paneles son más grandes y se ven mejor, y el de cerrar es rojo anaranjado y está alineado con las flechas.
 - **Los campos de datos a mano ya no se abren sin querer en el móvil:** la rueda para elegir el valor solo se abre con un toque deliberado, no al rozar un campo mientras desplazas, al deslizar el dedo sobre él ni al tocarlo con la página aún en movimiento.
+- **Los paneles se cierran deslizando hacia abajo en el móvil:** el detalle de una tarjeta, los diálogos de Comidas y Exportar a PDF se cierran al deslizarlos hacia abajo desde arriba, como el menú **Más**.
+
 #### 🐛 Correcciones:
 - **Seguridad:** el registro de accesos ya no guarda la dirección de subida de Apple Salud, los códigos OAuth ni las invitaciones.
 - **Withings:** la dirección de retorno acepta las pruebas y los avisos de Withings (POST y HEAD).

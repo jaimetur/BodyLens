@@ -2533,6 +2533,14 @@ document.addEventListener('click',e=>{const b=e.target.closest('.nday[data-k]');
 let SHEET=null;
 function openSheet(kind,k){SHEET={kind,k,win:null,opt:SHEET&&SHEET.kind===kind?SHEET.opt:{usual:true,many:true}};drawSheet();$('sheet').hidden=false;document.body.style.overflow='hidden'}
 function closeSheet(){ecgStop();$('sheet').hidden=true;SHEET=null;document.body.style.overflow=''}
+// every panel over the page (details, meal dialogs, PDF export) closes when swiped down from its top, as «Más» does
+{let box=null,y0=0,x0=0,dy=0;
+  document.addEventListener('touchstart',e=>{box=null;const b=e.target.closest('.sheet:not([hidden])>.shbox');if(!b||e.touches.length!==1||b.scrollTop>0||e.target.closest('input,textarea,select,.chart,[data-noswipe]'))return;
+    box=b;y0=e.touches[0].clientY;x0=e.touches[0].clientX;dy=0},{passive:true});
+  document.addEventListener('touchmove',e=>{if(!box)return;const t=e.touches[0];dy=t.clientY-y0;const dx=Math.abs(t.clientX-x0);
+    if(dy<0||dx>Math.abs(dy)){if(dy<-6||dx>20){box.style.transform='';box=null}return}box.style.transition='none';box.style.transform=`translateY(${dy}px)`},{passive:true});
+  document.addEventListener('touchend',()=>{if(!box)return;const b=box;box=null;b.style.transition='transform .2s ease';
+    if(dy>90){b.style.transform='translateY(100%)';setTimeout(()=>{b.style.transition='';b.style.transform='';const c=b.querySelector('.shclose');if(c)c.click()},200)}else b.style.transform=''})}
 $('sheet').addEventListener('click',e=>{if(e.target.id==='sheet'||e.target.closest('[data-close]')){closeSheet();return}
   const nav=e.target.closest('[data-nav]');if(nav&&!nav.disabled){SHEET.k=nav.dataset.nav;drawSheet();return}
   const pick=e.target.closest('[data-pick]');if(pick){SHEET.k=pick.dataset.pick;drawSheet();return}
