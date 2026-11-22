@@ -27,6 +27,10 @@ Only for administrator accounts. It is in "Your account" → **Administration**.
 ## Email
 - Email is sent from the mailbox configured on the server (`SMTP_*` variables). **Send me a test email** checks that it works.
 
+## Withings
+- BodyLens connects to Withings through a free developer application, created once at developer.withings.com (a public API application), with the **return address (callback URL)** shown in this tab.
+- Withings then gives two values: the **Client ID**, which identifies the application, and the **Client secret**, its password (do not share it). Copy them here and press **Save**; then each account connects its scale in Your account → Data sources.
+
 ## Legal details
 - The controller of the data (your name or your brand), a contact email for privacy and, optionally, a postal address. They appear at the top of the public pages [privacy policy](/privacy), [terms of use](/terms) and [deleting an account](/delete-account), which Google Play asks for to publish the app.
 

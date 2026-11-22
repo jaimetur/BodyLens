@@ -1,4 +1,4 @@
-<!-- en: 143dddf469bf479f -->
+<!-- en: 9bc6677803d1c997 -->
 # Administración
 
 Solo para cuentas de administrador. Está en «Tu cuenta» → **Administración**.
@@ -27,6 +27,10 @@ Solo para cuentas de administrador. Está en «Tu cuenta» → **Administración
 
 ## Correo
 - El correo se envía desde el buzón configurado en el servidor (variables `SMTP_*`). **Enviarme un correo de prueba** comprueba que funciona.
+
+## Withings
+- BodyLens se conecta a Withings con una aplicación de desarrollador gratuita, que se crea una sola vez en developer.withings.com (una aplicación de la API pública), con la **dirección de retorno (callback URL)** que muestra esta pestaña.
+- Withings da entonces dos datos: el **Client ID**, que identifica a la aplicación, y el **Client secret**, su contraseña (no lo compartas). Cópialos aquí y pulsa **Guardar**; después, cada cuenta conecta su báscula en Tu cuenta → Fuentes de datos.
 
 ## Datos legales
 - El responsable de los datos (tu nombre o tu marca), un correo de contacto para privacidad y, si quieres, una dirección postal. Aparecen al principio de las páginas públicas [política de privacidad](/privacy), [condiciones de uso](/terms) y [borrar una cuenta](/delete-account), que Google Play pide para publicar la app.

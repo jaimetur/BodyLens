@@ -6,7 +6,7 @@ if (EMBED) document.documentElement.classList.add('embed');
 if (EMBED) {
   let sx = 0, sy = 0, st = 0, ok = false;
   const scrolls = n => { for (; n && n !== document.body; n = n.parentElement) if (n.scrollWidth > n.clientWidth + 2 && /auto|scroll/.test(getComputedStyle(n).overflowX)) return true; return false; };
-  addEventListener('touchstart', e => { const t = e.touches[0]; ok = e.touches.length === 1 && !e.target.closest('input,select,textarea,dialog,[data-noswipe]') && !scrolls(e.target); sx = t.clientX; sy = t.clientY; st = Date.now(); }, { passive: true });
+  addEventListener('touchstart', e => { const t = e.touches[0]; ok = e.touches.length === 1 && !e.target.closest('input[type=range],input:focus,select:focus,textarea:focus,dialog,[data-noswipe]') && !scrolls(e.target); sx = t.clientX; sy = t.clientY; st = Date.now(); }, { passive: true });
   addEventListener('touchend', e => { if (!ok) return; ok = false; const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
     if (Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 2 || Date.now() - st > 700) return;
     try { if (parent.blStripSwipe) parent.blStripSwipe(dx < 0); } catch (_) {} }, { passive: true });
@@ -75,11 +75,13 @@ if (EMBED && window.frameElement) {
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(blFitFrame);
 }
 
-// phones: the explanation right under a card's title folds behind an ⓘ (warnings and paragraphs with links or buttons stay)
+// phones: the explanation right under a card's title folds behind an ⓘ (warnings, paragraphs with buttons or fields and .keep stay)
 (() => {
   const after = h => { const ps = []; for (let p = h.nextElementSibling; p && p.tagName === 'P'; p = p.nextElementSibling) ps.push(p); return ps; };
+  // (only when the card has more than those paragraphs: a card made only of text keeps it in sight)
   const fold = () => document.querySelectorAll('.card:not(.alert):not(#delCard):not(#mustBox)>h2').forEach(h => {
-    for (const p of after(h)) if (!p.querySelector('a,button,input,select') && p.textContent.trim().length > 60) { p.classList.add('lfold'); h.classList.add('hasfold'); } });
+    const ps = after(h), rest = ps.length ? ps[ps.length - 1].nextElementSibling : null; if (!rest) return;
+    for (const p of ps) if (!p.classList.contains('keep') && !p.querySelector('button,input,select') && p.textContent.trim().length > 60) { p.classList.add('lfold'); h.classList.add('hasfold'); } });
   if (document.readyState === 'loading') addEventListener('DOMContentLoaded', fold); else fold();
   document.addEventListener('click', e => { const h = e.target.closest('.card>h2.hasfold'); if (!h || e.target.closest('a,button,input,select')) return;
     const on = h.classList.toggle('lopen'); after(h).forEach(p => p.classList.toggle('lshow', on)); });

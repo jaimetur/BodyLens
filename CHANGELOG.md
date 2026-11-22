@@ -115,6 +115,7 @@
 - **Translations:** texts that still showed in Spanish in the other languages are translated: the weekday initials of the calendars and the meal initials, BMI and range labels, sleep phases and their tooltips, the captions of the rings and the charts' legends, the mood list (emotions and what they relate to) and its relationships, counts such as "21 of 30", the placeholder of the notes and several sentences of the insights. In Spanish, dates keep their «de» («viernes 20 de noviembre»).
 - **Administration on phones:** the buttons of each user (Edit, Make admin, Reset password…) wrap onto a new line instead of running off the screen.
 - **Your account, Administration and Help in dark mode on iPhone:** the pages shown inside the app follow the app's theme instead of showing light.
+- **Swipes over fields on phones:** a sideways swipe that starts on a field (Your account, Administration and every module) changes tab too, unless the field is being edited.
 
 #### 📚 Documentation:
 - **English is the official language of the project:** code, documentation and commit messages. Complete `README.md`; the README, the help and the changelog are written only in English and shown translated in the app.

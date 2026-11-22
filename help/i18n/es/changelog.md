@@ -1,4 +1,4 @@
-<!-- en: 8edecf26492b24a7 -->
+<!-- en: 16eb1fcaeb95c179 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -116,6 +116,7 @@
 - **Traducciones:** se traducen los textos que aún salían en español en los demás idiomas: las iniciales de los días de los calendarios y las de las comidas, las etiquetas del IMC y de los rangos, las fases del sueño y sus descripciones emergentes, los textos de los anillos y las leyendas de los gráficos, la lista de estados de ánimo (emociones y con qué se relacionan) y sus relaciones, cuentas como «21 de 30», el texto de ayuda de las notas y varias frases de los análisis. En español, las fechas conservan su «de» («viernes 20 de noviembre»).
 - **Administración en el móvil:** los botones de cada usuario (Editar, Hacer admin, Restablecer contraseña…) pasan a la línea siguiente en vez de salirse de la pantalla.
 - **Tu cuenta, Administración y Ayuda en modo oscuro en el iPhone:** las páginas que se muestran dentro de la app siguen el tema de la app en vez de verse claras.
+- **Deslizar sobre campos en el móvil:** un deslizamiento a un lado que empieza sobre un campo (Tu cuenta, Administración y todos los módulos) también cambia de pestaña, salvo si estás escribiendo en él.
 
 #### 📚 Documentación:
 - **El inglés es el idioma oficial del proyecto:** código, documentación y mensajes de commit. `README.md` completo; el README, la ayuda y el registro de cambios se escriben solo en inglés y se muestran traducidos en la app.

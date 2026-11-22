@@ -1453,8 +1453,8 @@ const SWIPE_ORDER=['resumen','peso','composicion','medidas','corazon','bienestar
 (()=>{let sx=0,sy=0,st=0,ok=false;const main=document.querySelector('.main');
   // una tabla ancha solo se queda el gesto si de verdad se ha desplazado; si ya estaba en el borde, cambia de sección
   let scr=null,scrL=0;
-  // the invisible date picker over a day's title (Meals) still lets the swipe through; a tap still opens it
-  const blocked=t=>t.closest('.shtabs,.seg,.rangefloat,input:not(.fdate input),select,textarea,.sheet,.tabbar,.pllist,.dsug,[data-noswipe]');
+  // a swipe that starts on a field still changes tab, unless the field is being edited (or is a slider)
+  const blocked=t=>t.closest('.shtabs,.seg,.rangefloat,input[type=range],input:focus,select:focus,textarea:focus,.sheet,.tabbar,.pllist,.dsug,[data-noswipe]');
   main.addEventListener('touchstart',e=>{if(e.touches.length!==1||!$('sheet').hidden||!$('expDlg').hidden){ok=false;return}const t=e.touches[0];sx=t.clientX;sy=t.clientY;st=Date.now();ok=!blocked(e.target);scr=(()=>{for(let n=e.target;n&&n!==main;n=n.parentElement){if(n.scrollWidth>n.clientWidth+2&&/auto|scroll/.test(getComputedStyle(n).overflowX))return n}return null})();scrL=scr?scr.scrollLeft:0},{passive:true});
   main.addEventListener('touchend',e=>{if(!ok)return;ok=false;if(scr&&Math.abs(scr.scrollLeft-scrL)>2)return;if(PKSCRUB_AT>=st||Date.now()-CHART_TOUCH<120||document.querySelector('.chart.inspect'))return;const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;
     if(Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*2||Date.now()-st>700)return;

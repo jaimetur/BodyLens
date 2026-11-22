@@ -116,7 +116,9 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
 
   <section class="card" data-panel="withings" hidden>
     <h2>Withings</h2>
-    <p>Los datos de tu aplicación en <a href="https://developer.withings.com/dashboard/" target="_blank" rel="noopener">developer.withings.com</a>. Allí, en la aplicación, añade esta dirección de retorno (callback URL): <span class="code" id="wCb"></span></p>
+    <p>BodyLens se conecta a Withings con una aplicación de desarrollador gratuita, que se crea una sola vez en <a href="https://developer.withings.com/dashboard/" target="_blank" rel="noopener">developer.withings.com</a> (inicia sesión con tu cuenta de Withings y crea una aplicación de la API pública). Al crearla, pon como dirección de retorno (callback URL) la que aparece debajo.</p>
+    <p>Withings te da entonces dos datos: el Client ID, que identifica a la aplicación, y el Client secret, que es su contraseña (no lo compartas). Cópialos aquí y pulsa Guardar; después, cada cuenta conecta su báscula en «Tu cuenta» → Fuentes de datos.</p>
+    <p class="keep">Dirección de retorno (callback URL): <span class="code" id="wCb"></span></p>
     <div class="edit">
       <label>Client ID<input id="wId" autocomplete="off" spellcheck="false"></label>
       <label>Client secret<input id="wSecret" type="password" autocomplete="new-password" placeholder="(sin cambios)"></label>
