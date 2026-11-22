@@ -80,3 +80,7 @@ button.danger-t{color:var(--bad)}
 .subseg button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:12px 14px;border-radius:14px;background:var(--raised);color:var(--ink);border:2px solid var(--line);text-align:left}
 .subseg button small{color:var(--muted);font-weight:600}
 .subseg button.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--raised));cursor:default}
+/* phones: the explanation under a card's title waits behind an ⓘ next to it (tap the title), as in the app */
+@media (max-width:699px){.card>p.lfold:not(.lshow){display:none}.card>h2.hasfold{cursor:pointer;display:flex;align-items:center;gap:8px}
+.card>h2.hasfold::after{content:"i";flex:none;display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--muted);color:var(--muted);font:700 11px/1 "Instrument Sans",sans-serif;text-transform:none;letter-spacing:0}
+.card>h2.hasfold.lopen::after{background:var(--ink);border-color:var(--ink);color:var(--surface)}}

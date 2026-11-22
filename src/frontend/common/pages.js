@@ -74,3 +74,13 @@ if (EMBED && window.frameElement) {
   addEventListener('resize', blFitFrame);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(blFitFrame);
 }
+
+// phones: the explanation right under a card's title folds behind an ⓘ (warnings and paragraphs with links or buttons stay)
+(() => {
+  const after = h => { const ps = []; for (let p = h.nextElementSibling; p && p.tagName === 'P'; p = p.nextElementSibling) ps.push(p); return ps; };
+  const fold = () => document.querySelectorAll('.card:not(.alert):not(#delCard):not(#mustBox)>h2').forEach(h => {
+    for (const p of after(h)) if (!p.querySelector('a,button,input,select') && p.textContent.trim().length > 60) { p.classList.add('lfold'); h.classList.add('hasfold'); } });
+  if (document.readyState === 'loading') addEventListener('DOMContentLoaded', fold); else fold();
+  document.addEventListener('click', e => { const h = e.target.closest('.card>h2.hasfold'); if (!h || e.target.closest('a,button,input,select')) return;
+    const on = h.classList.toggle('lopen'); after(h).forEach(p => p.classList.toggle('lshow', on)); });
+})();

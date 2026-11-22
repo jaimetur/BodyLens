@@ -1,4 +1,4 @@
-<!-- en: 8ea42e952edd58a9 -->
+<!-- en: 8edecf26492b24a7 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -96,7 +96,7 @@
 - **Menú del avatar:** muestra el nombre completo e incluye Tu cuenta, Administración, Ayuda y **Cerrar sesión**, en rojo.
 - **Línea de comandos de administración** (`python -m app.accounts.cli`): crear cuentas con contraseña temporal, invitaciones, contraseñas, usuarios, fuentes y mover perfiles.
 - **Reloj de sueño (ampliado):** muestra solo la noche elegida, como un anillo grueso coloreado por fases (profundo, ligero, REM, despierto) cuando el reloj registra fases, con la media de las 14 noches anteriores como una barra gris por dentro, el horario objetivo de ese día (entre semana o fin de semana) discontinuo por fuera y el tiempo dormido más grande en el centro.
-- **Móvil:** cada pestaña muestra un gráfico o un panel de cifras completo sin desplazarte: la explicación de cada tarjeta con gráfico (y de las tarjetas de Tu cuenta y de Objetivos, plan y comidas) espera tras una ⓘ junto a su título (toca el título), las tarjetas para apuntar datos a mano van al final de la pestaña, las tarjetas de cifras (también los récords y rachas de Actividad) tienen colores y minigráficos, y el avatar del perfil es más grande.
+- **Móvil:** cada pestaña muestra un gráfico o un panel de cifras completo sin desplazarte: la explicación de cada tarjeta con gráfico (y de las tarjetas de Tu cuenta, Administración y Objetivos, plan y comidas) espera tras una ⓘ junto a su título (toca el título), las tarjetas para apuntar datos a mano van al final de la pestaña, las tarjetas de cifras (también los récords y rachas de Actividad) tienen colores y minigráficos, y el avatar del perfil es más grande.
 - **Tarjetas ampliadas:** deslizar el dedo a un lado en el móvil o la tableta, o las flechas de cada lado en el ordenador, pasa al día anterior o al siguiente.
 - **Deslizar entre pestañas:** en pantallas táctiles, deslizar el dedo a un lado pasa a la pestaña siguiente o anterior del módulo (los apartados de Cuerpo cuentan como sus pestañas); después de la última pestaña pasa al módulo siguiente, y antes de la primera, a la última pestaña del anterior.
 - **Sin zoom en el móvil:** la app y sus páginas (acceso, Tu cuenta, Administración, Ayuda) ya no se amplían al pellizcar, al tocar dos veces seguidas (también en el teclado del PIN) ni al entrar en un campo; si un navegador la amplía igualmente (Brave, por ejemplo), vuelve a su tamaño normal y se puede reducir pellizcando.
