@@ -114,6 +114,7 @@
 - **Weigh-in and sleep calendars on phones:** each day shows its whole figure (for example 110,9) instead of cutting it, and the table fits the screen, so a swipe on it changes tab.
 - **Translations:** texts that still showed in Spanish in the other languages are translated: the weekday initials of the calendars and the meal initials, BMI and range labels, sleep phases and their tooltips, the captions of the rings and the charts' legends, the mood list (emotions and what they relate to) and its relationships, counts such as "21 of 30", the placeholder of the notes and several sentences of the insights. In Spanish, dates keep their «de» («viernes 20 de noviembre»).
 
+- **Administration on phones:** the buttons of each user (Edit, Make admin, Reset password…) wrap onto a new line instead of running off the screen.
 #### 📚 Documentation:
 - **English is the official language of the project:** code, documentation and commit messages. Complete `README.md`; the README, the help and the changelog are written only in English and shown translated in the app.
 - Usage help per module in `help/en/` (shown in the app's Help in each language).

@@ -34,7 +34,7 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
 /* an empty date shows nothing (Safari would show today's date in grey, as if it were set) */
 .cdrow input.empty:not(:focus)::-webkit-datetime-edit{opacity:0}.cdrow button{height:42px}
 @media (max-width:760px){.cdrow{grid-template-columns:1fr 1fr;padding-bottom:10px;border-bottom:1px solid var(--line)}.cdrow .cdc,.cdrow button{grid-column:1/-1}.cdrow .cdDays.off{display:none}.cdrow button{margin-top:0}.cdrow .cdUsed:empty{display:none}}
-@media (max-width:640px){table thead{display:none}table,tbody,tr,td{display:block}tr{border-bottom:1px solid var(--line);padding:6px 0}td{border:0;padding:3px 0}td.act{text-align:left}}
+@media (max-width:640px){table thead{display:none}table,tbody,tr,td{display:block}tr{border-bottom:1px solid var(--line);padding:6px 0}td{border:0;padding:3px 0}td.act{text-align:left;white-space:normal;display:flex;flex-wrap:wrap;gap:6px}td.act button{margin:0}}
 .secret{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:15px;background:var(--raised);padding:6px 10px;border-radius:8px;display:inline-block}
 </style></head>
 <body><main class="acct">
