@@ -56,7 +56,7 @@ Use it to see how you sleep: last night, your sleep balance, progress, schedule 
 
 ## Schedule
 
-- **Schedule**: from when you fall asleep until you wake up, night by night. In green, what you slept up to your target wake-up time; in red, what you slept after it (the weekend is measured with its own schedule). Dashed lines: your usual time; solid lines: the moving average.
+- **Schedule**: from when you fall asleep until you wake up, night by night. In green, what you slept up to your target wake-up time; in red, what you slept after it (the weekend is measured with its own schedule). Dashed lines: your usual time; solid lines: the moving average. **Auto**, **Week**, **Month**, **Quarter** and **Year** choose the window of the usual time: the median of all the nights of that week, month, quarter or year, also the ones outside the period shown.
 - **Sleep stages**: hours of each stage per night (Apple Watch).
 - **By night of the week**: average hours slept according to the day you go to bed.
 

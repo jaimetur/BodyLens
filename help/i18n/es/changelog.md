@@ -1,4 +1,4 @@
-<!-- en: 316d8d96dc5d4c70 -->
+<!-- en: fc9d353c0f08f967 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -116,7 +116,7 @@
   - Las páginas y sus estilos se revalidan en cada despliegue, así que no quedan copias obsoletas en la caché.
   - Tu cuenta y Administración se pueden mostrar dentro de la app.
   - Las tarjetas ampliadas caben en la pantalla y su botón de cerrar sigue visible al desplazarte, también con el texto más grande en el móvil.
-- **Calendarios de pesadas y de sueño en el móvil:** cada día muestra su cifra completa (por ejemplo 110,9) en vez de cortarla, y la tabla cabe en la pantalla, así que deslizar el dedo sobre ella cambia de pestaña. En el histórico de sueño, las barras de cada día ya no tapan su fecha, las cifras de la leyenda se leen con normalidad y la clave de la media semanal es una línea discontinua, y una semana nueva sin ninguna noche todavía no añade una fila vacía.
+- **Calendarios de pesadas y de sueño en el móvil:** cada día muestra su cifra completa (por ejemplo 110,9) en vez de cortarla, y la tabla cabe en la pantalla, así que deslizar el dedo sobre ella cambia de pestaña. Las horas habituales de la gráfica de Horario (Auto, Semana, Mes, Trimestre, Año) usan todas las noches de cada ventana, así que cambian con la ventana aunque el periodo mostrado sea una semana. En el histórico de sueño, las barras de cada día ya no tapan su fecha, las cifras de la leyenda se leen con normalidad y la clave de la media semanal es una línea discontinua, y una semana nueva sin ninguna noche todavía no añade una fila vacía.
 - **Traducciones:** se traducen los textos que aún salían en español en los demás idiomas: las iniciales de los días de los calendarios y las de las comidas, las etiquetas del IMC y de los rangos, las fases del sueño y sus descripciones emergentes, los textos de los anillos y las leyendas de los gráficos, la lista de estados de ánimo (emociones y con qué se relacionan) y sus relaciones, cuentas como «21 de 30», el texto de ayuda de las notas y varias frases de los análisis. En español, las fechas conservan su «de» («viernes 20 de noviembre»).
 - **Administración en el móvil:** los botones de cada usuario (Editar, Hacer admin, Restablecer contraseña…) pasan a la línea siguiente en vez de salirse de la pantalla.
 - **Tu cuenta, Administración y Ayuda en modo oscuro en el iPhone:** las páginas que se muestran dentro de la app siguen el tema de la app en vez de verse claras.

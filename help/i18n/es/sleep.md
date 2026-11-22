@@ -1,4 +1,4 @@
-<!-- en: 3ea43931b86e089b -->
+<!-- en: 6edee016e5f05a05 -->
 # Sueño
 
 Sirve para ver cómo duermes: la última noche, tu saldo de sueño, la evolución, el horario y el análisis. Incluye siestas, fases del sueño y comparaciones con tu peso.
@@ -57,7 +57,7 @@ Sirve para ver cómo duermes: la última noche, tu saldo de sueño, la evolució
 
 ## Horario
 
-- **Horario**: desde que te duermes hasta que te despiertas, noche a noche. En verde, lo que dormiste hasta tu hora objetivo de levantarte; en rojo, lo que dormiste después (el fin de semana se mide con su propio horario). Líneas discontinuas: tu hora habitual; líneas continuas: la media móvil.
+- **Horario**: desde que te duermes hasta que te despiertas, noche a noche. En verde, lo que dormiste hasta tu hora objetivo de levantarte; en rojo, lo que dormiste después (el fin de semana se mide con su propio horario). Líneas discontinuas: tu hora habitual; líneas continuas: la media móvil. **Auto**, **Semana**, **Mes**, **Trimestre** y **Año** eligen la ventana de la hora habitual: la mediana de todas las noches de esa semana, mes, trimestre o año, también las que quedan fuera del periodo mostrado.
 - **Fases del sueño**: horas de cada fase por noche (Apple Watch).
 - **Por noche de la semana**: media de horas dormidas según el día en que te acuestas.
 
