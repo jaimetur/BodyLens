@@ -2546,7 +2546,7 @@ document.addEventListener('click',e=>{const s=e.target.closest('.shside');if(!s)
     const b=$('sheetBody').querySelectorAll('.shnav [data-nav]')[dx<0?1:0];if(b&&!b.disabled)b.click()},{passive:true})})();
 // phones: plain explanations of the chart cards fold behind their title (those with links or buttons stay, and so do
 // the live texts of cards without a chart, such as an empty state)
-function leadFold(root){(root||document).querySelectorAll('.view:not(#v-ajustes) .card>p.lead:not(.lfold)').forEach(p=>{if(!p.querySelector('a,button,input,select')&&p.textContent.trim().length>40&&(!p.id||p.parentElement.querySelector('svg,table,canvas')))p.classList.add('lfold')})}
+function leadFold(root){(root||document).querySelectorAll('.view .card>p.lead:not(.lfold)').forEach(p=>{if(!p.querySelector('a,button,input,select')&&p.textContent.trim().length>40&&(!p.id||p.parentElement.querySelector('svg,table,canvas')))p.classList.add('lfold')})}
 // phones: the cards to enter data by hand go last in their tab, after the charts
 const PHONE=matchMedia('(max-width:699px)');
 function phoneOrder(){document.querySelectorAll('.view[id^="v-"]:not(#v-ajustes)>.qm').forEach(e=>{e.style.order=PHONE.matches?'50':''})}

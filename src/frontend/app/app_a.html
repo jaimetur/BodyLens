@@ -100,10 +100,10 @@ h1,h2,h3{text-wrap:balance;margin:0}
 .card .lead{font-size:.86rem;color:var(--muted);margin:0;max-width:72ch}
 /* phones: the explanation of each chart card waits behind an ⓘ next to its title (tap the title), so the charts come first */
 @media (max-width:699px){
-  .view:not(#v-ajustes) .card:not(.lopen)>.lead.lfold{display:none}
-  .view:not(#v-ajustes) .card:has(>.lead.lfold)>h2{cursor:pointer;display:flex;align-items:center;gap:8px}
-  .view:not(#v-ajustes) .card:has(>.lead.lfold)>h2::after{content:"i";flex:none;display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--faint);color:var(--muted);font:700 11px/1 var(--body);text-transform:none;letter-spacing:0}
-  .view:not(#v-ajustes) .card.lopen:has(>.lead.lfold)>h2::after{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+  .view .card:not(.lopen)>.lead.lfold{display:none}
+  .view .card:has(>.lead.lfold)>h2{cursor:pointer;display:flex;align-items:center;gap:8px}
+  .view .card:has(>.lead.lfold)>h2::after{content:"i";flex:none;display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--faint);color:var(--muted);font:700 11px/1 var(--body);text-transform:none;letter-spacing:0}
+  .view .card.lopen:has(>.lead.lfold)>h2::after{background:var(--ink);border-color:var(--ink);color:var(--surface)}
   .view:not(#v-ajustes) .lead.wnote{display:none}
 }
 .chead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}

@@ -15,7 +15,7 @@ One file per module. The sections of the app are those in the navigation bar; th
 | [History](history.md) | Your whole weight history by year and weight-loss attempts |
 | [Goals, plan and meals](settings.md) | Goals and weight-loss plan, Meals formula; also profiles, PIN, personal data, backups and export to PDF (in "Your account") |
 
-On a phone, each tab starts with a chart or its figures; the explanation of a chart waits behind the **ⓘ** next to its title (tap the title to show or hide it), and the cards to enter data by hand are at the end of the tab.
+On a phone, each tab starts with a chart or its figures; the explanation of a chart (and of the cards of Your account and of Goals, plan and meals) waits behind the **ⓘ** next to its title (tap the title to show or hide it), and the cards to enter data by hand are at the end of the tab.
 On touch screens, swipe sideways to go to the next or previous tab; past the last tab of a module you go on to the next module (and before the first, back to the previous one).
 
 On a phone:
