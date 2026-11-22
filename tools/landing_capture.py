@@ -84,12 +84,22 @@ def settle(page: Page, ms: int = 1200) -> None:
     page.wait_for_timeout(ms)
 
 
+def bottom_tabs(page: Page) -> bool:
+    """On phones the tabs of a module are in the strip above the bottom bar (the top ones stay hidden, for the swipe)."""
+    return page.evaluate("document.body.classList.contains('hasbt')")
+
+
+def tab_sel(page: Page, view: str, tab: str) -> str:
+    """A tab of a module, in the strip at the bottom (phones) or at the top (computers)."""
+    return f'.btabs a[data-go="{view}|{tab}"]' if bottom_tabs(page) else f'nav.vtabs[data-view="{view}"] a[data-tab="{tab}"]'
+
+
 def go(page: Page, view: str, tab: str | None = None, ms: int = 1200) -> None:
     """Opens a view (and one of its tabs) the way a user does, and waits for the charts."""
     page.evaluate("v => { if (location.hash !== '#' + v) location.hash = '#' + v }", view)
     page.wait_for_timeout(400)
     if tab:
-        page.click(f'nav.vtabs[data-view="{view}"] a[data-tab="{tab}"]')
+        page.locator(tab_sel(page, view, tab)).first.click()
     page.evaluate("window.scrollTo(0, 0)")
     settle(page, ms)
 
@@ -114,7 +124,7 @@ def tab(page: Page, view: str, name: str, ms: int = 1100) -> None:
     """Taps one of the tabs at the top of a view (scrolling up first, as a user would)."""
     if page.evaluate("window.scrollY") > 0:
         top(page)
-    tap(page, f'nav.vtabs[data-view="{view}"] a[data-tab="{name}"]', ms)
+    tap(page, tab_sel(page, view, name), ms)
 
 
 def swipe(page: Page, left: bool = True, y: int = 560, ms: int = 1100) -> None:
@@ -163,6 +173,12 @@ def new_page(browser, state: Path, profile: dict, scheme: str = "light", video_d
     extra = {"record_video_dir": video_dir, "record_video_size": video_size} if video_dir else {}
     ctx = browser.new_context(**profile, **COMMON, color_scheme=scheme, storage_state=str(state), **extra)
     page = ctx.new_page()
+    # the one-time hint about swiping between tabs is not part of the screenshots and videos,
+    page.add_init_script("try { const k = 'bascula:ui', u = JSON.parse(localStorage.getItem(k) || '{}'); u.swHint = 1;"
+                         " localStorage.setItem(k, JSON.stringify(u)) } catch (e) { }"
+                         # nor the dots that show for a moment after changing tab
+                         " addEventListener('DOMContentLoaded', () => { const s = document.createElement('style');"
+                         " s.textContent = '.swdots{display:none!important}'; document.head.append(s) })")
     page.clock.install(time=evening())
     return page
 
@@ -255,7 +271,7 @@ def tour_cuerpo(page: Page, still) -> None:   # Body → Scale (body fat panel a
     scroll(page, 560, 900)
     still()
     top(page)
-    tap(page, 'nav.cuetabs a[href="#medidas"]', 1050)
+    tap(page, '.btabs a[href="#medidas"]' if bottom_tabs(page) else 'nav.cuetabs a[href="#medidas"]', 1050)
     still()
     scroll(page, 420, 900)
     still()
@@ -313,13 +329,13 @@ def tour_intimo(page: Page, still) -> None:   # Intimate → Mood: the figures a
 
 def tour_historial(page: Page, still) -> None:   # History → Years, All, Attempts (swiping between them)
     still()
-    swipe(page, y=600, ms=1200)
+    swipe(page, y=480, ms=1200)
     still()
     tap(page, f'#v-historial button.lg:has-text("{TXT["daily"]}")', 850)
     still()
     tap(page, f'#v-historial button.lg:has-text("{TXT["daily"]}")', 850)
     still()
-    swipe(page, y=600, ms=1200)
+    swipe(page, y=480, ms=1200)
     still()
     scroll(page, 200, 850)
     still()
@@ -332,7 +348,7 @@ def tour_actividad_entrenos(page: Page, still) -> None:   # Activity → Workout
     scroll(page, 520, 900)
     still()
     top(page)
-    swipe(page, y=640, ms=1150)
+    swipe(page, y=480, ms=1150)
     still()
     scroll(page, 420, 900)
     still()
@@ -345,9 +361,9 @@ def tour_resumen_salud(page: Page, still) -> None:   # Summary → Body, Day to 
     scroll(page, 330, 850)
     still()
     top(page)
-    swipe(page, y=640, ms=1050)
+    swipe(page, y=480, ms=1050)
     still()
-    swipe(page, y=640, ms=1050)
+    swipe(page, y=480, ms=1050)
     still()
     tap(page, '[data-sheet="kpi"][data-k^="hk|hrv|"]', 1200)
     still()
@@ -616,7 +632,7 @@ def app_tabs(page: Page) -> list[dict]:
     """The modules of the app's tab bar and the tabs of each one, read from the page (so new modules or tabs are
     picked up). A module's tabs are its «vtabs» (data-tab) or, for a group of views like Body, the views of its bar
     (its id is then the Spanish title of the view, «cuerpo», which the page does not translate)."""
-    return page.evaluate("""() => [...document.querySelectorAll('#tabNav a[href^="#"]')].map(a => {
+    return page.evaluate("""() => [...document.querySelectorAll('#tabNav a[data-v]')].map(a => {
         const view = a.getAttribute('href').slice(1), v = document.getElementById('v-' + view);
         const nav = v && v.querySelector('nav.cuetabs');
         const id = nav && !nav.dataset.view ? ((v && v.dataset.title) || view).normalize('NFD')
