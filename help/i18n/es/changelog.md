@@ -1,4 +1,4 @@
-<!-- en: 2b19fc6fc8a399d3 -->
+<!-- en: 9b2bac38ec224526 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -106,6 +106,8 @@
 - **Navegación más fácil en el móvil:** la barra de abajo muestra los 4 módulos que más usas (o los que elijas en **Editar la barra**, quitando con − y añadiendo con +) y **Más**, un menú con todos los módulos, cuya flecha despliega sus pestañas para ir directamente a una, que se cierra al volver a tocar **Más**, con su botón ✕ o deslizándolo hacia abajo; las pestañas de cada módulo, con sus iconos, están abajo, en una franja justo encima de la barra de abajo, teñida del color del módulo para distinguirlas (también en Tu cuenta, en verde, y Administración, en rojo, cuyas pestañas también se recorren deslizando); al bajar por la página, una barra fina arriba mantiene el nombre del módulo (y las pestañas de Administración, ahora en una sola fila que se desliza, con iconos y la pestaña actual resaltada en color); el periodo muestra solo el que está en uso y se abre con un toque; unos puntos indican dónde estás al cambiar de pestaña, y la primera vez un aviso explica que se puede deslizar a los lados. Los botones de cerrar y las flechas de los paneles son más grandes y se ven mejor, y el de cerrar es rojo anaranjado y está alineado con las flechas.
 - **Los campos de datos a mano ya no se abren sin querer en el móvil:** la rueda para elegir el valor solo se abre con un toque deliberado, no al rozar un campo mientras desplazas, al deslizar el dedo sobre él ni al tocarlo con la página aún en movimiento.
 - **Los paneles se cierran deslizando hacia abajo en el móvil:** el detalle de una tarjeta, los diálogos de Comidas y Exportar a PDF se cierran al deslizarlos hacia abajo desde arriba, como el menú **Más**.
+- **Apuntar el ánimo como en la app Salud:** tras la cara, la app pregunta qué emociones lo describen mejor (sugeridas según lo agradable que sea) y qué está influyendo más, las dos cosas opcionales, y si es un momento o el ánimo de todo el día.
+- **Novedades y Acerca de BodyLens en los menús:** al final de **Más** y en el menú del perfil, abren esos documentos de la Ayuda.
 
 #### 🐛 Correcciones:
 - **Seguridad:** el registro de accesos ya no guarda la dirección de subida de Apple Salud, los códigos OAuth ni las invitaciones.

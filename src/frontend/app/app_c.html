@@ -131,7 +131,7 @@ function switchProfile(id,ok){if(id===SEL){closeProfMenu();return}const p=PROFS.
 (()=>{try{for(const l of document.querySelectorAll('body link[rel="icon"],body link[rel="apple-touch-icon"]'))document.head.appendChild(l.cloneNode(true))}catch(e){}})();
 function renderProfBtn(){const b=$('pfBtn');if(!b)return;try{$('brandSub').textContent='Salud y seguimiento · '+PROF().name.split(' ')[0]}catch(e){}try{checkLock()}catch(e){}const p=PROF();b.innerHTML=`<i style="background:${p.col}">${esc(initials(p.name))}</i><span>${esc(p.name.split(' ')[0])}</span>`;b.setAttribute('aria-label','Perfil: '+p.name+'. Cambiar de perfil')}
 function closeProfMenu(){const m=$('pfMenu');if(m)m.hidden=true;const b=$('pfBtn');if(b)b.setAttribute('aria-expanded','false')}
-function openProfMenu(){const m=$('pfMenu');m.innerHTML=`<div class="pfm-h">Perfiles</div>${PROFS.map(p=>`<button type="button" role="menuitemradio" aria-checked="${p.id===SEL}" data-pf="${esc(p.id)}"><i style="background:${p.col}">${esc(initials(p.name))}</i><span>${esc(p.name)}</span>${p.id===SEL?'<b>✓</b>':''}</button>`).join('')}<a class="owner-only" href="#ajustes" data-pfmanage>Gestionar perfiles</a><a class="owner-only" href="#ajustes">Ajustes</a>${PROF()&&PROF().pinH?'<button type="button" class="pfm-lock" data-pflock><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg><span>Bloquear perfil</span></button>':''}`;m.hidden=false;$('pfBtn').setAttribute('aria-expanded','true')}
+function openProfMenu(){const m=$('pfMenu');m.innerHTML=`<div class="pfm-h">Perfiles</div>${PROFS.map(p=>`<button type="button" role="menuitemradio" aria-checked="${p.id===SEL}" data-pf="${esc(p.id)}"><i style="background:${p.col}">${esc(initials(p.name))}</i><span>${esc(p.name)}</span>${p.id===SEL?'<b>✓</b>':''}</button>`).join('')}<a class="owner-only" href="#ajustes" data-pfmanage>Gestionar perfiles</a><a class="owner-only" href="#ajustes">Ajustes</a>${SRV_V.length?'<a href="#help" data-helpdoc="changelog">Novedades</a><a href="#help" data-helpdoc="readme">Acerca de BodyLens</a>':''}${PROF()&&PROF().pinH?'<button type="button" class="pfm-lock" data-pflock><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg><span>Bloquear perfil</span></button>':''}`;m.hidden=false;$('pfBtn').setAttribute('aria-expanded','true')}
 document.addEventListener('click',e=>{if(e.target.closest('#pfBtn')){$('pfMenu').hidden?openProfMenu():closeProfMenu();return}
   const p=e.target.closest('[data-pf]');if(p){switchProfile(p.dataset.pf);return}
   if(e.target.closest('#pfMenu a[href="#ajustes"]:not([data-pfmanage])')){closeProfMenu();setTimeout(()=>{showAj(UI.ajTab&&!AJ_PF.includes(UI.ajTab)?UI.ajTab:'plan');scrollTo(0,0)},120);return}
@@ -286,7 +286,12 @@ if(SRV_V.length){VIEWS.push(...SRV_V);
   $('v-ajustes').insertAdjacentHTML('afterend',SRV_V.map(([id,l])=>`<section class="view srvview" id="v-${id}" data-title="${l}" hidden><iframe class="srvframe" id="emb-${id}" title="${l}" scrolling="no"></iframe></section>`).join(''))}
 function srvShow(v){const f=$('emb-'+v);if(!f)return;
   if(!f.dataset.on){f.dataset.on='1';f.addEventListener('load',()=>{try{const d=f.contentDocument;if(d.defaultView.blFitFrame)d.defaultView.blFitFrame()}catch(e){}});
-    f.src='/'+v+'?embed=1'+(v==='admin'&&location.hash.includes(':')?'#'+location.hash.split(':')[1]:'')}}
+    f.src='/'+v+'?embed=1'+(v==='admin'&&location.hash.includes(':')?'#'+location.hash.split(':')[1]:v==='help'&&HELPDOC?'#'+HELPDOC:'')}
+  else if(v==='help'&&HELPDOC){try{f.contentWindow.location.hash=HELPDOC}catch(e){}}HELPDOC=null}
+// «Novedades» and «Acerca de BodyLens» (in the profile menu and in «Más»): those documents of Help
+let HELPDOC=null;const HELP_ICO={changelog:'<path d="M12 3l2.4 5.2 5.6.6-4.2 3.8 1.2 5.6L12 15.4 7 18.2l1.2-5.6L4 8.8l5.6-.6z"/>',readme:'<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/><circle cx="12" cy="7.8" r=".6"/>'};
+document.addEventListener('click',e=>{const a=e.target.closest('[data-helpdoc]');if(!a)return;e.preventDefault();closeProfMenu();HELPDOC=a.dataset.helpdoc;
+  if(VIEW==='help')srvShow('help');else location.hash='help';scrollTo(0,0)});
 const link=(id,label,cls)=>`<a class="${cls}${id==='ajustes'?' owner-only':''}" href="#${id}" data-v="${id}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[id]}</svg><span>${label}</span></a>`;
 const SUBV={medidas:'composicion',corazon:'composicion',bienestar:'composicion'};
 // modules a profile can be given access to (a profile without «mods» sees all of them)
@@ -3318,7 +3323,38 @@ document.addEventListener('click',e=>{const m=e.target.closest('[data-moodm]');i
   const md=e.target.closest('[data-moodday]');if(md&&OWNER){MOOD_AT=md.dataset.moodday+'T12:00';renderMood();const q=$('moodQuick');if(q)q.scrollIntoView({behavior:'smooth',block:'center'});return}
   if(e.target.closest('[data-moodnow]')){MOOD_AT=null;renderMood();return}
   const a=e.target.closest('[data-moodadd]');if(a&&OWNER){const v=+a.dataset.moodadd,n=new Date(),s=MOOD_AT&&MOOD_AT<`${d2k(n)}T${pad(n.getHours())}:${pad(n.getMinutes())}`?MOOD_AT.replace('T',' '):`${d2k(n)} ${pad(n.getHours())}:${pad(n.getMinutes())}`;
-    HKLOG=mergeEv(HKLOG,{e:[['mood',s,s,JSON.stringify({v,k:'momentaryEmotion'}),'app']]});saveLocal();if(col)enqueue('hklog',HKLOG);toast('Apuntado: '+moodWord(v));renderView()}});
+    moodDlgOpen(v,s)}});
+// recording a mood, as Apple Health does: how you feel (a moment or the whole day), the emotions that describe it best (suggested
+// by how pleasant it is) and what is influencing it most; emotions and influences are optional
+const MD_POS=['happy','joyful','grateful','calm','peaceful','content','confident','hopeful','excited','proud','relieved','amused','amazed','brave','passionate','surprised'];
+const MD_NEU=['calm','content','peaceful','indifferent','relieved','hopeful','surprised','drained','stressed','worried','overwhelmed'];
+const MD_NEG=['stressed','anxious','worried','sad','frustrated','irritated','annoyed','overwhelmed','drained','discouraged','disappointed','lonely','angry','scared','guilty','ashamed','embarrassed','hopeless','jealous','disgusted'];
+const MD_ALL=[...new Set([...MD_POS,...MD_NEU,...MD_NEG])];
+const MD_ASSOC=['health','fitness','selfcare','hobbies','identity','spirituality','community','family','friends','partner','dating','tasks','work','education','travel','weather','currentevents','money'];
+let MDW=null;
+function moodDlgOpen(v,at){MDW={v,at,day:false,step:1,l:new Set(),a:new Set(),more:false};moodDlgDraw();$('moodDlg').hidden=false;document.body.style.overflow='hidden'}
+function moodDlgClose(){$('moodDlg').hidden=true;MDW=null;document.body.style.overflow=''}
+function moodDlgDraw(){const W=MDW;if(!W)return;const vals=[-1,-.67,-.33,0,.33,.67,1],tint=moodCol(W.v);
+  const head=`<div class="mdw-h">${moodFace(W.v,48)}<div><b>${moodWord(W.v)}</b><small>${W.day?'Todo el día':'Ahora mismo'} · ${fK(W.at.slice(0,10))}</small></div></div><div class="mdw-dots" aria-hidden="true">${[0,1,2].map(i=>`<i class="${i===W.step?'on':''}"></i>`).join('')}</div>`;
+  const chips=(list,sel,attr)=>list.map(k=>`<button type="button" class="${sel.has(k)?'on':''}" data-${attr}="${k}" aria-pressed="${sel.has(k)}">${esc(moodEs(k))}</button>`).join('');
+  let body='';
+  if(W.step===0)body=`<h3>¿Cómo te sientes?</h3><div class="mdw-k"><button type="button" class="${W.day?'':'on'}" data-mdday="0">Ahora mismo</button><button type="button" class="${W.day?'on':''}" data-mdday="1">Todo el día</button></div>
+    <div class="mdq-r">${MOOD_LV.map(([,l],i)=>`<button type="button" class="${Math.abs(vals[i]-W.v)<.01?'on':''}" data-mdv="${vals[i]}" aria-label="${l}">${moodFace(vals[i],34)}<small>${l}</small></button>`).join('')}</div>`;
+  if(W.step===1){const sug=W.v<=-.14?MD_NEG:W.v>=.14?MD_POS:MD_NEU,list=W.more?[...new Set([...sug,...MD_ALL])]:[...new Set([...sug,...W.l])];
+    body=`<h3>¿Qué describe mejor lo que sientes?</h3><p class="lead">Elige las que quieras (o ninguna).</p><div class="mdw-c" style="--mdc:${tint}">${chips(list,W.l,'mdl')}<button type="button" class="more" data-mdmore>${W.more?'Ver menos':'Ver todas'}</button></div>`}
+  if(W.step===2)body=`<h3>¿Qué está influyendo más?</h3><p class="lead">Elige las que quieras (o ninguna).</p><div class="mdw-c" style="--mdc:${tint}">${chips(MD_ASSOC,W.a,'mda')}</div>`;
+  $('moodDlgBody').innerHTML=head+body+`<div class="mdw-f">${W.step>0?'<button type="button" class="btn ghost" data-mdback>Anterior</button>':''}<button type="button" class="btn" data-mdnext>${W.step<2?'Siguiente':'Guardar'}</button></div>`}
+function moodDlgSave(){const W=MDW;if(!W)return;const s=W.at;
+  HKLOG=mergeEv(HKLOG,{e:[['mood',s,s,JSON.stringify({v:W.v,k:W.day?'dailyMood':'momentaryEmotion',l:[...W.l],a:[...W.a]}),'app']]});saveLocal();if(col)enqueue('hklog',HKLOG);
+  toast('Apuntado: '+moodWord(W.v));moodDlgClose();renderView()}
+$('moodDlg').addEventListener('click',e=>{const t=e.target,W=MDW;if(!W)return;
+  if(t.id==='moodDlg'||t.closest('[data-mdclose]')){moodDlgClose();return}
+  const b=t.closest('button');if(!b)return;
+  if(b.dataset.mdday!=null){W.day=b.dataset.mdday==='1'}else if(b.dataset.mdv!=null){W.v=+b.dataset.mdv;W.l.clear()}
+  else if(b.dataset.mdl){W.l.has(b.dataset.mdl)?W.l.delete(b.dataset.mdl):W.l.add(b.dataset.mdl)}else if(b.dataset.mda){W.a.has(b.dataset.mda)?W.a.delete(b.dataset.mda):W.a.add(b.dataset.mda)}
+  else if(b.hasAttribute('data-mdmore'))W.more=!W.more;else if(b.hasAttribute('data-mdback'))W.step=Math.max(0,W.step-1);
+  else if(b.hasAttribute('data-mdnext')){if(W.step===2){moodDlgSave();return}W.step++;$('moodDlg').querySelector('.shbox').scrollTop=0}
+  moodDlgDraw()});
 
 function renderIntimo(){const locked=!privOK();for(const id of ['intHist','intSex','intLog','intLock','intMood','intMoodKv','intMoodEvo','intMoodCal','intMoodWhat','intMoodRel','intMoodProf','intMoodBad','intMoodList'])$(id).hidden=locked;
   const nav=document.querySelector('.vtabs[data-view="intimo"]');if(nav)nav.hidden=locked;$('intCycle').classList.toggle('vt-off',!locked&&curTab('intimo')!=='ciclo');
@@ -3773,7 +3809,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-actmet]');
           (ex?`<button type="button" class="mexp${op?' open':''}" data-mexp="${v}" aria-expanded="${op}" aria-label="Pestañas">${chev}</button></div><div class="msub"${op?'':' hidden'}>${ps.map(p=>chip(p).replace('class="','class="msl ').replace('">','">'+(p.ic||'')+'<span>').replace(/<\/a>$/,'</span></a>')).join('')}</div>`:`${chev}</div>`)};
       const ext=SRV_V.map(([v])=>{const a=document.querySelector(`#railNav a[data-v="${v}"]`);return a&&getComputedStyle(a).display!=='none'?mrow(v,false):''}).join('');
       h=`<div class="morep-h"><b>Todos los módulos</b><button type="button" data-medit>Editar la barra</button><button type="button" class="morep-x" data-mclose aria-label="Cerrar">✕</button></div>`+
-        `<div class="mgrp">${vis.map(v=>mrow(v,true)).join('')}</div>${ext?`<div class="mgrp">${ext}</div>`:''}`}
+        `<div class="mgrp">${vis.map(v=>mrow(v,true)).join('')}</div>${ext?`<div class="mgrp">${ext}</div>`:''}`+
+        (SRV_V.length?`<div class="mgrp">${[['changelog','Novedades'],['readme','Acerca de BodyLens']].map(([d,l])=>`<a class="mli" href="#help" data-helpdoc="${d}"><i class="mic"><svg viewBox="0 0 24 24" aria-hidden="true">${HELP_ICO[d]}</svg></i><span class="mli-t"><b>${l}</b></span>${chev}</a>`).join('')}</div>`:'')}
     else{const auto=isAuto(),inBar=vis.filter(v=>f.includes(v)),rest=vis.filter(v=>!f.includes(v)),full=inBar.length>=4;
       const row=(v,b)=>`<div class="mli">${mic(v)}<span class="mli-t"><b>${esc(lbl(v))}</b></span>${b}</div>`;
       h=`<div class="morep-h"><b>Editar la barra</b><button type="button" data-medit>Listo</button></div>`+
@@ -3810,7 +3847,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-actmet]');
   function dotsShow(){if(!mob())return;const k=VIEW+'|'+curTab(VIEW);if(k===DK)return;const first=!DK;DK=k;const ps=partsOf(modOf(VIEW));if(first||ps.length<2||!SWIPE_ORDER.includes(VIEW))return;
     dots.innerHTML=ps.map(p=>`<i class="${p.on?'on':''}"></i>`).join('');const r=(!rf.hidden?rf:!bt.hidden?bt:tn).getBoundingClientRect();dots.style.bottom=Math.round(innerHeight-r.top+10)+'px';
     dots.classList.add('on');clearTimeout(DT);DT=setTimeout(()=>dots.classList.remove('on'),1300)}
-  let HT=null;function hint(){HT=null;if(!mob()||UI.swHint||LOCK||document.body.classList.contains('locked')||!SWIPE_ORDER.includes(VIEW)||partsOf(modOf(VIEW)).length<2)return;UI.swHint=1;saveUI();
+  let HT=null;function hint(){HT=null;if(!mob()||UI.swHint||LOCK||document.body.classList.contains('locked')||document.querySelector('.sheet:not([hidden])')||!mp.hidden||!SWIPE_ORDER.includes(VIEW)||partsOf(modOf(VIEW)).length<2)return;UI.swHint=1;saveUI();
     const h=document.createElement('div');h.className='swhint';h.setAttribute('role','status');h.innerHTML='<svg viewBox="0 0 36 22" aria-hidden="true"><path d="M3 11h30M8 6l-5 5 5 5M28 6l5 5-5 5"/></svg><span>Desliza a los lados para cambiar de pestaña</span>';document.body.append(h);
     const close=()=>h.remove();setTimeout(()=>addEventListener('touchstart',close,{capture:true,once:true}),400);setTimeout(close,5000)}
   // 5. the tabs of the module in a strip just above the bottom bar, within reach of the thumb

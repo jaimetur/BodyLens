@@ -40,7 +40,7 @@ A private section for tracking the menstrual cycle, sexual activity and mood. Wh
 
 ## Mood
 
-- **Mood**: your latest record (face, description, emotions and what influences it) and the **How are you feeling now?** row, with seven faces from "Very unpleasant" to "Very pleasant" to log your mood with one tap. To log an earlier moment, change **When** (or tap a day in the calendar); **Now** goes back to the present.
+- **Mood**: your latest record (face, description, emotions and what influences it) and the **How are you feeling now?** row, with seven faces from "Very unpleasant" to "Very pleasant". Tapping one opens the log, as in Apple Health: choose the emotions that describe it best (suggested by how pleasant it is; **Show all** for the rest) and what is having the biggest impact (work, family, health…), both optional, and press **Save**. **Previous** goes back to the face and to whether it is a moment (**Right now**) or the mood of the **All day**. To log an earlier moment, change **When** (or tap a day in the calendar); **Now** goes back to the present.
 - **Scale**: from −3 (very unpleasant) to +3 (very pleasant).
 - If there are no records yet, it explains how to import them from Apple Health on the iPhone (Health app → Mindfulness → State of mind) with the Health Auto Export automation, or you can log them here; on Android, log them here by hand.
 - **Period**: the floating selector (1 wk to All) appears only on this tab.

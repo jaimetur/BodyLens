@@ -780,6 +780,14 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
 .mdbd-m{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}.mdbd-m span{display:flex;flex-direction:column;justify-content:space-between;gap:2px;padding:7px 9px;border-radius:10px;background:var(--line2);min-width:0}.mdbd-m span small{font-size:.66rem;line-height:1.2;color:var(--muted)}.mdbd-m span b{font-size:.95rem;font-variant-numeric:tabular-nums;white-space:nowrap}.mdbd-m>small{grid-column:1/-1}
 .mdbd-m span.ko{background:color-mix(in srgb,var(--bad) 14%,var(--line2));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--bad) 25%,transparent)}.mdbd-m span.ok{background:color-mix(in srgb,var(--good) 14%,var(--line2));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--good) 25%,transparent)}.mdbd-m span.ko b{color:var(--bad)}.mdbd-m span.ok b{color:var(--good)}
 .mdnow{align-items:center}.mdface{flex:none}.mdchips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}.mdchips span{font-size:.75rem;padding:3px 9px;border-radius:999px;background:var(--line2);color:var(--ink)}
+.mdw-h{display:flex;align-items:center;gap:12px;padding-right:44px}.mdw-h b{display:block;font-size:1.1rem}.mdw-h small{display:block;color:var(--muted);font-size:.8rem}
+.mdw h3{margin:4px 0 0;font-size:1.05rem}.mdw .lead{margin:-6px 0 0;font-size:.84rem}
+.mdw-c{display:flex;flex-wrap:wrap;gap:8px}.mdw-c button{font:inherit;font-size:.9rem;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--raised);color:var(--ink);cursor:pointer}
+.mdw-c button.on{background:var(--mdc,var(--weight));border-color:var(--mdc,var(--weight));color:#fff;font-weight:600}.mdw-c button.more{background:none;border-style:dashed;color:var(--muted)}
+.mdw-k{display:flex;gap:6px}.mdw-k button{flex:1;font:inherit;font-size:.88rem;padding:9px;border-radius:12px;border:1px solid var(--line);background:var(--raised);color:var(--ink);cursor:pointer}.mdw-k button.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.mdw .mdq-r button.on{border-color:var(--ink);background:var(--raised)}.mdw .mdq-r small{display:none}
+.mdw-f{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}.mdw-f .btn{min-width:110px}
+.mdw-dots{display:flex;gap:6px;justify-content:center}.mdw-dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}.mdw-dots i.on{background:var(--ink)}
 .mdq{margin-top:16px}.mdq-r{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.mdq-r button{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:1px solid transparent;border-radius:12px;padding:6px 2px;cursor:pointer;color:var(--muted);font:inherit}
 .mdq-r button:hover{border-color:var(--line);background:var(--surface)}.mdq-r small{font-size:.6rem;line-height:1.15;text-align:center}.mdq-r svg{max-width:100%}
 .mdcal i.md{color:var(--ink);font-weight:700}.mdg{gap:18px}.mdbar{display:grid;grid-template-columns:minmax(0,7.5rem) 1fr 2.6rem;gap:8px;align-items:center;font-size:.82rem;padding:3px 0}.mdbar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1300,6 +1308,7 @@ body.locked .btabs,body.pdfx .btabs{display:none!important}
 
   <div class="sheet" id="sheet" hidden role="dialog" aria-modal="true"><button type="button" class="shside l" data-side="0" aria-label="Anterior" hidden>‹</button><button type="button" class="shside r" data-side="1" aria-label="Siguiente" hidden>›</button><div class="shbox"><button type="button" class="shclose" data-close aria-label="Cerrar">✕</button><div id="sheetBody"></div></div></div>
   <div class="rangefloat" id="rangeFloat" hidden><div class="seg" role="group" aria-label="Periodo" id="rngFloat"></div></div>
+  <div class="sheet" id="moodDlg" hidden role="dialog" aria-modal="true" aria-label="Estado de ánimo"><div class="shbox"><button type="button" class="shclose" data-mdclose aria-label="Cerrar">✕</button><div id="moodDlgBody" class="pldlg mdw"></div></div></div>
   <div class="sheet" id="plDlg" hidden role="dialog" aria-modal="true"><div class="shbox"><button type="button" class="shclose" data-plcancel aria-label="Cerrar">✕</button><div id="plDlgBody" class="pldlg"></div></div></div>
   <div class="sheet" id="expDlg" hidden role="dialog" aria-modal="true" aria-label="Exportar a PDF"><div class="shbox"><button type="button" class="shclose" data-xclose aria-label="Cerrar">✕</button><h2 style="margin:0">Exportar a PDF</h2><div id="expBody"></div></div></div>
   <nav class="tabbar" id="tabNav" aria-label="Secciones"></nav>

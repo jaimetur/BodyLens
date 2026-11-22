@@ -1,4 +1,4 @@
-<!-- en: 5cc932139a062ccb -->
+<!-- en: 19b4dfaf0e2bae51 -->
 # Ciclo e intimidad
 
 Una sección privada para seguir el ciclo menstrual, la actividad sexual y el ánimo. Quién la ve depende de los módulos del perfil.
@@ -41,7 +41,7 @@ Una sección privada para seguir el ciclo menstrual, la actividad sexual y el á
 
 ## Ánimo
 
-- **Estado de ánimo**: tu último registro (cara, descripción, emociones y qué influye) y la fila **¿Cómo te sientes ahora?**, con siete caras desde «Muy desagradable» hasta «Muy agradable» para apuntar tu ánimo con un toque. Para apuntar un momento anterior, cambia **Cuándo** (o toca un día del calendario); **Ahora** vuelve al presente.
+- **Estado de ánimo**: tu último registro (cara, descripción, emociones y qué influye) y la fila **¿Cómo te sientes ahora?**, con siete caras desde «Muy desagradable» hasta «Muy agradable». Al tocar una se abre el registro, como en la app Salud: eliges las emociones que mejor lo describen (sugeridas según lo agradable que sea; **Ver todas** para el resto) y qué está influyendo más (trabajo, familia, salud…), las dos cosas opcionales, y pulsas **Guardar**. **Anterior** vuelve a la cara y a si es un momento (**Ahora mismo**) o el ánimo de **Todo el día**. Para apuntar un momento anterior, cambia **Cuándo** (o toca un día del calendario); **Ahora** vuelve al presente.
 - **Escala**: de −3 (muy desagradable) a +3 (muy agradable).
 - Si aún no hay registros, explica cómo importarlos desde Apple Salud en el iPhone (app Salud → Mindfulness → Estado de ánimo) con la automatización de Health Auto Export, o puedes apuntarlos aquí; en Android, apúntalos aquí a mano.
 - **Periodo**: el selector flotante (de 1 sem a Todo) aparece solo en esta pestaña.
