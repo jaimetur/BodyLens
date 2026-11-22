@@ -1,4 +1,4 @@
-<!-- en: bab1e38fc8c6d2dc -->
+<!-- en: 450fa6f6c195c37d -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -104,6 +104,7 @@
 - **Pantalla del PIN:** cabe en la pantalla sin barras de desplazamiento (las teclas son más grandes y están más separadas, crecen con el espacio libre y solo se reducen en pantallas muy bajas) y tiene **Entrar con otro usuario**, que cierra la sesión y vuelve a la pantalla de acceso.
 - **Ayuda, Tu cuenta y Administración dentro de la app se desplazan como una sola página:** en el móvil la página que se ve dentro de la app ya no se desplaza por su cuenta, así que al deslizar siempre se mueve el contenido.
 - **Navegación más fácil en el móvil:** la barra de abajo muestra 4 módulos a tu elección y **Más**, que abre todos los módulos con sus pestañas para ir directamente a cualquiera (se cierra con su botón ✕ o deslizándolo hacia abajo); las pestañas de cada módulo, con sus iconos, están abajo, en una franja justo encima de la barra de abajo, teñida del color del módulo para distinguirlas; al bajar por la página, una barra fina arriba mantiene el nombre del módulo (y las pestañas de Administración, ahora en una sola fila que se desliza); el periodo muestra solo el que está en uso y se abre con un toque; unos puntos indican dónde estás al cambiar de pestaña, y la primera vez un aviso explica que se puede deslizar a los lados. Los botones de cerrar y las flechas de los paneles son más grandes y se ven mejor, y el de cerrar es rojo anaranjado y está alineado con las flechas.
+- **Los campos de datos a mano ya no se abren sin querer en el móvil:** la rueda para elegir el valor solo se abre con un toque deliberado, no al rozar un campo mientras desplazas, al deslizar el dedo sobre él ni al tocarlo con la página aún en movimiento.
 #### 🐛 Correcciones:
 - **Seguridad:** el registro de accesos ya no guarda la dirección de subida de Apple Salud, los códigos OAuth ni las invitaciones.
 - **Withings:** la dirección de retorno acepta las pruebas y los avisos de Withings (POST y HEAD).

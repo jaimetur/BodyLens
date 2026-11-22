@@ -3561,12 +3561,19 @@ window.blBack=()=>{if(!$('whl').hidden){whlClose();return true}if(!$('sheet').hi
 document.addEventListener('click',e=>{const b=e.target.closest('[data-whl]');if(!b||!WHL)return;whlMark();const {el,vals,dec,idx}=WHL,a=b.dataset.whl;
   if(a==='ok'){el.value=vals[idx].toFixed(dec);el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))}
   whlClose();el.readOnly=false;if(a==='kbd'){el.dataset.kb='1';el.focus()}else el.blur()});
-$('whl').addEventListener('click',e=>{if(e.target.id==='whl'&&WHL){const el=WHL.el;whlClose();el.readOnly=false;el.blur()}});
+$('whl').addEventListener('click',e=>{if(e.target.id==='whl'&&WHL&&Date.now()-WHL_AT>450){const el=WHL.el;whlClose();el.readOnly=false;el.blur()}});
 document.addEventListener('keydown',e=>{if(WHL&&e.key==='Escape'){const el=WHL.el;whlClose();el.readOnly=false}});
 // only on touch screens: with a mouse and keyboard the field is typed as usual
 // (read-only while the wheel is open, so the phone keyboard does not come up)
+// only a deliberate tap opens it: not a touch that starts or stops a scroll (the finger moves, the page was moving, or it is held)
+let WHL_T=null,WHL_SCR=0,WHL_AT=0;addEventListener('scroll',()=>{WHL_SCR=Date.now()},{passive:true,capture:true});
 document.addEventListener('pointerdown',e=>{const el=e.target.closest('input[type=number]');if(!el||el.dataset.kb||e.pointerType==='mouse'||!whlRange(el))return;
-  el.readOnly=true;whlOpen(el)});
+  el.readOnly=true;WHL_T={el,x:e.clientX,y:e.clientY,t:Date.now(),y0:scrollY,moving:Date.now()-WHL_SCR<350}});
+document.addEventListener('pointermove',e=>{if(WHL_T&&Math.hypot(e.clientX-WHL_T.x,e.clientY-WHL_T.y)>10)WHL_T.moved=true},{passive:true});
+document.addEventListener('pointerup',e=>{const T=WHL_T;WHL_T=null;if(!T)return;
+  const ok=!T.moved&&!T.moving&&Math.abs(scrollY-T.y0)<4&&Date.now()-T.t<700&&e.target.closest('input[type=number]')===T.el;
+  if(ok){WHL_AT=Date.now();whlOpen(T.el)}});   // otherwise it stays read-only, so the phone keyboard does not come up either
+document.addEventListener('pointercancel',()=>{WHL_T=null});
 document.addEventListener('focusout',e=>{const el=e.target;if(el&&el.dataset&&el.dataset.kb&&!WHL)delete el.dataset.kb});
 // reference shown in the empty manual-entry fields: the last value of this account (blank when there is none)
 function lastRow(S,f){for(const y of Object.keys(S||{}).sort().reverse()){const d=(S[y]||{}).d||{};for(const k of Object.keys(d).sort().reverse()){const v=d[k];if(Array.isArray(v)&&f(v))return [k,v]}}return null}
