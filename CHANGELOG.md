@@ -118,6 +118,7 @@
 - **Administration on phones:** the buttons of each user (Edit, Make admin, Reset password…) wrap onto a new line instead of running off the screen.
 - **Your account, Administration and Help in dark mode on iPhone:** the pages shown inside the app follow the app's theme instead of showing light.
 - **Swipes over fields on phones:** a sideways swipe that starts on a field (Your account, Administration and every module) changes tab too, unless the field is being edited.
+- **Mood charts on phones:** «By day of the week» fills the width with bars up (green) or down (red) from the zero line, and the figures of «Your hard days» sit in an even grid, tinted green or red.
 
 #### 📚 Documentation:
 - **English is the official language of the project:** code, documentation and commit messages. Complete `README.md`; the README, the help and the changelog are written only in English and shown translated in the app.

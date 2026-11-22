@@ -1,4 +1,4 @@
-<!-- en: e66e75a83aa1ce4a -->
+<!-- en: 2b19fc6fc8a399d3 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -119,6 +119,7 @@
 - **Administración en el móvil:** los botones de cada usuario (Editar, Hacer admin, Restablecer contraseña…) pasan a la línea siguiente en vez de salirse de la pantalla.
 - **Tu cuenta, Administración y Ayuda en modo oscuro en el iPhone:** las páginas que se muestran dentro de la app siguen el tema de la app en vez de verse claras.
 - **Deslizar sobre campos en el móvil:** un deslizamiento a un lado que empieza sobre un campo (Tu cuenta, Administración y todos los módulos) también cambia de pestaña, salvo si estás escribiendo en él.
+- **Gráficas de ánimo en el móvil:** «Por día de la semana» ocupa todo el ancho, con barras hacia arriba (verde) o hacia abajo (rojo) desde la línea de cero, y las cifras de «Tus días difíciles» van en una rejilla ordenada, teñidas de verde o rojo.
 
 #### 📚 Documentación:
 - **El inglés es el idioma oficial del proyecto:** código, documentación y mensajes de commit. `README.md` completo; el README, la ayuda y el registro de cambios se escriben solo en inglés y se muestran traducidos en la app.
