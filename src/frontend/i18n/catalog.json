@@ -1766,6 +1766,7 @@
  "Syncing with your data sources belongs to {0}'s profile",
  "TEXT NOT NULL DEFAULT 'sheet'",
  "Table tennis",
+ "Tabs",
  "Take it",
  "Taken from your nights of the last weeks. SpO₂, respiratory rate, apnoea, heart rate variability (HRV) and wrist temperature come from Apple Health or Android; Withings only brings times, stages and heart rate.",
  "Talk to your doctor",

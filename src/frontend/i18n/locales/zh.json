@@ -1766,6 +1766,7 @@
  "Syncing with your data sources belongs to {0}'s profile": "与你的数据来源的同步属于 {0} 的档案",
  "TEXT NOT NULL DEFAULT 'sheet'": "TEXT NOT NULL DEFAULT 'sheet'",
  "Table tennis": "乒乓球",
+ "Tabs": "标签页",
  "Take it": "随身带上",
  "Taken from your nights of the last weeks. SpO₂, respiratory rate, apnoea, heart rate variability (HRV) and wrist temperature come from Apple Health or Android; Withings only brings times, stages and heart rate.": "根据你最近几周的夜间数据得出。血氧（SpO₂）、呼吸频率、呼吸暂停、心率变异性（HRV）和手腕温度来自 Apple 健康或 Android；Withings 只提供时间、阶段和心率。",
  "Talk to your doctor": "请咨询你的医生",

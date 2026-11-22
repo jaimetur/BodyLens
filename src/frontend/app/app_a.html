@@ -822,7 +822,14 @@ body.locked .cnbar,body.pdfx .cnbar,body.locked .swdots,body.pdfx .swdots{displa
 .morep-h .morep-x{flex:none;padding:0;width:34px;height:34px;border-radius:50%;background:#e8573a;color:#fff;font-size:.95rem;box-shadow:0 2px 8px rgba(232,87,58,.3)}
 .mgrp{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:12px}
 .mli{position:relative;display:flex;align-items:center;gap:12px;min-height:54px;padding:8px 12px;text-decoration:none;color:var(--ink);cursor:pointer;-webkit-tap-highlight-color:transparent}
-.mli+.mli::before{content:'';position:absolute;top:0;left:56px;right:0;border-top:1px solid var(--line)}
+.mli+.mli::before,.msub+.mli::before,.msub::before{content:'';position:absolute;top:0;left:56px;right:0;border-top:1px solid var(--line)}
+.mli-a{flex:1;min-width:0;align-self:stretch;display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit}
+.mexp{flex:none;width:42px;height:42px;margin:-4px -9px -4px 0;padding:0;border:0;border-radius:50%;background:none;display:grid;place-items:center;cursor:pointer}.mexp:active{background:var(--raised)}
+.mexp .mchev{stroke:var(--muted);transition:transform .2s}.mexp.open .mchev{transform:rotate(90deg)}
+.msub{position:relative;display:flex;flex-direction:column;padding:0 0 4px 56px}.msub[hidden]{display:none}
+.msl{display:flex;align-items:center;gap:10px;min-height:44px;padding-right:12px;text-decoration:none;color:var(--ink);font-size:.93rem;font-weight:500}.msl+.msl{border-top:1px solid var(--line)}
+.msl svg{flex:none;width:18px;height:18px;fill:none;stroke:var(--muted);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.msl.on{color:var(--weight);font-weight:700}.msl.on svg{stroke:var(--weight)}
 .mli:active{background:var(--raised)}
 .mic{flex:none;width:32px;height:32px;border-radius:9px;display:grid;place-items:center;background:var(--mc,var(--muted));color:#fff}
 .mic svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}

@@ -1766,6 +1766,7 @@
  "Syncing with your data sources belongs to {0}'s profile": "La synchronisation avec tes sources de données est celle du profil de {0}",
  "TEXT NOT NULL DEFAULT 'sheet'": "TEXT NOT NULL DEFAULT 'sheet'",
  "Table tennis": "Ping-pong",
+ "Tabs": "Onglets",
  "Take it": "Emporte-la",
  "Taken from your nights of the last weeks. SpO₂, respiratory rate, apnoea, heart rate variability (HRV) and wrist temperature come from Apple Health or Android; Withings only brings times, stages and heart rate.": "Calculé à partir de tes nuits des dernières semaines. La SpO₂, la fréquence respiratoire, l'apnée, la variabilité de la fréquence cardiaque (VFC) et la température du poignet viennent d'Apple Santé ou d'Android ; Withings n'apporte que les horaires, les phases et la fréquence cardiaque.",
  "Talk to your doctor": "Parle à ton médecin",

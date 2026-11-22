@@ -3739,15 +3739,18 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-actmet]');
     if(!more.hidden&&!inBar)more.setAttribute('aria-current','page');else more.removeAttribute('aria-current')}
   {const f=applyModVis;applyModVis=function(){const r=f.apply(this,arguments);try{barApply()}catch(e){}return r}}
   // «Más»: a menu over the page, above the bottom bar (so «Más» closes it again), with every module and its tabs
-  const mp=document.createElement('div');mp.className='morep';mp.hidden=true;mp.setAttribute('role','dialog');mp.setAttribute('aria-modal','true');document.body.append(mp);let EDIT=false;
+  const MOPEN=new Set(),mp=document.createElement('div');mp.className='morep';mp.hidden=true;mp.setAttribute('role','dialog');mp.setAttribute('aria-modal','true');document.body.append(mp);let EDIT=false;
   const lbl=v=>{const s=document.querySelector(`#railNav a[data-v="${v}"] span`)||document.querySelector(`#tabNav a[data-v="${v}"] span`);return s?s.textContent.trim():v};
   const mic=v=>`<i class="mic" style="--mc:var(--${MC[v]||'muted'})"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[v]||''}</svg></i>`;
   const chev='<svg class="mchev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
   function moreDraw(){const f=favs(),cur=modOf(VIEW),vis=visMods().map(a=>a.dataset.v);let h;
-    if(!EDIT){const sub=v=>{const ps=partsOf(v);return ps.length>1?`<small>${ps.map(p=>`<span>${esc(p.l)}</span>`).join('<i>·</i>')}</small>`:''};
-      const ext=SRV_V.map(([v])=>{const a=document.querySelector(`#railNav a[data-v="${v}"]`);return a&&getComputedStyle(a).display!=='none'?`<a class="mli${v===cur?' cur':''}" href="#${v}">${mic(v)}<span class="mli-t"><b>${esc(lbl(v))}</b></span>${chev}</a>`:''}).join('');
+    if(!EDIT){// a module: its name opens it (on the tab you last used); its arrow unfolds its tabs, to go straight to one
+      const mrow=(v,go)=>{const ps=partsOf(v),ex=ps.length>1,op=ex&&MOPEN.has(v),sub=ex?`<small>${ps.map(p=>`<span>${esc(p.l)}</span>`).join('<i>·</i>')}</small>`:'';
+        return `<div class="mli${v===cur?' cur':''}"><a class="mli-a" href="#${v}"${go?` data-mgo="${v}"`:''}>${mic(v)}<span class="mli-t"><b>${esc(lbl(v))}</b>${sub}</span></a>`+
+          (ex?`<button type="button" class="mexp${op?' open':''}" data-mexp="${v}" aria-expanded="${op}" aria-label="Pestañas">${chev}</button></div><div class="msub"${op?'':' hidden'}>${ps.map(p=>chip(p).replace('class="','class="msl ').replace('">','">'+(p.ic||'')+'<span>').replace(/<\/a>$/,'</span></a>')).join('')}</div>`:`${chev}</div>`)};
+      const ext=SRV_V.map(([v])=>{const a=document.querySelector(`#railNav a[data-v="${v}"]`);return a&&getComputedStyle(a).display!=='none'?mrow(v,false):''}).join('');
       h=`<div class="morep-h"><b>Todos los módulos</b><button type="button" data-medit>Editar la barra</button><button type="button" class="morep-x" data-mclose aria-label="Cerrar">✕</button></div>`+
-        `<div class="mgrp">${vis.map(v=>`<a class="mli${v===cur?' cur':''}" href="#${v}" data-mgo="${v}">${mic(v)}<span class="mli-t"><b>${esc(lbl(v))}</b>${sub(v)}</span>${chev}</a>`).join('')}</div>${ext?`<div class="mgrp">${ext}</div>`:''}`}
+        `<div class="mgrp">${vis.map(v=>mrow(v,true)).join('')}</div>${ext?`<div class="mgrp">${ext}</div>`:''}`}
     else{const auto=isAuto(),inBar=vis.filter(v=>f.includes(v)),rest=vis.filter(v=>!f.includes(v)),full=inBar.length>=4;
       const row=(v,b)=>`<div class="mli">${mic(v)}<span class="mli-t"><b>${esc(lbl(v))}</b></span>${b}</div>`;
       h=`<div class="morep-h"><b>Editar la barra</b><button type="button" data-medit>Listo</button></div>`+
@@ -3769,6 +3772,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-actmet]');
       if(dy>90){b.style.transform='translateY(100%)';setTimeout(mClose,200)}else b.style.transform=''})}
   mp.addEventListener('click',e=>{if(e.target===mp||e.target.closest('[data-mclose]')){mClose();return}
     if(e.target.closest('[data-medit]')){EDIT=!EDIT;moreDraw();return}
+    const x=e.target.closest('[data-mexp]');if(x){const v=x.dataset.mexp,o=!MOPEN.has(v);if(o)MOPEN.add(v);else MOPEN.delete(v);x.classList.toggle('open',o);x.setAttribute('aria-expanded',o);const u=x.parentNode.nextElementSibling;if(u)u.hidden=!o;return}
     const s=e.target.closest('[data-fav]');if(s){if(s.disabled)return;const v=s.dataset.fav;let f=favs();f=f.includes(v)?f.filter(x=>x!==v):[...f,v];
       if(f.length&&f.length<=4){bset({auto:false,favs:f});barApply();moreDraw()}return}
     const g=e.target.closest('[data-mgo]');if(g){e.preventDefault();e.stopPropagation();mClose();const t=tn.querySelector(`.tab[data-v="${g.dataset.mgo}"]`);if(t)t.click();return}

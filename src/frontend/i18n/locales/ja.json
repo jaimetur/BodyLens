@@ -1766,6 +1766,7 @@
  "Syncing with your data sources belongs to {0}'s profile": "データソースとの同期は、{0} のプロフィールのものです",
  "TEXT NOT NULL DEFAULT 'sheet'": "TEXT NOT NULL DEFAULT 'sheet'",
  "Table tennis": "卓球",
+ "Tabs": "タブ",
  "Take it": "いつでも",
  "Taken from your nights of the last weeks. SpO₂, respiratory rate, apnoea, heart rate variability (HRV) and wrist temperature come from Apple Health or Android; Withings only brings times, stages and heart rate.": "ここ数週間の夜のデータから算出しています。SpO₂、呼吸数、無呼吸、心拍変動 (HRV)、手首の皮膚温は Apple ヘルスケアまたは Android から取得します。Withings から得られるのは時刻、ステージ、心拍数のみです。",
  "Talk to your doctor": "医師に相談しましょう",
