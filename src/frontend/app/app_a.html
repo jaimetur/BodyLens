@@ -813,22 +813,32 @@ body:not(.viewer) .sxcal i[data-sxd]:not(.fut){cursor:pointer}.sxcal i[data-sxd]
 .cnbar-n a.on{color:var(--ink);box-shadow:inset 0 -2px 0 var(--ink)}
 body.locked .cnbar,body.pdfx .cnbar,body.locked .swdots,body.pdfx .swdots{display:none!important}
 .tab.xfav{display:none!important}#tabMore[hidden]{display:none!important}
-.morep{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.4);display:flex;align-items:flex-end;justify-content:center}
-.morep-b{width:100%;max-height:82vh;max-height:82dvh;overflow-y:auto;overscroll-behavior:contain;background:var(--surface);color:var(--ink);border-radius:22px 22px 0 0;padding:14px 14px max(16px,env(safe-area-inset-bottom,0px));box-shadow:var(--shadow)}
-.morep-h{display:flex;align-items:center;gap:8px;margin:2px 0 8px 4px}.morep-h b{flex:1}.morep-g{display:block;width:44px;height:5px;border-radius:3px;background:var(--line);margin:-4px auto 10px}.morep-h .morep-x{flex:none;padding:0;width:44px;height:44px;border-radius:50%;border:0;background:#e8573a;color:#fff;font-size:1.3rem;font-weight:700;box-shadow:0 2px 10px rgba(232,87,58,.35);cursor:pointer}.morep-h b{font-family:var(--display);font-size:1.35rem;letter-spacing:.02em;text-transform:uppercase}
-.morep-h button{border:1px solid var(--line);background:var(--raised);color:var(--ink);font:inherit;font-size:.82rem;font-weight:600;border-radius:999px;padding:7px 13px;cursor:pointer}
-.morep-p{margin:0 4px 8px;color:var(--muted);font-size:.84rem}
-.mrow{display:flex;flex-direction:column;gap:8px;padding:10px 4px;border-top:1px solid var(--line)}
-.mrow-h{display:flex;align-items:center;gap:8px}
-.mrow-h a{flex:1;display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-weight:700;font-size:1rem}
-.mrow-h svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
-.mrow-h.cur a{color:var(--accent)}
-.mstar{border:1px solid var(--line);background:var(--raised);color:var(--muted);font:inherit;font-size:.78rem;font-weight:600;border-radius:999px;padding:6px 11px;cursor:pointer}
-.mstar.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
-.mchips,.mfoot{display:flex;flex-wrap:wrap;gap:6px}.mchips{padding-left:32px}
-.mfoot{padding:12px 4px 2px;border-top:1px solid var(--line)}
-.mchips a,.mfoot a{text-decoration:none;color:var(--ink);background:var(--raised);border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-size:.82rem;font-weight:600}
-.mchips a.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.morep{position:fixed;left:0;right:0;top:0;bottom:0;z-index:24;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center}
+.morep-b{width:100%;max-height:calc(100% - max(28px,env(safe-area-inset-top,0px)));overflow-y:auto;overscroll-behavior:contain;background:var(--bg);color:var(--ink);border-radius:20px 20px 0 0;padding:8px 14px 12px;box-shadow:0 -8px 30px rgba(0,0,0,.18);animation:mpup .18s ease-out}
+@keyframes mpup{from{transform:translateY(30px);opacity:.5}}
+.morep-g{display:block;width:40px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 8px}
+.morep-h{display:flex;align-items:center;gap:8px;margin:0 2px 10px}.morep-h b{flex:1;font-family:var(--display);font-size:1.3rem;letter-spacing:.02em;text-transform:uppercase}
+.morep-h button{border:0;background:none;color:var(--weight);font:inherit;font-size:.95rem;font-weight:700;padding:8px 4px;cursor:pointer}
+.morep-h .morep-x{flex:none;padding:0;width:34px;height:34px;border-radius:50%;background:#e8573a;color:#fff;font-size:.95rem;box-shadow:0 2px 8px rgba(232,87,58,.3)}
+.mgrp{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:12px}
+.mli{position:relative;display:flex;align-items:center;gap:12px;min-height:54px;padding:8px 12px;text-decoration:none;color:var(--ink);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.mli+.mli::before{content:'';position:absolute;top:0;left:56px;right:0;border-top:1px solid var(--line)}
+.mli:active{background:var(--raised)}
+.mic{flex:none;width:32px;height:32px;border-radius:9px;display:grid;place-items:center;background:var(--mc,var(--muted));color:#fff}
+.mic svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mli-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.mli-t b{font-size:1rem;font-weight:600}
+.mli-t small{color:var(--muted);font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mli-t small i{font-style:normal;margin:0 5px;opacity:.6}
+.mchev{flex:none;width:18px;height:18px;fill:none;stroke:var(--faint);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.mli.cur{background:color-mix(in srgb,var(--weight) 9%,transparent)}.mli.cur b{color:var(--weight)}
+.mcap{margin:2px 6px 6px;color:var(--muted);font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.mnote{margin:-2px 6px 8px;color:var(--muted);font-size:.82rem}.mli-t.mwrap small{white-space:normal}
+.mbtn{flex:none;width:30px;height:30px;border-radius:50%;border:0;color:#fff;font-size:1.3rem;font-weight:700;line-height:1;display:grid;place-items:center;cursor:pointer;padding:0}
+.mdel{background:#e8573a}.madd{background:#2fa35b}.mbtn:disabled{opacity:.3;cursor:default}
+.msw{-webkit-appearance:none;appearance:none;flex:none;width:50px;height:30px;margin:0;border-radius:999px;background:var(--line);position:relative;cursor:pointer;transition:background .2s}
+.msw::after{content:'';position:absolute;top:2px;left:2px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
+.msw:checked{background:#2fa35b}.msw:checked::after{transform:translateX(20px)}
+#tabMore.mopen{color:var(--weight)}#tabMore.mopen svg{stroke-width:2.2}
+body.mopen .btabs,body.mopen .rangefloat,body.mopen .swdots,body.mopen .cnbar{visibility:hidden}
 .rangefloat:not(.rfopen){left:auto;right:max(12px,env(safe-area-inset-right,0px));transform:none}
 .rangefloat:not(.rfopen) .seg button:not(.on){display:none}
 .rangefloat:not(.rfopen) .seg button.on{padding:8px 12px}

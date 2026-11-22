@@ -3715,36 +3715,65 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-actmet]');
   function cbarCheck(){let on=false;if(mob()&&!document.body.classList.contains('locked')){const t=!document.body.classList.contains('hasbt')&&document.querySelector('.view:not([hidden]) .cuetabs');const el=t&&t.getClientRects().length?t:ab;on=el.getBoundingClientRect().bottom<0}
     if(on&&!shown)try{cbarDraw()}catch(e){}shown=on;bar.classList.toggle('on',on)}
   addEventListener('scroll',cbarCheck,{passive:true});addEventListener('resize',cbarCheck);
-  // 2. bottom bar: with more than 5 modules, 4 of them (chosen in «Más») and «Más», which opens every module with its tabs
+  // 2. bottom bar: with more than 5 modules, 4 of them and «Más», a menu with every module. The 4 are the ones used most on this
+  //    device (counted per profile and worked out once per visit, so the bar does not move while you use it), or the ones chosen in
+  //    «Más» → «Editar la barra»
+  const MC={resumen:'weight',peso:'weight',composicion:'mus',actividad:'act',sueno:'slp',comidas:'fat',intimo:'nap',historial:'wat'};
   const more=document.createElement('a');more.className='tab';more.id='tabMore';more.href='#';more.hidden=true;
   more.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg><span>Más</span>';tn.append(more);
   const visMods=()=>[...tn.querySelectorAll('.tab[data-v]')].filter(a=>!a.hidden&&!a.classList.contains('nomod'));
-  function favs(){const vis=visMods().map(a=>a.dataset.v);let f=Array.isArray(UI.favs)?UI.favs.filter(v=>vis.includes(v)).slice(0,4):[];if(!f.length)f=vis.slice(0,4);return f}
+  const PK=typeof SEL==='string'?SEL:'_',bcfg=()=>{const b=(UI.bar||{})[PK];return b&&typeof b==='object'?b:{}};
+  function bset(o){UI.bar={...(UI.bar||{}),[PK]:{...bcfg(),...o}};saveUI()}
+  const isAuto=()=>bcfg().auto!==false;let AUTOF=null;
+  function topUsed(){const u=bcfg().use||{};return visMods().map((a,i)=>({v:a.dataset.v,i,s:u[a.dataset.v]||0})).sort((a,b)=>b.s-a.s||a.i-b.i).slice(0,4).sort((a,b)=>a.i-b.i).map(x=>x.v)}
+  function favs(){const vis=visMods().map(a=>a.dataset.v);
+    if(isAuto()){if(!AUTOF||AUTOF.some(v=>!vis.includes(v)))AUTOF=topUsed();return [...AUTOF]}
+    const f=Array.isArray(bcfg().favs)?bcfg().favs.filter(v=>vis.includes(v)).slice(0,4):[];return f.length?f:vis.slice(0,4)}
+  // each module opened adds 1 to its count, and the older counts fade a little, so what you use lately weighs more
+  let LASTM='';function useCount(){const m=modOf(VIEW);if(!m||m===LASTM||document.body.classList.contains('locked'))return;LASTM=m;
+    const u={...(bcfg().use||{})};for(const k in u)u[k]=Math.round(u[k]*970)/1000;u[m]=(u[m]||0)+1;bset({use:u})}
   function barApply(){const vis=visMods();if(vis.length<=5){tn.querySelectorAll('.tab.xfav').forEach(a=>a.classList.remove('xfav'));more.hidden=true;return}
     const f=favs();for(const a of tn.querySelectorAll('.tab[data-v]'))a.classList.toggle('xfav',!f.includes(a.dataset.v));more.hidden=false;
     const n=f.length+1;tn.dataset.n=n;document.body.classList.toggle('tabbig',n<=4);document.body.classList.toggle('tabmid',n===5||n===6);moreMark()}
   function moreMark(){const cur=modOf(VIEW),inBar=[...tn.querySelectorAll('.tab[data-v]:not(.xfav)')].some(a=>a.dataset.v===cur&&!a.classList.contains('nomod'));
     if(!more.hidden&&!inBar)more.setAttribute('aria-current','page');else more.removeAttribute('aria-current')}
   {const f=applyModVis;applyModVis=function(){const r=f.apply(this,arguments);try{barApply()}catch(e){}return r}}
+  // «Más»: a menu over the page, above the bottom bar (so «Más» closes it again), with every module and its tabs
   const mp=document.createElement('div');mp.className='morep';mp.hidden=true;mp.setAttribute('role','dialog');mp.setAttribute('aria-modal','true');document.body.append(mp);let EDIT=false;
   const lbl=v=>{const s=document.querySelector(`#railNav a[data-v="${v}"] span`)||document.querySelector(`#tabNav a[data-v="${v}"] span`);return s?s.textContent.trim():v};
-  function moreDraw(){const f=favs(),cur=modOf(VIEW);
-    const rows=visMods().map(a=>{const v=a.dataset.v,ps=partsOf(v),fav=f.includes(v);
-      return `<div class="mrow"><div class="mrow-h${v===cur?' cur':''}"><a href="#${v}" data-mgo="${v}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[v]||''}</svg><span>${esc(lbl(v))}</span></a>${EDIT?`<button type="button" class="mstar${fav?' on':''}" data-fav="${v}" aria-pressed="${fav}">${fav?'En la barra':'Añadir'}</button>`:''}</div>${!EDIT&&ps.length>1?`<div class="mchips">${ps.map(chip).join('')}</div>`:''}</div>`}).join('');
-    const extra=EDIT?'':SRV_V.map(([v])=>{const a=document.querySelector(`#railNav a[data-v="${v}"]`);return a&&getComputedStyle(a).display!=='none'?`<a href="#${v}">${esc(lbl(v))}</a>`:''}).join('');
-    mp.innerHTML=`<div class="morep-b"><i class="morep-g" aria-hidden="true"></i><div class="morep-h"><b>Todos los módulos</b><button type="button" data-medit>${EDIT?'Listo':'Editar la barra'}</button><button type="button" class="morep-x" data-mclose aria-label="Cerrar">✕</button></div>${EDIT?'<p class="morep-p">Elige hasta 4 módulos para la barra de abajo; los demás quedan en «Más».</p>':''}${rows}${extra?`<div class="mfoot">${extra}</div>`:''}</div>`}
-  more.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();EDIT=false;moreDraw();mp.hidden=false});
+  const mic=v=>`<i class="mic" style="--mc:var(--${MC[v]||'muted'})"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[v]||''}</svg></i>`;
+  const chev='<svg class="mchev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+  function moreDraw(){const f=favs(),cur=modOf(VIEW),vis=visMods().map(a=>a.dataset.v);let h;
+    if(!EDIT){const sub=v=>{const ps=partsOf(v);return ps.length>1?`<small>${ps.map(p=>`<span>${esc(p.l)}</span>`).join('<i>·</i>')}</small>`:''};
+      const ext=SRV_V.map(([v])=>{const a=document.querySelector(`#railNav a[data-v="${v}"]`);return a&&getComputedStyle(a).display!=='none'?`<a class="mli${v===cur?' cur':''}" href="#${v}">${mic(v)}<span class="mli-t"><b>${esc(lbl(v))}</b></span>${chev}</a>`:''}).join('');
+      h=`<div class="morep-h"><b>Todos los módulos</b><button type="button" data-medit>Editar la barra</button><button type="button" class="morep-x" data-mclose aria-label="Cerrar">✕</button></div>`+
+        `<div class="mgrp">${vis.map(v=>`<a class="mli${v===cur?' cur':''}" href="#${v}" data-mgo="${v}">${mic(v)}<span class="mli-t"><b>${esc(lbl(v))}</b>${sub(v)}</span>${chev}</a>`).join('')}</div>${ext?`<div class="mgrp">${ext}</div>`:''}`}
+    else{const auto=isAuto(),inBar=vis.filter(v=>f.includes(v)),rest=vis.filter(v=>!f.includes(v)),full=inBar.length>=4;
+      const row=(v,b)=>`<div class="mli">${mic(v)}<span class="mli-t"><b>${esc(lbl(v))}</b></span>${b}</div>`;
+      h=`<div class="morep-h"><b>Editar la barra</b><button type="button" data-medit>Listo</button></div>`+
+        `<div class="mgrp"><label class="mli"><span class="mli-t mwrap"><b>Los más usados</b><small>${auto?'La barra muestra los 4 módulos que más usas.':'La barra muestra los módulos que elijas.'}</small></span><input type="checkbox" class="msw" data-mauto${auto?' checked':''}></label></div>`+
+        `<p class="mcap">En la barra</p><div class="mgrp">${inBar.map(v=>row(v,`<button type="button" class="mbtn mdel" data-fav="${v}" aria-label="Quitar"${inBar.length<2?' disabled':''}>−</button>`)).join('')}</div>`+
+        (rest.length?`<p class="mcap">En «Más»</p>${full?'<p class="mnote">La barra está llena: quita uno para añadir otro.</p>':''}<div class="mgrp">${rest.map(v=>row(v,`<button type="button" class="mbtn madd" data-fav="${v}" aria-label="Añadir"${full?' disabled':''}>+</button>`)).join('')}</div>`:'')}
+    mp.innerHTML=`<div class="morep-b"><i class="morep-g" aria-hidden="true"></i>${h}</div>`}
+  const box=()=>mp.querySelector('.morep-b');
+  function mOpen(){EDIT=false;moreDraw();mp.style.bottom=Math.round(tn.getBoundingClientRect().height)+'px';mp.hidden=false;more.classList.add('mopen');document.body.classList.add('mopen')}
+  function mClose(){if(mp.hidden)return;mp.hidden=true;more.classList.remove('mopen');document.body.classList.remove('mopen')}
+  more.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();if(mp.hidden)mOpen();else mClose()});
+  tn.addEventListener('click',()=>mClose());
+  addEventListener('hashchange',()=>mClose());
   // swipe down from the top of the panel (or from its handle) to close it
-  {let y0=null,dy=0;const box=()=>mp.querySelector('.morep-b');
+  {let y0=null,dy=0;
     mp.addEventListener('touchstart',e=>{const b=box();y0=e.touches.length===1&&b&&(b.scrollTop<=0||e.target.closest('.morep-g,.morep-h'))?e.touches[0].clientY:null;dy=0},{passive:true});
     mp.addEventListener('touchmove',e=>{if(y0==null)return;dy=e.touches[0].clientY-y0;const b=box();if(dy>0&&b){b.style.transition='none';b.style.transform=`translateY(${dy}px)`}},{passive:true});
     mp.addEventListener('touchend',()=>{if(y0==null)return;y0=null;const b=box();if(!b)return;b.style.transition='transform .2s ease';
-      if(dy>90){b.style.transform='translateY(100%)';setTimeout(()=>{mp.hidden=true;b.style.transform='';b.style.transition=''},200)}else b.style.transform=''})}
-  mp.addEventListener('click',e=>{if(e.target===mp||e.target.closest('[data-mclose]')){mp.hidden=true;return}
+      if(dy>90){b.style.transform='translateY(100%)';setTimeout(mClose,200)}else b.style.transform=''})}
+  mp.addEventListener('click',e=>{if(e.target===mp||e.target.closest('[data-mclose]')){mClose();return}
     if(e.target.closest('[data-medit]')){EDIT=!EDIT;moreDraw();return}
-    const s=e.target.closest('[data-fav]');if(s){let f=favs();const v=s.dataset.fav;if(f.includes(v)){if(f.length>1)f=f.filter(x=>x!==v)}else{if(f.length>=4)f.shift();f.push(v)}UI.favs=f;saveUI();barApply();moreDraw();return}
-    const g=e.target.closest('[data-mgo]');if(g){e.preventDefault();e.stopPropagation();mp.hidden=true;const t=tn.querySelector(`.tab[data-v="${g.dataset.mgo}"]`);if(t)t.click();return}
-    if(e.target.closest('a'))mp.hidden=true});
+    const s=e.target.closest('[data-fav]');if(s){if(s.disabled)return;const v=s.dataset.fav;let f=favs();f=f.includes(v)?f.filter(x=>x!==v):[...f,v];
+      if(f.length&&f.length<=4){bset({auto:false,favs:f});barApply();moreDraw()}return}
+    const g=e.target.closest('[data-mgo]');if(g){e.preventDefault();e.stopPropagation();mClose();const t=tn.querySelector(`.tab[data-v="${g.dataset.mgo}"]`);if(t)t.click();return}
+    if(e.target.closest('a'))mClose()});
+  mp.addEventListener('change',e=>{if(!e.target.matches('[data-mauto]'))return;if(e.target.checked){bset({auto:true});AUTOF=topUsed()}else bset({auto:false,favs:favs()});barApply();moreDraw()});
   // 3. period: folded to the one in use; a tap opens the others
   const rf=$('rangeFloat');
   rf.addEventListener('click',e=>{if(!mob())return;const b=e.target.closest('button[data-r]');if(!b)return;if(!rf.classList.contains('rfopen')){e.stopPropagation();e.preventDefault();rf.classList.add('rfopen');return}setTimeout(()=>rf.classList.remove('rfopen'),0)},true);
@@ -3763,7 +3792,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-actmet]');
     if(!on){rf.style.bottom='';return}bt.style.setProperty('--mc','var(--'+({resumen:'weight',peso:'weight',composicion:'mus',actividad:'act',sueno:'slp',comidas:'fat',intimo:'nap',historial:'wat'}[modOf(VIEW)]||'weight')+')');bt.innerHTML=ps.map(p=>chip(p).replace('">','">'+(p.ic||'')+'<span>').replace(/<\/a>$/,'</span></a>')).join('');bt.style.bottom=Math.round(tn.getBoundingClientRect().height)+'px';
     rf.style.bottom=Math.round(tn.getBoundingClientRect().height+bt.offsetHeight+10)+'px';const a=bt.querySelector('a.on');if(a)bt.scrollLeft=a.offsetLeft-(bt.clientWidth-a.offsetWidth)/2}
   addEventListener('resize',()=>{try{btDraw()}catch(e){}});
-  function sync(){try{btDraw();if(shown)cbarDraw();moreMark();dotsShow();if(!UI.swHint&&!HT)HT=setTimeout(hint,2500)}catch(e){}}
+  function sync(){try{btDraw();if(shown)cbarDraw();moreMark();useCount();dotsShow();if(!UI.swHint&&!HT)HT=setTimeout(hint,2500)}catch(e){}}
   {const f=applyVTabs;applyVTabs=function(){const r=f.apply(this,arguments);sync();return r}}
   addEventListener('hashchange',()=>setTimeout(()=>{sync();cbarCheck()},0));
   try{barApply()}catch(e){}sync()})();
