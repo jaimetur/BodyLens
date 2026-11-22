@@ -2307,12 +2307,13 @@ function renderSleepHist(L){const all=L.slp.filter(s=>s.asleep);if(!all.length){
   // calendario continuo por semanas (de lunes a domingo), como mucho las 18 últimas; el día 1 lleva el nombre del mes
   const byK={};for(const x of items)byK[x.k]=x;const today=d2k(new Date());
   let from=slpRange?addK(kEnd,-slpRange+1):all[0].k;const cap=addK(today,-(18*7-1));if(from<cap)from=cap;
-  const k0=addK(from,-dowIdx(from)),kLast=addK(today,6-dowIdx(today));
+  const kTop=!byK[today]&&addK(today,-dowIdx(today))>kEnd?kEnd:today;
+  const k0=addK(from,-dowIdx(from)),kLast=addK(kTop,6-dowIdx(kTop));
   const tall=Math.max(...items.filter(x=>x.k>=from).map(x=>x.v),1);let cells='';
   for(let k=k0;k<=kLast;k=addK(k,1)){const d=k2d(k).getDate(),x=byK[k];
     if(k>today){cells+='<div class="hc pad"></div>';continue}
     let inner='';if(x&&k>=from){if(SHM==='score')inner=`<span class="hring">${ringsSvg([{p:x.v/100,color:x.col}],'','')}</span><span class="hv">${x.v}</span>`;
-      else{const h=SHM==='bed'?60:Math.round(28+52*x.v/tall);inner=`<span class="hb" style="height:${h}%;background:${x.col}"><span>${x.txt}</span></span>`}}
+      else{const h=SHM==='bed'?70:Math.round(36+64*x.v/tall);inner=`<span class="hb" style="height:${h}%;background:${x.col}"><span>${x.txt}</span></span>`}}
     const lab=d===1||k===k0?`<span class="hm">${MS[k2d(k).getMonth()]}</span>`:'';
     cells+=`<button type="button" class="hc${x&&k>=from?'':' none'}${k<from?' out':''}${k===sel?' on':''}${k===today?' today':''}${d===1?' m1':''}" ${x&&k>=from?`data-pk="${k}" data-kind="slph"`:'disabled'}><span class="hd">${d}${lab}</span>${inner}</button>`}
   $('shCal').innerHTML=`<div class="hgrid">${DS.map(d=>`<span class="hw">${d}</span>`).join('')}${cells}</div>`}

@@ -518,8 +518,8 @@ table.yrs td b{display:block;font-weight:600}table.yrs td small{display:block;fo
 
 .pbwrap{display:flex;flex-direction:column;gap:6px}.pbnav{display:flex;align-items:center;gap:10px;margin-bottom:4px}.pbnav b{flex:1;text-align:center;font-size:.86rem}.pbnav .fnav{width:36px;height:36px}.pbars{touch-action:pan-y;-webkit-touch-callout:none;width:100%;height:auto;display:block;user-select:none;-webkit-user-select:none}
 .pbl{font-size:9.5px;fill:var(--muted);font-family:var(--mono)}
-.pbcap{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.74rem;color:var(--muted)}.pbcap b{color:var(--ink);font-family:var(--mono);font-weight:600}
-.pbk{display:inline-block;width:14px;height:0;vertical-align:middle;margin-right:5px}.pbk.avg{border-top:1.5px solid var(--ink)}.pbk.goal{border-top:1.5px dashed var(--muted)}.pbk.pill{border-top:1.8px dashed var(--ink)}.pbtag{font-size:10px;font-weight:700;font-family:var(--mono)}
+.pbcap{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.74rem;color:var(--muted)}.pbcap b{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
+.pbk{display:inline-block;width:14px;height:0;vertical-align:middle;margin-right:5px}.pbk.avg{border-top:1.5px solid var(--ink)}.pbk.goal{border-top:1.5px dashed var(--muted)}.pbk.pill{border:0;border-top:1.8px dashed var(--ink);background:none;padding:0;border-radius:0}.pbtag{font-size:10px;font-weight:700;font-family:var(--mono)}
 
 /* ---------- comidas ---------- */
 .hint{font-size:.76rem;color:var(--muted);margin:0;line-height:1.45}
@@ -636,15 +636,15 @@ table.yrs td b{display:block;font-weight:600}table.yrs td small{display:block;fo
 .hmons{display:flex;flex-direction:column;gap:16px;margin-top:6px}.hmon h3{margin:0 0 6px;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .hgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}.hw{text-align:center;font-size:.66rem;color:var(--faint);font-weight:600}
 .hc{position:relative;aspect-ratio:1/1.15;border:0;border-radius:8px;background:var(--raised);padding:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;overflow:hidden;color:var(--ink);font:inherit;min-width:0}
-.hc.pad{background:none;aspect-ratio:auto;height:0}.hc.out{opacity:.25}.hc.m1{box-shadow:inset 2px 0 0 var(--muted)}.hm{display:inline;margin-left:3px;font-size:.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:.02em}.hc.none{opacity:.45}.hc.on{box-shadow:inset 0 0 0 2px var(--ink)}.hc.today .hd{color:var(--weight)}
+.hc{padding-top:17px}.hc.pad{background:none;aspect-ratio:auto;height:0;padding:0}.hc.out{opacity:.25}.hc.m1{box-shadow:inset 2px 0 0 var(--muted)}.hm{display:inline;margin-left:3px;font-size:.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:.02em}.hc.none{opacity:.45}.hc.on{box-shadow:inset 0 0 0 2px var(--ink)}.hc.today .hd{color:var(--weight)}
 .hc .hd{position:absolute;top:3px;left:0;right:0;text-align:center;font-size:.68rem;font-weight:600}
 .hb{width:100%;display:flex;align-items:flex-end;justify-content:center;border-radius:6px 6px 0 0}.hb span{font-size:.62rem;font-weight:700;color:#fff;padding-bottom:3px;font-family:var(--mono)}
 .hring{position:absolute;inset:16px 6px 14px;display:flex;justify-content:center}.hring svg{height:100%;width:auto}.hring svg text{display:none}
 .hv{font-size:.62rem;font-weight:700;font-family:var(--mono);padding-bottom:2px}
 @media (min-width:700px){.hc{aspect-ratio:1/0.8}.hb span,.hv{font-size:.72rem}}
 /* en el ordenador las casillas son anchas: más bajas, el día arriba a la izquierda y la nota dentro del anillo */
-@media (min-width:900px){.hgrid{gap:5px}.hc{aspect-ratio:auto;height:92px}.hc .hd{text-align:left;left:9px;top:7px;font-size:.74rem}.hring{inset:10px 0 10px}.hv{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.9rem;padding:0}}
-body.pdfx .hgrid{gap:5px}body.pdfx .hc{aspect-ratio:auto;height:70px}body.pdfx .hc .hd{text-align:left;left:8px;top:6px;font-size:.74rem}body.pdfx .hring{inset:8px 0 8px}body.pdfx .hv{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.8rem;padding:0}
+@media (min-width:900px){.hgrid{gap:5px}.hc{aspect-ratio:auto;height:92px;padding-top:24px}.hc .hd{text-align:left;left:9px;top:7px;font-size:.74rem}.hring{inset:10px 0 10px}.hv{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.9rem;padding:0}}
+body.pdfx .hgrid{gap:5px}body.pdfx .hc{aspect-ratio:auto;height:70px;padding-top:22px}body.pdfx .hc .hd{text-align:left;left:8px;top:6px;font-size:.74rem}body.pdfx .hring{inset:8px 0 8px}body.pdfx .hv{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.8rem;padding:0}
 
 /* la barra de secciones y el selector de periodo van siempre abajo (antes subían arriba para quien no era Jaime, pero en la app de Claude de otras personas no hay aviso que los tape y quedaban encima de las pestañas) */
 
