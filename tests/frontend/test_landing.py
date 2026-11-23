@@ -11,6 +11,13 @@ def test_the_android_app_goes_to_sign_in(client):
     assert r.status_code == 303 and r.headers["location"] == "/login"
 
 
+def test_landing_path_moves_to_the_root(client):
+    for path in ("/landing", "/landing/"):
+        r = client.get(path, follow_redirects=False)
+        assert r.status_code == 301 and r.headers["location"] == "/"
+    assert client.get("/landing?lang=es", follow_redirects=False).headers["location"] == "/?lang=es"
+
+
 def test_landing_media_only_serves_media(client):
     assert client.get("/landing/media/../../backend/app/main.py").status_code == 404
     assert client.get("/landing/media/nothing.webp").status_code == 404

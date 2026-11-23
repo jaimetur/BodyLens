@@ -231,6 +231,14 @@ def pages_js():
     return _front("common", "pages.js", media_type="text/javascript", headers={"Cache-Control": "no-cache"})
 
 
+@router.get("/landing", include_in_schema=False)
+@router.get("/landing/", include_in_schema=False)
+def landing_redirect(request: Request):
+    """The landing page lives at the root of the site: /landing and /landing/ move there for good."""
+    q = request.url.query
+    return RedirectResponse("/" + (f"?{q}" if q else ""), status_code=301)
+
+
 @router.get("/landing/media/{name}")
 def landing_media(name: str):
     """Screenshots, videos and their manifest for the landing page (demo account, synthetic data). They are recorded
