@@ -83,6 +83,10 @@
  "4 digits": "4 cifras",
  "4 weeks": "4 semanas",
  "4 wk": "4 sem",
+ "4-week average": [
+  "Media 4 semanas",
+  "Media de 4 semanas"
+ ],
  "4-week pace": "Ritmo 4 semanas",
  "40 to 69 %": "De 40 a 69 %",
  "5 minutes without activity": "5 minutos sin actividad",
@@ -957,6 +961,7 @@
  "How does the free trial work?": "¿Cómo funciona la prueba gratuita?",
  "How each week splits into deep, REM, light and awake. Deep sleep repairs the body; REM, the memory: the bigger those two bands, the better.": "Reparto de cada semana entre sueño profundo, REM, ligero y despierto. El profundo repara el cuerpo; el REM, la memoria: cuanto más grandes esas dos franjas, mejor.",
  "How much you sleep": "Cuánto duermes",
+ "How much you sleep each night (median) in each week of the chosen period, or each month if it is longer than 6 months, with its moving average. With short periods, the last 12 weeks are shown.": "Lo que duermes cada noche (mediana) en cada semana del periodo elegido, o en cada mes si pasa de 6 meses, con su media móvil. Con periodos cortos se ven las 12 últimas semanas.",
  "How much you sleep on average in each week of the chosen period (in each month, if the period is longer than 6 months), compared with your target: the 0 line is your target; bars going down, what you were short each night on average. With short periods, the earlier weeks are also shown in grey for comparison.": "Cuánto duermes de media en cada semana del periodo elegido (en cada mes, si el periodo pasa de 6 meses), frente a tu objetivo: la línea del 0 es tu objetivo; las barras hacia abajo, lo que te faltó cada noche de media. Con periodos cortos se ven también, en gris, las semanas anteriores para comparar.",
  "How much you weigh in the morning compared with the surrounding days, depending on how you slept that night. Your whole history: {0} mornings with sleep and a weigh-in.": "Cuánto pesas por la mañana frente a los días de alrededor, según lo que dormiste esa noche. Todo tu historial: {0} mañanas con sueño y pesada.",
  "How much your heart rate drops in the first minute after exercise. The more, the better the cardiovascular recovery.": "Cuánto baja el pulso en el primer minuto tras el ejercicio. Cuanto más, mejor recuperación cardiovascular.",
@@ -1221,10 +1226,15 @@
  "Measurements must be between 10 and 300 cm.": "Las medidas tienen que estar entre 10 y 300 cm.",
  "Median": "Mediana",
  "Median of each month": "Mediana de cada mes",
+ "Median of each week": [
+  "Mediana de cada semana",
+  "Mediana de la semana"
+ ],
  "Median of how much your weight changes from one day to the next morning, depending on the day's score. It uses the {0} days with a score and a weight that day and the next, from all your records.": "Mediana de lo que cambia el peso de un día a la mañana siguiente, según la nota del día. Se usan los {0} días con nota y con peso ese día y el siguiente, de todo tu registro.",
  "Median of the month": "Mediana del mes",
  "Median of three weeks in the chosen period, to remove the scale's noise. The figure is your current value (median of the last two weeks).": "Mediana de tres semanas en el periodo elegido, para quitar el ruido de la báscula. La cifra es tu valor actual (mediana de las dos últimas semanas).",
  "Median time": "Hora mediana",
+ "Median time you fall asleep and get up in each week of the chosen period, or each month if it is longer than 6 months. With short periods, the last 12 weeks are shown.": "Hora mediana a la que te duermes y a la que te levantas en cada semana del periodo elegido, o en cada mes si pasa de 6 meses. Con periodos cortos se ven las 12 últimas semanas.",
  "Medium": "Medio",
  "Menstruation": "Menstruación",
  "Merge": "Juntar",

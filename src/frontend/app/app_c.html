@@ -467,7 +467,7 @@ function tsChart(host,o){
   return {X,Y,svg,w,m,H};
 }
 
-function barsChart(host,items,{fmt,labelOf,tipOf,colorOf,h,bandOf,lastOnly}){
+function barsChart(host,items,{fmt,labelOf,tipOf,colorOf,h,bandOf}){
   const H=h||220;const vals=items.map(i=>i.v).filter(v=>v!=null);if(!vals.length){host.innerHTML=emptyBox('Sin datos suficientes todavía.');return}
   const labs=items.map((it,i)=>labelOf(it,i,items)),two=labs.some(l=>Array.isArray(l));
   const {svg,w}=frame(host,H);const m={l:38,r:8,t:18,b:two?38:26};
@@ -483,7 +483,7 @@ function barsChart(host,items,{fmt,labelOf,tipOf,colorOf,h,bandOf,lastOnly}){
       const d=up?`M${cx-bwid/2},${y0} V${top+r} Q${cx-bwid/2},${top} ${cx-bwid/2+r},${top} H${cx+bwid/2-r} Q${cx+bwid/2},${top} ${cx+bwid/2},${top+r} V${y0} Z`
                 :`M${cx-bwid/2},${y0} V${top+hgt-r} Q${cx-bwid/2},${top+hgt} ${cx-bwid/2+r},${top+hgt} H${cx+bwid/2-r} Q${cx+bwid/2},${top+hgt} ${cx+bwid/2},${top+hgt-r} V${y0} Z`;
       el('path',{d,style:`fill:${colorOf(it)}`},svg);
-      if(!lastOnly&&items.length<=14||i===items.length-1)txt(svg,cx,up?top-5:top+hgt+12,fmt(it.v),{'text-anchor':'middle',class:'vlab'})}
+      if(items.length<=14||i===items.length-1)txt(svg,cx,up?top-5:top+hgt+12,fmt(it.v),{'text-anchor':'middle',class:'vlab'})}
     // etiquetas sin solaparse: se salta las que no caben según el ancho del texto
     const lw=Math.max(...labs.map(l=>Math.max(...[].concat(l).map(s=>String(s).length))))*6.6+6,step=Math.max(1,Math.ceil(lw/bw));
     if(i%step===0){const L=[].concat(labs[i]);txt(svg,cx,H-(two?22:8),L[0],{'text-anchor':'middle'});if(L[1])txt(svg,cx,H-8,L[1],{'text-anchor':'middle',class:'sub'})}});
@@ -2326,7 +2326,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('#shTabs [data-sh
 
 function renderSueno(){
   renderManualLife();
-  const L=LIFE;const ids=['chSched','chPh','chSlpW','chSlpTr','chClockTr','chSlpHist','slpWk','chPhPct','nightCard'];
+  const L=LIFE;const ids=['chSched','chPh','chSlpDow','chSlpW','chSlpTr','chClockTr','chSlpHist','slpWk','chPhPct','nightCard'];
   if(!L||!L.hasSlp){$('slpKv').innerHTML='';$('slpWTxt').textContent='';lifeEmpty(ids,'Aún no hay noches registradas. El sueño llega solo de Apple Salud (Apple Watch, AutoSleep), Android o Withings: conéctalos en Tu cuenta → Fuentes de datos.');return}
   const W=lifeWin(L.slp,slpRange),rows=W.rows,prev=W.prev;const av=(a,f)=>mean(a.map(f));
   const asleep=av(rows,s=>s.asleep),asleepP=av(prev,s=>s.asleep);
@@ -2352,6 +2352,11 @@ function renderSueno(){
   const pb=W.weekly?bins(rows,s=>1,true).map(b=>({k:b.k,days:7,n:b.n,asleep:mean(b.rs.map(slept)),bed:mean(b.rs.map(r=>slept(r)+(r.awake||0))),vals:pv.map(x=>mean(b.rs.map(r=>(r[x.id]||0)/60)))})):rows.map(s=>({k:s.k,days:1,asleep:slept(s),bed:slept(s)+(s.awake||0),vals:pv.map(x=>(s[x.id]||0)/60)}));
   colChart($('chPh'),{weekend:true,h:220,stack:true,layers:pv,items:pb,yFmt:v=>fmtN(v,0)+' h',empty:pv.length?'Sin fases registradas en este periodo.':'Todas las fases están ocultas. Toca una en la leyenda para verla.',
     tipOf:b=>`<b>${W.weekly?'Semana del '+fmtK(b.k,true)+' · por noche':'Noche del '+fmtK(addK(b.k,-1))+' al '+fmtK(b.k,true)}</b>`+pv.map((x,j)=>`<div class="r"><span><i class="sw" style="background:${x.color}"></i>${x.label}</span><span>${fmtDur(b.vals[j]*60)}</span></div>`).join('')+`<div class="r tot"><span>Total dormido</span><span>${fmtDur(b.asleep)}</span></div><div class="r"><span>Con ratos despierto</span><span>${fmtDur(b.bed)}</span></div>`});
+  // por noche de la semana (el día en que te acuestas)
+  const dw=Array.from({length:7},()=>[]);for(const s of rows)if(s.asleep)dw[dowIdx(addK(s.k,-1))].push(s.asleep/60);
+  const di=dw.map((a,i)=>({i,v:a.length?mean(a):null,n:a.length}));
+  if(di.filter(x=>x.n>=1).length<5)$('chSlpDow').innerHTML=emptyBox('Hacen falta más noches en este periodo.');
+  else barsChart($('chSlpDow'),di,{bandOf:x=>x.i>=4&&x.i<=5,h:200,fmt:v=>fmtN(v,1),labelOf:x=>DS[x.i],colorOf:x=>x.v>=SLEEP_GOAL?'var(--slp)':'var(--slp-soft)',tipOf:x=>`<b>Noche del ${DSN[x.i]}</b><div class="r"><span>Dormido de media</span><span>${fmtDur(x.v*60)}</span></div><div class="r"><span>Noches</span><span>${x.n}</span></div>`});
   // sueño y peso: el peso de la mañana frente a los días cercanos, según lo que dormiste
   const sr=L.slpRes||[];const B=[[0,6,'< 6 h'],[6,7,'6–7 h'],[7,8,'7–8 h'],[8,24,'≥ 8 h']].map(([a,b,l])=>{const xs=sr.filter(x=>x.h>=a&&x.h<b);return {l,n:xs.length,v:xs.length>=5?mean(xs.map(x=>x.res)):null}});
   $('slpWLead').textContent=`Cuánto pesas por la mañana frente a los días de alrededor, según lo que dormiste esa noche. Todo tu historial: ${sr.length} mañanas con sueño y pesada.`;
@@ -2698,18 +2703,6 @@ function drawSheet(){const S=SHEET,L=LIFE;if(!S)return;let h='';
 /* ---------- sueño: tendencias y estadísticas de más ---------- */
 const slept=r=>r.asleep!=null?r.asleep:null;
 const isWeekendNight=k=>{const d=dowIdx(addK(k,-1));return d===4||d===5}; // te acuestas viernes o sábado
-// de la hora de dormirte a la de levantarte por semana o mes: punto ámbar al dormirte, azul al levantarte, y tu horario objetivo en discontinua
-function clockBands(host,items,labelOf,titleOf){if(items.length<2){host.innerHTML=emptyBox('Hacen falta varias semanas con noches registradas.');return}
-  const H=230,{svg,w}=frame(host,H),m={l:44,r:52,t:12,b:items.some((p,i)=>Array.isArray(labelOf(p,i,items)))?38:24},o=SLP_SCHED.wd;
-  let lo=Math.min(o.bed,...items.map(p=>p.from))-30,hi=Math.max(o.wake,...items.map(p=>p.to))+30;lo=Math.floor(lo/60)*60;hi=Math.ceil(hi/60)*60;
-  const Y=v=>m.t+(v-lo)/(hi-lo)*(H-m.t-m.b),bw=(w-m.l-m.r)/items.length;
-  const g=el('g',{class:'grid'},svg);const st=hi-lo>720?240:hi-lo>360?120:60;for(let v=Math.ceil(lo/st)*st;v<=hi;v+=st){el('line',{x1:m.l,x2:w-m.r,y1:Y(v),y2:Y(v)},g);txt(svg,m.l-6,Y(v)+3.5,fmtClock(v),{'text-anchor':'end'})}
-  for(const [v,lab] of [[o.bed,'Objetivo'],[o.wake,'Objetivo']]){el('line',{x1:m.l,x2:w-m.r,y1:Y(v),y2:Y(v),style:'stroke:var(--good);stroke-width:1.5;stroke-dasharray:6 4'},svg);txt(svg,w-m.r+4,Y(v)+4,fmtClock(v),{style:'fill:var(--good);font-weight:700'})}
-  let lastX=-99;items.forEach((p,i)=>{const cx=m.l+i*bw+bw/2,op=p.inP===false?.35:1,ww=Math.max(2,Math.min(10,bw*.45)),r=Math.max(2.2,Math.min(5,bw*.32));
-    el('rect',{x:cx-ww/2,y:Y(p.from),width:ww,height:Math.max(1,Y(p.to)-Y(p.from)),rx:ww/2,style:`fill:var(--slp);opacity:${.45*op}`},svg);
-    el('circle',{cx,cy:Y(p.from),r,style:`fill:var(--warn);opacity:${op}`},svg);el('circle',{cx,cy:Y(p.to),r,style:`fill:var(--wat);opacity:${op}`},svg);
-    const lab=labelOf(p,i,items);if(cx-lastX>=24){lastX=cx;(Array.isArray(lab)?lab:[lab]).forEach((t,j)=>txt(svg,cx,H-m.b+14+j*12,t,{'text-anchor':'middle'}))}
-    const hit=el('rect',{x:m.l+i*bw,y:m.t,width:bw,height:H-m.t-m.b,style:'fill:transparent'},svg);const tt=document.createElementNS('http://www.w3.org/2000/svg','title');tt.textContent=`${titleOf(p.k)}: ${fmtClock(p.from)} → ${fmtClock(p.to)} (${p.n})`;hit.append(tt)})}
 function renderSleepExtra(L,W,rows){
   const all=L.slp;
   // 1. tendencia de todo el historial, mes a mes
@@ -2718,24 +2711,21 @@ function renderSleepExtra(L,W,rows){
   const mpts=f=>months.map(k=>({k:k+'-15',v:median(mm[k].map(f).filter(x=>x!=null)),n:mm[k].length})).filter(p=>p.v!=null);
   const dur=mpts(s=>slept(s)!=null?slept(s)/60:null);const ma=dur.map((p,i)=>({k:p.k,v:mean(dur.slice(Math.max(0,i-2),i+1).map(x=>x.v))}));
   const mTitle=k=>`${MSL[+k.slice(5,7)-1][0].toUpperCase()+MSL[+k.slice(5,7)-1].slice(1)} ${k.slice(0,4)}`;
-  // tendencia del periodo elegido frente a tu objetivo: semanas (hasta 6 meses) o meses; las cortas se completan con las 12 últimas semanas, en gris
-  const mlab=(p,i,a)=>{const m=+p.k.slice(5,7)-1,y=p.k.slice(2,4);return a.length>12?(m===0||i===0?[MSL[m][0].toUpperCase(),"'"+y]:MSL[m][0].toUpperCase()):(m===0||i===0?[MS[m],"'"+y]:MS[m])};
-  const G=SLEEP_GOAL*60,lastK=all[all.length-1].k,p0=slpRange?addK(lastK,-slpRange+1):all[0].k,span=diffK(p0,lastK)+1,byW=span<=182;
+  // tendencia y horas del periodo elegido, con el diseño de siempre: semanas (hasta 6 meses; las cortas, con las 12 últimas) o meses
+  const lastK=all[all.length-1].k,p0=slpRange?addK(lastK,-slpRange+1):all[0].k,span=diffK(p0,lastK)+1,byW=span<=182;
   const from=byW?monday(span<84?addK(lastK,-83):p0):p0.slice(0,7)+'-01',tg={};
-  for(const s of all){if(s.k<from||slept(s)==null)continue;const g=byW?monday(s.k):s.k.slice(0,7)+'-01';(tg[g]=tg[g]||[]).push(slept(s))}
-  const dv=Object.keys(tg).sort().filter(g=>tg[g].length>=(byW?3:5)).map(g=>{const h=mean(tg[g]);return {k:g,v:Math.round(h-G),h,n:tg[g].length,inP:byW?addK(g,6)>=p0:g.slice(0,7)>=p0.slice(0,7)}});
-  const wlab=(p,i,a)=>{const d=k2d(p.k),pm=i?k2d(a[i-1].k).getMonth():-1;return d.getMonth()!==pm?[String(d.getDate()),MS[d.getMonth()]]:String(d.getDate())};
-  const dfmt=v=>v===0?'0':(v>0?'+':'−')+fmtDur(Math.abs(v));
-  $('lgSlpTr').innerHTML=`<span class="lg static"><i class="sw" style="background:var(--good)"></i>Llegas a tu objetivo de ${fmtN(SLEEP_GOAL,SLEEP_GOAL%1?1:0)} h</span><span class="lg static"><i class="sw" style="background:var(--warn)"></i>Te falta hasta media hora</span><span class="lg static"><i class="sw" style="background:var(--bad)"></i>Te falta más</span>${dv.some(p=>!p.inP)?`<span class="lg static"><i class="sw" style="background:var(--line2)"></i>Antes del periodo</span>`:''}`;
-  if(dv.length<2)$('chSlpTr').innerHTML=emptyBox(byW?'Hacen falta varias semanas con noches registradas.':'Hacen falta varios meses con noches registradas.');
-  else barsChart($('chSlpTr'),dv,{h:210,lastOnly:true,fmt:dfmt,labelOf:byW?wlab:mlab,colorOf:p=>{const c=p.v>=0?'var(--good)':p.v>=-30?'var(--warn)':'var(--bad)';return p.inP?c:`color-mix(in srgb,${c} 30%,var(--line2))`},
-    tipOf:p=>`<b>${byW?'Semana del '+fmtK(p.k,true):mTitle(p.k)}</b><div class="r"><span>Dormido de media</span><span>${fmtDur(p.h)}</span></div><div class="r"><span>Frente a tu objetivo</span><span>${dfmt(p.v)}</span></div><div class="r"><span>Noches</span><span>${p.n}</span></div>`});
-  // a qué hora te duermes y te levantas: mismas semanas o meses que la tendencia, frente a tu horario objetivo
-  const cg={};for(const s of all){if(s.k<from||s.bed==null||s.wake==null)continue;const g=byW?monday(s.k):s.k.slice(0,7)+'-01';(cg[g]=cg[g]||[]).push(s)}
-  const cb=Object.keys(cg).sort().filter(g=>cg[g].length>=(byW?3:5)).map(g=>({k:g,from:median(cg[g].map(s=>s.bed)),to:median(cg[g].map(s=>s.wake)),n:cg[g].length,inP:byW?addK(g,6)>=p0:g.slice(0,7)>=p0.slice(0,7)}));
-  const o0=SLP_SCHED.wd;
-  $('lgClock').innerHTML=`<span class="lg static"><i class="sw" style="background:var(--warn);border-radius:50%"></i>Te duermes</span><span class="lg static"><i class="sw" style="background:var(--wat);border-radius:50%"></i>Te levantas</span><span class="lg static"><i class="sw" style="background:none;border-top:2px dashed var(--good);border-radius:0;height:0;width:14px"></i>Tu horario objetivo (${fmtClock(o0.bed)}–${fmtClock(o0.wake)})</span>`;
-  clockBands($('chClockTr'),cb,byW?wlab:mlab,k=>byW?'Semana del '+fmtK(k,true):mTitle(k));
+  for(const s of all){if(s.k<from)continue;const g=byW?monday(s.k):s.k.slice(0,7);(tg[g]=tg[g]||[]).push(s)}
+  const keys=Object.keys(tg).sort().filter(g=>tg[g].length>=(byW?3:5)),mid0=g=>byW?addK(g,3):g+'-15';
+  const ppts=f=>keys.map(g=>({k:mid0(g),v:median(tg[g].map(f).filter(x=>x!=null)),n:tg[g].length})).filter(p=>p.v!=null);
+  const durP=ppts(s=>slept(s)!=null?slept(s)/60:null),MW=byW?4:3,maP=durP.map((p,i)=>({k:p.k,v:mean(durP.slice(Math.max(0,i-MW+1),i+1).map(x=>x.v))}));
+  const GAP=byW?10:62,tT=k=>byW?'Semana del '+fmtK(addK(k,-3),true):mTitle(k);
+  $('lgSlpTr').innerHTML=legendHtml('slptr',[{id:'m',label:byW?'Mediana de cada semana':'Mediana de cada mes',sw:'dot',color:'var(--slp)'},{id:'ma',label:byW?'Media de 4 semanas':'Media de 3 meses',sw:'ln',color:'var(--ink)'}]);
+  tsChart($('chSlpTr'),{h:210,ml:36,series:[shown('slptr','m')&&{label:byW?'Mediana de la semana':'Mediana del mes',pts:durP,color:'var(--slp)',dots:true,dotR:3.5,width:1.4,op:.55,gap:GAP,tipTol:20},shown('slptr','ma')&&{label:byW?'Media 4 semanas':'Media 3 meses',pts:maP,color:'var(--ink)',width:2.4,gap:GAP,endDot:true,tipTol:20}],
+    refs:[{v:SLEEP_GOAL,label:SLEEP_GOAL+' h',scale:true}],vFmt:v=>fmtDur(v*60),yFmt:v=>fmtN(v,0)+' h',yStep:1,tipTitle:tT,empty:byW?'Hacen falta varias semanas con noches registradas.':'Hacen falta varios meses con noches registradas.'});
+  const bed=ppts(s=>s.bed),wake=ppts(s=>s.wake),mid=ppts(s=>s.bed!=null&&s.wake!=null?(s.bed+s.wake)/2:null);
+  $('lgClock').innerHTML=legendHtml('clock',[{id:'bed',label:'Te duermes',sw:'ln',color:'var(--slp)'},{id:'mid',label:'Mitad de la noche',sw:'dash',style:'color:var(--muted)'},{id:'wake',label:'Te levantas',sw:'ln',color:'var(--ph-awake)'}]);
+  tsChart($('chClockTr'),{h:210,ml:44,series:[shown('clock','bed')&&{label:'Te duermes',pts:bed,color:'var(--slp)',width:2.4,gap:GAP,dots:true,dotR:2.6,tipTol:20},shown('clock','mid')&&{label:'Mitad de la noche',pts:mid,color:'var(--muted)',width:1.4,dash:'4 4',gap:GAP,tipTol:20},shown('clock','wake')&&{label:'Te levantas',pts:wake,color:'var(--ph-awake)',width:2.4,gap:GAP,dots:true,dotR:2.6,tipTol:20}],
+    vFmt:fmtClock,yFmt:fmtClock,yStep:180,minPad:20,tipTitle:tT,empty:byW?'Hacen falta varias semanas con noches registradas.':'Hacen falta varios meses con noches registradas.'});
   const recent=months.slice(-3),old=months.slice(0,3);
   if(months.length>=8){const r=x=>median(recent.flatMap(k=>mm[k].map(x)).filter(v=>v!=null)),o=x=>median(old.flatMap(k=>mm[k].map(x)).filter(v=>v!=null));
     const dB=r(s=>s.bed)-o(s=>s.bed),dD=(r(s=>s.asleep)-o(s=>s.asleep));
@@ -3673,6 +3663,8 @@ function refPh(){const ph=(id,v,dec)=>{const el=$(id);if(el)el.placeholder=v==nu
   if($('mwType'))$('mwType').placeholder=wo&&wo[3]||'';ph('mwDur',wo&&wo[2]);ph('mwKcal',wo&&wo[4]);ph('mwDist',wo&&wo[6]!=null?wo[6]/1000:null,1);
   for(const [id,i,,,dec] of (typeof MH!=='undefined'?MH:[])){const r=lastRow(HK,v=>v[i]!=null);ph(id,r&&r[1][i],dec?1:0)}
   const mk=Object.keys((MED&&MED.e)||{}).sort().reverse();for(const [f] of (typeof MEDF!=='undefined'?MEDF:[])){const k=mk.find(k=>MED.e[k][f]!=null);ph('md-'+f,k?MED.e[k][f]:null,1)}}
+// iOS: si la página se acorta estando desplazada, las barras fijas se descolocan; se vuelve al final real
+try{new ResizeObserver(()=>{const mx=document.documentElement.scrollHeight-innerHeight;if(scrollY>mx+1)scrollTo(0,Math.max(0,mx))}).observe(document.body)}catch(e){}
 function renderView(){try{refPh()}catch(e){console.warn(e)}applyVTabs();if(VIEW==='sueno')try{renderBankTab()}catch(e){console.warn(e)}
   try{
     if(VIEW==='cuenta'||VIEW==='admin'||VIEW==='help'){srvShow(VIEW);if(VIEW==='cuenta')try{$('emb-cuenta').contentWindow.blPdFill()}catch(e){}return}

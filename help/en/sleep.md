@@ -49,13 +49,14 @@ Use it to see how you sleep: last night, your sleep balance, progress, schedule 
 
 - **Historical**: tabs **Score**, **Quality** (deep plus REM), **Sleep** (hours), **Deep**, **When you go to bed** and **Heart rate**. It shows bars for the period, with the goal line, and a calendar of up to 18 weeks; tapping a day selects it. With more than 6 weeks the calendar is a heat map: each day coloured with its value.
 - **Trends and details**, starting with figures for the period: **Asleep**, **In bed** (with efficiency), **You fall asleep** and **You get up** (median times), **Regularity** of your bedtime, **Nights of 7 h or more** (your goal), **Deep sleep** (with REM and light) and **HR while sleeping** (with its minimum).
-- **Trend**: a bar per week of the chosen period (per month if it is longer than 6 months) with how much you sleep on average above or below your goal (the 0 line): green if you reach it, amber if you are up to half an hour short, red if more. With short periods, the earlier weeks up to 12 are shown in grey for comparison. Tapping a bar shows its hours.
+- **Trend**: how much you sleep each night (median) in each week of the chosen period, or each month if it is longer than 6 months, with its moving average (4 weeks or 3 months) and your goal line. With short periods, the last 12 weeks are shown.
 
 ## Schedule
 
 - **Schedule**: from when you fall asleep until you wake up, night by night. In green, what you slept up to your target wake-up time; in red, what you slept after it (the weekend is measured with its own schedule). Dashed lines: your usual time; solid lines: the moving average. **Auto**, **Week**, **Month**, **Quarter** and **Year** choose the window of the usual time: the median of all the nights of that week, month, quarter or year, also the ones outside the period shown.
-- **What time you sleep**: for the same weeks or months as Trend, an amber dot at your usual time of falling asleep and a blue one at your wake-up time, joined by a bar, with your target schedule as dashed green lines.
+- **What time you sleep**: median time you fall asleep, the middle of the night and the time you get up, for the same weeks or months as Trend.
 - **Weekdays and weekends**: Sunday to Thursday nights compared with Friday and Saturday. For time asleep, falling asleep, the middle of the night and getting up, a dot for weekdays and another for weekends on the same scale, with the difference; below, your "social jet lag".
+- **By night of the week**: average hours slept according to the day you go to bed.
 
 ## Analysis
 
