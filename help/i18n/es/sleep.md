@@ -1,4 +1,4 @@
-<!-- en: 8d7d6eff0907711b -->
+<!-- en: 471d18422bba8352 -->
 # Sueño
 
 Sirve para ver cómo duermes: la última noche, tu saldo de sueño, la evolución, el horario y el análisis. Incluye siestas, fases del sueño y comparaciones con tu peso.
@@ -63,7 +63,7 @@ Sirve para ver cómo duermes: la última noche, tu saldo de sueño, la evolució
 
 - **Lo que dice tu sueño**: frases con tus propios datos.
 - **Fases del sueño**: horas de cada fase por noche.
-- **Calidad: sueño profundo y REM**: una barra por semana repartida entre profundo, REM, ligero y despierto.
+- **Calidad: sueño profundo y REM**: una barra por noche (por semana si el periodo pasa de 1 mes) repartida entre profundo, REM, ligero y despierto.
 - **Cuánto duermes**: desglose de las noches del periodo por horas dormidas: en verde los tramos que llegan a tu objetivo, en ámbar los que se quedan a menos de 1 hora.
 - **Sueño y peso**: cuánto pesas por la mañana frente a los días de alrededor, según cómo dormiste esa noche (con todo tu historial).
 

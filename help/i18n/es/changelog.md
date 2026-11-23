@@ -1,4 +1,4 @@
-<!-- en: 42fe392face9fc1a -->
+<!-- en: 40c6eddb1d23b3f8 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -80,7 +80,7 @@
 #### 🚀 Mejoras:
 - **Un único importador** (Tu cuenta → Datos y copias) para la copia completa y para el `snap.json` de la versión anterior. Si la copia tiene varios perfiles, eliges cuál importar.
 - **Comidas:**
-- **Gráficas de sueño, reorganizadas y más claras:** cada pestaña trata un tema (Noche, Saldo, Evolución, Horario, Análisis) y desaparecen los paneles repetidos (Horas de sueño y el calendario de 16 semanas). Saldo pone primero el plan para saldar la deuda, en tarjetas, y muestra noche a noche en barras verdes y rojas con la lista plegada; Tendencia y A qué hora duermes siguen el periodo elegido, por semanas (por meses a partir de 6 meses); Entre semana y fin de semana usa puntos sobre una misma escala; Calidad es una barra por semana repartida por fases; el calendario del Histórico pasa a mapa de calor con más de 6 semanas; los medidores de bienestar muestran dos cifras cada uno y el resto en Más.
+- **Gráficas de sueño, reorganizadas y más claras:** cada pestaña trata un tema (Noche, Saldo, Evolución, Horario, Análisis) y desaparecen los paneles repetidos (Horas de sueño y el calendario de 16 semanas). Saldo pone primero el plan para saldar la deuda, en tarjetas, y muestra noche a noche en barras verdes y rojas con la lista plegada; Tendencia y A qué hora duermes siguen el periodo elegido, por semanas (por meses a partir de 6 meses); Entre semana y fin de semana usa puntos sobre una misma escala; Calidad es una barra por noche (por semana a partir de 1 mes) repartida por fases; el calendario del Histórico pasa a mapa de calor con más de 6 semanas; los medidores de bienestar muestran dos cifras cada uno y el resto en Más.
   - Cada nota está en la fila de su comida, con botones grandes, y el Agua tiene su propia fila.
   - El registro del día va antes de la pérdida estimada.
   - El registro del día muestra arriba las últimas 4 semanas (de lunes a domingo) en lugar de una sola; las flechas saltan 4 semanas.

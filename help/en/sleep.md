@@ -62,7 +62,7 @@ Use it to see how you sleep: last night, your sleep balance, progress, schedule 
 
 - **What your sleep says**: sentences with your own data.
 - **Sleep stages**: hours of each stage per night.
-- **Quality: deep and REM sleep**: a bar per week split into deep, REM, light and awake.
+- **Quality: deep and REM sleep**: a bar per night (per week if the period is longer than 1 month) split into deep, REM, light and awake.
 - **How much you sleep**: breakdown of the period's nights by hours slept: green ranges reach your goal, amber ones are less than 1 hour short.
 - **Sleep and weight**: how much you weigh in the morning compared with the surrounding days, according to how you slept that night (using your whole history).
 

@@ -2750,9 +2750,11 @@ function renderSleepExtra(L,W,rows){
   const wk=bins(rows.filter(s=>slept(s)>0),s=>1,true);const pp=f=>wk.map(b=>({k:b.k,v:mean(b.rs.map(s=>(s[f]||0)/slept(s)*100))}));
   const PQ=[{id:'deep',label:'Profundo',color:'var(--ph-deep)'},{id:'rem',label:'REM',color:'var(--ph-rem)'},{id:'light',label:'Ligero',color:'var(--ph-light)'},{id:'awake',label:'Despierto',color:'var(--ph-awake)'}];
   $('lgPhPct').innerHTML=legendHtml('phpct',PQ);const qv=PQ.filter(x=>shown('phpct',x.id));
-  const qb=wk.filter(b=>b.rs.some(r=>r.deep!=null||r.rem!=null)).map(b=>{const t=b.rs.reduce((a,r)=>a+slept(r)+(r.awake||0),0);return {k:b.k,days:7,n:b.n,vals:qv.map(x=>t?b.rs.reduce((a,r)=>a+(r[x.id]||0),0)/t*100:0)}});
+  // hasta 1 mes, una barra por noche; con periodos más largos, una por semana
+  const perN=!!slpRange&&slpRange<=31,qg=perN?rows.filter(s=>slept(s)>0).map(s=>({k:s.k,days:1,n:1,rs:[s]})):wk.map(b=>({k:b.k,days:7,n:b.n,rs:b.rs}));
+  const qb=qg.filter(b=>b.rs.some(r=>r.deep!=null||r.rem!=null)).map(b=>{const t=b.rs.reduce((a,r)=>a+slept(r)+(r.awake||0),0);return {k:b.k,days:b.days,n:b.n,vals:qv.map(x=>t?b.rs.reduce((a,r)=>a+(r[x.id]||0),0)/t*100:0)}});
   colChart($('chPhPct'),{h:210,stack:true,layers:qv,items:qb,yFmt:v=>fmtInt(v)+' %',empty:qv.length?'Sin fases registradas en este periodo.':'Todas las fases están ocultas. Toca una en la leyenda para verla.',
-    tipOf:b=>`<b>Semana del ${fmtK(b.k,true)}</b>`+qv.map((x,j)=>`<div class="r"><span><i class="sw" style="background:${x.color}"></i>${x.label}</span><span>${fmtInt(b.vals[j])} %</span></div>`).join('')+`<div class="r"><span>Noches</span><span>${b.n}</span></div>`});
+    tipOf:b=>`<b>${perN?'Noche del '+fmtK(addK(b.k,-1))+' al '+fmtK(b.k,true):'Semana del '+fmtK(b.k,true)}</b>`+qv.map((x,j)=>`<div class="r"><span><i class="sw" style="background:${x.color}"></i>${x.label}</span><span>${fmtInt(b.vals[j])} %</span></div>`).join('')+(perN?'':`<div class="r"><span>Noches</span><span>${b.n}</span></div>`)});
   // 7. resumen en frases
   const notes=[];const last14=all.filter(s=>s.k>addK(last,-14)&&slept(s)!=null);
   if(last14.length>=7){const debt=last14.reduce((t,s)=>t+Math.max(0,SLEEP_GOAL*60-slept(s)),0);notes.push(['⏳',`En las últimas 2 semanas acumulas <b>${fmtDur(debt)}</b> de «deuda de sueño» (lo que te faltó para llegar a ${SLEEP_GOAL} h, noche a noche, en ${last14.length} noches registradas).`])}
