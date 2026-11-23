@@ -1,4 +1,4 @@
-<!-- en: dd0ee7d024e3539c -->
+<!-- en: 8575d106d4a34141 -->
 # Sueño
 
 Sirve para ver cómo duermes: la última noche, tu saldo de sueño, la evolución, el horario y el análisis. Incluye siestas, fases del sueño y comparaciones con tu peso.
@@ -50,12 +50,12 @@ Sirve para ver cómo duermes: la última noche, tu saldo de sueño, la evolució
 
 - **Histórico**: pestañas **Calificación**, **Calidad** (profundo más REM), **Sueño** (horas), **Profundo**, **Al acostarte** y **Pulso**. Muestra barras del periodo, con la línea del objetivo, y un calendario de hasta 18 semanas; al tocar un día se elige. Con más de 6 semanas el calendario es un mapa de calor: cada día coloreado con su valor.
 - **Tendencias y detalles**, empezando por las cifras del periodo: **Dormido**, **En la cama** (con la eficiencia), **Te duermes** y **Te levantas** (horas medianas), **Regularidad** de tu hora de dormirte, **Noches de 7 h o más** (tu objetivo), **Sueño profundo** (con REM y ligero) y **FC durmiendo** (con su mínima).
-- **Tendencia**: con todo tu historial, una barra por mes con cuánto duermes (mediana) por encima o por debajo de tu objetivo: verde si llegas, ámbar si te falta hasta media hora, rojo si más.
+- **Tendencia**: una barra por semana del periodo elegido (por mes si pasa de 6 meses) con cuánto duermes de media por encima o por debajo de tu objetivo (la línea del 0): verde si llegas, ámbar si te falta hasta media hora, rojo si más. Con periodos cortos se ven en gris las semanas anteriores, hasta 12, para comparar. Al tocar una barra se ven sus horas.
 
 ## Horario
 
 - **Horario**: desde que te duermes hasta que te despiertas, noche a noche. En verde, lo que dormiste hasta tu hora objetivo de levantarte; en rojo, lo que dormiste después (el fin de semana se mide con su propio horario). Líneas discontinuas: tu hora habitual; líneas continuas: la media móvil. **Auto**, **Semana**, **Mes**, **Trimestre** y **Año** eligen la ventana de la hora habitual: la mediana de todas las noches de esa semana, mes, trimestre o año, también las que quedan fuera del periodo mostrado.
-- **A qué hora duermes**: con todo tu historial, una franja por mes desde tu hora mediana de dormirte hasta la de levantarte, sobre tu horario objetivo, en verde hasta tu hora objetivo de levantarte y en rojo después.
+- **A qué hora duermes**: en las mismas semanas o meses que la Tendencia, un punto ámbar en tu hora habitual de dormirte y otro azul en la de levantarte, unidos por una barra, con tu horario objetivo en líneas verdes discontinuas.
 - **Entre semana y fin de semana**: noches de domingo a jueves comparadas con las de viernes y sábado. Para lo dormido, la hora de dormirte, la mitad de la noche y la de levantarte, un punto entre semana y otro el fin de semana sobre la misma escala, con la diferencia; debajo, tu «jet lag social».
 
 ## Análisis
