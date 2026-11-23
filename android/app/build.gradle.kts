@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "app.bodylens.android"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "app.bodylens.android"
         minSdk = 28
-        targetSdk = 35
+        targetSdk = 36
         versionCode = (System.getenv("BODYLENS_ANDROID_BUILD") ?: "1").toInt()
         versionName = "0.1." + (System.getenv("BODYLENS_ANDROID_BUILD") ?: "0")
     }
@@ -67,6 +67,6 @@ dependencies {
     implementation("androidx.health.connect:connect-client:1.1.0-alpha10")
     implementation("androidx.work:work-runtime-ktx:2.10.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("com.android.billingclient:billing-ktx:7.1.1")
+    implementation("com.android.billingclient:billing-ktx:8.0.0")
     implementation("androidx.fragment:fragment-ktx:1.8.5")   // activity results need Fragment 1.3+ (lint)
 }
