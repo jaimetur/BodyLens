@@ -30,42 +30,39 @@ Use it to see how you sleep: last night, your sleep balance, progress, schedule 
 - **Note for the day**: box to add a comment (up to 300 characters).
 - **Naps**: list of the day's naps with time, duration and heart rate, and a strip that places them next to the night. Naps add to the sleep balance.
 - **Add a night by hand**: the day you wake up, the time you went to bed and the time you got up. The night must last between 30 min and 20 h. The card lists the nights you logged, with **Remove**. If that night arrives later from your sources, the sources' night takes precedence; a night that already has data cannot be added by hand.
-- **Wellbeing from last night**: gauge-style indicators for the night (time asleep, preparation, sleeping heart rate, consistency, efficiency, deep sleep, awakenings and recommended bedtime for tonight). They are calculated from your last few weeks and need at least 3 nights.
+- **Wellbeing from last night**: gauge-style indicators for the night (time asleep, preparation, sleeping heart rate, consistency, efficiency, deep sleep, awakenings and recommended bedtime for tonight). Each one shows its two key figures; the rest, under **More**. They are calculated from your last few weeks and need at least 3 nights.
   - **Preparation** (0 to 100): 45 % night score, 30 % balance of the last week and 25 % sleeping heart rate compared with your last nights. Labels: Low, Fair, Good, Excellent.
-- Below them, a note on the sources: overnight SpO2, respiratory rate, apnoea, HRV and wrist temperature come from Apple Health or Android; Withings only provides schedules, stages and heart rate.
+- Below them, a note: they do not change with the chosen period, and on the sources: overnight SpO2, respiratory rate, apnoea, HRV and wrist temperature come from Apple Health or Android; Withings only provides schedules, stages and heart rate.
 
 ## Balance
 
-- **Sleep balance**: what you have slept in the last 7 nights, plus naps, compared with your goal per night. Nights without data do not count (nor does their goal). Positive is a surplus; negative, a debt. The ring shows the percentage and the text says how much you slept out of how much you needed. It also shows 7- and 14-night plans to pay off the debt.
+- **Sleep balance**: what you have slept in the last 7 nights, plus naps, compared with your goal per night. Nights without data do not count (nor does their goal). Positive is a surplus; negative, a debt. The ring shows the percentage and the text says how much you slept out of how much you needed. With no debt, it shows how much margin you have.
+- **Plan to pay off the debt**: if there is debt, right below, one card per plan with how much to sleep each night and what time to go to bed to pay it off in 3, 5, 7, 10 or 14 nights (the 7-night one is highlighted). It uses your average efficiency of the last month.
 - **Balance progress**: each point is the balance of the previous 7 nights; the bands and the red dots are weekends.
-- **Night by night**: what each night adds or subtracts (naps included). On nights without data, **Add** appears: you can log by hand the time you went to bed and got up (the night must last between 30 minutes and 20 hours). If the real night from Withings or Apple Health arrives later, it replaces it. Nights logged by hand can be edited or deleted.
+- **Night by night**: a bar per night, up in green for what it adds and down in red for what it subtracts (naps included), with how many nights add, how many subtract and the total. **See the night-by-night list** unfolds the list: on nights without data, **Add** appears and you can log by hand the time you went to bed and got up (the night must last between 30 minutes and 20 hours). If the real night from Withings or Apple Health arrives later, it replaces it. Nights logged by hand can be edited or deleted.
 - **In numbers**: average slept, nights on goal, current streak, days in debt, worst balance and naps contributed.
 - **Which nights put you in debt**: average balance by day of the week.
 - **How debt affects you**: compares your days with a lot of debt with the days when you are up to date in HRV, resting heart rate, steps, meal score and sleep score (needs at least 5 days of each type).
-- **Plan to pay off the debt**: if there is debt, a table with how much to sleep each night and what time to go to bed to pay it off in 3, 5, 7, 10 or 14 nights. It uses your average efficiency of the last month.
 - Tapping the balance card opens the report, with the target bedtime and wake-up time.
 
 ## Progress
 
-- **Historical**: tabs **Score**, **Quality** (deep plus REM), **Sleep** (hours), **Deep**, **When you go to bed** and **Heart rate**. It shows bars for the period and a calendar of up to 18 weeks; tapping a day selects it.
+- **Historical**: tabs **Score**, **Quality** (deep plus REM), **Sleep** (hours), **Deep**, **When you go to bed** and **Heart rate**. It shows bars for the period, with the goal line, and a calendar of up to 18 weeks; tapping a day selects it. With more than 6 weeks the calendar is a heat map: each day coloured with its value.
 - **Trends and details**, starting with figures for the period: **Asleep**, **In bed** (with efficiency), **You fall asleep** and **You get up** (median times), **Regularity** of your bedtime, **Nights of 7 h or more** (your goal), **Deep sleep** (with REM and light) and **HR while sleeping** (with its minimum).
-- **Hours of sleep** per night with the goal line.
-- **What your sleep says**: sentences with your own data.
-- **Trend**: monthly median of how much you sleep and its 3-month average, using your whole history.
-- **What time you sleep**: monthly median time you fall asleep and wake up.
+- **Trend**: using your whole history, a bar per month with how much you sleep (median) above or below your goal: green if you reach it, amber if you are up to half an hour short, red if more.
 
 ## Schedule
 
 - **Schedule**: from when you fall asleep until you wake up, night by night. In green, what you slept up to your target wake-up time; in red, what you slept after it (the weekend is measured with its own schedule). Dashed lines: your usual time; solid lines: the moving average. **Auto**, **Week**, **Month**, **Quarter** and **Year** choose the window of the usual time: the median of all the nights of that week, month, quarter or year, also the ones outside the period shown.
-- **Sleep stages**: hours of each stage per night (Apple Watch).
-- **By night of the week**: average hours slept according to the day you go to bed.
+- **What time you sleep**: using your whole history, a band per month from your median time of falling asleep to your median wake-up time, over your target schedule, green up to your target wake-up time and red after it.
+- **Weekdays and weekends**: Sunday to Thursday nights compared with Friday and Saturday. For time asleep, falling asleep, the middle of the night and getting up, a dot for weekdays and another for weekends on the same scale, with the difference; below, your "social jet lag".
 
 ## Analysis
 
-- **Sleep calendar**: hours for the last 16 weeks, more intense the more you sleep.
-- **How much you sleep**: breakdown of the period's nights by hours slept.
-- **Weekdays and weekends**: Sunday to Thursday nights compared with Friday and Saturday.
-- **Quality: deep and REM sleep**: share of each week in deep and in REM.
+- **What your sleep says**: sentences with your own data.
+- **Sleep stages**: hours of each stage per night.
+- **Quality: deep and REM sleep**: a bar per week split into deep, REM, light and awake.
+- **How much you sleep**: breakdown of the period's nights by hours slept: green ranges reach your goal, amber ones are less than 1 hour short.
 - **Sleep and weight**: how much you weigh in the morning compared with the surrounding days, according to how you slept that night (using your whole history).
 
 ## Source of the data and rules for nights

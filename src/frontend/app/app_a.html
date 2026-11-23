@@ -504,6 +504,11 @@ table.t tr.cur td{background:var(--raised)}table.t .xs-s{display:none}
 .shseg{display:flex;gap:6px;margin:4px 0 6px}.shseg button{font:inherit;font-size:.75rem;font-weight:600;padding:4px 10px;border-radius:99px;border:1px solid var(--line2);background:none;color:var(--muted)}.shseg button.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
 .bankch{width:100%;height:auto;display:block}.bankch .bkl{font-size:9px;font-weight:700;letter-spacing:.06em;fill:var(--muted)}.bankch .bkv{font-size:10px;font-weight:700;fill:var(--muted);font-family:var(--mono)}.bankch .bkd{font-size:10px;font-weight:700;fill:var(--ink)}
 .bknote{font-size:.72rem;color:var(--muted);margin:4px 0 10px}
+.lg.static{cursor:default}.dmlg{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.76rem;color:var(--muted);margin:2px 0 10px}.dmlg .dmd{position:static;display:inline-block;transform:none;margin-right:6px;vertical-align:-1px}
+.dmb{display:flex;flex-direction:column;gap:30px;padding:4px 4px 22px}.dml{display:flex;justify-content:space-between;align-items:baseline;font-size:.82rem;margin-bottom:12px}.dml b{font-variant-numeric:tabular-nums}.dml b.ok{color:var(--good)}.dml b.ko{color:var(--bad)}
+.dmt{position:relative;height:6px;border-radius:3px;background:var(--line2);margin:0 10px}.dmline{position:absolute;top:0;height:100%;background:color-mix(in srgb,var(--ink) 35%,transparent);border-radius:3px}.dmd{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;transform:translate(-50%,-50%);border:2px solid var(--surface)}.dmd.wd{background:var(--slp)}.dmd.we{background:var(--warn)}.dmd.lft em{left:auto;right:-2px;transform:none}.dmd.rgt em{left:-2px;transform:none}.dmd em{position:absolute;top:15px;left:50%;transform:translateX(-50%);font-style:normal;font-size:.68rem;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.bknch{width:100%;height:auto;display:block;margin:4px 0 6px}.bkfold{margin-top:10px}.bkfold>summary{cursor:pointer;font-size:.82rem;font-weight:600;color:var(--accent,var(--weight));padding:6px 0}.bkfold[open]>summary{margin-bottom:4px}
+.bkplan{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}.bkplan .dbp{background:var(--raised)}.bkplan .dbp.rec{box-shadow:inset 0 0 0 2px var(--good)}
 .bkrep{background:var(--raised);border-radius:16px;padding:14px}.bkrep h4{margin:0 0 8px;font-family:var(--display);font-size:1.15rem;text-transform:uppercase}.bkrep p{margin:0 0 8px;font-size:.92rem;line-height:1.4;color:var(--muted)}.bkrep p b{color:var(--ink)}.bkst{font-weight:700;font-size:1.05rem!important}.bkst.ko{color:var(--bad)!important}.bkst.ok{color:var(--good)!important}.bkgo{color:var(--ink)!important;font-weight:700;font-size:1.02rem!important;margin-top:4px!important}
 .gcard dd small.ddn{display:block;font-size:.76rem;font-weight:400;line-height:1.4;color:var(--muted)}
 table.yrs{width:100%;font-variant-numeric:tabular-nums}table.yrs th,table.yrs td{padding:8px 4px;vertical-align:middle}table.yrs td.n,table.yrs th.n{text-align:right;white-space:nowrap}
@@ -623,6 +628,7 @@ table.yrs td b{display:block;font-weight:600}table.yrs td small{display:block;fo
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--g-face:#0b0f16;--g-in:#0f141d}}
 :root[data-theme="dark"]{--g-face:#0b0f16;--g-in:#0f141d}
 .vsec{margin:10px 2px -4px;font-size:1.25rem}
+.gmore>summary{cursor:pointer;font-size:.76rem;font-weight:600;color:var(--muted);margin-top:6px;list-style:none}.gmore>summary::before{content:'+ '}.gmore[open]>summary::before{content:'− '}
 .wgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}@media (min-width:900px){.wgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .gcard{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
 .gcard h3{margin:0;font-size:.92rem;line-height:1.2}.gfig{display:flex;justify-content:center}.gfig svg{width:100%;max-width:170px;height:auto}
@@ -641,6 +647,7 @@ table.yrs td b{display:block;font-weight:600}table.yrs td small{display:block;fo
 .hb{width:100%;display:flex;align-items:flex-end;justify-content:center;border-radius:6px 6px 0 0}.hb span{font-size:.62rem;font-weight:700;color:#fff;padding-bottom:3px;font-family:var(--mono)}
 .hring{position:absolute;inset:16px 6px 14px;display:flex;justify-content:center}.hring svg{height:100%;width:auto}.hring svg text{display:none}
 .hv{font-size:.62rem;font-weight:700;font-family:var(--mono);padding-bottom:2px}
+.hgrid.heat .hc{aspect-ratio:1/0.78;padding-top:12px;justify-content:center}.hgrid.heat .hc .hd{top:2px;font-size:.56rem;color:color-mix(in srgb,#fff 75%,transparent)}.hgrid.heat .hc.none .hd,.hgrid.heat .hc.out .hd{color:var(--muted)}.hgrid.heat .hv{color:#fff;font-size:.7rem;padding:0;position:static;transform:none}.hgrid.heat .hm{color:inherit}
 @media (min-width:700px){.hc{aspect-ratio:1/0.8}.hb span,.hv{font-size:.72rem}}
 /* en el ordenador las casillas son anchas: más bajas, el día arriba a la izquierda y la nota dentro del anillo */
 @media (min-width:900px){.hgrid{gap:5px}.hc{aspect-ratio:auto;height:92px;padding-top:24px}.hc .hd{text-align:left;left:9px;top:7px;font-size:.74rem}.hring{inset:10px 0 10px}.hv{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.9rem;padding:0}}
@@ -1149,31 +1156,26 @@ body.locked .btabs,body.pdfx .btabs{display:none!important}
         </section>
         <h2 data-tg="hoy" class="vsec" id="wellTitle">Bienestar de la última noche</h2>
         <div data-tg="hoy" class="wgrid" id="wellGrid"></div>
-        <p data-tg="hoy" class="lead wnote">Sacado de tus noches de las últimas semanas. La SpO₂, el índice respiratorio, la apnea, la variabilidad del pulso (VFC) y la temperatura de la muñeca llegan de Apple Salud o Android; de Withings solo vienen horarios, fases y pulso.</p>
+        <p data-tg="hoy" class="lead wnote">No cambia con el periodo elegido; algunos indicadores comparan la última noche con tus últimas 7 o 30 noches. Sacado de tus noches de las últimas semanas. La SpO₂, el índice respiratorio, la apnea, la variabilidad del pulso (VFC) y la temperatura de la muñeca llegan de Apple Salud o Android; de Withings solo vienen horarios, fases y pulso.</p>
         <h2 data-tg="evo" class="vsec">Histórico</h2>
         <section data-tg="evo" class="card"><div class="shtabs" id="shTabs" role="group" aria-label="Qué ver"></div><p class="lead" id="shDesc"></p><div id="shBars"></div><div class="hmons" id="shCal"></div></section>
         <h2 data-tg="evo" class="vsec">Tendencias y detalles</h2>
         <div data-tg="evo" class="kv" id="slpKv"></div>
-        <section data-tg="evo" class="card"><h2>Horas de sueño</h2><p class="lead" id="slpLead"></p><div class="legend" id="lgSlp"></div><div class="chart" id="chSlp"></div></section>
-        <section data-tg="evo" class="card"><h2>Lo que dice tu sueño</h2><ul class="insights" id="slpNotes"></ul></section>
-        <div data-tg="evo" class="g2">
-          <section class="card"><h2>Tendencia</h2><p class="lead">Todo tu historial, mes a mes: lo que duermes cada noche (mediana) y su media de 3 meses.</p><div class="legend" id="lgSlpTr"></div><div class="chart" id="chSlpTr"></div><p class="lead" id="slpTrTxt"></p></section>
-          <section class="card"><h2>A qué hora duermes</h2><p class="lead">Todo tu historial, mes a mes: hora mediana a la que te duermes y a la que te levantas.</p><div class="legend" id="lgClock"></div><div class="chart" id="chClockTr"></div></section>
-        </div>
+        <section data-tg="evo" class="card"><h2>Tendencia</h2><p class="lead">Todo tu historial, mes a mes: cuánto duermes cada noche (mediana) frente a tu objetivo, en minutos. Verde si llegaste; rojo si te faltó más de media hora.</p><div class="legend" id="lgSlpTr"></div><div class="chart" id="chSlpTr"></div><p class="lead" id="slpTrTxt"></p></section>
         <section data-tg="hor" class="card"><h2>Horario</h2><p class="lead">Desde que te duermes hasta que te despiertas, noche a noche. En cada noche, en verde lo que dormiste hasta tu hora objetivo de levantarte (acostarte antes también cuenta) y en rojo lo que dormiste después (el fin de semana, con su propio horario); las líneas discontinuas, tu hora habitual de dormirte y de despertarte en cada semana, mes, trimestre o año, y las continuas, la media móvil.</p><div class="chart" id="chSched"></div></section>
         <div data-tg="hor" class="g2">
-          <section class="card"><h2>Fases del sueño</h2><p class="lead">Horas de cada fase por noche, como las registra tu Apple Watch.</p><div class="legend" id="lgPh"></div><div class="chart" id="chPh"></div></section>
-          <section class="card"><h2>Por noche de la semana</h2><p class="lead">Horas dormidas de media según el día en que te acuestas.</p><div class="chart" id="chSlpDow"></div></section>
+          <section class="card"><h2>A qué hora duermes</h2><p class="lead">Todo tu historial, mes a mes: desde tu hora mediana de dormirte hasta la de levantarte, sobre tu horario objetivo.</p><div class="legend" id="lgClock"></div><div class="chart" id="chClockTr"></div></section>
+          <section class="card"><h2>Entre semana y fin de semana</h2><p class="lead">Noches de domingo a jueves frente a las de viernes y sábado, en el periodo elegido.</p><div class="tbl" id="slpWk"></div><p class="lead" id="slpWkTxt"></p></section>
         </div>
-        <div data-tg="ana" class="g2 wide-l">
-          <section class="card"><h2>Calendario de sueño</h2><p class="lead">Horas dormidas cada noche de las últimas 16 semanas (en el día en que te levantas). Cuanto más intenso, más horas.</p><div class="scale" id="slpCalScale"></div><div class="cal" id="slpCal"></div></section>
-          <section class="card"><h2>Cuánto duermes</h2><p class="lead">Reparto de las noches del periodo según las horas dormidas.</p><div class="chart" id="chSlpHist"></div></section>
+        <section data-tg="ana" class="card"><h2>Lo que dice tu sueño</h2><ul class="insights" id="slpNotes"></ul></section>
+        <div data-tg="ana" class="g2">
+          <section class="card"><h2>Fases del sueño</h2><p class="lead">Horas de cada fase por noche, como las registra tu Apple Watch.</p><div class="legend" id="lgPh"></div><div class="chart" id="chPh"></div></section>
+          <section class="card"><h2>Calidad: sueño profundo y REM</h2><p class="lead">Reparto de cada semana entre sueño profundo, REM, ligero y despierto. El profundo repara el cuerpo; el REM, la memoria: cuanto más grandes esas dos franjas, mejor.</p><div class="legend" id="lgPhPct"></div><div class="chart" id="chPhPct"></div></section>
         </div>
         <div data-tg="ana" class="g2">
-          <section class="card"><h2>Entre semana y fin de semana</h2><p class="lead">Noches de domingo a jueves frente a las de viernes y sábado, en el periodo elegido.</p><div class="tbl" id="slpWk"></div><p class="lead" id="slpWkTxt"></p></section>
-          <section class="card"><h2>Calidad: sueño profundo y REM</h2><p class="lead">Parte de cada semana que pasaste en sueño profundo y en REM. El profundo repara el cuerpo; el REM, la memoria.</p><div class="legend" id="lgPhPct"></div><div class="chart" id="chPhPct"></div></section>
+          <section class="card"><h2>Cuánto duermes</h2><p class="lead">Reparto de las noches del periodo según las horas dormidas. Verde: llegaste a tu objetivo; amarillo: te falta menos de 1 h.</p><div class="chart" id="chSlpHist"></div></section>
+          <section class="card"><h2>Sueño y peso</h2><p class="lead" id="slpWLead"></p><div class="chart" id="chSlpW"></div><p class="lead" id="slpWTxt"></p></section>
         </div>
-        <section data-tg="ana" class="card"><h2>Sueño y peso</h2><p class="lead" id="slpWLead"></p><div class="chart" id="chSlpW"></div><p class="lead" id="slpWTxt"></p></section>
       </section>
 
       <section class="view" id="v-comidas" data-title="Comidas" hidden>

@@ -1,4 +1,4 @@
-<!-- en: 6edee016e5f05a05 -->
+<!-- en: dd0ee7d024e3539c -->
 # Sueño
 
 Sirve para ver cómo duermes: la última noche, tu saldo de sueño, la evolución, el horario y el análisis. Incluye siestas, fases del sueño y comparaciones con tu peso.
@@ -31,42 +31,39 @@ Sirve para ver cómo duermes: la última noche, tu saldo de sueño, la evolució
 - **Nota del día**: cuadro para añadir un comentario (hasta 300 caracteres).
 - **Siestas**: lista de las siestas del día con hora, duración y frecuencia cardiaca, y una tira que las sitúa junto a la noche. Las siestas suman al saldo de sueño.
 - **Apuntar una noche a mano**: el día en que te levantas, la hora a la que te acostaste y la de levantarte. La noche tiene que durar entre 30 min y 20 h. La tarjeta lista las noches que has apuntado, con **Quitar**. Si después llega esa noche de tus fuentes, manda la de las fuentes; una noche que ya tiene datos no se puede apuntar a mano.
-- **Bienestar de la última noche**: indicadores tipo medidor de la noche (tiempo dormido, preparación, pulso dormido, consistencia, eficiencia, sueño profundo, despertares y hora de acostarte recomendada para esta noche). Se calculan con tus últimas semanas y necesitan al menos 3 noches.
+- **Bienestar de la última noche**: indicadores tipo medidor de la noche (tiempo dormido, preparación, pulso dormido, consistencia, eficiencia, sueño profundo, despertares y hora de acostarte recomendada para esta noche). Cada uno muestra sus dos cifras clave; el resto, en **Más**. Se calculan con tus últimas semanas y necesitan al menos 3 noches.
   - **Preparación** (0 a 100): 45 % calificación de la noche, 30 % saldo de la última semana y 25 % pulso dormido frente a tus últimas noches. Etiquetas: Baja, Regular, Buena, Excelente.
-- Debajo, una nota sobre las fuentes: la SpO2 nocturna, el índice respiratorio, la apnea, la HRV y la temperatura de la muñeca llegan de Apple Salud o Android; de Withings solo vienen horarios, fases y pulso.
+- Debajo, una nota: no cambian con el periodo elegido, y sobre las fuentes: la SpO2 nocturna, el índice respiratorio, la apnea, la HRV y la temperatura de la muñeca llegan de Apple Salud o Android; de Withings solo vienen horarios, fases y pulso.
 
 ## Saldo
 
-- **Saldo de sueño**: lo que has dormido en las últimas 7 noches, más las siestas, frente a tu objetivo por noche. Las noches sin datos no cuentan (ni su objetivo). Positivo es un excedente; negativo, una deuda. El anillo muestra el porcentaje y el texto dice cuánto has dormido de cuánto necesitabas. También muestra planes de 7 y 14 noches para pagar la deuda.
+- **Saldo de sueño**: lo que has dormido en las últimas 7 noches, más las siestas, frente a tu objetivo por noche. Las noches sin datos no cuentan (ni su objetivo). Positivo es un excedente; negativo, una deuda. El anillo muestra el porcentaje y el texto dice cuánto has dormido de cuánto necesitabas. Sin deuda, muestra cuánto margen tienes.
+- **Plan para saldar la deuda**: si hay deuda, justo debajo, una tarjeta por plan con cuánto dormir cada noche y a qué hora acostarte para pagarla en 3, 5, 7, 10 o 14 noches (la de 7 noches, resaltada). Usa tu eficiencia media del último mes.
 - **Evolución del saldo**: cada punto es el saldo de las 7 noches anteriores; las bandas y los puntos rojos son los fines de semana.
-- **Noche a noche**: lo que suma o resta cada noche (siestas incluidas). En las noches sin datos aparece **Añadir**: puedes apuntar a mano la hora a la que te acostaste y te levantaste (la noche debe durar entre 30 minutos y 20 horas). Si la noche real de Withings o Apple Salud llega después, la sustituye. Las noches apuntadas a mano se pueden editar o borrar.
+- **Noche a noche**: una barra por noche, hacia arriba en verde lo que suma y hacia abajo en rojo lo que resta (siestas incluidas), con cuántas noches suman, cuántas restan y el total. **Ver la lista noche a noche** despliega la lista: en las noches sin datos aparece **Añadir** y puedes apuntar a mano la hora a la que te acostaste y te levantaste (la noche debe durar entre 30 minutos y 20 horas). Si la noche real de Withings o Apple Salud llega después, la sustituye. Las noches apuntadas a mano se pueden editar o borrar.
 - **En cifras**: media dormida, noches en el objetivo, racha actual, días en deuda, peor saldo y siestas aportadas.
 - **Qué noches te endeudan**: saldo medio por día de la semana.
 - **Cómo te afecta la deuda**: compara tus días con mucha deuda con los días en que estás al día en HRV, frecuencia cardiaca en reposo, pasos, nota de comidas y calificación de sueño (necesita al menos 5 días de cada tipo).
-- **Plan para saldar la deuda**: si hay deuda, una tabla con cuánto dormir cada noche y a qué hora acostarte para pagarla en 3, 5, 7, 10 o 14 noches. Usa tu eficiencia media del último mes.
 - Al tocar la tarjeta del saldo se abre el informe, con la hora objetivo de acostarte y de levantarte.
 
 ## Evolución
 
-- **Histórico**: pestañas **Calificación**, **Calidad** (profundo más REM), **Sueño** (horas), **Profundo**, **Al acostarte** y **Pulso**. Muestra barras del periodo y un calendario de hasta 18 semanas; al tocar un día se selecciona.
+- **Histórico**: pestañas **Calificación**, **Calidad** (profundo más REM), **Sueño** (horas), **Profundo**, **Al acostarte** y **Pulso**. Muestra barras del periodo, con la línea del objetivo, y un calendario de hasta 18 semanas; al tocar un día se elige. Con más de 6 semanas el calendario es un mapa de calor: cada día coloreado con su valor.
 - **Tendencias y detalles**, empezando por las cifras del periodo: **Dormido**, **En la cama** (con la eficiencia), **Te duermes** y **Te levantas** (horas medianas), **Regularidad** de tu hora de dormirte, **Noches de 7 h o más** (tu objetivo), **Sueño profundo** (con REM y ligero) y **FC durmiendo** (con su mínima).
-- **Horas de sueño** por noche con la línea del objetivo.
-- **Lo que dice tu sueño**: frases con tus propios datos.
-- **Tendencia**: mediana mensual de cuánto duermes y su media de 3 meses, con todo tu historial.
-- **A qué hora duermes**: mediana mensual de la hora a la que te duermes y te despiertas.
+- **Tendencia**: con todo tu historial, una barra por mes con cuánto duermes (mediana) por encima o por debajo de tu objetivo: verde si llegas, ámbar si te falta hasta media hora, rojo si más.
 
 ## Horario
 
 - **Horario**: desde que te duermes hasta que te despiertas, noche a noche. En verde, lo que dormiste hasta tu hora objetivo de levantarte; en rojo, lo que dormiste después (el fin de semana se mide con su propio horario). Líneas discontinuas: tu hora habitual; líneas continuas: la media móvil. **Auto**, **Semana**, **Mes**, **Trimestre** y **Año** eligen la ventana de la hora habitual: la mediana de todas las noches de esa semana, mes, trimestre o año, también las que quedan fuera del periodo mostrado.
-- **Fases del sueño**: horas de cada fase por noche (Apple Watch).
-- **Por noche de la semana**: media de horas dormidas según el día en que te acuestas.
+- **A qué hora duermes**: con todo tu historial, una franja por mes desde tu hora mediana de dormirte hasta la de levantarte, sobre tu horario objetivo, en verde hasta tu hora objetivo de levantarte y en rojo después.
+- **Entre semana y fin de semana**: noches de domingo a jueves comparadas con las de viernes y sábado. Para lo dormido, la hora de dormirte, la mitad de la noche y la de levantarte, un punto entre semana y otro el fin de semana sobre la misma escala, con la diferencia; debajo, tu «jet lag social».
 
 ## Análisis
 
-- **Calendario de sueño**: horas de las últimas 16 semanas, más intenso cuanto más duermes.
-- **Cuánto duermes**: desglose de las noches del periodo por horas dormidas.
-- **Entre semana y fin de semana**: noches de domingo a jueves comparadas con las de viernes y sábado.
-- **Calidad: sueño profundo y REM**: parte de cada semana en profundo y en REM.
+- **Lo que dice tu sueño**: frases con tus propios datos.
+- **Fases del sueño**: horas de cada fase por noche.
+- **Calidad: sueño profundo y REM**: una barra por semana repartida entre profundo, REM, ligero y despierto.
+- **Cuánto duermes**: desglose de las noches del periodo por horas dormidas: en verde los tramos que llegan a tu objetivo, en ámbar los que se quedan a menos de 1 hora.
 - **Sueño y peso**: cuánto pesas por la mañana frente a los días de alrededor, según cómo dormiste esa noche (con todo tu historial).
 
 ## Origen de los datos y reglas de las noches

@@ -1953,7 +1953,7 @@ function schedChart(host,items,o){
     top.querySelector('.schh').innerHTML=`<span class="schw">${h?`Habitual · ${wlab(SCH_SEL)} <button type="button" class="schx" data-schx aria-label="Ver todo el periodo">✕</button>`:'Habitual del periodo'}</span><span>Dormirte <b style="color:var(--warn)">${fmtClock(vb)}</b></span><span>Despertarte <b style="color:var(--wat)">${fmtClock(vw)}</b></span>${NN.length?`<span class="schtr" title="Noches enteras dentro de su horario objetivo y con 6 h o más dormidas">${TROPHY_SVG}<b>${TT}</b> de ${NN.length} noches · ${fmtInt(TT/NN.length*100)} %</span>`:''}`};
   top.innerHTML=`<div class="schh"></div><div class="seg schseg" role="group" aria-label="Ventana de los horarios habituales">${[['auto','Auto'],['semana','Semana'],['mes','Mes'],['trimestre','Trimestre'],['año','Año']].map(([v,l])=>`<button type="button" data-schw="${v}" class="${(UI.schWin||'auto')===v?'on':''}">${l}</button>`).join('')}</div>`;
   if(SCH_SEL&&!HWo[SCH_SEL])SCH_SEL=null;hdr();
-  const lg=document.createElement('div');lg.className='schlg';lg.innerHTML=`<span><i style="border-color:var(--warn);width:14px"></i><i style="border-color:var(--wat);width:14px;margin-left:-4px"></i>Habitual por ${WM}${(UI.schWin||'auto')==='auto'?' (auto)':''}</span><span><i class="sol" style="border-color:var(--warn)"></i><i class="sol" style="border-color:var(--wat);margin-left:-4px"></i>Media móvil (${MAL})</span><span><i class="obj"></i><i class="objno"></i>Hasta / después de tu hora objetivo de levantarte (horario <b style="color:var(--good)">${fmtClock(SLP_SCHED.wd.bed)}–${fmtClock(SLP_SCHED.wd.wake)}</b>${SLP_SCHED.we.bed!==SLP_SCHED.wd.bed||SLP_SCHED.we.wake!==SLP_SCHED.wd.wake?` · finde <b style="color:var(--good)">${fmtClock(SLP_SCHED.we.bed)}–${fmtClock(SLP_SCHED.we.wake)}</b>`:''})</span><span><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M7 3h10v5a5 5 0 0 1-10 0z" style="fill:var(--warn)"/><path d="M7 5H4v1.5A3.5 3.5 0 0 0 7.5 10M17 5h3v1.5A3.5 3.5 0 0 1 16.5 10" style="fill:none;stroke:var(--warn);stroke-width:2;stroke-linecap:round"/><path d="M12 13v4M8 21h8M9.5 17h5v4h-5z" style="fill:var(--warn);stroke:var(--warn);stroke-width:2;stroke-linecap:round"/></svg>Levantarte a tu hora (o antes) y dormir 6 h o más</span><span class="schtip">Toca una barra para ver los horarios de su ${WM}</span>`;
+  const lg=document.createElement('div');lg.className='schlg';lg.innerHTML=`<span><i style="border-color:var(--warn);width:14px"></i><i style="border-color:var(--wat);width:14px;margin-left:-4px"></i>Habitual por ${WM}${(UI.schWin||'auto')==='auto'?' (auto)':''}</span><span><i class="sol" style="border-color:var(--warn)"></i><i class="sol" style="border-color:var(--wat);margin-left:-4px"></i>Media móvil (${MAL})</span><span><i class="obj"></i>Dormido hasta tu hora objetivo de levantarte</span><span><i class="objno"></i>Dormido después</span><span>Tu horario: <b style="color:var(--good)">${fmtClock(SLP_SCHED.wd.bed)}–${fmtClock(SLP_SCHED.wd.wake)}</b>${SLP_SCHED.we.bed!==SLP_SCHED.wd.bed||SLP_SCHED.we.wake!==SLP_SCHED.wd.wake?` · finde <b style="color:var(--good)">${fmtClock(SLP_SCHED.we.bed)}–${fmtClock(SLP_SCHED.we.wake)}</b>`:''}</span><span><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M7 3h10v5a5 5 0 0 1-10 0z" style="fill:var(--warn)"/><path d="M7 5H4v1.5A3.5 3.5 0 0 0 7.5 10M17 5h3v1.5A3.5 3.5 0 0 1 16.5 10" style="fill:none;stroke:var(--warn);stroke-width:2;stroke-linecap:round"/><path d="M12 13v4M8 21h8M9.5 17h5v4h-5z" style="fill:var(--warn);stroke:var(--warn);stroke-width:2;stroke-linecap:round"/></svg>Levantarte a tu hora (o antes) y dormir 6 h o más</span><span class="schtip">Toca una barra para ver los horarios de su ${WM}</span>`;
   host.appendChild(lg);host.insertBefore(top,host.firstChild); // the legend under the chart, so the chart is seen first
   top.addEventListener('click',e=>{if(e.target.closest('[data-schx]')){SCH_SEL=null;hdr()}});
   const tip=document.createElement('div');tip.className='tip';tip.hidden=true;host.append(tip);
@@ -2146,7 +2146,7 @@ function periodBars({items,range,sel,kind,fmt,goal}){if(!items.length)return '';
   let i0=0,tags='';for(const key of Object.keys(grp).sort()){const gb=grp[key],m=mean(gb.map(b=>b.v)),x0=i0*bw,w=gb.length*bw;i0+=gb.length;if(w<6)continue;const ym=y(m),on=key===selG;
     g+=`<line x1="${(x0+1).toFixed(1)}" x2="${(x0+w-1).toFixed(1)}" y1="${ym.toFixed(1)}" y2="${ym.toFixed(1)}" style="stroke:var(--ink);stroke-width:${on?2:1.6};stroke-dasharray:5 3;stroke-linecap:round"/>`;
     const t=String(fmt(m)).replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim(),tw=t.length*6.1+12,empty=gb.every(b=>!b.v);
-    if(!empty&&(tw<=w-2||on)){const cx=Math.min(W-tw/2-1,Math.max(tw/2+1,x0+w/2)),ty=ym-17<top-2?ym+3:ym-17;
+    if(!empty&&(on||tw<=w-2&&Object.keys(grp).length<=8)){const cx=Math.min(W-tw/2-1,Math.max(tw/2+1,x0+w/2)),ty=ym-17<top-2?ym+3:ym-17;
       tags+=`<g style="opacity:${on||selIdx<0?1:.88}"><rect x="${(cx-tw/2).toFixed(1)}" y="${ty.toFixed(1)}" width="${tw.toFixed(1)}" height="14" rx="7" style="fill:${on?'var(--ink)':'var(--surface)'};stroke:var(--ink);stroke-width:1"/><text x="${cx.toFixed(1)}" y="${(ty+10.3).toFixed(1)}" text-anchor="middle" class="pbtag" style="fill:${on?'var(--surface)':'var(--ink)'}">${esc(t)}</text></g>`}}
   g+=tags;
   // etiquetas de mes
@@ -2243,10 +2243,12 @@ const arrow=(d,dec,unit,goodDown)=>{if(d==null||isNaN(d))return '';const r=Math.
 function renderWell(L){const host=$('wellGrid');const all=L.slp.filter(s=>s.asleep);if(all.length<3){host.innerHTML=emptyBox('Hacen falta unas cuantas noches para calcular estos indicadores.');return}
   const last=all[all.length-1],kEnd=last.k;const win=(a,b)=>all.filter(s=>s.k>addK(kEnd,-a)&&s.k<=addK(kEnd,-b));
   // siempre la última noche registrada (no depende del periodo elegido)
-  {const d0=k2d(addK(kEnd,-1)),d1=k2d(kEnd);$('wellTitle').innerHTML=`Bienestar de la última noche<small>${DSN[dowIdx(addK(kEnd,-1))]} ${d0.getDate()}${d0.getMonth()!==d1.getMonth()?' '+MS[d0.getMonth()]:''} → ${DSN[dowIdx(kEnd)]} ${d1.getDate()} ${MS[d1.getMonth()]} · no cambia con el periodo elegido; algunos indicadores la comparan con tus últimas 7 o 30 noches</small>`}
+  {const d0=k2d(addK(kEnd,-1)),d1=k2d(kEnd);$('wellTitle').innerHTML=`Bienestar de la última noche<small>${DSN[dowIdx(addK(kEnd,-1))]} ${d0.getDate()}${d0.getMonth()!==d1.getMonth()?' '+MS[d0.getMonth()]:''} → ${DSN[dowIdx(kEnd)]} ${d1.getDate()} ${MS[d1.getMonth()]}</small>`}
   const w7=win(7,0),p7=win(14,7),b30=win(31,1);const G=SLEEP_GOAL*60;
   const recent=all.filter(s=>s.k>addK(kEnd,-90));const usual={bed:median(recent.map(s=>s.bed).filter(x=>x!=null)),wake:median(recent.map(s=>s.wake).filter(x=>x!=null))};
-  const card=(t,svg,rows,cls)=>`<div class="gcard${cls?' '+cls:''}"><h3>${t}</h3><div class="gfig">${svg}</div><dl>${rows.map(([l,v])=>`<dt>${l}</dt><dd>${v}</dd>`).join('')}</dl></div>`;
+  const dl=rs=>`<dl>${rs.map(([l,v])=>`<dt>${l}</dt><dd>${v}</dd>`).join('')}</dl>`;
+  // the gauge and its two key figures; the rest, behind «Más»
+  const card=(t,svg,rows,cls)=>`<div class="gcard${cls?' '+cls:''}"><h3>${t}</h3><div class="gfig">${svg}</div>${dl(rows.slice(0,2))}${rows.length>2?`<details class="gmore"><summary>Más</summary>${dl(rows.slice(2))}</details>`:''}</div>`;
   const out=[];
   // 1. tiempo dormido y saldo de sueño (7 noches)
   const sum7=[0,1,2,3,4,5,6].reduce((t,i)=>{const s=all.find(x=>x.k===addK(kEnd,-i));return t+(s?s.asleep:0)},0),debt=Math.max(0,1-sum7/(G*7));
@@ -2311,19 +2313,21 @@ function renderSleepHist(L){const all=L.slp.filter(s=>s.asleep);if(!all.length){
   const kTop=!byK[today]&&addK(today,-dowIdx(today))>kEnd?kEnd:today;
   const k0=addK(from,-dowIdx(from)),kLast=addK(kTop,6-dowIdx(kTop));
   const tall=Math.max(...items.filter(x=>x.k>=from).map(x=>x.v),1);let cells='';
+  // more than 6 weeks: a heat map (each day coloured, with its value), easier to read than many small bars or rings
+  const heat=diffK(k0,kLast)>=42;
   for(let k=k0;k<=kLast;k=addK(k,1)){const d=k2d(k).getDate(),x=byK[k];
     if(k>today){cells+='<div class="hc pad"></div>';continue}
-    let inner='';if(x&&k>=from){if(SHM==='score')inner=`<span class="hring">${ringsSvg([{p:x.v/100,color:x.col}],'','')}</span><span class="hv">${x.v}</span>`;
+    let inner='';if(x&&k>=from&&heat)inner=`<span class="hv">${x.txt||x.v}</span>`;else if(x&&k>=from){if(SHM==='score')inner=`<span class="hring">${ringsSvg([{p:x.v/100,color:x.col}],'','')}</span><span class="hv">${x.v}</span>`;
       else{const h=SHM==='bed'?70:Math.round(36+64*x.v/tall);inner=`<span class="hb" style="height:${h}%;background:${x.col}"><span>${x.txt}</span></span>`}}
     const lab=d===1||k===k0?`<span class="hm">${MS[k2d(k).getMonth()]}</span>`:'';
-    cells+=`<button type="button" class="hc${x&&k>=from?'':' none'}${k<from?' out':''}${k===sel?' on':''}${k===today?' today':''}${d===1?' m1':''}" ${x&&k>=from?`data-pk="${k}" data-kind="slph"`:'disabled'}><span class="hd">${d}${lab}</span>${inner}</button>`}
-  $('shCal').innerHTML=`<div class="hgrid">${DS.map(d=>`<span class="hw">${d}</span>`).join('')}${cells}</div>`}
+    cells+=`<button type="button" class="hc${x&&k>=from?'':' none'}${k<from?' out':''}${k===sel?' on':''}${k===today?' today':''}${d===1?' m1':''}" ${x&&k>=from?`data-pk="${k}" data-kind="slph"`:'disabled'}${heat&&x&&k>=from?` style="background:color-mix(in srgb,${x.col} 78%,var(--raised))"`:''}><span class="hd">${d}${lab}</span>${inner}</button>`}
+  $('shCal').innerHTML=`<div class="hgrid${heat?' heat':''}">${DS.map(d=>`<span class="hw">${d}</span>`).join('')}${cells}</div>`}
 document.addEventListener('click',e=>{const b=e.target.closest('#shTabs [data-shm]');if(!b)return;SHM=b.dataset.shm;UI.shm=SHM;saveUI();if(LIFE)renderSleepHist(LIFE)});
 
 function renderSueno(){
   renderManualLife();
-  const L=LIFE;const ids=['chSlp','chSched','chPh','chSlpDow','chSlpW','chSlpTr','chClockTr','slpCal','chSlpHist','slpWk','chPhPct','nightCard'];
-  if(!L||!L.hasSlp){$('slpKv').innerHTML='';$('slpLead').textContent='';$('slpWTxt').textContent='';lifeEmpty(ids,'Aún no hay noches registradas. El sueño llega solo de Apple Salud (Apple Watch, AutoSleep), Android o Withings: conéctalos en Tu cuenta → Fuentes de datos.');return}
+  const L=LIFE;const ids=['chSched','chPh','chSlpW','chSlpTr','chClockTr','chSlpHist','slpWk','chPhPct','nightCard'];
+  if(!L||!L.hasSlp){$('slpKv').innerHTML='';$('slpWTxt').textContent='';lifeEmpty(ids,'Aún no hay noches registradas. El sueño llega solo de Apple Salud (Apple Watch, AutoSleep), Android o Withings: conéctalos en Tu cuenta → Fuentes de datos.');return}
   const W=lifeWin(L.slp,slpRange),rows=W.rows,prev=W.prev;const av=(a,f)=>mean(a.map(f));
   const asleep=av(rows,s=>s.asleep),asleepP=av(prev,s=>s.asleep);
   const tot=rows.reduce((s,x)=>s+(x.asleep||0),0);const pct=f=>tot?rows.reduce((s,x)=>s+(x[f]||0),0)/tot*100:null;
@@ -2338,13 +2342,6 @@ function renderSueno(){
     kvCell(`Noches de ${fmtN(SLEEP_GOAL,SLEEP_GOAL%1?1:0)} h o más`,rows.length?fmtInt(rows.filter(s=>s.asleep>=SLEEP_GOAL*60).length/rows.length*100):'—','%',`${rows.length} noches registradas`,'',{c:'var(--good)',p:rows.length?rows.filter(s=>s.asleep>=SLEEP_GOAL*60).length/rows.length:0}),
     kvCell('Sueño profundo',fmtInt(pct('deep')),'%',`REM ${fmtInt(pct('rem'))} % · ligero ${fmtInt(pct('light'))} %`,'',{c:'var(--ph-deep)',p:(pct('deep')||0)/25}),
     kvCell('FC durmiendo',fmtInt(av(rows,s=>s.hrAvg)),'lpm',`Mínima ${fmtInt(av(rows,s=>s.hrMin))} lpm`,'',{c:'var(--bad)',s:rows.map(s=>s.hrAvg)})].join('');
-  $('slpLead').textContent=W.weekly?`Horas dormidas de media cada semana. La línea discontinua marca ${SLEEP_GOAL} horas.`:`Horas dormidas cada noche (la fecha es la del día en que te levantas) y la media de 7 noches. La línea discontinua marca ${SLEEP_GOAL} horas.`;
-  const hb=bins(rows,s=>s.asleep!=null?s.asleep/60:null,W.weekly);
-  $('lgSlp').innerHTML=legendHtml('slp',[{id:'bar',label:W.weekly?'Media semanal':'Horas de la noche',color:'var(--slp)'},W.weekly?null:{id:'avg',label:'Media de 7 noches',sw:'ln',color:'var(--ink)'}].filter(Boolean));
-  colChart($('chSlp'),{weekend:true,h:($('chSlp').clientWidth||600)<500?220:250,items:shown('slp','bar')?hb:hb.map(b=>({...b,v:0})),color:'var(--slp)',colorOf:b=>b.v>=SLEEP_GOAL?'var(--slp)':'var(--slp-soft)',
-    line:!W.weekly&&shown('slp','avg')?hb.map(b=>trail(L.slp,s=>s.asleep!=null?s.asleep/60:null,b.k,7)):null,goal:{v:SLEEP_GOAL,label:SLEEP_GOAL+' h'},yFmt:v=>fmtN(v,0)+' h',
-    tipOf:b=>W.weekly?`<b>Semana del ${fmtK(b.k,true)}</b><div class="r"><span>Dormido de media</span><span>${fmtDur(b.v*60)}</span></div><div class="r"><span>Noches</span><span>${b.n}</span></div>`:
-      `<b>Noche del ${fmtK(addK(b.k,-1))} al ${fmtK(b.k,true)}</b><div class="r"><span>Dormido</span><span>${fmtDur(b.r.asleep)}</span></div><div class="r"><span>En la cama</span><span>${fmtDur(b.r.inBed)}</span></div><div class="r"><span>De</span><span>${fmtClock(b.r.bed)} a ${fmtClock(b.r.wake)}</span></div><div class="r"><span>Despertares</span><span>${b.r.wakeups??'—'}</span></div>`});
   // horario
   const sc=W.weekly?bins(rows.filter(s=>s.bed!=null&&s.wake!=null),s=>1,true).map(b=>({k:b.k,days:7,n:b.n,from:median(b.rs.map(s=>s.bed)),to:median(b.rs.map(s=>s.wake))})):rows.filter(s=>s.bed!=null&&s.wake!=null).map(s=>({k:s.k,days:1,from:s.bed,to:s.wake,r:s}));
   schedChart($('chSched'),sc,{nights:rows.filter(s=>s.bed!=null&&s.wake!=null),all:L.slp.filter(s=>s.bed!=null&&s.wake!=null).map(s=>({k:s.k,from:s.bed,to:s.wake})),h:($('chSched').clientWidth||600)<500?240:270,bed:bedM,wake:wakeM,tipOf:b=>b.r?`<b>Noche del ${fmtK(addK(b.k,-1))} al ${fmtK(b.k,true)}</b><div class="r"><span>Te dormiste</span><span>${fmtClock(b.from)}</span></div><div class="r"><span>Te despertaste</span><span>${fmtClock(b.to)}</span></div><div class="r"><span>Dormido</span><span>${fmtDur(b.r.asleep)}</span></div>`:`<b>Semana del ${fmtK(b.k,true)}</b><div class="r"><span>Te dormiste (mediana)</span><span>${fmtClock(b.from)}</span></div><div class="r"><span>Te despertaste</span><span>${fmtClock(b.to)}</span></div><div class="r"><span>Noches</span><span>${b.n}</span></div>`});
@@ -2355,16 +2352,11 @@ function renderSueno(){
   const pb=W.weekly?bins(rows,s=>1,true).map(b=>({k:b.k,days:7,n:b.n,asleep:mean(b.rs.map(slept)),bed:mean(b.rs.map(r=>slept(r)+(r.awake||0))),vals:pv.map(x=>mean(b.rs.map(r=>(r[x.id]||0)/60)))})):rows.map(s=>({k:s.k,days:1,asleep:slept(s),bed:slept(s)+(s.awake||0),vals:pv.map(x=>(s[x.id]||0)/60)}));
   colChart($('chPh'),{weekend:true,h:220,stack:true,layers:pv,items:pb,yFmt:v=>fmtN(v,0)+' h',empty:pv.length?'Sin fases registradas en este periodo.':'Todas las fases están ocultas. Toca una en la leyenda para verla.',
     tipOf:b=>`<b>${W.weekly?'Semana del '+fmtK(b.k,true)+' · por noche':'Noche del '+fmtK(addK(b.k,-1))+' al '+fmtK(b.k,true)}</b>`+pv.map((x,j)=>`<div class="r"><span><i class="sw" style="background:${x.color}"></i>${x.label}</span><span>${fmtDur(b.vals[j]*60)}</span></div>`).join('')+`<div class="r tot"><span>Total dormido</span><span>${fmtDur(b.asleep)}</span></div><div class="r"><span>Con ratos despierto</span><span>${fmtDur(b.bed)}</span></div>`});
-  // por noche de la semana (el día en que te acuestas)
-  const dw=Array.from({length:7},()=>[]);for(const s of rows)if(s.asleep)dw[dowIdx(addK(s.k,-1))].push(s.asleep/60);
-  const di=dw.map((a,i)=>({i,v:a.length?mean(a):null,n:a.length}));
-  if(di.filter(x=>x.n>=1).length<5)$('chSlpDow').innerHTML=emptyBox('Hacen falta más noches en este periodo.');
-  else barsChart($('chSlpDow'),di,{bandOf:x=>x.i>=4&&x.i<=5,h:200,fmt:v=>fmtN(v,1),labelOf:x=>DS[x.i],colorOf:x=>x.v>=SLEEP_GOAL?'var(--slp)':'var(--slp-soft)',tipOf:x=>`<b>Noche del ${DSN[x.i]}</b><div class="r"><span>Dormido de media</span><span>${fmtDur(x.v*60)}</span></div><div class="r"><span>Noches</span><span>${x.n}</span></div>`});
   // sueño y peso: el peso de la mañana frente a los días cercanos, según lo que dormiste
   const sr=L.slpRes||[];const B=[[0,6,'< 6 h'],[6,7,'6–7 h'],[7,8,'7–8 h'],[8,24,'≥ 8 h']].map(([a,b,l])=>{const xs=sr.filter(x=>x.h>=a&&x.h<b);return {l,n:xs.length,v:xs.length>=5?mean(xs.map(x=>x.res)):null}});
   $('slpWLead').textContent=`Cuánto pesas por la mañana frente a los días de alrededor, según lo que dormiste esa noche. Todo tu historial: ${sr.length} mañanas con sueño y pesada.`;
   if(B.filter(b=>b.v!=null).length<2){$('chSlpW').innerHTML=emptyBox('Hacen falta más mañanas con sueño registrado y pesada.');$('slpWTxt').textContent=''}
-  else{barsChart($('chSlpW'),B,{h:200,fmt:v=>sgn(v,2),labelOf:b=>b.l,colorOf:b=>b.v<=0?'var(--good)':'var(--bad)',tipOf:b=>`<b>Noches de ${b.l}</b><div class="r"><span>Peso frente a días cercanos</span><span>${b.v!=null?sgn(b.v,2)+' kg':'—'}</span></div><div class="r"><span>Mañanas</span><span>${b.n}</span></div>`});
+  else{barsChart($('chSlpW'),B,{h:210,fmt:v=>sgn(v,2),labelOf:b=>b.l,colorOf:b=>b.v<=0?'var(--good)':'var(--bad)',tipOf:b=>`<b>Noches de ${b.l}</b><div class="r"><span>Peso frente a días cercanos</span><span>${b.v!=null?sgn(b.v,2)+' kg':'—'}</span></div><div class="r"><span>Mañanas</span><span>${b.n}</span></div>`});
     const ok=B.filter(b=>b.v!=null),s0=ok[0],s1=ok[ok.length-1];
     const gap=s0.v-s1.v;
     $('slpWTxt').innerHTML=`Tras dormir ${s0.l} pesas de media <b>${sgn(s0.v,2)} kg</b> respecto a los días cercanos; tras ${s1.l}, <b>${sgn(s1.v,2)} kg</b>. `+(Math.abs(gap)<0.1?'La diferencia es muy pequeña: lo que duermes apenas cambia lo que marca la báscula al día siguiente.':gap>0?'Dormir poco suele traer retención de líquidos y más hambre al día siguiente; no es grasa, pero se nota en la báscula.':'En tu caso, dormir poco no sube lo que marca la báscula al día siguiente.')}
@@ -2394,7 +2386,7 @@ function debtHtml(last7,_d,need,all,usual){
   return `<div class="debt tap" data-sheet="bank" role="button" tabindex="0" aria-label="Ver el saldo de sueño en detalle"><h3>Saldo de sueño</h3><div class="fdh"><div class="fdring">${ring}</div><div class="fdbig dbtx">
     <div class="nsub">Últimas 7 noches: has dormido <b>${fmtDur(slept)}</b> de <b>${fmtDur(need).replace(/ 00$/,'')}</b>${nights<7?` (${7-nights===1?'1 noche sin datos, que no cuenta':`${7-nights} noches sin datos, que no cuentan`})`:''}.</div>
     <div class="nsub">${head}</div></div></div>
-    ${even?'':`<div class="dbplans">${plan(7)}${plan(14)}</div>`}
+    ${even||usual.noPlans?'':`<div class="dbplans">${plan(7)}${plan(14)}</div>`}
     ${even?'':`<p class="dbnote">Las noches en que duermes más de tu objetivo compensan las que duermes menos. Calculado sobre tu objetivo de ${fmtN(SLEEP_GOAL,SLEEP_GOAL%1?1:0)} h, tu hora objetivo de despertar (${same?fmtClock(W.wd.wake):`${fmtClock(W.wd.wake)} los laborables y ${fmtClock(W.we.wake)} el fin de semana`}; se cambia en Ajustes) y tu eficiencia media (${fmtInt(eff*100)} %), que es el tiempo en la cama que de verdad duermes.</p>`}</div>`}
 // saldo de sueño (7 noches hasta k incluida), en minutos; las noches sin datos no cuentan (ni su objetivo ni sus siestas)
 const tonightWakeK=()=>{const n=new Date(),t=d2k(n);return n.getHours()<5?t:addK(t,1)}; // esta noche: te levantas mañana (de madrugada aún cuenta la noche en curso)
@@ -2706,6 +2698,19 @@ function drawSheet(){const S=SHEET,L=LIFE;if(!S)return;let h='';
 /* ---------- sueño: tendencias y estadísticas de más ---------- */
 const slept=r=>r.asleep!=null?r.asleep:null;
 const isWeekendNight=k=>{const d=dowIdx(addK(k,-1));return d===4||d===5}; // te acuestas viernes o sábado
+// franjas mensuales de la hora de dormirte a la de levantarte (verde hasta tu hora objetivo de levantarte, rojo después)
+function clockBands(host,items,labelOf,titleOf){if(items.length<2){host.innerHTML=emptyBox('Hacen falta varios meses con noches registradas.');return}
+  const H=220,{svg,w}=frame(host,H),m={l:44,r:8,t:10,b:items.length>12||items.some((p,i)=>Array.isArray(labelOf(p,i,items)))?38:24},o=SLP_SCHED.wd;
+  let lo=Math.min(o.bed,...items.map(p=>p.from))-30,hi=Math.max(o.wake,...items.map(p=>p.to))+30;lo=Math.floor(lo/120)*120;hi=Math.ceil(hi/120)*120;
+  const Y=v=>m.t+(v-lo)/(hi-lo)*(H-m.t-m.b),bw=(w-m.l-m.r)/items.length;
+  const g=el('g',{class:'grid'},svg);const st=hi-lo>600?180:120;for(let v=lo;v<=hi;v+=st){el('line',{x1:m.l,x2:w-m.r,y1:Y(v),y2:Y(v)},g);txt(svg,m.l-6,Y(v)+3.5,fmtClock(v),{'text-anchor':'end'})}
+  el('rect',{x:m.l,y:Y(o.bed),width:w-m.l-m.r,height:Y(o.wake)-Y(o.bed),style:'fill:var(--good);opacity:.1'},svg);
+  items.forEach((p,i)=>{const x=m.l+i*bw+bw*.18,ww=Math.max(2,bw*.64),rx=Math.min(4,ww/3),id='cb'+(++SCH_CID);
+    const cp=document.createElementNS('http://www.w3.org/2000/svg','clipPath');cp.id=id;el('rect',{x,y:Y(p.from),width:ww,height:Math.max(1,Y(p.to)-Y(p.from)),rx},cp);svg.append(cp);
+    const seg=(a,b,col)=>{const y0=Math.max(p.from,a),y1=Math.min(p.to,b);if(y1>y0)el('rect',{x,y:Y(y0),width:ww,height:Y(y1)-Y(y0),'clip-path':`url(#${id})`,style:`fill:${col}`},svg)};
+    seg(-1e4,o.wake,'var(--good)');seg(o.wake,1e4,'var(--bad)');
+    const lab=labelOf(p,i,items),L=Array.isArray(lab)?lab:[lab];L.forEach((t,j)=>txt(svg,m.l+i*bw+bw/2,H-m.b+14+j*12,t,{'text-anchor':'middle'}));
+    const hit=el('rect',{x:m.l+i*bw,y:m.t,width:bw,height:H-m.t-m.b,style:'fill:transparent'},svg);const tt=document.createElementNS('http://www.w3.org/2000/svg','title');tt.textContent=`${titleOf(p.k)}: ${fmtClock(p.from)} → ${fmtClock(p.to)} (${p.n})`;hit.append(tt)})}
 function renderSleepExtra(L,W,rows){
   const all=L.slp;
   // 1. tendencia de todo el historial, mes a mes
@@ -2714,46 +2719,44 @@ function renderSleepExtra(L,W,rows){
   const mpts=f=>months.map(k=>({k:k+'-15',v:median(mm[k].map(f).filter(x=>x!=null)),n:mm[k].length})).filter(p=>p.v!=null);
   const dur=mpts(s=>slept(s)!=null?slept(s)/60:null);const ma=dur.map((p,i)=>({k:p.k,v:mean(dur.slice(Math.max(0,i-2),i+1).map(x=>x.v))}));
   const mTitle=k=>`${MSL[+k.slice(5,7)-1][0].toUpperCase()+MSL[+k.slice(5,7)-1].slice(1)} ${k.slice(0,4)}`;
-  $('lgSlpTr').innerHTML=legendHtml('slptr',[{id:'m',label:'Mediana de cada mes',sw:'dot',color:'var(--slp)'},{id:'ma',label:'Media de 3 meses',sw:'ln',color:'var(--ink)'}]);
-  tsChart($('chSlpTr'),{h:210,ml:36,series:[shown('slptr','m')&&{label:'Mediana del mes',pts:dur,color:'var(--slp)',dots:true,dotR:3.5,width:1.4,op:.55,gap:62,tipTol:20},shown('slptr','ma')&&{label:'Media 3 meses',pts:ma,color:'var(--ink)',width:2.4,gap:62,endDot:true,tipTol:20}],
-    refs:[{v:SLEEP_GOAL,label:SLEEP_GOAL+' h',scale:true}],vFmt:v=>fmtDur(v*60),yFmt:v=>fmtN(v,0)+' h',yStep:1,tipTitle:mTitle,empty:'Hacen falta varios meses con noches registradas.'});
-  // 2. a qué hora te duermes y te levantas, mes a mes
-  const bed=mpts(s=>s.bed),wake=mpts(s=>s.wake),mid=mpts(s=>s.bed!=null&&s.wake!=null?(s.bed+s.wake)/2:null);
-  $('lgClock').innerHTML=legendHtml('clock',[{id:'bed',label:'Te duermes',sw:'ln',color:'var(--slp)'},{id:'mid',label:'Mitad de la noche',sw:'dash',style:'color:var(--muted)'},{id:'wake',label:'Te levantas',sw:'ln',color:'var(--ph-awake)'}]);
-  tsChart($('chClockTr'),{h:210,ml:44,series:[shown('clock','bed')&&{label:'Te duermes',pts:bed,color:'var(--slp)',width:2.4,gap:62,dots:true,dotR:2.6,tipTol:20},shown('clock','mid')&&{label:'Mitad de la noche',pts:mid,color:'var(--muted)',width:1.4,dash:'4 4',gap:62,tipTol:20},shown('clock','wake')&&{label:'Te levantas',pts:wake,color:'var(--ph-awake)',width:2.4,gap:62,dots:true,dotR:2.6,tipTol:20}],
-    vFmt:fmtClock,yFmt:fmtClock,yStep:180,minPad:20,tipTitle:mTitle,empty:'Hacen falta varios meses con noches registradas.'});
+  // mes a mes, frente a tu objetivo: barras hacia arriba (verde) si dormiste más, hacia abajo si menos
+  const mlab=(p,i,a)=>{const m=+p.k.slice(5,7)-1,y=p.k.slice(2,4);return a.length>12?(m===0||i===0?[MSL[m][0].toUpperCase(),"'"+y]:MSL[m][0].toUpperCase()):(m===0||i===0?[MS[m],"'"+y]:MS[m])};
+  const G=SLEEP_GOAL*60,dv=dur.map(p=>({k:p.k,v:Math.round(p.v*60-G),h:p.v,n:p.n}));
+  $('lgSlpTr').innerHTML='';
+  if(dv.length<2)$('chSlpTr').innerHTML=emptyBox('Hacen falta varios meses con noches registradas.');
+  else barsChart($('chSlpTr'),dv,{h:210,fmt:v=>(v>0?'+':v<0?'−':'')+fmtInt(Math.abs(v)),labelOf:mlab,colorOf:p=>p.v>=0?'var(--good)':p.v>=-30?'var(--warn)':'var(--bad)',
+    tipOf:p=>`<b>${mTitle(p.k)}</b><div class="r"><span>Dormido (mediana)</span><span>${fmtDur(p.h*60)}</span></div><div class="r"><span>Frente a tu objetivo</span><span>${p.v>=0?'+':'−'}${fmtDur(Math.abs(p.v))}</span></div><div class="r"><span>Noches</span><span>${p.n}</span></div>`});
+  // a qué hora te duermes y te levantas, mes a mes: una franja por mes, con tu horario objetivo de fondo
+  const bed=mpts(s=>s.bed),wake=mpts(s=>s.wake);const wkM={};for(const p of wake)wkM[p.k]=p.v;
+  $('lgClock').innerHTML=`<span class="lg static"><i class="sw" style="background:var(--good)"></i>Dormido hasta tu hora de levantarte</span><span class="lg static"><i class="sw" style="background:var(--bad)"></i>Después</span><span class="lg static"><i class="sw" style="background:color-mix(in srgb,var(--good) 18%,transparent)"></i>Tu horario objetivo (${fmtClock(SLP_SCHED.wd.bed)}–${fmtClock(SLP_SCHED.wd.wake)})</span>`;
+  clockBands($('chClockTr'),bed.filter(p=>wkM[p.k]!=null).map(p=>({k:p.k,from:p.v,to:wkM[p.k],n:p.n})),mlab,mTitle);
   const recent=months.slice(-3),old=months.slice(0,3);
   if(months.length>=8){const r=x=>median(recent.flatMap(k=>mm[k].map(x)).filter(v=>v!=null)),o=x=>median(old.flatMap(k=>mm[k].map(x)).filter(v=>v!=null));
     const dB=r(s=>s.bed)-o(s=>s.bed),dD=(r(s=>s.asleep)-o(s=>s.asleep));
     $('slpTrTxt').innerHTML=`Desde ${MSL[+months[0].slice(5,7)-1]} de ${months[0].slice(0,4)} te duermes <b>${fmtDur(Math.abs(dB))} ${dB>0?'más tarde':'más pronto'}</b> y duermes <b>${fmtDur(Math.abs(dD))} ${dD>0?'más':'menos'}</b> por noche (los 3 primeros meses frente a los 3 últimos).`}
   else $('slpTrTxt').textContent='';
-  // 3. calendario de las últimas 16 semanas
-  const byK={};for(const s of all)byK[s.k]=s;const last=all[all.length-1].k;let mon=monday(addK(last,-7*15));const trs=[],colH=[[],[],[],[],[],[],[]],allH=[];
-  const shade=h=>`color-mix(in srgb, var(--slp) ${Math.round(12+Math.max(0,Math.min(1,(h-4)/5))*78)}%, var(--surface))`;
-  for(let k=mon;k<=last;k=addK(k,7)){let tds=`<td class="wk"><b>${k2d(k).getDate()}</b><small>${MS[k2d(k).getMonth()]}</small></td>`;const hs=[];
-    for(let i=0;i<7;i++){const dk=addK(k,i),s=byK[dk];if(dk>last){tds+='<td class="fut"></td>';continue}
-      if(!s||slept(s)==null){tds+=`<td class="none" title="Noche del ${fmtK(addK(dk,-1))} al ${fmtK(dk,true)}: sin datos">·</td>`;continue}
-      const h=slept(s)/60;hs.push(h);colH[i].push(h);allH.push(h);tds+=`<td style="background:${shade(h)};color:${h>=6.8?'#fff':'var(--ink)'}" title="Noche del ${fmtK(addK(dk,-1))} al ${fmtK(dk,true)}: ${fmtDur(slept(s))} (${fmtClock(s.bed)}–${fmtClock(s.wake)})">${fmtN(h,1)}</td>`}
-    const a=mean(hs);tds+='<td class="sep"></td>';tds+=a!=null?`<td class="tot" style="background:${shade(a)};color:${a>=6.8?'#fff':'var(--ink)'}">${fmtN(a,1)}</td>`:'<td class="tot none">·</td>';trs.push(`<tr>${tds}</tr>`)}
-  const cell=(v,t)=>v!=null?`<td style="background:${shade(v)};color:${v>=6.8?'#fff':'var(--ink)'}" title="${t}">${fmtN(v,1)}</td>`:'<td class="none">·</td>';
-  const gA=mean(allH),avgRow=`<tr class="avg"><td class="wk">Media</td>${colH.map((hs,i)=>cell(mean(hs),`${DSL[i][0].toUpperCase()+DSL[i].slice(1)}: ${fmtDur(mean(hs)*60)} de media (${hs.length} ${hs.length===1?'noche':'noches'})`)).join('')}<td class="sep"></td>${gA!=null?`<td class="tot" style="background:${shade(gA)};color:${gA>=6.8?'#fff':'var(--ink)'}" title="Media de las 16 semanas: ${fmtDur(gA*60)}">${fmtN(gA,1)}</td>`:'<td class="tot none">·</td>'}</tr>`;
-  $('slpCal').innerHTML=`<table><thead><tr><th class="wk">Sem.</th>${DS.map(d=>`<th>${d}</th>`).join('')}<th class="sep"></th><th class="tot">Media</th></tr></thead><tbody>${trs.reverse().join('')}</tbody><tfoot><tr class="gap"><td colspan="10"></td></tr>${avgRow}</tfoot></table>`;
-  $('slpCalScale').innerHTML=`<span>4 h</span>${[4,5,6,7,8,9].map(h=>`<i style="background:${shade(h)}" title="${h} h"></i>`).join('')}<span>9 h o más</span>`;
+  const last=all[all.length-1].k;
   // 4. distribución de las noches del periodo
-  const BK=[[0,5,'< 5 h'],[5,6,'5–6'],[6,7,'6–7'],[7,8,'7–8'],[8,9,'8–9'],[9,99,'≥ 9']].map(([a,b,l])=>{const n=rows.filter(s=>slept(s)!=null&&slept(s)/60>=a&&slept(s)/60<b).length;return {l,n,a,v:rows.length?n/rows.length*100:null}});
-  barsChart($('chSlpHist'),BK,{h:200,fmt:v=>fmtInt(v)+' %',labelOf:b=>b.l,colorOf:b=>b.a>=SLEEP_GOAL?'var(--slp)':'var(--slp-soft)',tipOf:b=>`<b>Noches de ${b.l}${b.l.includes('h')?'':' h'}</b><div class="r"><span>Noches</span><span>${b.n}</span></div><div class="r"><span>Del total</span><span>${fmtInt(b.v)} %</span></div>`});
+  const BK=[[0,5,'< 5 h'],[5,6,'5–6'],[6,7,'6–7'],[7,8,'7–8'],[8,9,'8–9'],[9,99,'≥ 9']].map(([a,b,l])=>{const n=rows.filter(s=>slept(s)!=null&&slept(s)/60>=a&&slept(s)/60<b).length;return {l,n,a,v:rows.length&&n?n/rows.length*100:null}});
+  barsChart($('chSlpHist'),BK,{h:200,fmt:v=>fmtInt(v)+' %',labelOf:b=>b.l,colorOf:b=>b.a>=SLEEP_GOAL?'var(--good)':b.a>=SLEEP_GOAL-1?'var(--warn)':'var(--bad)',tipOf:b=>`<b>Noches de ${b.l}${b.l.includes('h')?'':' h'}</b><div class="r"><span>Noches</span><span>${b.n}</span></div><div class="r"><span>Del total</span><span>${fmtInt(b.v)} %</span></div>`});
   // 5. entre semana frente a fin de semana
   const grp=f=>{const g=rows.filter(f);return {n:g.length,dur:mean(g.map(slept)),bed:median(g.map(s=>s.bed).filter(x=>x!=null)),wake:median(g.map(s=>s.wake).filter(x=>x!=null)),mid:median(g.filter(s=>s.bed!=null&&s.wake!=null).map(s=>(s.bed+s.wake)/2))}};
   const wd=grp(s=>!isWeekendNight(s.k)),we=grp(s=>isWeekendNight(s.k));
   if(wd.n>=3&&we.n>=2){const row=(l,a,b,f,diff)=>`<tr><td>${l}</td><td>${f(a)}</td><td>${f(b)}</td><td>${diff}</td></tr>`;const dm=(a,b)=>a==null||b==null?'—':(b-a>=0?'+':'−')+fmtDur(Math.abs(b-a));
-    $('slpWk').innerHTML=`<table class="t"><thead><tr><th></th><th>Entre semana</th><th>Fin de semana</th><th>Diferencia</th></tr></thead><tbody>${row('Dormido',wd.dur,we.dur,fmtDur,dm(wd.dur,we.dur))}${row('Te duermes',wd.bed,we.bed,fmtClock,dm(wd.bed,we.bed))}${row('Te levantas',wd.wake,we.wake,fmtClock,dm(wd.wake,we.wake))}${row('Mitad de la noche',wd.mid,we.mid,fmtClock,dm(wd.mid,we.mid))}${row('Noches',wd.n,we.n,v=>String(v),'')}</tbody></table>`;
+    // una fila por dato: un punto entre semana y otro el fin de semana sobre la misma escala, y la diferencia
+    const dmb=(l,a,b,f,lo,hi,good)=>{if(a==null||b==null)return '';const P=v=>Math.max(0,Math.min(100,(v-lo)/(hi-lo)*100)),pa=P(a),pb=P(b),d=b-a;
+      return `<div class="wkdr"><div class="dml"><span>${l}</span><b class="${good==null||Math.abs(d)<10?'':(d>0)===good?'ok':'ko'}">${dm(a,b)}</b></div><div class="dmt"><i class="dmline" style="left:${Math.min(pa,pb)}%;width:${Math.abs(pb-pa)}%"></i><i class="dmd wd ${pa<=pb?'lft':'rgt'}" style="left:${pa}%"><em>${f(a)}</em></i><i class="dmd we ${pa<=pb?'rgt':'lft'}" style="left:${pb}%"><em>${f(b)}</em></i></div></div>`};
+    const tv=[wd.bed,we.bed,wd.wake,we.wake,wd.mid,we.mid].filter(v=>v!=null),tlo=Math.min(...tv)-45,thi=Math.max(...tv)+45,dlo=Math.min(wd.dur,we.dur)-60,dhi=Math.max(wd.dur,we.dur)+60;
+    $('slpWk').innerHTML=`<div class="dmlg"><span><i class="dmd wd"></i><span>Entre semana</span> · <span>${wd.n} noches</span></span><span><i class="dmd we"></i><span>Fin de semana</span> · <span>${we.n} noches</span></span></div><div class="dmb">${dmb('Dormido',wd.dur,we.dur,fmtDur,dlo,dhi,true)}${dmb('Te duermes',wd.bed,we.bed,fmtClock,tlo,thi,null)}${dmb('Mitad de la noche',wd.mid,we.mid,fmtClock,tlo,thi,null)}${dmb('Te levantas',wd.wake,we.wake,fmtClock,tlo,thi,null)}</div>`;
     const jl=we.mid-wd.mid;$('slpWkTxt').innerHTML=`Tu «jet lag social» es de <b>${fmtDur(Math.abs(jl))}</b>: el fin de semana la mitad de tu noche se ${jl>=0?'retrasa':'adelanta'} eso respecto a entre semana. Por encima de una hora suele costar más dormirse el domingo y madrugar el lunes.`}
   else{$('slpWk').innerHTML=emptyBox('Hacen falta más noches entre semana y de fin de semana en este periodo.');$('slpWkTxt').textContent=''}
   // 6. proporción de cada fase, por semanas
   const wk=bins(rows.filter(s=>slept(s)>0),s=>1,true);const pp=f=>wk.map(b=>({k:b.k,v:mean(b.rs.map(s=>(s[f]||0)/slept(s)*100))}));
-  $('lgPhPct').innerHTML=legendHtml('phpct',[{id:'deep',label:'Profundo',sw:'ln',color:'var(--ph-deep)'},{id:'rem',label:'REM',sw:'ln',color:'var(--ph-rem)'}]);
-  tsChart($('chPhPct'),{h:200,ml:34,series:[shown('phpct','deep')&&{label:'Profundo',pts:pp('deep'),color:'var(--ph-deep)',width:2.2,gap:21,endDot:true},shown('phpct','rem')&&{label:'REM',pts:pp('rem'),color:'var(--ph-rem)',width:2.2,gap:21,endDot:true}],
-    vFmt:v=>fmtInt(v)+' %',yFmt:v=>fmtInt(v)+' %',tipTitle:k=>'Semana del '+fmtK(k,true),empty:'Sin fases registradas en este periodo.'});
+  const PQ=[{id:'deep',label:'Profundo',color:'var(--ph-deep)'},{id:'rem',label:'REM',color:'var(--ph-rem)'},{id:'light',label:'Ligero',color:'var(--ph-light)'},{id:'awake',label:'Despierto',color:'var(--ph-awake)'}];
+  $('lgPhPct').innerHTML=legendHtml('phpct',PQ);const qv=PQ.filter(x=>shown('phpct',x.id));
+  const qb=wk.filter(b=>b.rs.some(r=>r.deep!=null||r.rem!=null)).map(b=>{const t=b.rs.reduce((a,r)=>a+slept(r)+(r.awake||0),0);return {k:b.k,days:7,n:b.n,vals:qv.map(x=>t?b.rs.reduce((a,r)=>a+(r[x.id]||0),0)/t*100:0)}});
+  colChart($('chPhPct'),{h:210,stack:true,layers:qv,items:qb,yFmt:v=>fmtInt(v)+' %',empty:qv.length?'Sin fases registradas en este periodo.':'Todas las fases están ocultas. Toca una en la leyenda para verla.',
+    tipOf:b=>`<b>Semana del ${fmtK(b.k,true)}</b>`+qv.map((x,j)=>`<div class="r"><span><i class="sw" style="background:${x.color}"></i>${x.label}</span><span>${fmtInt(b.vals[j])} %</span></div>`).join('')+`<div class="r"><span>Noches</span><span>${b.n}</span></div>`});
   // 7. resumen en frases
   const notes=[];const last14=all.filter(s=>s.k>addK(last,-14)&&slept(s)!=null);
   if(last14.length>=7){const debt=last14.reduce((t,s)=>t+Math.max(0,SLEEP_GOAL*60-slept(s)),0);notes.push(['⏳',`En las últimas 2 semanas acumulas <b>${fmtDur(debt)}</b> de «deuda de sueño» (lo que te faltó para llegar a ${SLEEP_GOAL} h, noche a noche, en ${last14.length} noches registradas).`])}
@@ -2890,6 +2893,17 @@ function bankCtx(){const L=LIFE;if(!L||!L.hasSlp)return null;const all=L.slp.fil
 const nightBal=(C,k)=>{const s=C.byK[k];return s?s.asleep+napMin(k)-C.G:0};
 // filas de «Noche a noche»: separador de mes, noches sin datos en gris y alta manual de noches
 let SLP_ED=null;
+let BKN_OPEN=false;
+document.addEventListener('toggle',e=>{if(e.target.matches&&e.target.matches('[data-bkfold]'))BKN_OPEN=e.target.open},true);
+// noche a noche en barras: hacia arriba lo que suma (verde), hacia abajo lo que resta (rojo); fin de semana sombreado
+function bknChart(list,mx){const n=list.length,W=Math.max(300,n*12),H=150,mid=H/2-6,bw=W/n,s=(mid-14)/mx;let g=`<svg viewBox="0 0 ${W} ${H}" class="bknch" role="img" aria-label="Saldo de cada noche">`;
+  list.forEach((x,i)=>{if(dowIdx(x.k)>=5)g+=`<rect x="${(i*bw).toFixed(1)}" y="2" width="${bw.toFixed(1)}" height="${H-20}" style="${WE_FILL}"/>`});
+  g+=`<line x1="0" x2="${W}" y1="${mid}" y2="${mid}" style="stroke:var(--faint);stroke-width:1"/>`;
+  list.forEach((x,i)=>{const bx=i*bw+bw*.15,ww=bw*.7;if(!x.has){g+=`<circle cx="${(i*bw+bw/2).toFixed(1)}" cy="${mid}" r="1.6" style="fill:var(--faint)"/>`;return}
+    const hh=Math.max(1.5,Math.abs(x.v)*s);g+=`<rect x="${bx.toFixed(1)}" y="${(x.v>=0?mid-hh:mid).toFixed(1)}" width="${ww.toFixed(1)}" height="${hh.toFixed(1)}" rx="${Math.min(3,ww/3).toFixed(1)}" style="fill:${x.v>=0?'var(--good)':'var(--bad)'}"><title>${esc(fmtK(x.k,true))}: ${x.v>=0?'+':'−'}${fmtDur(Math.abs(x.v))}</title></rect>`});
+  let lm='';list.forEach((x,i)=>{const d=k2d(x.k).getDate();if(i===0||d===1||(n<=14&&i%2===0)||(n>14&&dowIdx(x.k)===0)){g+=`<text x="${(i*bw+bw/2).toFixed(1)}" y="${H-5}" text-anchor="middle" class="pbl">${d}${x.k.slice(0,7)!==lm?' '+MS[k2d(x.k).getMonth()]:''}</text>`;lm=x.k.slice(0,7)}});
+  const tot=list.filter(x=>x.has).reduce((t,x)=>t+x.v,0),pos=list.filter(x=>x.has&&x.v>=0).length,neg=list.filter(x=>x.has&&x.v<0).length;
+  return g+`</svg><div class="pbcap"><span><i class="pbk" style="border-top:6px solid var(--good)"></i>Suman <b>${pos}</b></span><span><i class="pbk" style="border-top:6px solid var(--bad)"></i>Restan <b>${neg}</b></span><span>Total <b style="color:${tot>=0?'var(--good)':'var(--bad)'}">${tot>=0?'+':'−'}${fmtDur(Math.abs(tot))}</b></span></div>`}
 function bknRows(list,mx){const multi=list.length&&list[0].k.slice(0,7)!==list[list.length-1].k.slice(0,7);let lm='',h='';
   for(const x of list){const mk=x.k.slice(0,7);if(multi&&mk!==lm){lm=mk;h+=`<div class="bkm">${MSL[+mk.slice(5)-1]} ${mk.slice(0,4)}</div>`}
     const s=LIFE&&LIFE.slp?LIFE.slp.find(r=>r.k===x.k):null,man=s&&s.man;
@@ -2967,14 +2981,17 @@ function renderBankTab(){const host=$('bankTab');if(!host)return;const C=bankCtx
   const P=slpRange||diffK(all[0].k,last)+1,PL=slpRange?({7:'la última semana',30:'el último mes',91:'los últimos 3 meses',182:'los últimos 6 meses',365:'el último año'})[slpRange]||`los últimos ${slpRange} días`:'todo tu historial';
   // 1. panel principal
   const last7=[];for(let i=6;i>=0;i--){const k=addK(last,-i);last7.push({k,s:byK[k]})}
-  let h=`<section class="card">${debtHtml(last7,0,G*7,all,{})}</section>`;
+  let h=`<section class="card">${debtHtml(last7,0,G*7,all,{noPlans:bal<-15})}</section>`;
+  // plan para saldarla: tarjetas, justo después del panel principal
+  if(bal<-15){const effs=all.slice(-30).map(x=>x.eff).filter(v=>v!=null&&v>40),eff=effs.length?Math.min(100,mean(effs))/100:0.9,W=SLP_SCHED,same=W.wd.wake===W.we.wake;
+    h+=`<section class="card"><h2>Plan para saldar la deuda</h2><div class="dbplans bkplan">${[3,5,7,10,14].map(n=>{const per=Math.round(G-bal/n),b=w=>fmtClock(w-Math.round(per/eff));return `<div class="dbp${n===7?' rec':''}"><span>En <b>${n} noches</b></span><b class="dbh">${fmtDur(per)}</b><small>cada noche</small>${same?`<small>A la cama a las <b>${b(W.wd.wake)}</b></small>`:`<small class="dbt"><span>Laborables</span><b>${b(W.wd.wake)}</b></small><small class="dbt"><span>Fin de semana</span><b>${b(W.we.wake)}</b></small>`}</div>`}).join('')}</div><p class="bc-note">Con tu eficiencia media del ${fmtInt(eff*100)} % y tus horas objetivo de despertar. Repartirla en una o dos semanas es más realista que intentarlo en una noche.</p></section>`}
   // 2. evolución del saldo (reutiliza la gráfica de la hoja)
   const dEv=Math.max(14,P);const prev=SHEET;SHEET={kind:'bank',opt:{long:dEv>45,days:dEv}};let sh='';try{sh=bankSheet(C.L)}finally{SHEET=prev}
   sh=sh.replace(/<div class="bkhead">[\s\S]*?<\/div>\s*<div class="shseg">[\s\S]*?<\/div>/,'');
   h+=`<section class="card"><div class="chead"><h2>Evolución del saldo</h2><span class="nlbl">${P<14?'las últimas 2 semanas':PL}</span></div>${sh}</section>`;
   // 3. noche a noche (14 noches): lo que cada noche suma o resta
   const NN=Math.min(31,Math.max(7,P)),n14=[];for(let i=NN-1;i>=0;i--){const k=addK(last,-i);n14.push({k,v:nightBal(C,k),has:!!byK[k]})}const mx=Math.max(60,...n14.map(x=>Math.abs(x.v)));
-  h+=`<section class="card"><h2>Noche a noche</h2><p class="lead">${P>31?'Las últimas 31 noches: ':`Las últimas ${NN} noches: `}lo que cada noche suma o resta al saldo frente a tu objetivo de ${fmtN(SLEEP_GOAL,SLEEP_GOAL%1?1:0)} h (siestas incluidas).</p><div class="bkn">${bknRows(n14,mx)}</div><p class="bknote">Las noches sin datos no cuentan en el saldo.${OWNER?' Si te acuerdas de cuándo dormiste, pulsa «Añadir» para apuntarla a mano.':''}</p></section>`;
+  h+=`<section class="card"><h2>Noche a noche</h2><p class="lead">${P>31?'Las últimas 31 noches: ':`Las últimas ${NN} noches: `}lo que cada noche suma o resta al saldo frente a tu objetivo de ${fmtN(SLEEP_GOAL,SLEEP_GOAL%1?1:0)} h (siestas incluidas).</p>${bknChart(n14,mx)}<details class="bkfold" data-bkfold${BKN_OPEN?' open':''}><summary>Ver la lista noche a noche</summary><div class="bkn">${bknRows(n14,mx)}</div></details><p class="bknote">Las noches sin datos no cuentan en el saldo.${OWNER?' Si te acuerdas de cuándo dormiste, pulsa «Añadir» para apuntarla a mano.':''}</p></section>`;
   // 4. cifras
   const in30=all.filter(s=>s.k>addK(last,-P)),ok30=in30.filter(s=>s.asleep+napMin(s.k)>=G).length;
   let cur=0;for(let i=0;;i++){const s=byK[addK(last,-i)];if(s&&s.asleep+napMin(s.k)>=G)cur++;else break}
@@ -2995,9 +3012,6 @@ function renderBankTab(){const host=$('bankTab');if(!host)return;const C=bankCtx
     return `<tr><td>${lab}</td><td class="num">${fmtN(y,dec)}${unit}</td><td class="num">${fmtN(x,dec)}${unit}</td><td class="num ${Math.abs(d)<(dec?0.1:1)?'':okd?'ok':'ko'}">${d>=0?'+':'−'}${fmtN(Math.abs(d),dec)}</td></tr>`};
   const R=[cmp('VFC',k=>hk[k]&&hk[k].hrv,' ms',0,true),cmp('Pulso en reposo',k=>hk[k]&&hk[k].rhr,' lpm',0,false),cmp('Pasos ese día',k=>act[k]&&act[k].steps,'',0,true),cmp('Nota de comidas',k=>fd[k],' %',0,true),cmp('Calificación de sueño',k=>{const s=byK[addK(k,1)];return s?nightScore(s,null):null},'',0,true)].join('');
   h+=`<section class="card"><h2>Cómo te afecta la deuda</h2><p class="lead">Tus días con más de 5 h de deuda frente a los días en que estabas al día (${P<90?'últimos 3 meses':PL}: ${bad.length} y ${good.length} días).</p>${R?`<div class="tblwrap"><table class="bkt"><thead><tr><th></th><th>Al día</th><th>Con deuda</th><th>Diferencia</th></tr></thead><tbody>${R}</tbody></table></div><p class="bc-note">Calificación de sueño: la de la noche siguiente. Son asociaciones en tus datos, no causas demostradas.</p>`:emptyBox('Todavía no hay bastantes días de cada tipo para comparar.')}</section>`;
-  // 7. plan para saldarla
-  if(bal<-15){const effs=all.slice(-30).map(x=>x.eff).filter(v=>v!=null&&v>40),eff=effs.length?Math.min(100,mean(effs))/100:0.9,W=SLP_SCHED;
-    h+=`<section class="card"><h2>Plan para saldar la deuda</h2><div class="tblwrap"><table class="bkt"><thead><tr><th>En</th><th>Dormir cada noche</th><th>A la cama (laborables)</th><th>Fines de semana</th></tr></thead><tbody>${[3,5,7,10,14].map(n=>{const per=Math.round(G-bal/n),b=w=>fmtClock(w-Math.round(per/eff));return `<tr><td>${n} noches</td><td class="num"><b>${fmtDur(per)}</b></td><td class="num">${b(W.wd.wake)}</td><td class="num">${b(W.we.wake)}</td></tr>`}).join('')}</tbody></table></div><p class="bc-note">Con tu eficiencia media del ${fmtInt(eff*100)} % y tus horas objetivo de despertar. Repartirla en una o dos semanas es más realista que intentarlo en una noche.</p></section>`}
   host.innerHTML=h}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-bkl]');if(!b)return;BK_LONG=b.dataset.bkl==='1';UI.bkLong=BK_LONG;saveUI();renderBankTab()});
 // ir a un apartado de otra sección: data-go="vista|apartado"
