@@ -3585,7 +3585,12 @@ function renderCorazon(){
     tsChart($('hc-'+c),{h:150,ml:38,series:[{label:l,pts,color:'var(--weight)',width:2,gap:10,endDot:true,dots:pts.length<60,dotR:2.2}],vFmt:v=>fmtN(v,dec)+u})}
 }
 const VT_DEF={resumen:'gen',peso:'evo',sueno:'hoy',comidas:'hoy',historial:'anios',actividad:'hoy',intimo:'ciclo'};
-function applyVTabs(){for(const nav of document.querySelectorAll('.vtabs')){const v=nav.dataset.view,cur=(UI.vt&&UI.vt[v])||VT_DEF[v];
+// iOS: si un campo con el teclado abierto se oculta al cambiar de pestaña o de sección, Safari deja la pantalla encogida
+// y las barras fijas se mueven con el scroll; se suelta el campo antes de cambiar y se recoloca la página al cerrar el teclado
+const blurHidden=()=>setTimeout(()=>{const a=document.activeElement;if(a&&a!==document.body&&a.matches&&a.matches('input,textarea,select,[contenteditable]')&&!a.getClientRects().length)a.blur()},0);
+document.addEventListener('focusout',e=>{if(e.target.matches&&e.target.matches('input,textarea,select,[contenteditable]'))setTimeout(()=>{if(!document.activeElement||!document.activeElement.matches('input,textarea,select,[contenteditable]'))scrollTo(scrollX,scrollY)},80)});
+addEventListener('hashchange',blurHidden);
+function applyVTabs(){blurHidden();for(const nav of document.querySelectorAll('.vtabs')){const v=nav.dataset.view,cur=(UI.vt&&UI.vt[v])||VT_DEF[v];
   nav.querySelectorAll('a').forEach(a=>{const on=a.dataset.tab===cur;a.classList.toggle('on',on);on?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current')});
   document.querySelectorAll(`#v-${v} [data-tg]`).forEach(el=>el.classList.toggle('vt-off',el.dataset.tg!==cur))}}
 document.addEventListener('click',e=>{const m=e.target.closest('[data-vt]');if(m){e.preventDefault();UI.vt={...(UI.vt||{}),resumen:m.dataset.vt};saveUI();applyVTabs();renderView();window.scrollTo({top:0});return}const a=e.target.closest('.vtabs a');if(!a)return;e.preventDefault();const v=a.closest('.vtabs').dataset.view;
