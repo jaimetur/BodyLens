@@ -85,7 +85,7 @@ h1,h2,h3{text-wrap:balance;margin:0}
 .notice{border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 14px;font-size:.9rem;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .notice[data-kind="err"]{border-color:var(--bad)}
 
-.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:25;transform:translateZ(0);display:flex;justify-content:space-around;gap:0;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px max(16px,env(safe-area-inset-right,0px)) max(14px,calc(6px + env(safe-area-inset-bottom,0px))) max(16px,env(safe-area-inset-left,0px))}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:25;display:flex;justify-content:space-around;gap:0;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px max(16px,env(safe-area-inset-right,0px)) max(14px,calc(6px + env(safe-area-inset-bottom,0px))) max(16px,env(safe-area-inset-left,0px))}
 @media (min-width:900px){.tabbar{display:none}}
 .tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;border-radius:12px;text-decoration:none;color:var(--muted);font-size:.68rem;font-weight:600;letter-spacing:0}@media (max-width:440px){.tab{font-size:.58rem}.tab svg{width:21px;height:21px}.tabbar{padding-left:max(6px,env(safe-area-inset-left,0px));padding-right:max(6px,env(safe-area-inset-right,0px))}}
 .tab svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -891,7 +891,7 @@ body.mopen .btabs,body.mopen .rangefloat,body.mopen .swdots,body.mopen .cnbar{vi
 @keyframes swh{0%,100%{transform:translateX(-6px)}50%{transform:translateX(6px)}}
 /* the tabs of the module go to a strip just above the bottom bar, within reach of the thumb (the top ones stay for the swipe and the PDF, out of sight) */
 body.hasbt .view:not([hidden]) .cuetabs,body.hasbt #v-cuenta>.ajtabs,body.hasbt #v-ajustes #ajTabs{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);padding:0;margin:0;border:0;white-space:nowrap}
-.btabs{position:fixed;left:0;right:0;z-index:24;transform:translateZ(0);display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:6px max(10px,env(safe-area-inset-right,0px)) 6px max(10px,env(safe-area-inset-left,0px));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line)}
+.btabs{position:fixed;left:0;right:0;z-index:24;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:6px max(10px,env(safe-area-inset-right,0px)) 6px max(10px,env(safe-area-inset-left,0px));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line)}
 .btabs::-webkit-scrollbar{display:none}.btabs[hidden]{display:none}
 .btabs a{flex:1 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:48px;padding:4px 10px;border-radius:14px;text-decoration:none;color:var(--muted);font-size:.74rem;font-weight:600;white-space:nowrap}
 .btabs a svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}

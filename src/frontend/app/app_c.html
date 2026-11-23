@@ -3586,9 +3586,8 @@ function renderCorazon(){
 }
 const VT_DEF={resumen:'gen',peso:'evo',sueno:'hoy',comidas:'hoy',historial:'anios',actividad:'hoy',intimo:'ciclo'};
 // iOS: si un campo con el teclado abierto se oculta al cambiar de pestaña o de sección, Safari deja la pantalla encogida
-// y las barras fijas se mueven con el scroll; se suelta el campo antes de cambiar y se recoloca la página al cerrar el teclado
+// y las barras fijas se mueven con el scroll; se suelta el campo antes de cambiar
 const blurHidden=()=>setTimeout(()=>{const a=document.activeElement;if(a&&a!==document.body&&a.matches&&a.matches('input,textarea,select,[contenteditable]')&&!a.getClientRects().length)a.blur()},0);
-document.addEventListener('focusout',e=>{if(e.target.matches&&e.target.matches('input,textarea,select,[contenteditable]'))setTimeout(()=>{if(!document.activeElement||!document.activeElement.matches('input,textarea,select,[contenteditable]'))scrollTo(scrollX,scrollY)},80)});
 addEventListener('hashchange',blurHidden);
 function applyVTabs(){blurHidden();for(const nav of document.querySelectorAll('.vtabs')){const v=nav.dataset.view,cur=(UI.vt&&UI.vt[v])||VT_DEF[v];
   nav.querySelectorAll('a').forEach(a=>{const on=a.dataset.tab===cur;a.classList.toggle('on',on);on?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current')});
@@ -3668,8 +3667,6 @@ function refPh(){const ph=(id,v,dec)=>{const el=$(id);if(el)el.placeholder=v==nu
   if($('mwType'))$('mwType').placeholder=wo&&wo[3]||'';ph('mwDur',wo&&wo[2]);ph('mwKcal',wo&&wo[4]);ph('mwDist',wo&&wo[6]!=null?wo[6]/1000:null,1);
   for(const [id,i,,,dec] of (typeof MH!=='undefined'?MH:[])){const r=lastRow(HK,v=>v[i]!=null);ph(id,r&&r[1][i],dec?1:0)}
   const mk=Object.keys((MED&&MED.e)||{}).sort().reverse();for(const [f] of (typeof MEDF!=='undefined'?MEDF:[])){const k=mk.find(k=>MED.e[k][f]!=null);ph('md-'+f,k?MED.e[k][f]:null,1)}}
-// iOS: si la página se acorta estando desplazada, las barras fijas se descolocan; se vuelve al final real
-try{new ResizeObserver(()=>{const mx=document.documentElement.scrollHeight-innerHeight;if(scrollY>mx+1)scrollTo(0,Math.max(0,mx))}).observe(document.body)}catch(e){}
 function renderView(){try{refPh()}catch(e){console.warn(e)}applyVTabs();if(VIEW==='sueno')try{renderBankTab()}catch(e){console.warn(e)}
   try{
     if(VIEW==='cuenta'||VIEW==='admin'||VIEW==='help'){srvShow(VIEW);if(VIEW==='cuenta')try{$('emb-cuenta').contentWindow.blPdFill()}catch(e){}return}
@@ -3890,6 +3887,11 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-actmet]');
     if(!on){rf.style.bottom='';return}bt.style.setProperty('--mc','var(--'+({resumen:'weight',peso:'weight',composicion:'mus',actividad:'act',sueno:'slp',comidas:'fat',intimo:'nap',historial:'wat',cuenta:'good',admin:'bad'}[modOf(VIEW)]||'weight')+')');bt.innerHTML=ps.map(p=>chip(p).replace('">','">'+(p.ic||'')+'<span>').replace(/<\/a>$/,'</span></a>')).join('');bt.style.bottom=Math.round(tn.getBoundingClientRect().height)+'px';
     rf.style.bottom=Math.round(tn.getBoundingClientRect().height+bt.offsetHeight+10)+'px';const a=bt.querySelector('a.on');if(a)bt.scrollLeft=a.offsetLeft-(bt.clientWidth-a.offsetWidth)/2}
   addEventListener('resize',()=>{try{btDraw()}catch(e){}});
+  // iOS: a veces Safari deja la zona útil más corta que la pantalla (tras el teclado, al volver a la app…) y las barras fijas
+  // se quedan a media pantalla y se mueven con el scroll; se bajan hasta el borde real de lo que se ve
+  {const vv=window.visualViewport;if(vv){let F=0;const pin=()=>{F=0;const dy=Math.round(vv.offsetTop+vv.height-innerHeight);const t=dy>2&&!document.activeElement.matches('input,textarea,select,[contenteditable]')?`0 ${dy}px`:'';
+      for(const e of [tn,bt,rf,dots,mp])if(e&&e.style.translate!==t)e.style.translate=t};const req=()=>{if(!F)F=requestAnimationFrame(pin)};
+    vv.addEventListener('resize',req);vv.addEventListener('scroll',req);addEventListener('scroll',req,{passive:true});addEventListener('resize',req);document.addEventListener('focusout',()=>setTimeout(req,300));req()}}
   window.blSync=()=>sync();
   function sync(){try{btDraw();if(shown)cbarDraw();moreMark();useCount();dotsShow();if(!UI.swHint&&!HT)HT=setTimeout(hint,2500)}catch(e){}}
   {const f=applyVTabs;applyVTabs=function(){const r=f.apply(this,arguments);sync();return r}}

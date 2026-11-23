@@ -113,7 +113,7 @@
 - **Security:** the access log no longer stores the Apple Health upload address, OAuth codes or invitations.
 - **Withings:** the callback address accepts Withings' tests and notices (POST and HEAD).
 - **Browser:**
-- **Bottom bars on iPhone:** the module bar and the tab strip stay at the bottom while scrolling, also after a text field was left open when changing tab or section, or a tab got shorter while scrolled.
+- **Bottom bars on iPhone:** the module bar and the tab strip stay at the real bottom of the screen while scrolling, also when Safari leaves the usable area shorter than the screen (after the keyboard or when coming back to the app).
   - Pages and their styles are revalidated on every deployment, so no stale copies stay in the cache.
   - Your account and Administration can be shown inside the app.
   - The enlarged cards fit the screen and their close button stays visible while scrolling, also with a larger text size on phones.
