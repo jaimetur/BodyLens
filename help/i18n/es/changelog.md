@@ -1,4 +1,4 @@
-<!-- en: d0584909255b3870 -->
+<!-- en: fe0a5669027cf045 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -114,7 +114,7 @@
 - **Seguridad:** el registro de accesos ya no guarda la dirección de subida de Apple Salud, los códigos OAuth ni las invitaciones.
 - **Withings:** la dirección de retorno acepta las pruebas y los avisos de Withings (POST y HEAD).
 - **Navegador:**
-- **Barras de abajo en el iPhone:** la barra de módulos y la de pestañas se quedan en el borde real de la pantalla al desplazarte, también cuando Safari deja la zona útil más corta que la pantalla (tras el teclado o al volver a la app).
+- **Barras de abajo en el iPhone:** al cambiar de pestaña o de sección se suelta el campo de texto que queda oculto, para que Safari no se quede con la pantalla encogida del teclado y las barras de abajo sigan en su sitio.
   - Las páginas y sus estilos se revalidan en cada despliegue, así que no quedan copias obsoletas en la caché.
   - Tu cuenta y Administración se pueden mostrar dentro de la app.
   - Las tarjetas ampliadas caben en la pantalla y su botón de cerrar sigue visible al desplazarte, también con el texto más grande en el móvil.

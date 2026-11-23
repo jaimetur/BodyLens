@@ -3907,11 +3907,6 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-actmet]');
     if(!on){rf.style.bottom='';return}bt.style.setProperty('--mc','var(--'+({resumen:'weight',peso:'weight',composicion:'mus',actividad:'act',sueno:'slp',comidas:'fat',intimo:'nap',historial:'wat',cuenta:'good',admin:'bad'}[modOf(VIEW)]||'weight')+')');bt.innerHTML=ps.map(p=>chip(p).replace('">','">'+(p.ic||'')+'<span>').replace(/<\/a>$/,'</span></a>')).join('');bt.style.bottom=Math.round(tn.getBoundingClientRect().height)+'px';
     rf.style.bottom=Math.round(tn.getBoundingClientRect().height+bt.offsetHeight+10)+'px';const a=bt.querySelector('a.on');if(a)bt.scrollLeft=a.offsetLeft-(bt.clientWidth-a.offsetWidth)/2}
   addEventListener('resize',()=>{try{btDraw()}catch(e){}});
-  // iOS: a veces Safari deja la zona útil más corta que la pantalla (tras el teclado, al volver a la app…) y las barras fijas
-  // se quedan a media pantalla y se mueven con el scroll; se bajan hasta el borde real de lo que se ve
-  {const vv=window.visualViewport;if(vv){let F=0;const pin=()=>{F=0;const dy=Math.round(vv.offsetTop+vv.height-innerHeight);const t=dy>2&&!document.activeElement.matches('input,textarea,select,[contenteditable]')?`0 ${dy}px`:'';
-      for(const e of [tn,bt,rf,dots,mp])if(e&&e.style.translate!==t)e.style.translate=t};const req=()=>{if(!F)F=requestAnimationFrame(pin)};
-    vv.addEventListener('resize',req);vv.addEventListener('scroll',req);addEventListener('scroll',req,{passive:true});addEventListener('resize',req);document.addEventListener('focusout',()=>setTimeout(req,300));req()}}
   window.blSync=()=>sync();
   function sync(){try{btDraw();if(shown)cbarDraw();moreMark();useCount();dotsShow();if(!UI.swHint&&!HT)HT=setTimeout(hint,2500)}catch(e){}}
   {const f=applyVTabs;applyVTabs=function(){const r=f.apply(this,arguments);sync();return r}}
