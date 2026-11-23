@@ -79,7 +79,7 @@
 #### 🚀 Enhancements:
 - **A single importer** (Your account → Data and backups) for the full backup and for the previous version's `snap.json`. If the backup has several profiles, you choose which one to import.
 - **Meals:**
-- **Sleep charts, reorganised and clearer:** each tab keeps one topic (Night, Balance, Progress, Schedule, Analysis) and repeated panels are gone (Hours of sleep and the 16-week calendar). Balance puts the plan to pay off the debt first, as cards, and shows night by night as green and red bars with the list folded; Trend and What time you sleep follow the chosen period, by week (by month beyond 6 months); Weekdays and weekends uses dots on one scale; Quality is a bar per night (per week beyond 1 month) split by stage; the Historical calendar becomes a heat map beyond 6 weeks; the wellbeing gauges show two figures each with the rest under More.
+- **Sleep charts, reorganised and clearer:** each tab keeps one topic (Night, Balance, Progress, Schedule, Analysis) and Balance shows the plan to pay off the debt as cards and night by night as green and red bars with the list folded; Trend and What time you sleep follow the chosen period, by week (by month beyond 6 months); Weekdays and weekends uses dots on one scale; Quality is a bar per night (per week beyond 1 month) split by stage; the Historical calendar becomes a heat map beyond 6 weeks; the wellbeing gauges show two figures each with the rest under More.
   - Each score sits on its meal's row, with large buttons, and Water has its own row.
   - The day's log comes before the estimated loss.
   - The day's log shows the last 4 weeks (Monday to Sunday) at the top instead of just one; the arrows jump 4 weeks.

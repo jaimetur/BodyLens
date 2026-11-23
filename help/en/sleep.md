@@ -36,19 +36,20 @@ Use it to see how you sleep: last night, your sleep balance, progress, schedule 
 
 ## Balance
 
-- **Sleep balance**: what you have slept in the last 7 nights, plus naps, compared with your goal per night. Nights without data do not count (nor does their goal). Positive is a surplus; negative, a debt. The ring shows the percentage and the text says how much you slept out of how much you needed. With no debt, it shows how much margin you have.
-- **Plan to pay off the debt**: if there is debt, right below, one card per plan with how much to sleep each night and what time to go to bed to pay it off in 3, 5, 7, 10 or 14 nights (the 7-night one is highlighted). It uses your average efficiency of the last month.
+- **Sleep balance**: what you have slept in the last 7 nights, plus naps, compared with your goal per night. Nights without data do not count (nor does their goal). Positive is a surplus; negative, a debt. The ring shows the percentage and the text says how much you slept out of how much you needed. It also shows 7- and 14-night plans to pay off the debt; with no debt, how much margin you have.
 - **Balance progress**: each point is the balance of the previous 7 nights; the bands and the red dots are weekends.
 - **Night by night**: a bar per night, up in green for what it adds and down in red for what it subtracts (naps included), with how many nights add, how many subtract and the total. **See the night-by-night list** unfolds the list: on nights without data, **Add** appears and you can log by hand the time you went to bed and got up (the night must last between 30 minutes and 20 hours). If the real night from Withings or Apple Health arrives later, it replaces it. Nights logged by hand can be edited or deleted.
 - **In numbers**: average slept, nights on goal, current streak, days in debt, worst balance and naps contributed.
 - **Which nights put you in debt**: average balance by day of the week.
 - **How debt affects you**: compares your days with a lot of debt with the days when you are up to date in HRV, resting heart rate, steps, meal score and sleep score (needs at least 5 days of each type).
+- **Plan to pay off the debt**: if there is debt, one card per plan with how much to sleep each night and what time to go to bed to pay it off in 3, 5, 7, 10 or 14 nights (the 7-night one is highlighted). It uses your average efficiency of the last month.
 - Tapping the balance card opens the report, with the target bedtime and wake-up time.
 
 ## Progress
 
 - **Historical**: tabs **Score**, **Quality** (deep plus REM), **Sleep** (hours), **Deep**, **When you go to bed** and **Heart rate**. It shows bars for the period, with the goal line, and a calendar of up to 18 weeks; tapping a day selects it. With more than 6 weeks the calendar is a heat map: each day coloured with its value.
 - **Trends and details**, starting with figures for the period: **Asleep**, **In bed** (with efficiency), **You fall asleep** and **You get up** (median times), **Regularity** of your bedtime, **Nights of 7 h or more** (your goal), **Deep sleep** (with REM and light) and **HR while sleeping** (with its minimum).
+- **Hours of sleep** per night (per week with long periods) with the goal line and the 7-night average.
 - **Trend**: how much you sleep each night (median) in each week of the chosen period, or each month if it is longer than 6 months, with its moving average (4 weeks or 3 months) and your goal line. With short periods, the last 12 weeks are shown.
 
 ## Schedule
@@ -61,6 +62,7 @@ Use it to see how you sleep: last night, your sleep balance, progress, schedule 
 ## Analysis
 
 - **What your sleep says**: sentences with your own data.
+- **Sleep calendar**: hours slept each night of the last 16 weeks by day of the week, with the average of each week and of each day; the more intense, the more hours.
 - **Sleep stages**: hours of each stage per night.
 - **Quality: deep and REM sleep**: a bar per night (per week if the period is longer than 1 month) split into deep, REM, light and awake.
 - **How much you sleep**: breakdown of the period's nights by hours slept: green ranges reach your goal, amber ones are less than 1 hour short.

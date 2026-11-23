@@ -1,4 +1,4 @@
-<!-- en: 471d18422bba8352 -->
+<!-- en: fc524bc80a0f4207 -->
 # Sueño
 
 Sirve para ver cómo duermes: la última noche, tu saldo de sueño, la evolución, el horario y el análisis. Incluye siestas, fases del sueño y comparaciones con tu peso.
@@ -37,19 +37,20 @@ Sirve para ver cómo duermes: la última noche, tu saldo de sueño, la evolució
 
 ## Saldo
 
-- **Saldo de sueño**: lo que has dormido en las últimas 7 noches, más las siestas, frente a tu objetivo por noche. Las noches sin datos no cuentan (ni su objetivo). Positivo es un excedente; negativo, una deuda. El anillo muestra el porcentaje y el texto dice cuánto has dormido de cuánto necesitabas. Sin deuda, muestra cuánto margen tienes.
-- **Plan para saldar la deuda**: si hay deuda, justo debajo, una tarjeta por plan con cuánto dormir cada noche y a qué hora acostarte para pagarla en 3, 5, 7, 10 o 14 noches (la de 7 noches, resaltada). Usa tu eficiencia media del último mes.
+- **Saldo de sueño**: lo que has dormido en las últimas 7 noches, más las siestas, frente a tu objetivo por noche. Las noches sin datos no cuentan (ni su objetivo). Positivo es un excedente; negativo, una deuda. El anillo muestra el porcentaje y el texto dice cuánto has dormido de cuánto necesitabas. También muestra planes de 7 y 14 noches para pagar la deuda; sin deuda, cuánto margen tienes.
 - **Evolución del saldo**: cada punto es el saldo de las 7 noches anteriores; las bandas y los puntos rojos son los fines de semana.
 - **Noche a noche**: una barra por noche, hacia arriba en verde lo que suma y hacia abajo en rojo lo que resta (siestas incluidas), con cuántas noches suman, cuántas restan y el total. **Ver la lista noche a noche** despliega la lista: en las noches sin datos aparece **Añadir** y puedes apuntar a mano la hora a la que te acostaste y te levantaste (la noche debe durar entre 30 minutos y 20 horas). Si la noche real de Withings o Apple Salud llega después, la sustituye. Las noches apuntadas a mano se pueden editar o borrar.
 - **En cifras**: media dormida, noches en el objetivo, racha actual, días en deuda, peor saldo y siestas aportadas.
 - **Qué noches te endeudan**: saldo medio por día de la semana.
 - **Cómo te afecta la deuda**: compara tus días con mucha deuda con los días en que estás al día en HRV, frecuencia cardiaca en reposo, pasos, nota de comidas y calificación de sueño (necesita al menos 5 días de cada tipo).
+- **Plan para saldar la deuda**: si hay deuda, una tarjeta por plan con cuánto dormir cada noche y a qué hora acostarte para pagarla en 3, 5, 7, 10 o 14 noches (la de 7 noches, resaltada). Usa tu eficiencia media del último mes.
 - Al tocar la tarjeta del saldo se abre el informe, con la hora objetivo de acostarte y de levantarte.
 
 ## Evolución
 
 - **Histórico**: pestañas **Calificación**, **Calidad** (profundo más REM), **Sueño** (horas), **Profundo**, **Al acostarte** y **Pulso**. Muestra barras del periodo, con la línea del objetivo, y un calendario de hasta 18 semanas; al tocar un día se elige. Con más de 6 semanas el calendario es un mapa de calor: cada día coloreado con su valor.
 - **Tendencias y detalles**, empezando por las cifras del periodo: **Dormido**, **En la cama** (con la eficiencia), **Te duermes** y **Te levantas** (horas medianas), **Regularidad** de tu hora de dormirte, **Noches de 7 h o más** (tu objetivo), **Sueño profundo** (con REM y ligero) y **FC durmiendo** (con su mínima).
+- **Horas de sueño** por noche (por semana con periodos largos) con la línea del objetivo y la media de 7 noches.
 - **Tendencia**: lo que duermes cada noche (mediana) en cada semana del periodo elegido, o en cada mes si pasa de 6 meses, con su media móvil (4 semanas o 3 meses) y la línea de tu objetivo. Con periodos cortos se ven las 12 últimas semanas.
 
 ## Horario
@@ -62,6 +63,7 @@ Sirve para ver cómo duermes: la última noche, tu saldo de sueño, la evolució
 ## Análisis
 
 - **Lo que dice tu sueño**: frases con tus propios datos.
+- **Calendario de sueño**: horas dormidas cada noche de las últimas 16 semanas por día de la semana, con la media de cada semana y de cada día; cuanto más intenso, más horas.
 - **Fases del sueño**: horas de cada fase por noche.
 - **Calidad: sueño profundo y REM**: una barra por noche (por semana si el periodo pasa de 1 mes) repartida entre profundo, REM, ligero y despierto.
 - **Cuánto duermes**: desglose de las noches del periodo por horas dormidas: en verde los tramos que llegan a tu objetivo, en ámbar los que se quedan a menos de 1 hora.
