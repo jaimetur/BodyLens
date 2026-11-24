@@ -8,6 +8,8 @@ made with the synthetic demo account (`tools/demo_data.py`), never with real dat
 | `icon-512.png` | Store listing → App icon | 512×512 PNG (full square: Play rounds the corners) |
 | `feature-1024x500-es.png`, `feature-1024x500-en.png` | Store listing → Feature graphic (Spanish / English listing) | 1024×500 PNG |
 | `screenshots/es/*.png`, `screenshots/en/*.png` | Store listing → Phone screenshots, in this order | 7 × 1080×1920 PNG (9:16) |
+| `screenshots-tablet/es/*.png`, `screenshots-tablet/en/*.png` | Store listing → 7-inch and 10-inch tablet screenshots (the same images for both) | 7 × 1620×2880 PNG (9:16) |
+| `screenshots-chromebook/es/*.png`, `screenshots-chromebook/en/*.png` | Store listing → Chromebook screenshots | 7 × 2880×1620 PNG (16:9) |
 
 ## 1. Create the app
 
