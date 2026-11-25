@@ -1,4 +1,4 @@
-<!-- en: 12736b8e2232a1c8 -->
+<!-- en: 621431069709d542 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -133,6 +133,7 @@
 - El material que ya no se usa sale del repositorio: el plan de migración original, el encargo y el traspaso (`docs/`) y los scripts de Apps Script y de Salud (`legacy/`); las reglas de datos que hay que conservar pasan a `AGENTS.md`.
 - `AGENTS.md` con las reglas del repositorio (diseño intacto, paridad de datos, secretos y datos personales fuera, idioma de trabajo, textos e idiomas).
 - `src/frontend/i18n/README.md`: cómo añadir o mejorar una traducción.
+- **Botón de la web en el README:** un botón grande al principio de `README.md` abre la web de BodyLens (https://bodylens.jtgcloud.com); la Ayuda de la app no lo muestra.
 
 ---
 

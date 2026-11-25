@@ -41,13 +41,14 @@ def resolve(doc: str) -> Path | None:
 
 
 def source(doc: str) -> str | None:
-    """The English Markdown of ``doc`` as it is translated and shown (README without its GitHub language bar)."""
+    """The English Markdown of ``doc`` as it is translated and shown (README without its GitHub language bar and website button)."""
     p = resolve(doc)
     if not p:
         return None
     md = p.read_text(encoding="utf-8")
     if doc == "readme":
         md = re.sub(r"^\*\*[^\n]*README_[A-Z]{2}\.md[^\n]*(\n[^\n#][^\n]*)*\n", "", md, count=1, flags=re.M)
+        md = re.sub(r"^<p\b[^>]*>.*?</p>\n+", "", md, flags=re.M | re.S)   # GitHub-only HTML (the website button)
     return md
 
 

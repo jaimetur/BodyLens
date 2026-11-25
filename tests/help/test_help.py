@@ -12,7 +12,8 @@ def docs_dir(tmp_path, monkeypatch, env):
     (d / "help" / "en" / "README.md").write_text("# Help\n\n- [Sleep](sleep.md)\n- [Weight](weight.md)\n")
     (d / "help" / "en" / "weight.md").write_text("# Weight\n\nYour **trend** weight.\n")
     (d / "help" / "en" / "sleep.md").write_text("# Sleep\n\n| a | b |\n|---|---|\n| 1 | 2 |\n\nSee [weight](weight.md).\n")
-    (d / "README.md").write_text("# BodyLens\n\n**English** · [Español](README_ES.md)\n\nIntro text.\n")
+    (d / "README.md").write_text("# BodyLens\n\n**English** · [Español](README_ES.md)\n\nIntro text.\n\n"
+                                  '<p align="center">\n  <a href="https://x"><img alt="Visit"></a>\n</p>\n\n## Features\n')
     (d / "CHANGELOG.md").write_text("# CHANGELOG\n\n## Release: v1\n- **New:** things\n")
     monkeypatch.setenv("DOCS_DIR", str(d))
     config.reload_settings()
@@ -38,6 +39,7 @@ def test_documents_in_english(client, make_user, login, docs_dir):
     assert r["shown"] == "en" and "<table>" in r["html"] and 'data-doc="weight"' in r["html"]
     readme = c.get("/api/help/readme?lang=en").json()["html"]
     assert "Intro text" in readme and "README_ES" not in readme       # no GitHub language bar
+    assert "Visit" not in readme and "Features" in readme             # nor the website button
     assert "Release: v1" in c.get("/api/help/changelog?lang=en").json()["html"]
     assert c.get("/api/help/../etc?lang=en").status_code == 404
     assert c.get("/api/help/nope?lang=en").status_code == 404

@@ -5,6 +5,10 @@ composition from a **Withings** scale and what your phone and watch record (slee
 VO2 max, ECG, cycle, mood…) from **Apple Health** or **Android Health Connect**. It runs in Docker on your own
 server, the data arrives on its own, and every person sees only their own data.
 
+<p align="center">
+  <a href="https://bodylens.jtgcloud.com"><img alt="Visit the BodyLens website" src="https://img.shields.io/badge/Visit_the_website-bodylens.jtgcloud.com-4353FF?style=for-the-badge&logo=googlechrome&logoColor=white" height="44"></a>
+</p>
+
 ## Features
 
 - **Summary:** trend weight, plan progress, “today at a glance” (readiness, sleep, sleep balance, HRV, steps) and

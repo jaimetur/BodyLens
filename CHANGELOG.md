@@ -132,6 +132,7 @@
 - No longer used material moved out of the repository: the original migration plan, brief and handover (`docs/`) and the Apps Script and Health scripts (`legacy/`); the data rules that must be kept move to `AGENTS.md`.
 - `AGENTS.md` with the repository rules (design untouched, data parity, secrets and personal data kept out, working language, texts and languages).
 - `src/frontend/i18n/README.md`: how to add or improve a translation.
+- **Website button in the README:** a large button at the top of `README.md` opens the BodyLens website (https://bodylens.jtgcloud.com); the app's Help leaves it out.
 
 ---
 
