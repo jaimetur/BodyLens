@@ -1,4 +1,4 @@
-<!-- en: 621431069709d542 -->
+<!-- en: 3bd99f16162f4269 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -76,6 +76,7 @@
 - **Borrar mi cuenta** en Tu cuenta (con la contraseña): borra la cuenta y todos sus datos y cancela su suscripción.
 - **Páginas legales** (públicas, en todos los idiomas): política de privacidad (`/privacy`), condiciones de uso (`/terms`) y cómo borrar una cuenta (`/delete-account`), con los datos del responsable en Administración → Datos legales; enlazadas desde la página de entrada, Tu cuenta y la app.
 - **Códigos de invitación:** al darse de alta con un código (`INVITACION_AMIGOS`, de por vida, por defecto, en Administración → Invitaciones; dan igual mayúsculas, tildes y espacios) se crea al momento una cuenta gratis durante lo que dure el código (1, 3 o 6 meses, 1 año, hasta una fecha o de por vida, a elegir en cada código, una fecha de caducidad opcional y un máximo de cuentas opcional, por ejemplo las 100 primeras, tras los que el código se borra, alias como `LAUNCH` para `LANZAMIENTO` que comparten sus plazas y la opción de anunciarlo en la página principal como promoción con un contador de las plazas que quedan. La lista de usuarios de Administración muestra cómo se creó cada cuenta: el código que usó o su suscripción, con su plan y su método de pago (tarjeta, Google Pay o Apple Pay), aunque las cuentas creadas con él conservan su tiempo), salvo que un administrador le cambie la fecha de fin en Usuarios → Editar → Acceso gratuito. Ya no se piden cuentas: la página de entrada tiene, en lugar de «Pide una», una tarjeta grande **Crear mi cuenta** que abre el alta en un diálogo, con los planes y el código de invitación.
+- **Google Play, automático:** cada compilación de Android llega sola a la prueba interna de Google Play, y las capturas de la tienda (móvil, tablet y Chromebook) se vuelven a hacer cada vez que cambia la app, en todos los idiomas de la app; cada idioma de la tienda tiene sus propios textos y capturas, así que cada persona ve la app en su idioma. `tools/play_publish.py` envía la ficha y las capturas a Play Console.
 
 #### 🚀 Mejoras:
 - **Un único importador** (Tu cuenta → Datos y copias) para la copia completa y para el `snap.json` de la versión anterior. Si la copia tiene varios perfiles, eliges cuál importar.

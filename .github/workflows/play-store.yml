@@ -1,0 +1,86 @@
+name: 🛍️ Google Play screenshots
+
+# Takes the Google Play screenshots again whenever the app's layout changes, so the store can always show the latest
+# version of the app: 7 screens on phone, tablet and Chromebook, in every language of the app, from a SYNTHETIC demo
+# account (tools/demo_data.py; never real data), with tools/store_capture.py. They go to the "play-store-media"
+# release (one zip per language and manifest.json); tools/play-store-media.sh downloads them to
+# assets/play-store/screenshots. Run it by hand with "publish" ticked to also send them, with the listing texts of
+# assets/play-store/listings, to Play Console (tools/play_publish.py; needs the PLAY_SERVICE_ACCOUNT_JSON secret).
+on:
+  push:
+    branches: [main, "[0-9]+.[0-9]+.[0-9]+"]
+    paths:
+      - "src/frontend/app/**"
+      - "src/frontend/i18n/**"
+      - "src/frontend/common/themes.css"
+      - "src/backend/app/web/page.py"
+      - "tools/store_capture.py"
+      - "tools/landing_capture.py"
+      - "tools/demo_data.py"
+      - ".github/workflows/play-store.yml"
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Also send the screenshots and listing texts to Google Play"
+        type: boolean
+        default: false
+
+concurrency:
+  group: bodylens-play-store
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      TZ: Europe/Madrid
+      COOKIE_SECURE: "0"
+      SCHEDULER_ENABLED: "0"
+      PUBLIC_URL: http://localhost:8765
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+      - name: Tools (fonts, Playwright)
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q fonts-noto-color-emoji fonts-noto-cjk
+          pip install -q -e . playwright pillow
+          python -m playwright install --with-deps chromium
+          (cd src/frontend && npm ci --silent && mkdir -p vendor && cp node_modules/xlsx/dist/xlsx.full.min.js \
+            node_modules/jspdf/dist/jspdf.umd.min.js node_modules/html2canvas-pro/dist/html2canvas-pro.min.js vendor/)
+      - name: Demo account and server
+        run: |
+          { echo "DEMO_PASSWORD=$(python -c 'import secrets;print(secrets.token_urlsafe(16))')"
+            echo "DATA_DIR=$RUNNER_TEMP/demo"; echo "SHOTS=$RUNNER_TEMP/shots"; } >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/demo" "$RUNNER_TEMP/shots"
+      - name: Screenshots (every language)
+        run: |
+          DEMO_PASSWORD="$DEMO_PASSWORD" python tools/demo_data.py
+          (cd src/backend && python -m uvicorn app.main:app --host 127.0.0.1 --port 8765 > "$RUNNER_TEMP/server.log" 2>&1 &)
+          for i in $(seq 60); do curl -sf http://localhost:8765/healthz >/dev/null && break; sleep 1; done
+          python tools/store_capture.py --out "$SHOTS"
+      - name: Server log
+        if: failure()
+        run: tail -n 100 "$RUNNER_TEMP/server.log" || true
+      - name: Publish to the play-store-media release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd "$SHOTS"
+          for d in */; do (cd "$d" && zip -qr "../screenshots-${d%/}.zip" .); done
+          NOTES="Google Play screenshots (phone, tablet, Chromebook) in every language of the app, taken from a synthetic demo account whenever the app changes. tools/play-store-media.sh downloads them to assets/play-store/screenshots."
+          gh release view play-store-media >/dev/null 2>&1 || gh release create play-store-media --prerelease --title "Google Play screenshots (automatic)" --notes "$NOTES" --target "$GITHUB_SHA"
+          gh release upload play-store-media screenshots-*.zip manifest.json --clobber
+      - name: Send to Google Play
+        if: ${{ inputs.publish }}
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: python tools/play_publish.py listing --images "$SHOTS"

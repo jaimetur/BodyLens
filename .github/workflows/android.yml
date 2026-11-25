@@ -4,6 +4,8 @@ name: 🤖 Android app
 # - On every change in android/ it refreshes the rolling "android-latest" pre-release (the Actions artifact storage is
 #   full), from which tools/deploy-android.sh takes the APK to the NAS, which serves it at /android.apk.
 # - Called by release.yml with a release tag, it attaches the APK to that version's release instead.
+# - With the PLAY_SERVICE_ACCOUNT_JSON secret, each rolling build also goes to Google Play's internal test track
+#   (tools/play_publish.py); promoting it to the closed test or production is done in Play Console.
 on:
   push:
     branches: [main, "[0-9]+.[0-9]+.[0-9]+"]
@@ -67,6 +69,16 @@ jobs:
           gh release upload android-latest bodylens-android.apk bodylens-bridge.apk bodylens-android.aab --clobber
           echo "build ${{ github.run_number }} · ${GITHUB_SHA::7}" > android-build.txt
           gh release upload android-latest android-build.txt --clobber
+      - name: Send to Google Play (internal test), if the service account is in the secrets
+        if: ${{ !inputs.release_tag }}
+        continue-on-error: true   # the APKs are already published; a Play error does not undo them
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          if [ -z "$PLAY_SERVICE_ACCOUNT_JSON" ]; then echo "No PLAY_SERVICE_ACCOUNT_JSON secret: upload the AAB by hand."; exit 0; fi
+          pip install -q google-auth requests
+          python tools/play_publish.py bundle bodylens-android.aab --track internal \
+            --notes "Build ${{ github.run_number }}: $(git log -1 --format=%s | cut -c1-450)"
       - name: Attach to the version release
         if: ${{ inputs.release_tag }}
         env:

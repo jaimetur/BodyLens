@@ -119,6 +119,13 @@ Google Play subscriptions. It asks for the server address the first time (`https
   computer: it creates the key (`~/bodylens-upload.jks`) and stores it in the repository secrets
   (`ANDROID_KEYSTORE_B64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`). Keep the `.jks`
   and its password safe. Without the secrets, CI signs with a throwaway debug key (fine to try the APK, not for Play).
+- **Google Play without uploading by hand**: with the secret `PLAY_SERVICE_ACCOUNT_JSON` (the JSON key of a Play
+  Console service account with "Release apps to testing tracks" and "Manage store presence"), every rolling build also
+  goes to Play's internal test track (`tools/play_publish.py bundle`); promote it to the closed test or production
+  in Play Console. `gh secret set PLAY_SERVICE_ACCOUNT_JSON < key.json` stores it.
+- **Store listing**: texts per language in `assets/play-store/listings/`; screenshots of every language, phone, tablet
+  and Chromebook, taken again by GitHub Actions whenever the app changes (`play-store-media` release,
+  `tools/play-store-media.sh` downloads them). See `docs/play-store/README.md`.
 
 ## Subscriptions, payments and legal pages
 

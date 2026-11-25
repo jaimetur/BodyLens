@@ -36,3 +36,6 @@ android/.idea/
 
 # traducciones: lista de trabajo de tools/i18n_extract.py
 src/frontend/i18n/new.json
+
+# Google Play screenshots: made by GitHub Actions (play-store-media release), downloaded by tools/play-store-media.sh
+assets/play-store/screenshots/
