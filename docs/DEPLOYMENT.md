@@ -123,25 +123,33 @@ Google Play subscriptions. It asks for the server address the first time (`https
   Console service account with "Release apps to testing tracks" and "Manage store presence"), every build of a
   version branch also goes to Play (`tools/play_publish.py bundle`), named `X.Y.Z (<build>)`, to the track of the
   repository variable `PLAY_TRACK` (`alpha`, the closed test, by default; if your closed test is a track you created,
-  its name). `gh secret set PLAY_SERVICE_ACCOUNT_JSON < key.json` stores it. If versionName is not the branch, the
+  its name), with its release notes. `gh secret set PLAY_SERVICE_ACCOUNT_JSON < key.json` stores it. If versionName is not the branch, the
   upload fails; without the secret, the workflow warns and uploads nothing. Mam-IA, BodyLens and MeetGo upload the
   same way.
-- **Going to production**: a personal developer account needs a closed test with at least 12 testers for 14 days in a
-  row, then Play Console → **Dashboard → Apply for production**. Once Google grants it:
+- **Final release and production**: every push to `main` (merging a version branch) runs `🚀 Release`
+  (`.github/workflows/release.yml`): the GitHub release `vX.Y.Z`, as the latest one, with the notes of the version's
+  block in `CHANGELOG.md`, and on Google Play the build the testers have in the closed test goes to the track of the
+  repository variable `PLAY_STABLE_TRACK` (`production`), with its release notes, without building it again
+  (`tools/play_publish.py promote`). If the closed test has no build of that version, it fails and says so. Without
+  `PLAY_STABLE_TRACK`, the version stays in the closed test.
+- **Release notes**: from the version's block in `CHANGELOG.md`, for GitHub (the whole block) and for Play ("What's
+  new", on every closed-test upload and on the way to production). Play takes at most 500 characters per language:
+  the block's `#### 📱 Google Play (<language>):` sections as they are (one per language; GitHub does not show them),
+  or else the titles of its new features, enhancements and fixes, in English. Only languages the listing has are
+  sent. `python tools/play_publish.py notes 0.2.0` shows what Play would get.
+- **Going to production (once)**: a personal developer account needs a closed test with at least 12 testers for 14
+  days in a row, then Play Console → **Dashboard → Apply for production**. Once Google grants it:
   1. Play Console → **Users and permissions** → the service account → **App permissions → BodyLens**: add "Release
      to production, exclude devices, and use Play App Signing".
   2. Play Console → **Test and release → Production → Countries/regions**: add the countries (without them the upload
      to production fails).
-  3. Switch the track: `gh variable set PLAY_TRACK --body production -R jaimetur/BodyLens`; the three apps at once:
-     `for r in Mam-IA BodyLens MeetGo; do gh variable set PLAY_TRACK --body production -R jaimetur/$r; done`.
-  4. Try it: **Actions → 🤖 Android app → Run workflow** on the version branch; the log ends with
-     "X.Y.Z (N) uploaded to the production track".
+  3. Turn on the stable track: `gh variable set PLAY_STABLE_TRACK --body production -R jaimetur/BodyLens`; the three
+     apps at once: `for r in Mam-IA BodyLens MeetGo; do gh variable set PLAY_STABLE_TRACK --body production -R jaimetur/$r; done`.
+  4. Try it: **Actions → 🚀 Release → Run workflow** on `main`; the log ends with "X.Y.Z sent to the production track".
 
-  From then on every build of a version branch goes to production, to every user as soon as Google approves it (no
-  staged rollout: with few users it adds nothing and the percentage would have to be raised by hand). The closed test
-  needs no upload of its own: Play gives each person the highest version of the tracks they can use, so testers get
-  the production one too. To try a version before everyone gets it, go back to the closed test
-  (`gh variable delete PLAY_TRACK -R jaimetur/BodyLens`) and promote it by hand in Play Console.
+  From then on version branches keep going to the closed test and what reaches `main` goes to production, to every
+  user as soon as Google approves it (no staged rollout: with few users it adds nothing and the percentage would have
+  to be raised by hand).
 - **Store listing**: texts per language in `assets/play-store/listings/`; screenshots of every language, phone, tablet
   and Chromebook, taken again by GitHub Actions whenever the app changes (`play-store-media` release,
   `tools/play-store-media.sh` downloads them) and, on version branches with the secret, sent to Play with the texts.

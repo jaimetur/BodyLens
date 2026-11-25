@@ -24,9 +24,10 @@ layout changes (`.github/workflows/play-store.yml`, `tools/store_capture.py`) an
 **Publishing without Play Console** (`tools/play_publish.py`, with the service account in the
 `PLAY_SERVICE_ACCOUNT_JSON` secret, see `docs/DEPLOYMENT.md`):
 - every Android build of a version branch (`X.Y.Z`) goes to Play by itself (`.github/workflows/android.yml`), to the
-  track of the GitHub variable `PLAY_TRACK` (`alpha`, the closed test, by default; `production` once Google allows it,
-  see `docs/DEPLOYMENT.md`). Play shows it with the same version as the repository, e.g. **0.2.0 (45)**: the version
-  name is the release version and the number in brackets is the build;
+  track of the GitHub variable `PLAY_TRACK` (`alpha`, the closed test, by default), with the release notes of
+  `CHANGELOG.md`. Play shows it with the same version as the repository, e.g. **0.2.0 (45)**: the version name is the
+  release version and the number in brackets is the build. When the version reaches `main`, the same build goes to
+  production (`PLAY_STABLE_TRACK`, see `docs/DEPLOYMENT.md`);
 - whenever the screenshots are taken again on a version branch, they are sent with the texts of every language
   (phone and tablet screenshots and the feature graphic); by hand, run the *🛍️ Google Play screenshots* workflow
   with **publish** ticked (or `tools/play_publish.py listing --images assets/play-store/screenshots`). Chromebook

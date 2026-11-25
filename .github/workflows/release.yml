@@ -1,19 +1,27 @@
 name: 🚀 Release
 
 # Publishes the GitHub release of a BodyLens version (vX.Y.Z, from pyproject.toml), as DriveTest Analyzer does:
-# notes taken from that version's block in CHANGELOG.md, the source code and the Android APK of the version.
-# - Manual run (Actions → 🚀 Release → Run workflow, on the version branch): recreates the release and its tag on the
-#   commit built; "final" makes it the latest release, otherwise it is a pre-release.
+# notes taken from that version's block in CHANGELOG.md (without its "📱 Google Play" sections, which are only for the
+# store), the source code and the Android APK of the version.
+# - Every push to main (when a version branch is merged): publishes it as final, the latest release, with no manual
+#   step; if the version already has a release, it is published again on the new commit.
+# - Manual run (Actions → 🚀 Release → Run workflow): recreates the release and its tag on the commit built; "final"
+#   makes it the latest release, otherwise it is a pre-release.
 # - Pushing a tag vX.Y.Z publishes it as final (docker.yml also builds the image jaimetur/bodylens:X.Y.Z for the tag).
+# A final release also goes to Google Play: the build the testers have in the closed test (PLAY_TRACK, alpha by
+# default) goes to the stable track of the PLAY_STABLE_TRACK variable (production), with the version's release notes,
+# without building it again (tools/play_publish.py promote). Without that variable, until Google gives the app access
+# to production, the version stays in the closed test.
 on:
+  push:
+    branches: [main]
+    tags: ["v*"]
   workflow_dispatch:
     inputs:
       final_release:
         description: "Final release (otherwise a pre-release)"
         type: boolean
         default: true
-  push:
-    tags: ["v*"]
 
 concurrency:
   group: bodylens-release-${{ github.ref }}
@@ -26,6 +34,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     outputs:
+      version: ${{ steps.version.outputs.version }}
       tag: ${{ steps.version.outputs.tag }}
     steps:
       - uses: actions/checkout@v7
@@ -53,7 +62,8 @@ jobs:
           m = re.search(rf"^## Release: v{re.escape(version)}\s*$(.*?)(?=^---\s*$|^## Release:|\Z)", text, re.M | re.S)
           if not m:
               sys.exit(f"Release v{version} not found in CHANGELOG.md")
-          Path("dist/release_notes.md").write_text(m.group(1).strip() + "\n", encoding="utf-8")
+          notes = re.sub(r"^#### 📱 Google Play \([\w-]+\):?[ \t]*\n.*?(?=^#### |\Z)", "", m.group(1), flags=re.M | re.S)
+          Path("dist/release_notes.md").write_text(notes.strip() + "\n", encoding="utf-8")
           PY
           cat dist/release_notes.md
 
@@ -67,10 +77,11 @@ jobs:
           FINAL: ${{ github.event_name == 'push' || inputs.final_release }}
         shell: bash
         run: |
-          # a manual run recreates the release and its tag on the commit built; a tag push keeps the tag it came with
+          # a push to main or a manual run recreates the release and its tag on the commit built; a tag push keeps the
+          # tag it came with
           if gh release view "$TAG" >/dev/null 2>&1; then
-            if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then gh release delete "$TAG" --yes --cleanup-tag; else gh release delete "$TAG" --yes; fi
-          elif [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]] && git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null; then
+            if [[ "${GITHUB_REF_TYPE}" == "branch" ]]; then gh release delete "$TAG" --yes --cleanup-tag; else gh release delete "$TAG" --yes; fi
+          elif [[ "${GITHUB_REF_TYPE}" == "branch" ]] && git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null; then
             git push origin ":refs/tags/$TAG"
           fi
           flags=(--title "$TAG" --notes-file dist/release_notes.md --target "${GITHUB_SHA}")
@@ -83,3 +94,22 @@ jobs:
     with:
       release_tag: ${{ needs.publish.outputs.tag }}
     secrets: inherit
+
+  play:
+    needs: publish
+    if: ${{ github.event_name == 'push' || inputs.final_release }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Google Play, from the closed test to the stable track
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          PLAY_TRACK: ${{ vars.PLAY_TRACK || 'alpha' }}
+          PLAY_STABLE_TRACK: ${{ vars.PLAY_STABLE_TRACK }}
+          VERSION: ${{ needs.publish.outputs.version }}
+        run: |
+          if [ -z "$PLAY_STABLE_TRACK" ]; then echo "::notice title=Google Play::No PLAY_STABLE_TRACK variable: $VERSION stays in the $PLAY_TRACK track. Set it to production once Google gives the app access to production."; exit 0; fi
+          if [ -z "$PLAY_SERVICE_ACCOUNT_JSON" ]; then echo "::warning title=Google Play::No PLAY_SERVICE_ACCOUNT_JSON secret: $VERSION was not sent to the $PLAY_STABLE_TRACK track."; exit 0; fi
+          pip install -q google-auth requests
+          python tools/play_publish.py promote "$VERSION" --from "$PLAY_TRACK" --track "$PLAY_STABLE_TRACK"
+          echo "::notice title=Google Play::$VERSION sent to the $PLAY_STABLE_TRACK track"

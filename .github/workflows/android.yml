@@ -6,9 +6,10 @@ name: 🤖 Android app
 # - Called by release.yml with a release tag, it attaches the APK to that version's release instead.
 # - On a version branch (X.Y.Z), with the PLAY_SERVICE_ACCOUNT_JSON secret, each build (also run by hand) goes to
 #   Google Play (tools/play_publish.py), named "X.Y.Z (build)" like the app (versionName = the release version,
-#   versionCode = the build number), to the track of the PLAY_TRACK variable (by default alpha, the closed test;
-#   production once Google has given the app access to it, see docs/DEPLOYMENT.md). If versionName is not the branch,
-#   it fails. It runs last: a Play error leaves the job red but the APKs are already published.
+#   versionCode = the build number), to the track of the PLAY_TRACK variable (by default alpha, the closed test), with
+#   the release notes of the version's block in CHANGELOG.md. If versionName is not the branch, it fails. It runs last:
+#   a Play error leaves the job red but the APKs are already published. When the version reaches main, release.yml
+#   takes this build to production.
 on:
   push:
     branches: [main, "[0-9]+.[0-9]+.[0-9]+"]
@@ -83,7 +84,8 @@ jobs:
           VERSION=$(sed -n 's/^ *versionName *= *"\([^"]*\)".*/\1/p' android/app/build.gradle.kts)
           if [ "$VERSION" != "$GITHUB_REF_NAME" ]; then echo "::error title=Google Play::versionName $VERSION is not the release $GITHUB_REF_NAME (run tools/CreateUpdateRelease.py --update)"; exit 1; fi
           pip install -q google-auth requests
-          python tools/play_publish.py bundle bodylens-android.aab --track "$PLAY_TRACK" --name "$VERSION (${{ github.run_number }})"
+          python tools/play_publish.py bundle bodylens-android.aab --track "$PLAY_TRACK" --name "$VERSION (${{ github.run_number }})" \
+            --version "$VERSION"
           echo "::notice title=Google Play::$VERSION (${{ github.run_number }}) uploaded to the $PLAY_TRACK track"
       - name: Attach to the version release
         if: ${{ inputs.release_tag }}
