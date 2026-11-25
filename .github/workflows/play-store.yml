@@ -77,8 +77,8 @@ jobs:
           cd "$SHOTS"
           for d in */; do (cd "$d" && zip -qr "../screenshots-${d%/}.zip" .); done
           NOTES="Google Play screenshots (phone, tablet, Chromebook) in every language of the app, taken from a synthetic demo account whenever the app changes. tools/play-store-media.sh downloads them to assets/play-store/screenshots."
-          gh release view play-store-media >/dev/null 2>&1 || gh release create play-store-media --prerelease --title "Google Play screenshots (automatic)" --notes "$NOTES" --target "$GITHUB_SHA"
-          gh release upload play-store-media screenshots-*.zip manifest.json --clobber
+          gh release view play-store-media -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 || gh release create play-store-media -R "$GITHUB_REPOSITORY" --prerelease --title "Google Play screenshots (automatic)" --notes "$NOTES" --target "$GITHUB_SHA"
+          gh release upload play-store-media -R "$GITHUB_REPOSITORY" screenshots-*.zip manifest.json --clobber
       - name: Send to Google Play
         if: ${{ inputs.publish }}
         env:
