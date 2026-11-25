@@ -70,7 +70,7 @@ jobs:
         run: tail -n 100 "$RUNNER_TEMP/server.log" || true
       - name: What the page showed when a recording failed
         if: failure()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: capture-debug
           path: ${{ runner.temp }}/debug

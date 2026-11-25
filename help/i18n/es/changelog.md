@@ -1,4 +1,4 @@
-<!-- en: 55290660e6f9c39d -->
+<!-- en: 29f15621f282c9a3 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -13,7 +13,7 @@
 - **Copias como en MeetGo:** Administración → Copias muestra las copias guardadas, el espacio en disco y la última y la próxima copia, y hace copias ZIP completas (base de datos y archivos de las cuentas) o ligeras (base de datos) a mano, las restaura por partes (tras una copia ligera de la base de datos actual, conservando la configuración de copias y las sesiones abiertas) y las programa (de cada hora a mensuales, ligeras entre las completas semanales) con retención por días, semanas y meses; por defecto diarias a las 03:30, ligeras de lunes a sábado y completa el domingo, conservando 15 días, 12 semanas y 120 meses. Las copias diarias de versiones anteriores se quedan, como copias ligeras, y la retención nunca las borra.
 
 #### 🚀 Mejoras:
-- **Google Play va a la par que el repositorio:** la app de Android lleva la versión de la release (Play muestra, por ejemplo, «0.2.0 (45)», con el número de compilación entre paréntesis), cada compilación de una rama de versión se envía sola a Play (al canal de la variable `PLAY_TRACK`: la prueba cerrada por defecto, producción cuando Google lo permita) y los textos y capturas de la ficha se envían cuando cambian.
+- **Google Play va a la par que el repositorio:** la app de Android lleva la versión de la release (Play muestra, por ejemplo, «0.2.0 (45)», con el número de compilación entre paréntesis), cada compilación de una rama de versión se envía sola a Play (al canal de la variable `PLAY_TRACK`: la prueba cerrada por defecto, producción cuando Google lo permita) y los textos y capturas de la ficha se envían cuando cambian (las capturas se hacen con las animaciones terminadas, así que una app sin cambios da las mismas imágenes, y las de la ficha solo se sustituyen cuando son distintas, porque cada cambio pasa por la revisión de Google).
 - **Landing en todos los idiomas:** un menú de idioma arriba (🌐) muestra la landing en cualquiera de los idiomas de la app; se abre en inglés hasta que se elige uno y recuerda la elección.
 
 #### 🐛 Correcciones:

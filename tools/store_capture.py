@@ -61,7 +61,9 @@ def capture(browser, url: str, password: str, lang: str, out: Path) -> None:
             lc.settle(page, 2500)
             for name, view, tab in SHOTS:
                 lc.go(page, view, tab, 1800)
-                page.screenshot(path=str(d / f"{name}.png"))
+                # animations and transitions finished: the same app gives the same bytes (tools/play_publish.py
+                # leaves the listing's images alone when they did not change)
+                page.screenshot(path=str(d / f"{name}.png"), animations="disabled", caret="hide")
             page.context.close()
             print(f"   {lang} {device}: {len(SHOTS)}")
 

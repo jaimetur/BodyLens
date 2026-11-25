@@ -15,7 +15,9 @@
 - listing: updates the store listing of every language in assets/play-store/listings/<locale>.json (title, short and
   full description) and, with --images, replaces its screenshots with those of tools/store_capture.py
   (<DIR>/<lang>/phone|tablet/*.png; Chromebook screenshots cannot be uploaded through the API) and its feature graphic
-  (assets/play-store/feature-1024x500-<es|en>.png). --validate checks the changes and discards them.
+  (assets/play-store/feature-1024x500-<es|en>.png); the images of a type the listing already has (same sha256, same
+  order) are left as they are, since every change of images goes through Google's review. --validate checks the
+  changes and discards them.
 
 The service account (its JSON key in PLAY_SERVICE_ACCOUNT_JSON, or a file with --key) needs, in Play Console → Users
 and permissions, "Release apps to testing tracks" (and "Release to production" for production) and "Manage store
@@ -24,6 +26,7 @@ presence" for the listing. Changes go through Google's review as when they are m
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -161,13 +164,28 @@ def promote(s: AuthorizedSession, a) -> None:
     finish(s, edit, a.validate)
 
 
+def replace_images(s: AuthorizedSession, edit: str, loc: str, kind: str, files: list[Path]) -> bool:
+    """Replace the images of one type, unless the listing already has the same ones (same files in the same order,
+    compared by sha256): every change of images goes through Google's review."""
+    now = ok(s.get(f"{API}/edits/{edit}/listings/{loc}/{kind}")).get("images", [])
+    if [i.get("sha256") for i in now] == [hashlib.sha256(f.read_bytes()).hexdigest() for f in files]:
+        return False
+    if now:
+        ok(s.delete(f"{API}/edits/{edit}/listings/{loc}/{kind}"))
+    for f in files:
+        with open(f, "rb") as fh:
+            ok(s.post(f"{UPLOAD}/edits/{edit}/listings/{loc}/{kind}", params={"uploadType": "media"},
+                      data=fh, headers={"Content-Type": "image/png"}, timeout=300))
+    return True
+
+
 def listing(s: AuthorizedSession, a) -> None:
     edit = ok(s.post(f"{API}/edits"))["id"]
     for p in sorted(LISTINGS.glob("*.json")):
         loc = p.stem
         t = json.loads(p.read_text(encoding="utf-8"))
         ok(s.put(f"{API}/edits/{edit}/listings/{loc}", json={"language": loc, **t}))
-        n = 0
+        n = same = 0
         if a.images:
             lang = APP_LANG[loc]
             feat = ROOT / "assets" / "play-store" / f"feature-1024x500-{'es' if lang == 'es' else 'en'}.png"
@@ -175,13 +193,11 @@ def listing(s: AuthorizedSession, a) -> None:
                     (k, sorted((Path(a.images) / lang / d).glob("*.png"))) for k, d in IMAGES.items()]:
                 if not files:
                     continue
-                ok(s.delete(f"{API}/edits/{edit}/listings/{loc}/{kind}"))
-                for f in files:
-                    with open(f, "rb") as fh:
-                        ok(s.post(f"{UPLOAD}/edits/{edit}/listings/{loc}/{kind}", params={"uploadType": "media"},
-                                  data=fh, headers={"Content-Type": "image/png"}, timeout=300))
-                    n += 1
-        print(f"   {loc}: texts" + (f" and {n} images" if n else ""))
+                if replace_images(s, edit, loc, kind, files):
+                    n += len(files)
+                else:
+                    same += len(files)
+        print(f"   {loc}: texts" + (f", {n} new images" if n else "") + (f", {same} images unchanged" if same else ""))
     finish(s, edit, a.validate)
 
 
