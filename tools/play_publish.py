@@ -28,6 +28,7 @@ import json
 import os
 import re
 import sys
+import time
 from pathlib import Path
 
 from google.auth.transport.requests import AuthorizedSession
@@ -46,6 +47,11 @@ CHANGELOG = ROOT / "CHANGELOG.md"
 CHANGELOG_LANG = "en-US"  # the language CHANGELOG.md is written in
 NOTES_MAX = 500  # Play's limit for the release notes of each language
 USER_SECTIONS = ("🌟", "🚀", "🐛")  # sections of a changelog block that users notice: new, better, fixed
+RETRIES, RETRY_WAIT = 3, 30  # a change committed meanwhile to the same app (another workflow) deletes this one: start again
+
+
+class EditDeleted(Exception):
+    """Google Play deleted the open edit because another one was committed meanwhile (e.g. the listing and the AAB)."""
 
 
 def session(key: str | None) -> AuthorizedSession:
@@ -58,6 +64,8 @@ def session(key: str | None) -> AuthorizedSession:
 
 
 def ok(r):
+    if r.status_code == 400 and "This Edit has been deleted" in r.text:
+        raise EditDeleted(r.request.method + " " + r.request.url.split("/applications/")[-1] if r.request else "")
     if r.status_code >= 400:
         sys.exit(f"Google Play: {r.status_code} {r.text[:600]}")
     return r.json() if r.content else {}
@@ -203,7 +211,14 @@ def main() -> None:
             print(f"Release notes ({lang}, {len(text)} characters):\n{text}")
         return
     s = session(a.key)
-    {"bundle": bundle, "promote": promote, "listing": listing}[a.cmd](s, a)
+    for attempt in range(1, RETRIES + 1):
+        try:
+            return {"bundle": bundle, "promote": promote, "listing": listing}[a.cmd](s, a)
+        except EditDeleted as e:
+            if attempt == RETRIES:
+                sys.exit(f"Google Play deleted the edit {RETRIES} times ({e}): another change to the app kept being committed.")
+            print(f"Google Play deleted the edit ({e}): another change was committed meanwhile; again in {RETRY_WAIT * attempt} s")
+            time.sleep(RETRY_WAIT * attempt)
 
 
 if __name__ == "__main__":
