@@ -107,20 +107,18 @@ def _read_only_banner(delete_ms: int) -> str:
             "document.documentElement.lang||'es',{day:'numeric',month:'long',year:'numeric'});});</script>")
 
 
-LANDING_LANGS = ("en", "es")
+LANDING_LANGS = tuple(i18n.LANGS)
 
 
 def landing(request: Request) -> HTMLResponse:
-    """The landing page in English or Spanish: the one chosen with its EN | ES switch (remembered in the language
-    cookie), else the one of the visitor's browser (Spanish for Spanish and the languages of Spain, English otherwise)."""
+    """The landing page in the language chosen with its language menu (remembered in the language cookie), else in
+    English."""
     asked = request.query_params.get("lang")
     lang = asked if asked in LANDING_LANGS else None
     if not lang:
         c = request.cookies.get(i18n.COOKIE)
         lang = c if c in LANDING_LANGS else None
-    if not lang:
-        first = (request.headers.get("accept-language", "").split(",")[0].strip().lower()[:2])
-        lang = "es" if first in ("es", "ca", "gl", "eu") else "en"
+    lang = lang or "en"
     r = _page("landing", "index.html", request=request, lang=lang)
     from app.core import version
     build = version.current()["build"]
@@ -129,8 +127,8 @@ def landing(request: Request) -> HTMLResponse:
     css = config.settings.frontend_dir.joinpath("common", "themes.css").read_text(encoding="utf-8")
     r.body = r.body.replace(b"</head>", ("<style>" + css.replace("html:root[data-theme=", ".thm[data-theme=") + "</style></head>").encode(), 1)
     r.headers["content-length"] = str(len(r.body))
-    r.headers["vary"] = "accept-language,cookie"
-    if lang == "en":   # the description for search engines (the page's texts are translated in the browser)
+    r.headers["vary"] = "cookie"
+    if lang != "es":   # the description for search engines (the page's texts are translated in the browser)
         import re
         m = re.search(rb'<meta name="description-en" content="([^"]*)">', r.body)
         if m:

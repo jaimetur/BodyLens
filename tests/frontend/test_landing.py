@@ -23,9 +23,12 @@ def test_landing_media_only_serves_media(client):
     assert client.get("/landing/media/nothing.webp").status_code == 404
 
 
-def test_landing_language_by_browser_and_switch(client):
-    assert '<html lang="es"' in client.get("/", headers={"accept-language": "es-ES,es;q=0.9"}).text
-    assert '<html lang="en"' in client.get("/", headers={"accept-language": "de-DE,de;q=0.9"}).text
-    r = client.get("/?lang=es", headers={"accept-language": "en-US"})
-    assert '<html lang="es"' in r.text and "bl_lang" in r.headers.get("set-cookie", "") or "lang" in r.headers.get("set-cookie", "")
-    assert '<html lang="es"' in client.get("/", headers={"accept-language": "en-US"}).text   # remembered
+def test_landing_language_english_by_default_and_menu(client):
+    assert '<html lang="en"' in client.get("/", headers={"accept-language": "es-ES,es;q=0.9"}).text   # English by default
+    r = client.get("/?lang=de", headers={"accept-language": "en-US"})
+    assert '<html lang="de"' in r.text and "bl_lang=de" in r.headers.get("set-cookie", "")
+    assert '<html lang="de"' in client.get("/").text   # remembered
+    assert '<html lang="es"' in client.get("/?lang=es").text
+    client.cookies.clear()
+    assert '<html lang="en"' in client.get("/?lang=xx").text   # unknown language: English
+    assert 'id="langSel"' in r.text and '<option value="ja">' in r.text
