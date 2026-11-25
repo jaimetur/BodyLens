@@ -3,9 +3,10 @@ Las invitaciones, peticiones de acceso, fuentes y correo de prueba tienen sus ru
 from __future__ import annotations
 
 import secrets
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.accounts import deletion, users
 from app.billing import codes
@@ -160,29 +161,195 @@ def put_withings_app(body: WithingsAppIn, u: User = Depends(admin_user)):
     return get_withings_app(u)
 
 
-# ---------- copias de seguridad ----------
+# ---------- backups (core/backup.py) ----------
+
+class BackupSettingsIn(BaseModel):
+    enabled: bool = False
+    recurrence: str = Field(default="daily", pattern="^(hourly|every_4_hours|daily|weekly|monthly)$")
+    weekly_day: int = Field(default=0, ge=0, le=6)
+    monthly_day: int = Field(default=1, ge=1, le=31)
+    execution_time: str = Field(default="03:30", pattern=r"^\d{2}:\d{2}$")
+    light_backups: bool = False
+    full_backup_day: int = Field(default=0, ge=0, le=6)
+    keep_days: int = Field(default=7, ge=1, le=3650)
+    keep_weeks: int = Field(default=4, ge=0, le=520)
+    keep_months: int = Field(default=6, ge=0, le=240)
+    components: list[str] = Field(default_factory=lambda: ["database", "files"])
+    backup_path: str = ""
+
+
+class BackupRunIn(BaseModel):
+    level: str = Field(pattern="^(full|light)$")
+
+
+class BackupFileIn(BaseModel):
+    path: str = ""
+    name: str
+
+
+class BackupRestoreIn(BackupFileIn):
+    parts: list[str] = Field(default_factory=list)
+
+
+class BackupDirIn(BaseModel):
+    path: str = ""
+    name: str = Field(min_length=1, max_length=80)
+
+
+def _bk_folder(path: str) -> str:
+    from app.core import backup
+    try:
+        return str(backup.inside(path or backup.get_config()["backup_path"]))
+    except ValueError:
+        raise HTTPException(400, "La carpeta tiene que estar dentro de la carpeta de datos.")
+
+
+def _bk_file(path: str, name: str):
+    from app.core import backup
+    try:
+        return backup.backup_file(_bk_folder(path), name)
+    except ValueError:
+        raise HTTPException(404, "No existe esa copia.")
+
+
+def _bk_status() -> dict:
+    from app.core import backup
+    cfg, state = backup.get_config(), backup.get_state()
+    backups = backup.list_backups(cfg["backup_path"])
+    by = {lvl: [b for b in backups if b["level"] == lvl] for lvl in backup.LEVELS}
+    since = state.get("last_scheduled_at") or state.get("enabled_at")
+    nxt = backup.next_run(cfg, datetime.fromisoformat(since) if since else datetime.now(backup.TZ))
+    if nxt and nxt < datetime.now(backup.TZ):
+        nxt = backup.next_run(cfg, datetime.now(backup.TZ))
+    task = backup.current_task()
+    newest = lambda lvl: next((b["size"] for b in by[lvl] if b["origin"] != "legacy"), None)   # noqa: E731
+    return {
+        "settings": cfg, "root": str(backup.root()), "default_path": str(backup.default_folder()),
+        "status": {
+            "count": len(backups), "size": sum(b["size"] for b in backups),
+            "count_full": len(by["full"]), "count_light": len(by["light"]),
+            "size_full": sum(b["size"] for b in by["full"]), "size_light": sum(b["size"] for b in by["light"]),
+            "latest_full": newest("full"), "latest_light": newest("light"),
+            "disk": backup.disk(cfg["backup_path"]),
+            "last_success": state.get("last_success") or (backups[0]["created_at"] if backups else None),
+            "last_level": state.get("last_level") or (backups[0]["level"] if backups else None),
+            "next_run": nxt.isoformat() if nxt else None,
+            "next_level": backup.scheduled_level(cfg, backups, nxt) if nxt else None,
+            "problem": state.get("problem"),
+        },
+        "backups": backups,
+        "task": task.out() if task else None,
+    }
+
 
 @router.get("/api/admin/backups")
-def backups(u: User = Depends(admin_user)):
+def backups_status(u: User = Depends(admin_user)):
+    return _bk_status()
+
+
+@router.put("/api/admin/backups/settings")
+def backups_settings(body: BackupSettingsIn, u: User = Depends(admin_user)):
+    """The schedule, the content and the folder of the next backups (scheduled ones included)."""
     from app.core import backup
-    return {"backups": backup.listing(), "keep": backup.keep()}
+    data = body.model_dump()
+    data["components"] = [c for c in data["components"] if c in backup.COMPONENTS] or list(backup.COMPONENTS)
+    data["backup_path"] = _bk_folder(data["backup_path"])
+    before = backup.get_config()
+    backup.save_config(data)
+    if data["enabled"] and not before.get("enabled"):   # the schedule counts from now, not from the last backup made
+        backup.save_state(enabled_at=datetime.now(backup.TZ).isoformat(), last_scheduled_at=None)
+    return _bk_status()
 
 
-@router.post("/api/admin/backups")
-async def backup_now(u: User = Depends(admin_user)):
-    import asyncio
+@router.get("/api/admin/backups/files")
+def backups_files(path: str = "", u: User = Depends(admin_user)):
     from app.core import backup
-    p = await asyncio.to_thread(backup.make)
-    return {"ok": True, "name": p.name}
+    return backup.list_backups(_bk_folder(path))
 
 
-@router.get("/api/admin/backups/{name}")
-def backup_file(name: str, u: User = Depends(admin_user)):
+@router.get("/api/admin/backups/dirs")
+def backups_dirs(path: str = "", u: User = Depends(admin_user)):
+    from app.core import backup
+    try:
+        return backup.list_dirs(_bk_folder(path))
+    except OSError as e:
+        raise HTTPException(400, str(e))
+
+
+@router.post("/api/admin/backups/dirs")
+def backups_new_dir(body: BackupDirIn, u: User = Depends(admin_user)):
+    from app.core import backup
+    name = body.name.strip().replace("/", "").replace("\\", "")
+    if not name or name.startswith("."):
+        raise HTTPException(400, "Ese nombre de carpeta no vale.")
+    target = backup.inside(_bk_folder(body.path)) / name
+    target.mkdir(parents=True, exist_ok=True)
+    return backup.list_dirs(target)
+
+
+@router.post("/api/admin/backups/run")
+def backups_run(body: BackupRunIn, u: User = Depends(admin_user)):
+    """Back up now (full or light), with the content and folder saved in the settings."""
+    from app.core import backup
+    if backup.busy():
+        raise HTTPException(409, "Ya hay una copia o una restauración en marcha.")
+    cfg = backup.get_config()
+    components = list(cfg.get("components") or backup.COMPONENTS)
+    if body.level == "light" and components == ["files"]:
+        raise HTTPException(400, "Una copia ligera no lleva los ficheros: elige también la base de datos.")
+    t = backup.start("backup", lambda t: backup.make_backup(t, level=body.level, origin="manual", components=components,
+                                                            where=cfg["backup_path"], by=u.name))
+    return t.out()
+
+
+@router.get("/api/admin/backups/task/{task_id}")
+def backups_task(task_id: str, u: User = Depends(admin_user)):
+    from app.core import backup
+    t = backup.get_task(task_id)
+    if not t:
+        raise HTTPException(404, "No existe esa tarea.")
+    return t.out()
+
+
+@router.post("/api/admin/backups/inspect")
+def backups_inspect(body: BackupFileIn, u: User = Depends(admin_user)):
+    """What a backup holds, to choose the parts to restore."""
+    from app.core import backup
+    try:
+        return backup.read_manifest(_bk_file(body.path, body.name))
+    except HTTPException:
+        raise
+    except Exception:   # noqa: BLE001
+        raise HTTPException(400, "No se puede leer esa copia.")
+
+
+@router.post("/api/admin/backups/restore")
+def backups_restore(body: BackupRestoreIn, u: User = Depends(admin_user)):
+    from app.core import backup
+    parts = [p for p in body.parts if p in backup.COMPONENTS]
+    if not parts:
+        raise HTTPException(400, "Elige qué restaurar.")
+    if backup.busy():
+        raise HTTPException(409, "Ya hay una copia o una restauración en marcha.")
+    path, where = _bk_file(body.path, body.name), _bk_folder(body.path)
+    t = backup.start("restore", lambda t: backup.restore(t, path=path, parts=parts, where=where, by=u.name))
+    return t.out()
+
+
+@router.get("/api/admin/backups/download")
+def backups_download(name: str, path: str = "", u: User = Depends(admin_user)):
     from fastapi.responses import FileResponse
+    p = _bk_file(path, name)
+    return FileResponse(p, media_type="application/zip" if p.suffix == ".zip" else "application/octet-stream", filename=p.name)
+
+
+@router.post("/api/admin/backups/delete")
+def backups_delete(body: BackupFileIn, u: User = Depends(admin_user)):
     from app.core import backup
-    if not backup.NAME.match(name) or not (backup.folder() / name).exists():
-        raise HTTPException(404, "No existe esa copia.")
-    return FileResponse(backup.folder() / name, media_type="application/octet-stream", filename=name)
+    if backup.busy():
+        raise HTTPException(409, "Hay una copia o una restauración en marcha.")
+    _bk_file(body.path, body.name).unlink()
+    return {"ok": True}
 
 
 # ---------- correo ----------

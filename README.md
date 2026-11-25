@@ -57,7 +57,8 @@ server, the data arrives on its own, and every person sees only their own data.
 - **Android:** the BodyLens Android app (in `android/`) reads Health Connect and posts every hour in the same format.
   When an account gets both, the main source it chooses (Apple Health, Android, or automatic) rules and the other one
   only fills gaps.
-- **Daily backup** of the database at 03:30 (the last 30 are kept).
+- **Backups** as ZIPs, by hand or scheduled (hourly to monthly; by default daily at 03:30, light from Monday to
+  Saturday and full on Sunday), with retention by days, weeks and months, and restore from Administration → Backups.
 
 ## How it is built
 

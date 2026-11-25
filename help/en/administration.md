@@ -47,6 +47,16 @@ The figures of the service and, below them, its settings (payments, subscription
 ### Legal details
 - The controller of the data (your name or your brand), a contact email for privacy and, optionally, a postal address. They appear at the top of the public pages [privacy policy](/privacy), [terms of use](/terms) and [deleting an account](/delete-account), which Google Play asks for to publish the app.
 
+## Backups
+Backups of the database and of the accounts' files, made by hand or scheduled, in ZIPs in a folder of the server's data folder (not of your computer).
+
+- **Figures**: stored backups (full and light) and their size, free disk space (in red when little is left), the last successful backup and the next one, and whether it will be full or light.
+- **Back up now**: choose the content (the **database**, and the **accounts' files**: each account's workbook and the imported sheets) and the folder; both are kept for the next backups, scheduled ones too. The button asks whether it is **full** (database and files) or **light** (the database alone).
+- **Restore**: choose a folder, the type and the backup, then the parts to restore. Before restoring, a light backup of the current database is made by itself, so it can be undone; this server's backup schedule and open sessions are kept. **Download** keeps a copy outside the server; **Delete** removes one.
+- **Scheduled backups**: on or off; frequency (hourly, every 4 hours, daily, weekly or monthly), day of the week or of the month, time (Madrid); light backups between the full ones, with the day of the full one. By default: daily at 03:30, light from Monday to Saturday and full on Sunday.
+- **Retention**, of the scheduled backups only: every backup of the last 15 days, and of the full ones the newest and one per week for 12 weeks and one per month for 120 months (all of them can be changed). Backups made by hand, before a restore or by earlier versions are never deleted.
+- The server's keys (`secrets`) are never put in a backup, nor what the server makes again by itself (the Android apps, the home page's media and the help's translations). The daily database copies of earlier versions show as light backups "from an earlier version".
+
 ## Access requests
 - Requests made before accounts were created with a subscription or an invitation code (no new ones arrive).
 - List of accounts requested from the sign-in screen, with name, username, email, date and message.

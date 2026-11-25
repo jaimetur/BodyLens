@@ -51,6 +51,45 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
 .bz .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .bz svg.chart{display:block;width:100%;height:96px;margin-top:12px}.bz svg.chart rect{fill:var(--accent)}.bz svg.chart text{fill:var(--muted);font-size:10px}
 .bzjump{display:flex;flex-wrap:wrap;gap:6px 14px}
+/* Backups (as MeetGo's): figures, Back up now, Restore and Scheduled backups */
+.bk{display:flex;flex-direction:column;gap:14px}.bk .grow{flex:1 1 auto}
+.bk-head{display:flex;align-items:flex-start;gap:12px}.bk-head h3{margin:0;font-size:18px}.bk-head p{margin:2px 0 0}
+.bk-shield,.bk-card-ic{display:grid;place-items:center;flex:none;border-radius:14px}.bk-shield{width:44px;height:44px;background:color-mix(in srgb,#0b7a75 14%,transparent);color:#0b9a92}
+.bk svg,.bk-dlg svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.bk-eyebrow{margin:0;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.bk-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:0}
+.bk-stats>div{display:grid;gap:3px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.bk-stats dt{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.bk-stats dd{margin:0;font-size:17px;font-weight:800;overflow-wrap:anywhere}.bk-stats dd.bk-detail{font-size:12.5px;font-weight:700;color:var(--muted)}.bk-stats dd.bk-detail:empty{display:none}
+.bk-stats>div.low{border-color:#dc2626;background:color-mix(in srgb,#dc2626 10%,var(--surface))}.bk-stats>div.low :is(dt,dd){color:#dc2626}
+.bk-problem{display:block;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,#f59e0b 14%,var(--surface));font-size:13px;margin:0}
+.bk-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.bk-card{--bk:#0b9a92;display:flex;flex-direction:column;gap:12px;min-width:0;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.bk-cards .bk-card:nth-child(2){--bk:#2f7de1}.bk-card.bk-schedule{--bk:#7c5cd6}
+.bk-card-head{display:flex;align-items:flex-start;gap:10px}.bk-card-head>div{flex:1 1 auto;min-width:0}.bk-card-head h4{margin:0;font-size:15.5px}.bk-card-head p{margin:3px 0 0;color:var(--muted);font-size:12.5px}
+.bk-card-ic{width:36px;height:36px;border-radius:12px;background:color-mix(in srgb,var(--bk) 14%,transparent);color:var(--bk)}
+.bk-field{display:grid;gap:5px;font-size:12.5px;font-weight:700;color:var(--muted);min-width:0;margin:0}.bk-field input,.bk-field select{margin:0;font-weight:500}
+.bk-path{display:flex;gap:6px;align-items:center}.bk-path input{flex:1;min-width:0;margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px}.bk-path button{flex:none;width:auto}
+.bk-checks{display:grid;gap:6px}.bk-check{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border:1px solid var(--line);border-radius:12px;cursor:pointer;font-weight:500;color:var(--ink);margin:0}
+.bk-check.off{opacity:.55;cursor:default}.bk-check input{width:auto;height:auto;margin:3px 0 0;accent-color:var(--bk,#0b9a92)}.bk-check span{display:grid;gap:2px}.bk-check small{color:var(--muted);font-size:12px}
+.bk-summary{margin:0;font-size:13px;font-weight:700}
+.bk-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:auto}.bk-actions button{width:auto}.bk-card .bk-actions button:not(.ghost){background:var(--bk);border-color:var(--bk)}
+.bk-saved{margin-right:auto;font-size:12.5px;font-weight:700;color:#16a34a}.bk-saved:not(:empty)::before{content:"✓ "}
+.bk-switch{display:flex;align-items:center;gap:8px;flex:none;margin:0;font-size:13px;font-weight:700}
+.bk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.bk-help{margin:12px 0 0;padding-left:18px;display:grid;gap:3px;color:var(--muted);font-size:13px}.bk-help b{color:var(--ink)}
+.bk-note{margin:0}#bkSched>p{margin-top:10px}
+.bk-dlg{max-width:min(520px,calc(100vw - 32px));width:100%;border:1px solid var(--line);border-radius:16px;background:var(--bg);color:var(--ink);padding:18px}.bk-dlg::backdrop{background:rgba(0,0,0,.5)}
+.bk-dlg h3{margin:0 0 6px}.bk-dlg>*+*{margin-top:10px}
+.bk-levels{display:grid;gap:8px}.bk-level{display:grid;gap:3px;padding:12px 14px;border:1px solid var(--line);border-radius:13px;text-align:left;background:var(--surface);color:var(--ink);width:100%}
+.bk-level:not(:disabled):hover{border-color:#2f7de1;box-shadow:0 0 0 3px color-mix(in srgb,#2f7de1 15%,transparent)}.bk-level:disabled{opacity:.5}.bk-level small{color:var(--muted);font-weight:500}
+.bk-dirs{display:grid;gap:2px;max-height:260px;overflow-y:auto;border:1px solid var(--line);border-radius:12px;padding:4px}
+.bk-dir{display:flex;gap:8px;align-items:center;padding:8px 10px;border-radius:9px;text-align:left;background:none;color:var(--ink);border:0;width:100%}.bk-dir:hover{background:var(--raised)}
+.bk-task{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:55;display:flex;gap:10px;align-items:flex-start;width:min(360px,calc(100vw - 36px));padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--bg);box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.bk-task.error{border-color:#dc2626}.bk-task.done{border-color:#16a34a}.bk-task button{width:auto;padding:2px 8px}
+.bk-bar{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin:6px 0 4px}.bk-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#0b9a92,#2f7de1);transition:width .3s}
+.bk-task small{color:var(--muted);font-size:12px}
+@media (max-width:760px){.bk-cards{grid-template-columns:1fr}.bk-card-head{flex-wrap:wrap}}
 .secret{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:15px;background:var(--raised);padding:6px 10px;border-radius:8px;display:inline-block}
 </style></head>
 <body><main class="acct">
@@ -214,11 +253,82 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
   </section>
 
   <section class="card" data-panel="copias" hidden>
-    <h2>Copias de seguridad</h2>
-    <p>Cada noche (03:30) el servidor guarda una copia de toda la base de datos (cuentas y datos de todos) en <code>/data/backups</code>. Se conservan las últimas <span id="bKeep">30</span>. Para restaurar una, se para el contenedor y se pone en lugar de <code>bodylens.db</code>.</p>
-    <div class="row"><button class="ghost" id="bNow" type="button">Hacer una copia ahora</button><span class="msg" id="bMsg"></span></div>
-    <ul class="list" id="bList"></ul>
+    <h2>Copias</h2>
+    <p>Copias de seguridad de la base de datos y de los archivos de las cuentas, a mano o programadas.</p>
+    <div class="bk">
+      <header class="bk-head">
+        <span class="bk-shield" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+        <div><p class="bk-eyebrow">Copias de la base de datos y los archivos</p><h3>Protección con copias</h3>
+          <p class="small">Haz una copia ZIP ahora, restaura una o programa copias periódicas del contenido elegido.</p></div>
+      </header>
+      <dl class="bk-stats" id="bkStats"></dl>
+      <p class="bk-problem" id="bkProblem" hidden></p>
+      <div class="bk-cards">
+        <section class="bk-card">
+          <header class="bk-card-head"><span class="bk-card-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></span>
+            <div><h4>Hacer copia ahora</h4><p>Un ZIP con el contenido elegido en la carpeta elegida. Al pulsar el botón eliges si es completa o ligera (sin los archivos). El contenido y la carpeta se guardan para las próximas copias, también las programadas.</p></div></header>
+          <div class="bk-field"><span>Contenido de la copia</span>
+            <div class="bk-checks">
+              <label class="bk-check"><input type="checkbox" data-bkc="database"><span><b>Base de datos</b><small>Cuentas, datos de salud, comidas, ajustes… todo lo que guarda BodyLens</small></span></label>
+              <label class="bk-check"><input type="checkbox" data-bkc="files"><span><b>Archivos de las cuentas</b><small>El libro de cada cuenta y las hojas importadas (solo en las copias completas)</small></span></label>
+            </div></div>
+          <div class="bk-field"><span>Carpeta de copias</span><div class="bk-path"><input id="bkPath" readonly><button type="button" class="ghost" data-pick="backup">Elegir</button></div></div>
+          <p class="bk-summary" id="bkKeeps"></p>
+          <div class="bk-actions"><span class="bk-saved" id="bkSaved" role="status"></span><button type="button" id="bkNow">Copiar ahora</button></div>
+        </section>
+        <section class="bk-card">
+          <header class="bk-card-head"><span class="bk-card-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/></svg></span>
+            <div><h4>Restaurar</h4><p>Elige una copia completa o ligera de una carpeta; lo que se restaura se elige después.</p></div></header>
+          <div class="bk-field"><span>Carpeta de copias</span><div class="bk-path"><input id="bkRPath" readonly><button type="button" class="ghost" data-pick="restore">Elegir</button></div></div>
+          <label class="bk-field"><span>Tipo de copia</span><select id="bkRType"><option value="full">Copias completas</option><option value="light">Copias ligeras</option></select></label>
+          <label class="bk-field"><span>Copia</span><select id="bkRFile"></select></label>
+          <div class="bk-actions"><button type="button" class="ghost" id="bkDown" title="Guarda una copia fuera del servidor">Descargar</button><button type="button" class="ghost danger-t" id="bkDel">Borrar</button><span class="grow"></span><button type="button" id="bkRestore">Restaurar copia</button></div>
+        </section>
+      </div>
+      <section class="bk-card bk-schedule">
+        <header class="bk-card-head"><span class="bk-card-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></svg></span>
+          <div class="grow"><h4>Copias programadas</h4><p>Copias periódicas del contenido elegido en «Hacer copia ahora», conservadas como se explica abajo; las hechas a mano nunca se borran.</p></div>
+          <label class="bk-switch"><span>Activar copias periódicas</span><span class="sw"><input type="checkbox" id="bkOn"><span></span></span></label></header>
+        <div id="bkSched">
+          <div class="bk-grid">
+            <label class="bk-field"><span>Frecuencia</span><select id="bkRec"><option value="hourly">Cada hora</option><option value="every_4_hours">Cada 4 horas</option><option value="daily">Diaria</option><option value="weekly">Semanal</option><option value="monthly">Mensual</option></select></label>
+            <label class="bk-field" id="bkWdL"><span>Día de la semana</span><select id="bkWd" class="bkdays"></select></label>
+            <label class="bk-field" id="bkMdL"><span>Día del mes</span><input id="bkMd" type="number" min="1" max="31"></label>
+            <label class="bk-field"><span>Hora</span><input id="bkTime" type="time"></label>
+            <label class="bk-field" id="bkLightL"><span>Copias ligeras</span><select id="bkLight"><option value="0">No: todas completas</option><option value="1">Sí: ligeras entre las completas</option></select></label>
+            <label class="bk-field" id="bkFullL"><span>Día de la copia completa</span><select id="bkFull" class="bkdays"></select></label>
+            <label class="bk-field"><span>Días que se conservan</span><input id="bkKd" type="number" min="1" max="3650"></label>
+            <label class="bk-field"><span>Semanas que se conservan</span><input id="bkKw" type="number" min="0" max="520"></label>
+            <label class="bk-field"><span>Meses que se conservan</span><input id="bkKm" type="number" min="0" max="240"></label>
+          </div>
+          <ul class="bk-help" id="bkHelp"></ul>
+          <p class="bk-summary" id="bkPlan"></p>
+          <p class="small bk-note" id="bkLightNote">Las copias ligeras no llevan los archivos de las cuentas; una vez a la semana, en su día, se hace la completa. Si una completa no se pudo hacer, se hace en la siguiente copia.</p>
+        </div>
+        <div class="bk-actions"><span class="msg" id="bkSchedMsg"></span><span class="grow"></span><button type="button" id="bkSave">Guardar la programación</button></div>
+      </section>
+      <p class="small bk-note" id="bkWhere"></p>
+      <p class="small bk-note">Las claves del servidor (la carpeta secrets) no entran en las copias: se quedan en el servidor. Tampoco lo que el servidor vuelve a crear solo (las apps de Android, los medios de la página de inicio y las traducciones de la ayuda). Las copias diarias de versiones anteriores, solo de la base de datos, aparecen como copias ligeras «de una versión anterior» y nunca se borran solas.</p>
+    </div>
   </section>
+  <div class="bk-task" id="bkTask" hidden role="status"><div class="grow"><b id="bkTaskT"></b><div class="bk-bar"><span id="bkBar"></span></div><small id="bkTaskS"></small></div><button type="button" class="ghost" id="bkTaskX" aria-label="Cerrar">×</button></div>
+  <dialog class="bk-dlg" id="bkLevelDlg"><h3>¿Copia completa o ligera?</h3><p class="small">Las dos guardan el contenido elegido en la carpeta elegida.</p>
+    <div class="bk-levels"><button type="button" class="bk-level" data-level="full"><b>Completa</b><small>La base de datos y los archivos de las cuentas</small><small class="small" id="bkLatestFull"></small></button>
+      <button type="button" class="bk-level" data-level="light"><b>Ligera</b><small>Solo la base de datos, sin los archivos</small><small class="small" id="bkLatestLight"></small></button></div>
+    <div class="row"><button type="button" class="ghost" data-close>Cancelar</button></div></dialog>
+  <dialog class="bk-dlg" id="bkPickDlg"><h3>Carpeta de copias</h3><p class="small">Carpetas del servidor, dentro de su carpeta de datos (no de este ordenador).</p>
+    <div class="bk-path"><input id="bkPickPath" readonly><button type="button" class="ghost" id="bkPickHome" title="Carpeta de datos">⌂</button><button type="button" class="ghost" id="bkPickUp" title="Subir">↑</button></div>
+    <div class="bk-dirs" id="bkDirs"></div>
+    <div class="bk-path"><input id="bkPickNew" placeholder="Nueva carpeta" maxlength="80"><button type="button" class="ghost" id="bkPickAdd">Añadir</button></div>
+    <div class="row"><button type="button" class="ghost" data-close>Cancelar</button><button type="button" id="bkPickUse">Usar esta carpeta</button></div></dialog>
+  <dialog class="bk-dlg" id="bkRestDlg"><h3>Restaurar copia</h3><p class="bk-eyebrow">Confirmación: se sobrescribirán datos</p><p><b data-noi18n id="bkRestName"></b> <span id="bkRestWhen"></span></p>
+    <div class="bk-checks">
+      <label class="bk-check" id="bkRdbL"><input type="checkbox" id="bkRdb"><span><b>Base de datos</b><small id="bkRdbT"></small></span></label>
+      <label class="bk-check" id="bkRfL"><input type="checkbox" id="bkRf"><span><b>Archivos de las cuentas</b><small id="bkRfT"></small></span></label>
+    </div>
+    <p class="bk-problem">Antes de restaurar se hace sola una copia ligera de la base de datos actual, para poder deshacerlo. La programación de copias de este servidor se conserva. Quien esté conectado puede tener que volver a cargar.</p>
+    <label class="bk-check"><input type="checkbox" id="bkSure"><span>Entiendo que los datos actuales se sustituirán</span></label>
+    <div class="row"><button type="button" class="ghost" data-close>Cancelar</button><button type="button" class="danger" id="bkRestGo" disabled>Restaurar</button></div></dialog>
 
   <section class="card" data-panel="fuentes" hidden>
     <h2>Fuentes de datos (puente con Google)</h2>
@@ -240,10 +350,8 @@ document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click
 show((location.hash || '#usuarios').slice(1).replace(/[^a-z]/g, '') || 'usuarios');
 
 async function load() {
-  const [acc, rq, inv, mail, wapp, bk] = await Promise.all([api('GET', '/api/admin/accounts'), api('GET', '/api/admin/access-requests'), api('GET', '/api/admin/invites'), api('GET', '/api/admin/mail'), api('GET', '/api/admin/withings'), api('GET', '/api/admin/backups')]);
-  $('bKeep').textContent = bk.keep;
+  const [acc, rq, inv, mail, wapp] = await Promise.all([api('GET', '/api/admin/accounts'), api('GET', '/api/admin/access-requests'), api('GET', '/api/admin/invites'), api('GET', '/api/admin/mail'), api('GET', '/api/admin/withings')]);
   loadTranslator();
-  $('bList').innerHTML = bk.backups.map(b => `<li><span>${esc(b.name)} <span class="small">· ${(b.size / 1048576).toFixed(1)} MB</span></span><a class="btn ghost" href="/api/admin/backups/${encodeURIComponent(b.name)}" download>Descargar</a></li>`).join('') || '<li><span class="small">Todavía no hay copias.</span></li>';
   $('wCb').textContent = wapp.callback; $('wId').value = wapp.clientId || ''; $('wSecret').value = '';
   $('wSecret').placeholder = wapp.hasSecret ? saved(wapp.secretHint) || '(guardado; escribe otro para cambiarlo)' : '';
   $('wState').textContent = wapp.configured ? 'Configurado: cada cuenta puede conectar su Withings en «Tu cuenta».' : 'Sin configurar.';
@@ -408,10 +516,6 @@ $('lgSave').addEventListener('click', async () => {
   try { await api('PUT', '/api/admin/legal', { controller: $('lgCtl').value, email: $('lgMail').value, address: $('lgAddr').value }); say($('lgMsg'), 'Guardado.', 'ok'); }
   catch (e) { say($('lgMsg'), e.message, 'err'); }
 });
-$('bNow').addEventListener('click', async () => {
-  $('bNow').disabled = true; say($('bMsg'), 'Copiando…');
-  try { const r = await api('POST', '/api/admin/backups'); say($('bMsg'), 'Copia hecha: ' + r.name, 'ok'); await load(); } catch (e) { say($('bMsg'), e.message, 'err'); } finally { $('bNow').disabled = false; }
-});
 async function loadTranslator() {
   try {
     const t = await api('GET', '/api/admin/translator');
@@ -522,6 +626,178 @@ async function testConn(what, msg) {
 $('stTest').addEventListener('click', () => testConn('stripe', $('stMsg')));
 $('gpTest').addEventListener('click', () => testConn('play', $('gpMsg')));
 $('gpRepTest').addEventListener('click', () => testConn('reports', $('gpMsg')));
+// ---------- Backups (as MeetGo's; core/backup.py) ----------
+const BK_DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+const BK_PER_DAY = { hourly: 24, every_4_hours: 6, daily: 1, weekly: 1 / 7, monthly: 1 / 30 };
+const BK_ORIGIN = { manual: 'hecha a mano', scheduled: 'programada', prerestore: 'antes de restaurar', legacy: 'de una versión anterior' };
+let BK = null, BKC = null, BK_DIRTY = false, BK_TASK = null, BK_FILES = [], BK_PICK = null;
+document.querySelectorAll('.bkdays').forEach(sel => { sel.innerHTML = BK_DAYS.map((d, i) => `<option value="${i}">${d}</option>`).join(''); });
+// inside the app the page's frame is as tall as its content: a dialog opens where the person is looking, not in its middle
+function bkModal(dlg) {
+  dlg.style.margin = '';
+  dlg.showModal();
+  try { if (window.frameElement) { const r = window.frameElement.getBoundingClientRect(); dlg.style.margin = `${Math.max(0, -r.top) + 90}px auto auto`; } } catch (e) {}
+}
+const bkSize = b => { if (b == null) return '—'; const u = ['B', 'KB', 'MB', 'GB', 'TB']; let v = b, i = 0; while (v >= 1024 && i < u.length - 1) { v /= 1024; i++; } return `${v >= 100 || i === 0 ? Math.round(v) : v.toFixed(1)} ${u[i]}`; };
+const bkWhen = iso => iso ? new Date(iso).toLocaleString('es-ES', { timeZone: 'Europe/Madrid', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+const bkLevel = l => l === 'full' ? 'Completa' : l === 'light' ? 'Ligera' : '';
+async function loadBackups() {
+  try { BK = await api('GET', '/api/admin/backups'); } catch (e) { return; }
+  if (!BK_DIRTY) BKC = JSON.parse(JSON.stringify(BK.settings));
+  if (BK.task && BK.task.state === 'running' && !BK_TASK) bkFollow(BK.task);
+  if (!$('bkRPath').value) { $('bkRPath').value = BK.settings.backup_path; bkFiles(); }
+  drawBackups();
+}
+function drawBackups() {
+  const s = BK.status, d = s.disk;
+  $('bkStats').innerHTML = [
+    ['Copias guardadas', s.count, `${s.count_full} completas · ${s.count_light} ligeras`, ''],
+    ['Tamaño total', bkSize(s.size), `${bkSize(s.size_full)} completas · ${bkSize(s.size_light)} ligeras`, ''],
+    ['Espacio libre', bkSize(d.free), `de ${bkSize(d.total)} · ${d.total ? Math.round(100 * d.used / d.total) : 0} % usado` + (d.low ? ' · queda poco espacio' : ''), d.low ? 'low' : ''],
+    ['Última copia correcta', bkWhen(s.last_success), bkLevel(s.last_level), ''],
+    ['Próxima copia', s.next_run ? bkWhen(s.next_run) : 'Sin programar', bkLevel(s.next_level), ''],
+  ].map(([t, v, det, cls]) => `<div class="${cls}"><dt>${esc(t)}</dt><dd>${esc(v)}</dd><dd class="bk-detail">${esc(det)}</dd></div>`).join('');
+  $('bkProblem').hidden = !s.problem; $('bkProblem').textContent = s.problem || '';
+  const c = BKC;
+  document.querySelectorAll('[data-bkc]').forEach(i => { i.checked = c.components.includes(i.dataset.bkc); });
+  $('bkPath').value = c.backup_path; $('bkPath').title = c.backup_path;
+  $('bkKeeps').textContent = `Esta copia guarda: ${c.components.map(x => (window.blT || String)(x === 'database' ? 'base de datos' : 'archivos de las cuentas')).join(' + ')}.`;
+  $('bkOn').checked = c.enabled; $('bkSched').hidden = !c.enabled;
+  $('bkRec').value = c.recurrence; $('bkWd').value = c.weekly_day; $('bkMd').value = c.monthly_day; $('bkTime').value = c.execution_time;
+  $('bkLight').value = c.light_backups ? '1' : '0'; $('bkFull').value = c.full_backup_day;
+  $('bkKd').value = c.keep_days; $('bkKw').value = c.keep_weeks; $('bkKm').value = c.keep_months;
+  const lightOk = ['hourly', 'every_4_hours', 'daily'].includes(c.recurrence), light = lightOk && c.light_backups;
+  $('bkWdL').hidden = c.recurrence !== 'weekly'; $('bkMdL').hidden = c.recurrence !== 'monthly';
+  $('bkLightL').hidden = !lightOk; $('bkFullL').hidden = !light; $('bkLightNote').hidden = !light;
+  $('bkHelp').innerHTML = `<li><b>Días que se conservan:</b> <span>${esc(`se conservan todas las copias de los últimos ${c.keep_days} días.`)}</span></li>`
+    + `<li><b>Semanas que se conservan:</b> <span>${esc(`se conserva una copia completa por semana durante las últimas ${c.keep_weeks} semanas.`)}</span></li>`
+    + `<li><b>Meses que se conservan:</b> <span>${esc(`se conserva una copia completa por mes durante los últimos ${c.keep_months} meses.`)}</span></li>`
+    + '<li>El resto de copias programadas se borra, salvo la última completa. Las hechas a mano o antes de restaurar nunca se borran.</li>';
+  // how many backups the retention keeps at most, and their space with the latest sizes
+  const inDays = Math.max(1, Math.ceil(c.keep_days * (BK_PER_DAY[c.recurrence] || 1)));
+  const fullInDays = light ? Math.max(1, Math.ceil(c.keep_days / 7)) : inDays, lightN = light ? Math.max(0, inDays - fullInDays) : 0;
+  const fullN = fullInDays + c.keep_weeks + c.keep_months, bytes = fullN * (s.latest_full || 0) + lightN * (s.latest_light || 0);
+  $('bkPlan').textContent = `Como mucho se guardan a la vez unas ${fullN} copias completas y ${lightN} ligeras: unos ${s.latest_full || s.latest_light ? bkSize(bytes) : '—'} con los tamaños de las últimas.`;
+  $('bkWhere').textContent = `Las copias se guardan en el servidor, dentro de su carpeta de datos (${BK.root}), no en este ordenador. Descarga de vez en cuando alguna para tenerla también fuera del servidor.`;
+  $('bkLatestFull').textContent = `Última de este tipo: ${bkSize(s.latest_full)}`; $('bkLatestLight').textContent = `Última de este tipo: ${bkSize(s.latest_light)}`;
+  const running = BK_TASK && BK_TASK.state === 'running';
+  $('bkNow').disabled = running; bkFileButtons();
+}
+function bkFileButtons() {
+  const has = !!$('bkRFile').value, running = BK_TASK && BK_TASK.state === 'running';
+  $('bkDown').disabled = !has; $('bkDel').disabled = !has || running; $('bkRestore').disabled = !has || running;
+}
+async function bkFiles() {
+  try { BK_FILES = await api('GET', '/api/admin/backups/files?path=' + encodeURIComponent($('bkRPath').value)); } catch (e) { BK_FILES = []; }
+  const keep = $('bkRFile').value, shown = BK_FILES.filter(f => f.level === $('bkRType').value);
+  $('bkRFile').innerHTML = `<option value="">${shown.length ? 'Elige una copia' : 'No hay copias de este tipo'}</option>`
+    + shown.map(f => `<option value="${esc(f.name)}">${esc(bkWhen(f.created_at))} · ${esc(bkSize(f.size))} · ${esc(BK_ORIGIN[f.origin] || f.origin)}</option>`).join('');
+  if (shown.some(f => f.name === keep)) $('bkRFile').value = keep;
+  bkFileButtons();
+}
+// what Back up now keeps and where are saved at once, for the next backups (the scheduled ones too)
+async function bkKeep(change) {
+  Object.assign(BKC, change);
+  try { BK = await api('PUT', '/api/admin/backups/settings', { ...BK.settings, components: BKC.components, backup_path: BKC.backup_path });
+    $('bkSaved').textContent = 'Guardado para las próximas copias'; setTimeout(() => { $('bkSaved').textContent = ''; }, 2500); }
+  catch (e) { alert(e.message); }
+  drawBackups();
+}
+document.querySelectorAll('[data-bkc]').forEach(i => i.addEventListener('change', () => {
+  const next = [...document.querySelectorAll('[data-bkc]')].filter(x => x.checked).map(x => x.dataset.bkc);
+  if (!next.length) { i.checked = true; return; } bkKeep({ components: next });
+}));
+const bkEdit = change => { BK_DIRTY = true; Object.assign(BKC, change); drawBackups(); };
+$('bkOn').addEventListener('change', e => bkEdit({ enabled: e.target.checked }));
+$('bkRec').addEventListener('change', e => bkEdit({ recurrence: e.target.value }));
+$('bkWd').addEventListener('change', e => bkEdit({ weekly_day: +e.target.value }));
+$('bkMd').addEventListener('change', e => bkEdit({ monthly_day: Math.min(31, Math.max(1, +e.target.value || 1)) }));
+$('bkTime').addEventListener('change', e => bkEdit({ execution_time: e.target.value || '03:30' }));
+$('bkLight').addEventListener('change', e => bkEdit({ light_backups: e.target.value === '1' }));
+$('bkFull').addEventListener('change', e => bkEdit({ full_backup_day: +e.target.value }));
+$('bkKd').addEventListener('change', e => bkEdit({ keep_days: Math.max(1, +e.target.value || 1) }));
+$('bkKw').addEventListener('change', e => bkEdit({ keep_weeks: Math.max(0, +e.target.value || 0) }));
+$('bkKm').addEventListener('change', e => bkEdit({ keep_months: Math.max(0, +e.target.value || 0) }));
+$('bkSave').addEventListener('click', async () => {
+  try { BK = await api('PUT', '/api/admin/backups/settings', BKC); BK_DIRTY = false; BKC = JSON.parse(JSON.stringify(BK.settings)); drawBackups(); say($('bkSchedMsg'), 'Programación guardada', 'ok'); }
+  catch (e) { say($('bkSchedMsg'), e.message, 'err'); }
+});
+// a running backup or restore: its progress every second, then everything again
+function bkFollow(t) {
+  BK_TASK = t; const box = $('bkTask'); box.hidden = false;
+  const draw = () => {
+    box.className = 'bk-task ' + BK_TASK.state;
+    const steps = { database: 'base de datos', files: 'archivos', safety: 'copia previa' };
+    $('bkTaskT').textContent = (BK_TASK.kind === 'restore' ? 'Restauración' : 'Copia de seguridad') + (BK_TASK.step && steps[BK_TASK.step] ? ' · ' + steps[BK_TASK.step] : '');
+    $('bkBar').style.width = Math.round((BK_TASK.state === 'done' ? 1 : BK_TASK.progress) * 100) + '%';
+    $('bkTaskS').textContent = BK_TASK.state === 'error' ? BK_TASK.message : BK_TASK.state === 'done' ? 'Terminado' : Math.round(BK_TASK.progress * 100) + ' %';
+    $('bkTaskX').hidden = BK_TASK.state === 'running';
+  };
+  draw(); drawBackups();
+  const timer = setInterval(async () => {
+    try { BK_TASK = await api('GET', '/api/admin/backups/task/' + BK_TASK.id); } catch (e) { return; }
+    draw();
+    if (BK_TASK.state !== 'running') { clearInterval(timer); await loadBackups(); bkFiles(); if (BK_TASK.kind === 'restore' && BK_TASK.state === 'done') load(); }
+  }, 1000);
+}
+$('bkTaskX').addEventListener('click', () => { $('bkTask').hidden = true; BK_TASK = null; drawBackups(); });
+document.querySelectorAll('.bk-dlg [data-close]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
+$('bkNow').addEventListener('click', () => {
+  document.querySelector('[data-level="full"]').disabled = !BKC.components.length;
+  document.querySelector('[data-level="light"]').disabled = !BKC.components.includes('database');
+  bkModal($('bkLevelDlg'));
+});
+document.querySelectorAll('[data-level]').forEach(b => b.addEventListener('click', async () => {
+  $('bkLevelDlg').close();
+  try { bkFollow(await api('POST', '/api/admin/backups/run', { level: b.dataset.level })); } catch (e) { alert(e.message); }
+}));
+$('bkRType').addEventListener('change', () => { $('bkRFile').value = ''; bkFiles(); });
+$('bkRFile').addEventListener('change', bkFileButtons);
+$('bkDown').addEventListener('click', () => { location.href = `/api/admin/backups/download?path=${encodeURIComponent($('bkRPath').value)}&name=${encodeURIComponent($('bkRFile').value)}`; });
+$('bkDel').addEventListener('click', async () => {
+  const name = $('bkRFile').value;
+  if (!confirm(`¿Borrar la copia ${name}? No se puede deshacer.`)) return;
+  try { await api('POST', '/api/admin/backups/delete', { path: $('bkRPath').value, name }); $('bkRFile').value = ''; await bkFiles(); loadBackups(); } catch (e) { alert(e.message); }
+});
+$('bkRestore').addEventListener('click', async () => {
+  let m; try { m = await api('POST', '/api/admin/backups/inspect', { path: $('bkRPath').value, name: $('bkRFile').value }); } catch (e) { return alert(e.message); }
+  $('bkRestName').textContent = $('bkRFile').value; $('bkRestWhen').textContent = m.created_at ? '· ' + bkWhen(m.created_at) : '';
+  $('bkRdb').disabled = !m.has_database; $('bkRdb').checked = !!m.has_database; $('bkRdbL').classList.toggle('off', !m.has_database);
+  $('bkRf').disabled = !m.has_files; $('bkRf').checked = !!m.has_files; $('bkRfL').classList.toggle('off', !m.has_files);
+  $('bkRdbT').textContent = m.has_database ? `Sustituye todos los datos actuales por los de la copia (${m.table_count} tablas)` : 'No está en esta copia';
+  $('bkRfT').textContent = m.has_files ? `Sobrescribe los ${m.file_count} archivos que tiene la copia; los demás se conservan` : 'No está en esta copia';
+  $('bkSure').checked = false; $('bkRestGo').disabled = true; bkModal($('bkRestDlg'));
+});
+const bkParts = () => [...($('bkRdb').checked ? ['database'] : []), ...($('bkRf').checked ? ['files'] : [])];
+['bkSure', 'bkRdb', 'bkRf'].forEach(id => $(id).addEventListener('change', () => { $('bkRestGo').disabled = !$('bkSure').checked || !bkParts().length; }));
+$('bkRestGo').addEventListener('click', async () => {
+  $('bkRestDlg').close();
+  try { bkFollow(await api('POST', '/api/admin/backups/restore', { path: $('bkRPath').value, name: $('bkRFile').value, parts: bkParts() })); } catch (e) { alert(e.message); }
+});
+// folders of the server's data directory (not of this computer); a new one can be made before choosing it
+async function bkGo(path) {
+  try { BK_PICK = await api('GET', '/api/admin/backups/dirs?path=' + encodeURIComponent(path)); } catch (e) { return alert(e.message); }
+  $('bkPickPath').value = BK_PICK.path; $('bkPickUp').disabled = !BK_PICK.parent;
+  $('bkDirs').innerHTML = BK_PICK.dirs.length ? BK_PICK.dirs.map(d => `<button type="button" class="bk-dir" data-dir="${esc(d)}">📁 <span data-noi18n>${esc(d)}</span></button>`).join('') : '<div class="small" style="padding:12px">No tiene subcarpetas</div>';
+}
+let BK_PICK_FOR = 'backup';
+document.querySelectorAll('[data-pick]').forEach(b => b.addEventListener('click', () => {
+  BK_PICK_FOR = b.dataset.pick; $('bkPickNew').value = '';
+  bkGo(BK_PICK_FOR === 'backup' ? BKC.backup_path : $('bkRPath').value || BK.root); bkModal($('bkPickDlg'));
+}));
+$('bkDirs').addEventListener('click', e => { const b = e.target.closest('[data-dir]'); if (b) bkGo(BK_PICK.path + '/' + b.dataset.dir); });
+$('bkPickHome').addEventListener('click', () => bkGo(BK.root));
+$('bkPickUp').addEventListener('click', () => BK_PICK && BK_PICK.parent && bkGo(BK_PICK.parent));
+$('bkPickAdd').addEventListener('click', async () => {
+  const name = $('bkPickNew').value.trim(); if (!name) return;
+  try { BK_PICK = await api('POST', '/api/admin/backups/dirs', { path: BK_PICK.path, name }); $('bkPickNew').value = ''; bkGo(BK_PICK.path); } catch (e) { alert(e.message); }
+});
+$('bkPickUse').addEventListener('click', () => {
+  $('bkPickDlg').close(); if (!BK_PICK) return;
+  if (BK_PICK_FOR === 'backup') bkKeep({ backup_path: BK_PICK.path }); else { $('bkRPath').value = BK_PICK.path; $('bkRFile').value = ''; bkFiles(); }
+});
+loadBackups();
+setInterval(loadBackups, 30000);   // the list follows the scheduled backups as they are made
 load().catch(e => alert(e.message));
 </script>
 </body></html>

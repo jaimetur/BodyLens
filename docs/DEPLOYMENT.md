@@ -188,7 +188,14 @@ Google Play subscriptions. It asks for the server address the first time (`https
 ## Backup
 
 Everything of the app is in `/volume1/docker/data/bodylens` (including `bodylens.db`): just include that folder in
-Hyper Backup. (Phase 3: automatic daily backup inside `backups/`.)
+Hyper Backup.
+
+The server also makes its own backups (Administration → Backups, `src/backend/app/core/backup.py`): ZIPs in
+`backups/full` and `backups/light` of the data folder, with the database (full ones also with `users/` and `import/`;
+never `secrets/`). By default, with nothing saved in Administration, daily at 03:30 (Madrid), light from Monday to Saturday
+and full on Sunday, keeping 15 days, a full one per week for 12 weeks and one per month for 120 months. The daily
+`backups/bodylens-YYYY-MM-DD.db` copies of earlier versions are shown as light backups "from an earlier version" and are
+never deleted by the retention. `BACKUP_KEEP` is no longer used.
 
 ## Help and automatic translation
 

@@ -1,4 +1,4 @@
-<!-- en: b286bb0d0c7aac9f -->
+<!-- en: 25cb698c648819f0 -->
 # Administración
 
 Solo para cuentas de administrador. Está en «Tu cuenta» → **Administración**.
@@ -47,6 +47,16 @@ Las cifras del servicio y, debajo, su configuración (pagos, suscripciones, clav
 
 ### Datos legales
 - El responsable de los datos (tu nombre o tu marca), un correo de contacto para privacidad y, si quieres, una dirección postal. Aparecen al principio de las páginas públicas [política de privacidad](/privacy), [condiciones de uso](/terms) y [borrar una cuenta](/delete-account), que Google Play pide para publicar la app.
+
+## Copias
+Copias de seguridad de la base de datos y de los archivos de las cuentas, a mano o programadas, en ZIP dentro de una carpeta de la carpeta de datos del servidor (no de tu ordenador).
+
+- **Cifras**: copias guardadas (completas y ligeras) y su tamaño, espacio libre en el disco (en rojo cuando queda poco), la última copia correcta y la próxima, y si será completa o ligera.
+- **Hacer copia ahora**: elige el contenido (la **base de datos** y los **archivos de las cuentas**: el libro de cada cuenta y las hojas importadas) y la carpeta; los dos se guardan para las próximas copias, también las programadas. El botón pregunta si es **completa** (base de datos y archivos) o **ligera** (solo la base de datos).
+- **Restaurar**: elige una carpeta, el tipo y la copia, y después las partes que se restauran. Antes de restaurar se hace sola una copia ligera de la base de datos actual, para poder deshacerlo; la programación de copias y las sesiones abiertas de este servidor se conservan. **Descargar** guarda una copia fuera del servidor; **Borrar** quita una.
+- **Copias programadas**: activadas o no; frecuencia (cada hora, cada 4 horas, diaria, semanal o mensual), día de la semana o del mes, hora (Madrid); copias ligeras entre las completas, con el día de la completa. Por defecto: diaria a las 03:30, ligera de lunes a sábado y completa el domingo.
+- **Retención**, solo de las copias programadas: todas las de los últimos 15 días y, de las completas, la más reciente, una por semana durante 12 semanas y una por mes durante 120 meses (todo se puede cambiar). Las copias hechas a mano, antes de restaurar o por versiones anteriores nunca se borran.
+- Las claves del servidor (`secrets`) nunca entran en una copia, ni lo que el servidor vuelve a crear solo (las apps de Android, los medios de la página de inicio y las traducciones de la ayuda). Las copias diarias de la base de datos de versiones anteriores aparecen como copias ligeras «de una versión anterior».
 
 ## Peticiones de acceso
 - Peticiones hechas antes de que las cuentas se crearan con una suscripción o un código de invitación (ya no llegan nuevas).

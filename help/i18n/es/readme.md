@@ -1,4 +1,4 @@
-<!-- en: ef9f9bc2f64106e4 -->
+<!-- en: e2d79716d9f846cd -->
 # BodyLens
 
 **BodyLens** es una app web de salud personal, multiusuario y autoalojada. Reúne el peso y la composición corporal
@@ -53,7 +53,9 @@ servidor, los datos llegan solos y cada persona ve únicamente los suyos.
 - **Android:** la app BodyLens para Android (en `android/`) lee Health Connect y envía cada hora en el mismo formato.
   Si a una cuenta le llegan las dos, manda la fuente que elija (Apple Salud, Android o automática) y la otra solo
   rellena huecos.
-- **Copia de seguridad diaria** de la base de datos a las 03:30 (se conservan las últimas 30).
+- **Copias de seguridad** en ZIP, a mano o programadas (de cada hora a mensuales; por defecto diarias a las 03:30,
+  ligeras de lunes a sábado y completa el domingo), con retención por días, semanas y meses, y restauración desde
+  Administración → Copias.
 
 ## Cómo está construida
 

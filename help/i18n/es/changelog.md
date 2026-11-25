@@ -1,4 +1,4 @@
-<!-- en: a9c44974cb7bac09 -->
+<!-- en: 55290660e6f9c39d -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -10,6 +10,7 @@
 
 #### 🌟 Novedades:
 - **Negocio en Administración:** un panel con las cifras del servicio en 7 días, 30 días, 12 meses o desde el principio (cuentas y cuentas activas, suscripciones por estado, plan y canal, acceso gratis y códigos usados, ingreso recurrente mensual, cobros, devoluciones, conversión de la prueba y bajas de Stripe, ingresos, instalaciones y versiones publicadas de Google Play, descargas de los APK desde el servidor, copias, correo y disco), cada recuadro con su fuente y cuándo se tomó, y debajo la configuración que tenía sus propias pestañas (Stripe, Google Play con su bucket de informes, suscripciones, Withings, traductor, correo y datos legales), con **Probar conexión**; las claves guardadas se guardan cifradas, también la contraseña del correo, y solo se muestran por sus últimos caracteres.
+- **Copias como en MeetGo:** Administración → Copias muestra las copias guardadas, el espacio en disco y la última y la próxima copia, y hace copias ZIP completas (base de datos y archivos de las cuentas) o ligeras (base de datos) a mano, las restaura por partes (tras una copia ligera de la base de datos actual, conservando la configuración de copias y las sesiones abiertas) y las programa (de cada hora a mensuales, ligeras entre las completas semanales) con retención por días, semanas y meses; por defecto diarias a las 03:30, ligeras de lunes a sábado y completa el domingo, conservando 15 días, 12 semanas y 120 meses. Las copias diarias de versiones anteriores se quedan, como copias ligeras, y la retención nunca las borra.
 
 #### 🚀 Mejoras:
 - **Google Play va a la par que el repositorio:** la app de Android lleva la versión de la release (Play muestra, por ejemplo, «0.2.0 (45)», con el número de compilación entre paréntesis), cada compilación de una rama de versión se envía sola a Play (al canal de la variable `PLAY_TRACK`: la prueba cerrada por defecto, producción cuando Google lo permita) y los textos y capturas de la ficha se envían cuando cambian.

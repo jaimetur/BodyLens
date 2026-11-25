@@ -210,9 +210,7 @@ def health_block(now: datetime) -> dict:
     from app.core import backup
     from app.mail import mailer
     copies = backup.listing()
-    last = None
-    if copies:
-        last = datetime.fromtimestamp((backup.folder() / copies[0]["name"]).stat().st_mtime, timezone.utc).isoformat()
+    last = copies[0]["created_at"] if copies else None
     try:
         du = shutil.disk_usage(config.settings.data_dir)
         disk = {"free": du.free, "total": du.total}
