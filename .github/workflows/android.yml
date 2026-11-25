@@ -4,8 +4,10 @@ name: 🤖 Android app
 # - On every change in android/ it refreshes the rolling "android-latest" pre-release (the Actions artifact storage is
 #   full), from which tools/deploy-android.sh takes the APK to the NAS, which serves it at /android.apk.
 # - Called by release.yml with a release tag, it attaches the APK to that version's release instead.
-# - With the PLAY_SERVICE_ACCOUNT_JSON secret, each rolling build also goes to Google Play's internal test track
-#   (tools/play_publish.py); promoting it to the closed test or production is done in Play Console.
+# - With the PLAY_SERVICE_ACCOUNT_JSON secret, each build of a version branch (X.Y.Z) or run by hand also goes to
+#   Google Play (tools/play_publish.py), named "X.Y.Z (build)" like the app (versionName = the release version,
+#   versionCode = the build number), to the track of the PLAY_TRACK variable (internal test by default; alpha is the
+#   closed test, production needs Google's approval first).
 on:
   push:
     branches: [main, "[0-9]+.[0-9]+.[0-9]+"]
@@ -69,16 +71,18 @@ jobs:
           gh release upload android-latest bodylens-android.apk bodylens-bridge.apk bodylens-android.aab --clobber
           echo "build ${{ github.run_number }} · ${GITHUB_SHA::7}" > android-build.txt
           gh release upload android-latest android-build.txt --clobber
-      - name: Send to Google Play (internal test), if the service account is in the secrets
-        if: ${{ !inputs.release_tag }}
+      - name: Send to Google Play, if the service account is in the secrets
+        if: ${{ !inputs.release_tag && (github.event_name == 'workflow_dispatch' || github.ref_name != 'main') }}
         continue-on-error: true   # the APKs are already published; a Play error does not undo them
         env:
           PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          PLAY_TRACK: ${{ vars.PLAY_TRACK || 'internal' }}
         run: |
           if [ -z "$PLAY_SERVICE_ACCOUNT_JSON" ]; then echo "No PLAY_SERVICE_ACCOUNT_JSON secret: upload the AAB by hand."; exit 0; fi
           pip install -q google-auth requests
-          python tools/play_publish.py bundle bodylens-android.aab --track internal \
-            --notes "Build ${{ github.run_number }}: $(git log -1 --format=%s | cut -c1-450)"
+          V=$(sed -n 's/.*versionName = "\([^"]*\)".*/\1/p' android/app/build.gradle.kts)
+          python tools/play_publish.py bundle bodylens-android.aab --track "$PLAY_TRACK" --name "$V (${{ github.run_number }})" \
+            --notes "BodyLens $V: $(git log -1 --format=%s | cut -c1-450)"
       - name: Attach to the version release
         if: ${{ inputs.release_tag }}
         env:

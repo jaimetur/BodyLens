@@ -10,6 +10,7 @@
 #### 🌟 New Features:
 
 #### 🚀 Enhancements:
+- **Google Play follows the repository:** the Android app has the release version (Play shows e.g. "0.2.0 (45)", the build number in brackets), every build of a version branch is sent to Play by itself (to the track of the `PLAY_TRACK` variable, internal test by default), and the listing texts and screenshots are sent whenever they change.
 
 #### 🐛 Bug fixes:
 

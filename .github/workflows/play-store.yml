@@ -4,8 +4,9 @@ name: 🛍️ Google Play screenshots
 # version of the app: 7 screens on phone, tablet and Chromebook, in every language of the app, from a SYNTHETIC demo
 # account (tools/demo_data.py; never real data), with tools/store_capture.py. They go to the "play-store-media"
 # release (one zip per language and manifest.json); tools/play-store-media.sh downloads them to
-# assets/play-store/screenshots. Run it by hand with "publish" ticked to also send them, with the listing texts of
-# assets/play-store/listings, to Play Console (tools/play_publish.py; needs the PLAY_SERVICE_ACCOUNT_JSON secret).
+# assets/play-store/screenshots. With the PLAY_SERVICE_ACCOUNT_JSON secret, on every version branch (X.Y.Z) they are
+# also sent, with the listing texts of assets/play-store/listings, to Play Console (tools/play_publish.py); by hand,
+# tick "publish" to send them from any branch.
 on:
   push:
     branches: [main, "[0-9]+.[0-9]+.[0-9]+"]
@@ -17,6 +18,9 @@ on:
       - "tools/store_capture.py"
       - "tools/landing_capture.py"
       - "tools/demo_data.py"
+      - "tools/play_publish.py"
+      - "assets/play-store/listings/**"
+      - "assets/play-store/feature-*.png"
       - ".github/workflows/play-store.yml"
   workflow_dispatch:
     inputs:
@@ -79,8 +83,10 @@ jobs:
           NOTES="Google Play screenshots (phone, tablet, Chromebook) in every language of the app, taken from a synthetic demo account whenever the app changes. tools/play-store-media.sh downloads them to assets/play-store/screenshots."
           gh release view play-store-media -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 || gh release create play-store-media -R "$GITHUB_REPOSITORY" --prerelease --title "Google Play screenshots (automatic)" --notes "$NOTES" --target "$GITHUB_SHA"
           gh release upload play-store-media -R "$GITHUB_REPOSITORY" screenshots-*.zip manifest.json --clobber
-      - name: Send to Google Play
-        if: ${{ inputs.publish }}
+      - name: Send to Google Play (listing texts and images), if the service account is in the secrets
+        if: ${{ inputs.publish || (github.event_name == 'push' && github.ref_name != 'main') }}
         env:
           PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-        run: python tools/play_publish.py listing --images "$SHOTS"
+        run: |
+          if [ -z "$PLAY_SERVICE_ACCOUNT_JSON" ]; then echo "No PLAY_SERVICE_ACCOUNT_JSON secret: update the listing by hand."; exit 0; fi
+          python tools/play_publish.py listing --images "$SHOTS"

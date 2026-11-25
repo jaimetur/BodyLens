@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Publishes BodyLens to Google Play Console with the Google Play Developer API, without the web console.
 
-    PLAY_SERVICE_ACCOUNT_JSON="$(cat key.json)" python tools/play_publish.py bundle app.aab [--track internal]
+    PLAY_SERVICE_ACCOUNT_JSON="$(cat key.json)" python tools/play_publish.py bundle app.aab [--track internal] [--name "0.2.0 (45)"]
     PLAY_SERVICE_ACCOUNT_JSON="$(cat key.json)" python tools/play_publish.py listing [--images DIR] [--validate]
 
 - bundle: uploads an Android App Bundle and releases it to a track (internal by default; alpha is the closed test,
-  production needs Google's approval first), with --notes as its English release notes.
+  production needs Google's approval first), with --name as the release name and --notes as its English notes.
 - listing: updates the store listing of every language in assets/play-store/listings/<locale>.json (title, short and
   full description) and, with --images, replaces its screenshots with those of tools/store_capture.py
   (<DIR>/<lang>/phone|tablet/*.png; Chromebook screenshots cannot be uploaded through the API) and its feature graphic
@@ -69,7 +69,7 @@ def bundle(s: AuthorizedSession, a) -> None:
                       headers={"Content-Type": "application/octet-stream"}, timeout=600))
     code = b["versionCode"]
     notes = [{"language": "en-US", "text": a.notes}] if a.notes else []
-    release = {"versionCodes": [str(code)], "status": a.status, "releaseNotes": notes}
+    release = {"versionCodes": [str(code)], "status": a.status, "releaseNotes": notes, **({"name": a.name} if a.name else {})}
     ok(s.put(f"{API}/edits/{edit}/tracks/{a.track}", json={"track": a.track, "releases": [release]}))
     print(f"Version {code} → {a.track} ({a.status}).")
     finish(s, edit, a.validate)
@@ -108,6 +108,7 @@ def main() -> None:
     b.add_argument("aab")
     b.add_argument("--track", default="internal", help="internal (default), alpha (closed test), beta, production")
     b.add_argument("--status", default="completed", choices=["completed", "draft"])
+    b.add_argument("--name", default="", help='release name shown in Play Console (e.g. "0.2.0 (45)")')
     b.add_argument("--notes", default="", help="release notes (English)")
     li = sub.add_parser("listing", help="update the store listing texts (and screenshots) of every language")
     li.add_argument("--images", help="folder of tools/store_capture.py (e.g. assets/play-store/screenshots)")

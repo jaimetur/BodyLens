@@ -7,7 +7,7 @@ Adapted from DriveTest Analyzer's tool of the same name. A BodyLens release is:
   - `version` in pyproject.toml;
   - a `## Release: vX.Y.Z` block on top of CHANGELOG.md and of its Spanish copy help/i18n/es/changelog.md (which is
     stamped again with tools/help_i18n.py so the Help keeps serving it);
-  - the major.minor of the Android app's versionName (android/app/build.gradle.kts).
+  - the versionName of the Android app (android/app/build.gradle.kts; its versionCode is the CI build number).
 
 Usage:
   python3 tools/CreateUpdateRelease.py                                # window (Tk); questions in the terminal without Tk
@@ -97,9 +97,8 @@ def replace_pyproject_version(content: str, version: str) -> str:
 
 
 def replace_android_version(content: str, version: str) -> str:
-    """Return the Gradle script with the major.minor of versionName updated (the patch is the CI build number)."""
-    major, minor, _ = version.split('.')
-    content, count = re.subn(r'(versionName\s*=\s*")\d+\.\d+\.(")', rf'\g<1>{major}.{minor}.\g<2>', content, count=1)
+    """Return the Gradle script with versionName set to the release version (the versionCode is the CI build number)."""
+    content, count = re.subn(r'(versionName\s*=\s*")[^"]*(")', rf'\g<1>{version}\g<2>', content, count=1)
     if count != 1:
         raise RuntimeError('Unable to update versionName in android/app/build.gradle.kts.')
     return content

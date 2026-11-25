@@ -23,10 +23,14 @@ layout changes (`.github/workflows/play-store.yml`, `tools/store_capture.py`) an
 
 **Publishing without Play Console** (`tools/play_publish.py`, with the service account in the
 `PLAY_SERVICE_ACCOUNT_JSON` secret, see `docs/DEPLOYMENT.md`):
-- every Android build of the version branch goes to the **internal test** by itself (`.github/workflows/android.yml`);
-- the texts of every language and the phone and tablet screenshots are sent by running the *🛍️ Google Play
-  screenshots* workflow by hand with **publish** ticked (or `tools/play_publish.py listing --images
-  assets/play-store/screenshots`). Chromebook screenshots cannot be sent through the API: upload them by hand.
+- every Android build of a version branch (`X.Y.Z`) goes to Play by itself (`.github/workflows/android.yml`), to the
+  track of the GitHub variable `PLAY_TRACK` (`internal` by default; `alpha` is the closed test). Play shows it with
+  the same version as the repository, e.g. **0.2.0 (45)**: the version name is the release version and the number
+  in brackets is the build;
+- whenever the screenshots are taken again on a version branch, they are sent with the texts of every language
+  (phone and tablet screenshots and the feature graphic); by hand, run the *🛍️ Google Play screenshots* workflow
+  with **publish** ticked (or `tools/play_publish.py listing --images assets/play-store/screenshots`). Chromebook
+  screenshots cannot be sent through the API: upload them by hand.
 
 ## 1. Create the app
 

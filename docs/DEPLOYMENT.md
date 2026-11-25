@@ -77,7 +77,7 @@ python3 tools/CreateUpdateRelease.py --update 0.1.0 2026-11-20
 ```
 
 - **Create New Release** checks that the branch does not exist (locally or on GitHub), then creates it, sets the
-  version in `pyproject.toml` and the major.minor of the Android app's `versionName`, adds an empty
+  version in `pyproject.toml` and the Android app's `versionName` (Play shows it as `X.Y.Z (<build>)`), adds an empty
   `## Release: vX.Y.Z` block on top of `CHANGELOG.md` and of `help/i18n/es/changelog.md` (stamped again), commits and
   pushes it. If there is uncommitted work it asks first: commit and push it to the current branch, carry it to the new
   one, or discard it (from the command line, `--dirty`; without it, it stops).
@@ -120,12 +120,14 @@ Google Play subscriptions. It asks for the server address the first time (`https
   (`ANDROID_KEYSTORE_B64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`). Keep the `.jks`
   and its password safe. Without the secrets, CI signs with a throwaway debug key (fine to try the APK, not for Play).
 - **Google Play without uploading by hand**: with the secret `PLAY_SERVICE_ACCOUNT_JSON` (the JSON key of a Play
-  Console service account with "Release apps to testing tracks" and "Manage store presence"), every rolling build also
-  goes to Play's internal test track (`tools/play_publish.py bundle`); promote it to the closed test or production
-  in Play Console. `gh secret set PLAY_SERVICE_ACCOUNT_JSON < key.json` stores it.
+  Console service account with "Release apps to testing tracks" and "Manage store presence"), every build of a
+  version branch also goes to Play (`tools/play_publish.py bundle`), named `X.Y.Z (<build>)`, to the track of the
+  repository variable `PLAY_TRACK` (`internal` by default, `alpha` for the closed test); promote it to production in
+  Play Console. `gh secret set PLAY_SERVICE_ACCOUNT_JSON < key.json` stores it.
 - **Store listing**: texts per language in `assets/play-store/listings/`; screenshots of every language, phone, tablet
   and Chromebook, taken again by GitHub Actions whenever the app changes (`play-store-media` release,
-  `tools/play-store-media.sh` downloads them). See `docs/play-store/README.md`.
+  `tools/play-store-media.sh` downloads them) and, on version branches with the secret, sent to Play with the texts.
+  See `docs/play-store/README.md`.
 
 ## Subscriptions, payments and legal pages
 

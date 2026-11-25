@@ -34,8 +34,9 @@ def test_update_header_pyproject_and_android():
     out = rt.replace_current_changelog_metadata(CHANGELOG, "0.1.1", "2026-11-20")
     assert "## Release: v0.1.1\n### Release Date: 2026-11-20" in out
     assert 'version = "0.3.0"' in rt.replace_pyproject_version('[project]\nname = "x"\nversion = "0.1.0"\n', "0.3.0")
-    g = 'versionName = "0.1." + (System.getenv("BODYLENS_ANDROID_BUILD") ?: "0")'
-    assert rt.replace_android_version(g, "1.4.2").startswith('versionName = "1.4." +')
+    g = 'versionName = "0.1.0"   // the release version'
+    assert rt.replace_android_version(g, "1.4.2") == 'versionName = "1.4.2"   // the release version'
+    assert 'versionName = "0.1.0"' in rt.replace_android_version('versionName = "0.1." + (b ?: "0")', "0.1.0")
 
 
 def test_real_files_build_without_writing():
