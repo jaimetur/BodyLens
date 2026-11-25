@@ -1,6 +1,20 @@
-<!-- en: a556c8f21896d5a6 -->
+<!-- en: 7cbaf2aaafad2f9a -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
+
+---
+
+## Release: v0.2.0
+### Release Date: 2026-11-25
+#### ⚠️ Cambios incompatibles:
+
+#### 🌟 Novedades:
+
+#### 🚀 Mejoras:
+
+#### 🐛 Correcciones:
+
+#### 📚 Documentación:
 
 ---
 

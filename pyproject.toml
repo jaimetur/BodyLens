@@ -1,6 +1,6 @@
 [project]
 name = "bodylens"
-version = "0.1.0"
+version = "0.2.0"
 description = "Servidor de BodyLens: app personal de salud multiusuario"
 requires-python = ">=3.12"
 dependencies = [
