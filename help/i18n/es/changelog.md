@@ -1,4 +1,4 @@
-<!-- en: 045193c77073b7e5 -->
+<!-- en: a9c44974cb7bac09 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -16,6 +16,7 @@
 - **Landing en todos los idiomas:** un menú de idioma arriba (🌐) muestra la landing en cualquiera de los idiomas de la app; se abre en inglés hasta que se elige uno y recuerda la elección.
 
 #### 🐛 Correcciones:
+- **Scroll sobre Tu cuenta, Administración y Ayuda dentro de la app:** la rueda del ratón y el deslizamiento sobre esas páginas vuelven a mover la app (se quedaban parados en el marco de la página).
 
 #### 📚 Documentación:
 

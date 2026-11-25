@@ -13,8 +13,9 @@ main.grid>.card{margin:0}
 select{min-height:42px;appearance:auto}
 /* dentro de la app */
 .embed body{padding:0;background:transparent}
-/* inside the app the frame grows with its content: only the app scrolls (phones used to scroll the frame instead) */
-.embed,.embed body{overflow:hidden;overscroll-behavior:none}
+/* inside the app the frame grows with its content: only the app scrolls (phones used to scroll the frame instead);
+   the wheel and swipes over the frame pass on to the app (overscroll-behavior:none kept them from reaching it) */
+.embed,.embed body{overflow:hidden}
 .embed main{max-width:none;padding:0 0 8px}
 .embed .top{display:none}
 .brand{display:flex;align-items:center;gap:10px;margin-bottom:22px;text-decoration:none;color:inherit}

@@ -15,6 +15,7 @@
 - **Landing page in every language:** a language menu at the top (🌐) shows the landing page in any of the app's languages; it opens in English until a language is chosen, and remembers the choice.
 
 #### 🐛 Bug fixes:
+- **Scrolling over Your account, Administration and Help inside the app:** the mouse wheel and swipes over those pages scroll the app again (they stopped at the page's frame).
 
 #### 📚 Documentation:
 
