@@ -16,6 +16,54 @@
 
 #### 📚 Documentation:
 
+#### 📱 Google Play (es-ES):
+Versión de prueba de BodyLens: tu peso, sueño, actividad, corazón y estado de ánimo en un solo lugar, desde la báscula, el móvil (Health Connect) y el reloj.
+Esta versión no trae cambios visibles: mejora cómo se publica la app.
+
+#### 📱 Google Play (es-419):
+Versión de prueba de BodyLens: tu peso, sueño, actividad, corazón y estado de ánimo en un solo lugar, desde la báscula, el celular (Health Connect) y el reloj.
+Esta versión no trae cambios visibles: mejora cómo se publica la app.
+
+#### 📱 Google Play (en-US):
+BodyLens test version: your weight, sleep, activity, heart and mood in one place, from your scale, your phone (Health Connect) and your watch.
+No visible changes in this version: it improves how the app is published.
+
+#### 📱 Google Play (ca):
+Versió de prova de BodyLens: el teu pes, son, activitat, cor i estat d'ànim en un sol lloc, des de la bàscula, el mòbil (Health Connect) i el rellotge.
+Aquesta versió no porta canvis visibles: millora com es publica l'app.
+
+#### 📱 Google Play (de-DE):
+Testversion von BodyLens: Gewicht, Schlaf, Aktivität, Herz und Stimmung an einem Ort, von Waage, Handy (Health Connect) und Uhr.
+Diese Version bringt keine sichtbaren Änderungen: Sie verbessert, wie die App veröffentlicht wird.
+
+#### 📱 Google Play (fr-FR):
+Version de test de BodyLens : votre poids, sommeil, activité, cœur et humeur au même endroit, depuis la balance, le téléphone (Health Connect) et la montre.
+Cette version n'apporte pas de changement visible : elle améliore la publication de l'app.
+
+#### 📱 Google Play (it-IT):
+Versione di prova di BodyLens: peso, sonno, attività, cuore e umore in un unico posto, dalla bilancia, dal telefono (Health Connect) e dall'orologio.
+Questa versione non porta cambiamenti visibili: migliora la pubblicazione dell'app.
+
+#### 📱 Google Play (ja-JP):
+BodyLens のテスト版です。体重、睡眠、活動、心拍、気分を、体重計、スマホ（ヘルスコネクト）、スマートウォッチから1か所にまとめます。
+このバージョンでは目に見える変更はありません。アプリの公開方法を改善しました。
+
+#### 📱 Google Play (nl-NL):
+Testversie van BodyLens: je gewicht, slaap, activiteit, hart en stemming op één plek, van je weegschaal, telefoon (Health Connect) en horloge.
+Deze versie brengt geen zichtbare wijzigingen: ze verbetert hoe de app wordt gepubliceerd.
+
+#### 📱 Google Play (pt-PT):
+Versão de teste do BodyLens: o seu peso, sono, atividade, coração e humor num só lugar, a partir da balança, do telemóvel (Health Connect) e do relógio.
+Esta versão não traz alterações visíveis: melhora a forma como a app é publicada.
+
+#### 📱 Google Play (pt-BR):
+Versão de teste do BodyLens: seu peso, sono, atividade, coração e humor em um só lugar, a partir da balança, do celular (Health Connect) e do relógio.
+Esta versão não traz mudanças visíveis: melhora a forma como o app é publicado.
+
+#### 📱 Google Play (zh-CN):
+BodyLens 测试版：把体重计、手机（Health Connect）和手表中的体重、睡眠、活动、心脏和情绪数据集中在一处。
+此版本没有可见变化：改进了应用的发布方式。
+
 ---
 
 ## Release: v0.1.0

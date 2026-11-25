@@ -1,4 +1,4 @@
-<!-- en: 14dfe5e33a0d0c40 -->
+<!-- en: 74bbec1c94a3a04e -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -11,7 +11,7 @@
 #### 🌟 Novedades:
 
 #### 🚀 Mejoras:
-- **Google Play va a la par que el repositorio:** la app de Android lleva la versión de la release (Play muestra, por ejemplo, «0.2.0 (45)», con el número de compilación entre paréntesis), cada compilación de una rama de versión se envía sola a Play (al canal de la variable `PLAY_TRACK`, prueba interna por defecto) y los textos y capturas de la ficha se envían cuando cambian.
+- **Google Play va a la par que el repositorio:** la app de Android lleva la versión de la release (Play muestra, por ejemplo, «0.2.0 (45)», con el número de compilación entre paréntesis), cada compilación de una rama de versión se envía sola a Play (al canal de la variable `PLAY_TRACK`: la prueba cerrada por defecto, producción cuando Google lo permita) y los textos y capturas de la ficha se envían cuando cambian.
 
 #### 🐛 Correcciones:
 

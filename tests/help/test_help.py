@@ -178,6 +178,15 @@ def test_bundled_translations_up_to_date():
     assert r.returncode == 0, r.stdout
 
 
+def test_changelog_without_play_release_notes(docs_dir):
+    """The «📱 Google Play (<language>)» sections are the store's release notes: not shown or translated in the app."""
+    from app.help import docs
+    plain = "# CHANGELOG\n\n## Release: v2\n#### 🌟 New Features:\n- **New:** things\n\n#### 📚 Documentation:\n\n---\n\n## Release: v1\n- x\n"
+    play = plain.replace("---\n", "#### 📱 Google Play (es-ES):\nNovedades.\n\n#### 📱 Google Play (en-US):\nNews.\n\n---\n", 1)
+    (docs_dir / "CHANGELOG.md").write_text(play, encoding="utf-8")
+    assert docs.source("changelog") == plain
+
+
 def test_release_comes_from_the_changelog(docs_dir):
     from app.core import version
     (docs_dir / "CHANGELOG.md").write_text("# CHANGELOG\n\n## Release: v2.3.1\n### Release Date: 2026-12-01\n- x\n\n## Release: v2.3.0\n### Release Date: 2026-11-01\n")
