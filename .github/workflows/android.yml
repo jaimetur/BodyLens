@@ -4,14 +4,15 @@ name: 🤖 Android app
 # - On every change in android/ it refreshes the rolling "android-latest" pre-release (the Actions artifact storage is
 #   full), from which tools/deploy-android.sh takes the APK to the NAS, which serves it at /android.apk.
 # - Called by release.yml with a release tag, it attaches the APK to that version's release instead.
-# - With the PLAY_SERVICE_ACCOUNT_JSON secret, each build of a version branch (X.Y.Z) or run by hand also goes to
+# - On a version branch (X.Y.Z), with the PLAY_SERVICE_ACCOUNT_JSON secret, each build (also run by hand) goes to
 #   Google Play (tools/play_publish.py), named "X.Y.Z (build)" like the app (versionName = the release version,
-#   versionCode = the build number), to the track of the PLAY_TRACK variable (internal test by default; alpha is the
-#   closed test, production needs Google's approval first).
+#   versionCode = the build number), to the track of the PLAY_TRACK variable (by default alpha, the closed test;
+#   production once Google has given the app access to it, see docs/DEPLOYMENT.md). If versionName is not the branch,
+#   it fails. It runs last: a Play error leaves the job red but the APKs are already published.
 on:
   push:
     branches: [main, "[0-9]+.[0-9]+.[0-9]+"]
-    paths: ["android/**", ".github/workflows/android.yml"]
+    paths: ["android/**", ".github/workflows/android.yml", "tools/play_publish.py"]
   workflow_dispatch:
   workflow_call:
     inputs:
@@ -71,18 +72,19 @@ jobs:
           gh release upload android-latest bodylens-android.apk bodylens-bridge.apk bodylens-android.aab --clobber
           echo "build ${{ github.run_number }} · ${GITHUB_SHA::7}" > android-build.txt
           gh release upload android-latest android-build.txt --clobber
-      - name: Send to Google Play, if the service account is in the secrets
-        if: ${{ !inputs.release_tag && (github.event_name == 'workflow_dispatch' || github.ref_name != 'main') }}
-        continue-on-error: true   # the APKs are already published; a Play error does not undo them
+      - name: Upload to Google Play (release branches)
+        if: ${{ !inputs.release_tag }}
         env:
           PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-          PLAY_TRACK: ${{ vars.PLAY_TRACK || 'internal' }}
+          PLAY_TRACK: ${{ vars.PLAY_TRACK || 'alpha' }}
         run: |
-          if [ -z "$PLAY_SERVICE_ACCOUNT_JSON" ]; then echo "No PLAY_SERVICE_ACCOUNT_JSON secret: upload the AAB by hand."; exit 0; fi
+          if [[ ! "$GITHUB_REF_NAME" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then echo "Not a release branch: not uploaded to Google Play."; exit 0; fi
+          if [ -z "$PLAY_SERVICE_ACCOUNT_JSON" ]; then echo "::warning title=Google Play::No PLAY_SERVICE_ACCOUNT_JSON secret: the AAB was not uploaded to Google Play."; exit 0; fi
+          VERSION=$(sed -n 's/^ *versionName *= *"\([^"]*\)".*/\1/p' android/app/build.gradle.kts)
+          if [ "$VERSION" != "$GITHUB_REF_NAME" ]; then echo "::error title=Google Play::versionName $VERSION is not the release $GITHUB_REF_NAME (run tools/CreateUpdateRelease.py --update)"; exit 1; fi
           pip install -q google-auth requests
-          V=$(sed -n 's/.*versionName = "\([^"]*\)".*/\1/p' android/app/build.gradle.kts)
-          python tools/play_publish.py bundle bodylens-android.aab --track "$PLAY_TRACK" --name "$V (${{ github.run_number }})" \
-            --notes "BodyLens $V: $(git log -1 --format=%s | cut -c1-450)"
+          python tools/play_publish.py bundle bodylens-android.aab --track "$PLAY_TRACK" --name "$VERSION (${{ github.run_number }})"
+          echo "::notice title=Google Play::$VERSION (${{ github.run_number }}) uploaded to the $PLAY_TRACK track"
       - name: Attach to the version release
         if: ${{ inputs.release_tag }}
         env:

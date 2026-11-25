@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Publishes BodyLens to Google Play Console with the Google Play Developer API, without the web console.
 
-    PLAY_SERVICE_ACCOUNT_JSON="$(cat key.json)" python tools/play_publish.py bundle app.aab [--track internal] [--name "0.2.0 (45)"]
+    PLAY_SERVICE_ACCOUNT_JSON="$(cat key.json)" python tools/play_publish.py bundle app.aab [--track alpha] [--name "0.2.0 (45)"]
     PLAY_SERVICE_ACCOUNT_JSON="$(cat key.json)" python tools/play_publish.py listing [--images DIR] [--validate]
 
-- bundle: uploads an Android App Bundle and releases it to a track (internal by default; alpha is the closed test,
-  production needs Google's approval first), with --name as the release name and --notes as its English notes.
+- bundle: uploads an Android App Bundle and releases it to a track (alpha, the closed test, by default; production
+  needs Google's approval first), with --name as the release name and --notes as its English notes.
 - listing: updates the store listing of every language in assets/play-store/listings/<locale>.json (title, short and
   full description) and, with --images, replaces its screenshots with those of tools/store_capture.py
   (<DIR>/<lang>/phone|tablet/*.png; Chromebook screenshots cannot be uploaded through the API) and its feature graphic
@@ -106,7 +106,7 @@ def main() -> None:
     sub = ap.add_subparsers(dest="cmd", required=True)
     b = sub.add_parser("bundle", help="upload an AAB and release it to a track")
     b.add_argument("aab")
-    b.add_argument("--track", default="internal", help="internal (default), alpha (closed test), beta, production")
+    b.add_argument("--track", default="alpha", help="alpha (closed test, default), internal, beta, production")
     b.add_argument("--status", default="completed", choices=["completed", "draft"])
     b.add_argument("--name", default="", help='release name shown in Play Console (e.g. "0.2.0 (45)")')
     b.add_argument("--notes", default="", help="release notes (English)")
