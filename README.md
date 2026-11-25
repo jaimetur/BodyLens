@@ -6,7 +6,9 @@ VO2 max, ECG, cycle, mood…) from **Apple Health** or **Android Health Connect*
 server, the data arrives on its own, and every person sees only their own data.
 
 <p align="center">
-  <a href="https://bodylens.jtgcloud.com"><img alt="Visit the BodyLens website" src="https://img.shields.io/badge/Visit_the_website-bodylens.jtgcloud.com-4353FF?style=for-the-badge&logo=googlechrome&logoColor=white" height="44"></a>
+  <a href="https://bodylens.jtgcloud.com"><img alt="Visit the BodyLens website" src="https://img.shields.io/badge/%F0%9F%8C%90_Visit_the_website-bodylens.jtgcloud.com-3d4fd6?style=for-the-badge&labelColor=141c2b" height="44"></a>
+  &nbsp;
+  <a href="https://bodylens.jtgcloud.com/login"><img alt="Open the BodyLens app" src="https://img.shields.io/badge/%F0%9F%93%B1_Open_the_app-bodylens.jtgcloud.com%2Flogin-0f8b8d?style=for-the-badge&labelColor=141c2b" height="44"></a>
 </p>
 
 ## Features
