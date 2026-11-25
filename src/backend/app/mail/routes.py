@@ -31,7 +31,7 @@ async def admin_test_email(body: TestMailIn, request: Request, u: User = Depends
         first = esc((u.name or u.username).split()[0])
         await asyncio.to_thread(mailer.send, [to], "Comprobación del correo", mailer.page("Comprobación del correo", [
             f"Hola {first},",
-            "este es el correo de comprobación que has pedido desde Administración → Correo. Si te ha llegado, BodyLens "
+            "este es el correo de comprobación que has pedido desde Administración → Negocio → Correo. Si te ha llegado, BodyLens "
             "ya puede enviarte los avisos de tu cuenta: peticiones de acceso, invitaciones, contraseñas e invitaciones "
             "de pareja.",
         ], link=("Abrir BodyLens", f"{base_url(request)}/")))

@@ -49,6 +49,12 @@ def encrypt(obj) -> str:
     return _f().encrypt(json.dumps(obj).encode()).decode()
 
 
+def hint(secret: str | None) -> str:
+    """How a saved secret is shown in Administration: never whole, only its last 4 characters ("…4f2a")."""
+    s = str(secret or "").strip()
+    return "…" + s[-4:] if len(s) >= 12 else ("…" if s else "")
+
+
 def decrypt(token: str | None):
     if not token:
         return None

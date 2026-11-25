@@ -330,6 +330,7 @@ def get_stripe(request: Request, u: User = Depends(admin_user)):
     with db.ro() as con:
         n = con.execute("SELECT COUNT(*) FROM stripe_subs").fetchone()[0]
     return {"configured": stripe.configured(), "webhookSet": bool(s["webhook"]), "prices": s["prices"],
+            "secretHint": crypto.hint(s["secret"]), "webhookHint": crypto.hint(s["webhook"]),
             "live": bool(s["secret"] and s["secret"].startswith("sk_live")), "subscriptions": n,
             "webhookUrl": f"{base_url(request)}/api/web/webhook"}
 
@@ -355,4 +356,6 @@ def put_stripe(body: StripeIn, request: Request, u: User = Depends(admin_user)):
             new["webhook"] = crypto.encrypt(body.webhook.strip())
     with db.tx() as con:
         db.set_setting(con, "stripe", new)
+    from app.business import sources
+    sources.clear()
     return get_stripe(request, u)

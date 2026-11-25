@@ -158,13 +158,16 @@ Google Play subscriptions. It asks for the server address the first time (`https
 ## Subscriptions, payments and legal pages
 
 - **Legal pages** (public): `/privacy`, `/terms` and `/delete-account`. Their texts are `help/en/legal/*.md`, with
-  reviewed translations in `help/i18n/<lang>/`. Who is responsible for the data is set in Administration → Legal
-  details.
+  reviewed translations in `help/i18n/<lang>/`. Who is responsible for the data is set in Administration → Business
+  → Legal details.
 - **Google Play** (subscriptions in the app): in the Play Console create the subscription `bodylens` with the base
   plans `monthly` (€1.50) and `yearly` (€12), each with a 7-day free-trial offer. Create a service account in Google
   Cloud, give it access in Play Console → Users and permissions (view financial data, manage orders and
-  subscriptions) and paste its JSON key in Administration → Google Play.
-- **Stripe** (subscriptions on the website): paste the secret key in Administration → Web payments (Stripe); the server
+  subscriptions) and paste its JSON key in Administration → Business → Google Play.
+  For the downloads and earnings of Administration → Business, the service account also needs, for the whole
+  account, to view app information and financial data, and the reports bucket (Play Console → Manage account →
+  Play apps reports → Statistics → Copy Cloud Storage URI) pasted in the same block.
+- **Stripe** (subscriptions on the website): paste the secret key in Administration → Business → Payments · Stripe; the server
   creates the product and the prices (€1.50/month, €12/year). Create the webhook with the address shown there and the
   events `checkout.session.completed` and `customer.subscription.*`, and paste its signing secret. Enable Google Pay
   and Apple Pay in Stripe → Settings → Payment methods (Stripe's own checkout page is used, so no domain needs
@@ -190,7 +193,7 @@ Hyper Backup. (Phase 3: automatic daily backup inside `backups/`.)
 ## Help and automatic translation
 
 The Help section of the app shows `help/en/`, `README.md` and `CHANGELOG.md`, translated automatically into each
-account's language with the Claude API. Set the Anthropic API key in **Administration → Translator** (stored
+account's language with the Claude API. Set the Anthropic API key in **Administration → Business → Translator** (stored
 encrypted in the database) or as `ANTHROPIC_API_KEY` in the `.env`. Translations are kept in
 `/data/translations/<lang>/` and made again only when the English text changes. Without a key, the help is shown in
 English. The documents are read from `DOCS_DIR` (`/app/docs` in the image, `/app/code` with hot deployment).

@@ -5,6 +5,7 @@ a subscription can be used while Google Play says it is active (trial, paid, gra
 the period paid); when it is over, only signing in, renewing, downloading data and deleting the account are allowed."""
 from __future__ import annotations
 
+import re
 import time
 from datetime import datetime, timedelta, timezone
 
@@ -249,6 +250,7 @@ class PlayIn(BaseModel):
     serviceAccount: str = ""   # the JSON key of the service account; empty = keep the stored one
     remove: bool = False
     storeUrl: str | None = None   # the app's page in Google Play, once published (the landing page links it)
+    bucket: str | None = None     # the Cloud Storage bucket of the developer account's reports (gs://pubsite_prod_…)
 
 
 class CodeIn(BaseModel):
@@ -319,7 +321,7 @@ def get_play(u: User = Depends(admin_user)):
     with db.ro() as con:
         n = con.execute("SELECT COUNT(*) FROM subscriptions").fetchone()[0]
     return {"package": s["package"], "product": s["product"], "configured": play.configured(),
-            "serviceAccount": sa.get("client_email", ""), "subscriptions": n,
+            "serviceAccount": sa.get("client_email", ""), "subscriptions": n, "bucket": s["bucket"],
             "storeUrl": (db.get_setting("play", {}) or {}).get("storeUrl", "")}
 
 
@@ -328,7 +330,13 @@ def put_play(body: PlayIn, u: User = Depends(admin_user)):
     import json
     stored = db.get_setting("play", {}) or {}
     new = {"package": body.package.strip() or play.DEFAULT_PACKAGE, "product": body.product.strip() or play.DEFAULT_PRODUCT,
-           "sa": stored.get("sa"), "storeUrl": stored.get("storeUrl", "")}
+           "sa": stored.get("sa"), "storeUrl": stored.get("storeUrl", ""), "bucket": stored.get("bucket", "")}
+    if body.bucket is not None:
+        from app.business import sources
+        b = sources.bucket_name(body.bucket)
+        if b and not re.fullmatch(r"[a-z0-9][a-z0-9._-]{1,220}", b):
+            raise HTTPException(400, "Eso no parece el nombre de un bucket (gs://pubsite_prod_…).")
+        new["bucket"] = b
     if body.storeUrl is not None:
         url = body.storeUrl.strip()
         if url and not url.startswith("https://play.google.com/"):
@@ -346,4 +354,6 @@ def put_play(body: PlayIn, u: User = Depends(admin_user)):
     with db.tx() as con:
         db.set_setting(con, "play", new)
     play._access.clear()
+    from app.business import sources
+    sources.clear()
     return get_play(u)

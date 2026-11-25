@@ -37,6 +37,20 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
 .cdrow input.empty:not(:focus)::-webkit-datetime-edit{opacity:0}.cdrow button{height:42px}
 @media (max-width:760px){.cdrow{grid-template-columns:1fr 1fr;padding-bottom:10px;border-bottom:1px solid var(--line)}.cdrow .cdc,.cdrow button{grid-column:1/-1}.cdrow .cdDays.off{display:none}.cdrow button{margin-top:0}.cdrow .cdUsed:empty{display:none}}
 @media (max-width:640px){table thead{display:none}table,tbody,tr,td{display:block}tr{border-bottom:1px solid var(--line);padding:6px 0}td{border:0;padding:3px 0}td.act{text-align:left;white-space:normal;display:flex;flex-wrap:wrap;gap:6px}td.act button{margin:0}}
+/* Business: period, blocks of figures (tiles), their source and a bar chart */
+.row.bzper{gap:6px;flex-wrap:wrap;flex-direction:row;align-items:center}.bzper button{flex:none;width:auto;padding:7px 12px}.bzper button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.bzgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:14px;margin-top:14px}
+#sbPlans{margin:12px 0}.bz{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--surface);min-width:0}
+.bz h3{margin:0 0 10px;font-size:15px}.bz .src{display:block;margin-top:10px;padding:0;border:0;font-size:12px;color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+@media (max-width:640px){.bz{padding:12px 10px}.tiles{gap:8px}.tile b{font-size:19px}}
+.tile{background:var(--raised);border-radius:10px;padding:9px 10px;min-width:0}
+.tile small{display:block;font-size:12px;color:var(--muted)}.tile b{display:block;font-size:22px;line-height:1.25;overflow-wrap:anywhere}
+.tile span{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.bz .note{font-size:12.5px;color:var(--muted);margin:10px 0 0}.bz .err{color:var(--bad)}
+.bz .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.bz svg.chart{display:block;width:100%;height:96px;margin-top:12px}.bz svg.chart rect{fill:var(--accent)}.bz svg.chart text{fill:var(--muted);font-size:10px}
+.bzjump{display:flex;flex-wrap:wrap;gap:6px 14px}
 .secret{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:15px;background:var(--raised);padding:6px 10px;border-radius:8px;display:inline-block}
 </style></head>
 <body><main class="acct">
@@ -44,15 +58,10 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
 
   <div class="tabs" role="tablist">
     <button type="button" data-tab="usuarios" class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18.5 14.8c1.6.8 2.6 2.5 3 5.2"/></svg><span>Usuarios</span></button>
+    <button type="button" data-tab="negocio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 20.5h17"/><path d="M6.5 16.5v-4M11 16.5V8M15.5 16.5v-6M20 16.5V5"/></svg><span>Negocio</span></button>
     <button type="button" data-tab="peticiones"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M19 8v6M16 11h6"/></svg><span>Peticiones de acceso</span><b id="nReq" hidden></b></button>
     <button type="button" data-tab="invitaciones"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9.5L12 3l9 6.5V20H3z"/><path d="M3 9.5l9 6 9-6"/></svg><span>Invitaciones</span></button>
-    <button type="button" data-tab="correo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/></svg><span>Correo</span></button>
-    <button type="button" data-tab="withings"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="4"/><path d="M8 10a4 4 0 0 1 8 0"/><path d="M12 10l1.6-2.2"/></svg><span>Withings</span></button>
-    <button type="button" data-tab="translator"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h9M8.5 3v2M11 5c-.8 4-3.5 7-7 8.5M6.5 8.5c1.3 2 3.2 3.6 5.5 4.5"/><path d="M13 21l4-10 4 10M14.5 17.5h5"/></svg><span>Translator</span></button>
     <button type="button" data-tab="copias"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="7.5" ry="2.8"/><path d="M4.5 5.5v13c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-13"/><path d="M4.5 12c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8"/></svg><span>Copias</span></button>
-    <button type="button" data-tab="legal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg><span>Datos legales</span></button>
-    <button type="button" data-tab="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.2v15.6a.9.9 0 0 0 1.4.8l12.3-7.8a.9.9 0 0 0 0-1.6L7.9 3.4a.9.9 0 0 0-1.4.8z"/></svg><span>Google Play</span></button>
-    <button type="button" data-tab="stripe"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6.5 15h4"/></svg><span>Pagos web (Stripe)</span></button>
     <button type="button" data-tab="fuentes" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3v5M15 3v5M6.5 8h11v3a5.5 5.5 0 0 1-11 0z"/><path d="M12 16.5V21"/></svg><span>Fuentes de datos</span></button>
   </div>
 
@@ -97,7 +106,86 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
     <div class="row"><button class="ghost" id="cdAdd" type="button">Añadir código</button><button id="cdSave" type="button">Guardar</button><span class="msg" id="cdMsg"></span></div>
   </section>
 
-  <section class="card" data-panel="correo" hidden>
+  <section class="card" data-panel="negocio" hidden>
+    <h2>Negocio</h2>
+    <p>Las cifras del servicio: cuentas, suscripciones, ingresos y descargas. Cada recuadro dice de dónde salen sus datos y cuándo se tomaron.</p>
+    <div class="row bzper" role="group" aria-label="Periodo"><button type="button" class="ghost" data-per="7d">7 días</button><button type="button" class="ghost" data-per="30d">30 días</button><button type="button" class="ghost" data-per="12m">12 meses</button><button type="button" class="ghost" data-per="all">Desde el principio</button><button type="button" class="ghost" id="bzRefresh">Actualizar</button><span class="msg" id="bzMsg"></span></div>
+    <div id="bzGrid" class="bzgrid"></div>
+  </section>
+
+  <section class="card" data-panel="negocio" id="cfg" hidden>
+    <h2>Configuración</h2>
+    <p>Pagos, suscripciones, claves de API y datos legales. Las claves se guardan cifradas en el servidor y nunca se muestran enteras.</p>
+    <p class="bzjump"><a href="#cfg-stripe">Pagos · Stripe</a><a href="#cfg-play">Google Play</a><a href="#cfg-subs">Suscripciones</a><a href="#cfg-withings">Withings</a><a href="#cfg-translator">Translator</a><a href="#cfg-correo">Correo saliente (SMTP)</a><a href="#cfg-legal">Datos legales</a></p>
+  </section>
+
+  <section class="card" data-panel="negocio" id="cfg-stripe" hidden>
+    <h2>Pagos · Stripe</h2>
+    <p>Para las suscripciones desde la web (tarjeta, Google Pay y Apple Pay) con 7 días gratis: 1,50 €/mes o 12 €/año. Al guardar la clave, el servidor crea en Stripe el producto y los dos precios si aún no existen.</p>
+    <div class="edit">
+      <label>Clave secreta de Stripe<input id="stKey" type="password" autocomplete="new-password" spellcheck="false" placeholder="(sin cambios)"></label>
+      <label>Secreto de firma del webhook<input id="stHook" type="password" autocomplete="new-password" spellcheck="false" placeholder="(sin cambios)"></label>
+    </div>
+    <p class="small">Dirección del webhook en Stripe (Desarrolladores → Webhooks), con los eventos <code>checkout.session.completed</code> y <code>customer.subscription.*</code>: <span class="code" id="stUrl" data-noi18n></span></p>
+    <div class="row"><button id="stSave" type="button">Guardar</button><button class="ghost" id="stTest" type="button">Probar conexión</button><button class="ghost danger-t" id="stDel" type="button">Quitar las claves</button><span class="msg" id="stMsg"></span></div>
+    <p class="small" id="stState"></p>
+  </section>
+
+  <section class="card" data-panel="negocio" id="cfg-play" hidden>
+    <h2>Google Play</h2>
+    <p>Para las cuentas con suscripción de la app de Android: el servidor comprueba cada compra con Google usando una cuenta de servicio con acceso a la Play Console. Mientras no esté configurado, la app no ofrece suscribirse.</p>
+    <div class="edit">
+      <label>Paquete de la app<input id="gpPkg" placeholder="app.bodylens.android"></label>
+      <label>Suscripción (ID del producto)<input id="gpProd"></label>
+      <label class="wide">Clave de la cuenta de servicio (contenido del fichero JSON)<textarea id="gpSa" rows="4" spellcheck="false" placeholder="(sin cambios)"></textarea></label>
+      <label>Enlace de la app en Google Play (cuando esté publicada; la página de inicio lo muestra)<input id="gpUrl" type="url"></label>
+      <label>Bucket de informes de Google Play<input id="gpBucket" spellcheck="false" autocapitalize="none" placeholder="pubsite_prod_rev_…"></label>
+    </div>
+    <p class="small">Las descargas y los ingresos de Google Play salen de los informes que Google deja cada mes en un bucket de Google Cloud Storage. Para saber cuál es:</p>
+    <ol class="small">
+      <li>En Play Console, ve a «Gestionar cuenta > Informes de aplicaciones de Play» y elige «Estadísticas».</li>
+      <li>Pulsa «Copiar URI de Cloud Storage», junto al encabezado de la sección.</li>
+      <li>Pégalo en el campo del bucket y guarda. Empieza por pubsite_prod_rev.</li>
+    </ol>
+    <p class="small">La cuenta de servicio necesita, en Play Console y para toda la cuenta, ver la información de las aplicaciones y ver los datos financieros.</p>
+    <div class="row"><button id="gpSave" type="button">Guardar</button><button class="ghost" id="gpTest" type="button">Probar conexión</button><button class="ghost" id="gpRepTest" type="button">Probar los informes</button><button class="ghost danger-t" id="gpDel" type="button">Quitar la clave</button><span class="msg" id="gpMsg"></span></div>
+    <p class="small" id="gpState"></p>
+  </section>
+
+  <section class="card" data-panel="negocio" id="cfg-subs" hidden>
+    <h2>Suscripciones</h2>
+    <p>BodyLens tiene una sola suscripción con dos planes, mensual y anual, y unos días de prueba gratis. Se ofrece en la web cuando Stripe está configurado y en la app de Android cuando Google Play lo está.</p>
+    <div class="tiles" id="sbPlans"></div>
+    <p class="small">Los planes y precios de la web los crea el servidor en Stripe; los de Google Play son los de la suscripción «bodylens» en Play Console.</p>
+    <div class="row"><button class="ghost" type="button" data-go="usuarios">Acceso gratis: Usuarios → Editar</button><button class="ghost" type="button" data-go="invitaciones">Códigos de promoción y oferta de lanzamiento: Invitaciones</button></div>
+  </section>
+
+  <section class="card" data-panel="negocio" id="cfg-withings" hidden>
+    <h2>Withings</h2>
+    <p>BodyLens se conecta a Withings con una aplicación de desarrollador gratuita, que se crea una sola vez en <a href="https://developer.withings.com/dashboard/" target="_blank" rel="noopener">developer.withings.com</a> (inicia sesión con tu cuenta de Withings y crea una aplicación de la API pública). Al crearla, pon como dirección de retorno (callback URL) la que aparece debajo.</p>
+    <p>Withings te da entonces dos datos: el Client ID, que identifica a la aplicación, y el Client secret, que es su contraseña (no lo compartas). Cópialos aquí y pulsa Guardar; después, cada cuenta conecta su báscula en «Tu cuenta» → Fuentes de datos.</p>
+    <p class="keep">Dirección de retorno (callback URL): <span class="code" id="wCb"></span></p>
+    <div class="edit">
+      <label>Client ID<input id="wId" autocomplete="off" spellcheck="false"></label>
+      <label>Client secret<input id="wSecret" type="password" autocomplete="new-password" placeholder="(sin cambios)"></label>
+    </div>
+    <div class="row"><button id="wSave" type="button">Guardar</button><span class="msg" id="wMsg"></span></div>
+    <p class="small" id="wState"></p>
+  </section>
+
+  <section class="card" data-panel="negocio" id="cfg-translator" hidden>
+    <h2>Translator</h2>
+    <p>The help, the README and the changelog are written in English and translated automatically into the language of each account. Each translation is made once and kept; it is made again only when the English text changes.</p>
+    <p><b>LibreTranslate</b> (free, runs on this server): <span id="tLibre">…</span></p>
+    <p class="small">Optional, better quality but paid per use: an Anthropic API key for the Claude API. It is used only when LibreTranslate is not available.</p>
+    <div class="edit">
+      <label>Anthropic API key<input id="tKey" type="password" autocomplete="new-password" spellcheck="false" placeholder="sk-ant-…"></label>
+    </div>
+    <div class="row"><button id="tSave" type="button">Save</button><button class="ghost" id="tNow" type="button">Translate now</button><button class="ghost danger-t" id="tDel" type="button">Remove the key</button><span class="msg" id="tMsg"></span></div>
+    <p class="small" id="tState"></p>
+  </section>
+
+  <section class="card" data-panel="negocio" id="cfg-correo" hidden>
     <h2>Correo saliente (SMTP)</h2>
     <p>Desde aquí salen los avisos (peticiones de acceso, activaciones, contraseñas). Lo guardado aquí manda sobre el <code>.env</code> del servidor.</p>
     <div class="edit">
@@ -114,57 +202,7 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
     <p class="small" id="mState"></p>
   </section>
 
-  <section class="card" data-panel="withings" hidden>
-    <h2>Withings</h2>
-    <p>BodyLens se conecta a Withings con una aplicación de desarrollador gratuita, que se crea una sola vez en <a href="https://developer.withings.com/dashboard/" target="_blank" rel="noopener">developer.withings.com</a> (inicia sesión con tu cuenta de Withings y crea una aplicación de la API pública). Al crearla, pon como dirección de retorno (callback URL) la que aparece debajo.</p>
-    <p>Withings te da entonces dos datos: el Client ID, que identifica a la aplicación, y el Client secret, que es su contraseña (no lo compartas). Cópialos aquí y pulsa Guardar; después, cada cuenta conecta su báscula en «Tu cuenta» → Fuentes de datos.</p>
-    <p class="keep">Dirección de retorno (callback URL): <span class="code" id="wCb"></span></p>
-    <div class="edit">
-      <label>Client ID<input id="wId" autocomplete="off" spellcheck="false"></label>
-      <label>Client secret<input id="wSecret" type="password" autocomplete="new-password" placeholder="(sin cambios)"></label>
-    </div>
-    <div class="row"><button id="wSave" type="button">Guardar</button><span class="msg" id="wMsg"></span></div>
-    <p class="small" id="wState"></p>
-  </section>
-
-  <section class="card" data-panel="translator" hidden>
-    <h2>Translator</h2>
-    <p>The help, the README and the changelog are written in English and translated automatically into the language of each account. Each translation is made once and kept; it is made again only when the English text changes.</p>
-    <p><b>LibreTranslate</b> (free, runs on this server): <span id="tLibre">…</span></p>
-    <p class="small">Optional, better quality but paid per use: an Anthropic API key for the Claude API. It is used only when LibreTranslate is not available.</p>
-    <div class="edit">
-      <label>Anthropic API key<input id="tKey" type="password" autocomplete="new-password" spellcheck="false" placeholder="sk-ant-…"></label>
-    </div>
-    <div class="row"><button id="tSave" type="button">Save</button><button class="ghost" id="tNow" type="button">Translate now</button><button class="ghost danger-t" id="tDel" type="button">Remove the key</button><span class="msg" id="tMsg"></span></div>
-    <p class="small" id="tState"></p>
-  </section>
-
-  <section class="card" data-panel="stripe" hidden>
-    <h2>Pagos web (Stripe)</h2>
-    <p>Para las suscripciones desde la web (tarjeta, Google Pay y Apple Pay) con 7 días gratis: 1,50 €/mes o 12 €/año. Al guardar la clave, el servidor crea en Stripe el producto y los dos precios si aún no existen.</p>
-    <div class="edit">
-      <label>Clave secreta de Stripe<input id="stKey" type="password" autocomplete="new-password" spellcheck="false" placeholder="(sin cambios)"></label>
-      <label>Secreto de firma del webhook<input id="stHook" type="password" autocomplete="new-password" spellcheck="false" placeholder="(sin cambios)"></label>
-    </div>
-    <p class="small">Dirección del webhook en Stripe (Desarrolladores → Webhooks), con los eventos <code>checkout.session.completed</code> y <code>customer.subscription.*</code>: <span class="code" id="stUrl" data-noi18n></span></p>
-    <div class="row"><button id="stSave" type="button">Guardar</button><button class="ghost danger-t" id="stDel" type="button">Quitar las claves</button><span class="msg" id="stMsg"></span></div>
-    <p class="small" id="stState"></p>
-  </section>
-
-  <section class="card" data-panel="play" hidden>
-    <h2>Google Play</h2>
-    <p>Para las cuentas con suscripción de la app de Android: el servidor comprueba cada compra con Google usando una cuenta de servicio con acceso a la Play Console. Mientras no esté configurado, la app no ofrece suscribirse.</p>
-    <div class="edit">
-      <label>Paquete de la app<input id="gpPkg" placeholder="app.bodylens.android"></label>
-      <label>Suscripción (ID del producto)<input id="gpProd"></label>
-      <label class="wide">Clave de la cuenta de servicio (contenido del fichero JSON)<textarea id="gpSa" rows="4" spellcheck="false" placeholder="(sin cambios)"></textarea></label>
-      <label>Enlace de la app en Google Play (cuando esté publicada; la página de inicio lo muestra)<input id="gpUrl" type="url"></label>
-    </div>
-    <div class="row"><button id="gpSave" type="button">Guardar</button><button class="ghost danger-t" id="gpDel" type="button">Quitar la clave</button><span class="msg" id="gpMsg"></span></div>
-    <p class="small" id="gpState"></p>
-  </section>
-
-  <section class="card" data-panel="legal" hidden>
+  <section class="card" data-panel="negocio" id="cfg-legal" hidden>
     <h2>Datos legales</h2>
     <p>Aparecen arriba de las páginas públicas de <a href="/privacy" target="_blank" rel="noopener">política de privacidad</a>, <a href="/terms" target="_blank" rel="noopener">condiciones de uso</a> y <a href="/delete-account" target="_blank" rel="noopener">borrar una cuenta</a>, que pide Google Play para publicar la app.</p>
     <div class="edit">
@@ -191,7 +229,11 @@ td.act button{padding:6px 10px;font-size:13px;margin:2px 0 2px 4px}
 <script src="/pages.js"></script>
 <script>
 let D = null, EDIT = null;
-const show = t => { document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t)); document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== t); history.replaceState(null, '', '#' + t);
+// a saved key is never shown whole: only that it is saved and its last characters
+const saved = h => h ? `configurada · termina en ${h}` : '';
+// the settings that used to have their own tab are now in Business: their old links still work
+const MOVED = { correo: 'cfg-correo', withings: 'cfg-withings', translator: 'cfg-translator', legal: 'cfg-legal', play: 'cfg-play', stripe: 'cfg-stripe' };
+const show = t => { if (MOVED[t]) { const id = MOVED[t]; t = 'negocio'; setTimeout(() => { const el = document.getElementById(id); if (el) el.scrollIntoView({ block: 'start' }); }, 50); } document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t)); document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== t); history.replaceState(null, '', '#' + t);
   const on = document.querySelector('.tabs button.on'); if (on) { const c = on.parentElement; c.scrollTo({ left: on.offsetLeft - c.offsetLeft - (c.clientWidth - on.offsetWidth) / 2, behavior: 'smooth' }); }
   try { if (parent !== window && parent.blSync) parent.blSync(); } catch (e) {} };
 document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => show(b.dataset.tab)));
@@ -203,7 +245,7 @@ async function load() {
   loadTranslator();
   $('bList').innerHTML = bk.backups.map(b => `<li><span>${esc(b.name)} <span class="small">· ${(b.size / 1048576).toFixed(1)} MB</span></span><a class="btn ghost" href="/api/admin/backups/${encodeURIComponent(b.name)}" download>Descargar</a></li>`).join('') || '<li><span class="small">Todavía no hay copias.</span></li>';
   $('wCb').textContent = wapp.callback; $('wId').value = wapp.clientId || ''; $('wSecret').value = '';
-  $('wSecret').placeholder = wapp.hasSecret ? '(guardado; escribe otro para cambiarlo)' : '';
+  $('wSecret').placeholder = wapp.hasSecret ? saved(wapp.secretHint) || '(guardado; escribe otro para cambiarlo)' : '';
   $('wState').textContent = wapp.configured ? 'Configurado: cada cuenta puede conectar su Withings en «Tu cuenta».' : 'Sin configurar.';
   D = acc;
   // usuarios
@@ -218,7 +260,7 @@ async function load() {
   $('iList').innerHTML = inv.invites.map(i => `<li><span>${esc(i.note || 'Invitación')} · ${i.used_at ? 'usada por ' + esc(i.used_by_name) : (i.expires_at < new Date().toISOString() ? 'caducada' : 'pendiente, caduca ' + when(i.expires_at))}</span></li>`).join('') || '<li><span class="small">Todavía no hay invitaciones.</span></li>';
   // correo
   $('mHost').value = mail.host || ''; $('mPort').value = mail.port || ''; $('mSec').value = mail.security || 'ssl'; $('mUser').value = mail.username || ''; $('mFrom').value = mail.from_address || ''; $('mName').value = mail.from_name || 'BodyLens'; $('mPass').value = '';
-  $('mPass').placeholder = mail.hasPassword ? '(guardada; escribe otra para cambiarla)' : '(sin contraseña)';
+  $('mPass').placeholder = mail.hasPassword ? saved(mail.passwordHint) || '(guardada; escribe otra para cambiarla)' : '(sin contraseña)';
   $('mState').textContent = mail.configured ? `Configurado: sale de ${mail.from_address} por ${mail.host}:${mail.port}.` : 'Sin configurar: faltan el servidor o el remitente.';
   // fuentes
   $('sList').innerHTML = acc.users.filter(u => u.active).map(u => `<li data-uid="${u.id}" style="display:block"><b>${esc(u.name)}</b> <span class="small">(${esc(u.username)}) · última sincronización ${when(u.sync.lastSync)}${u.sync.lastSyncResult ? ' · ' + esc(u.sync.lastSyncResult.message || '') : ''}</span>
@@ -330,14 +372,14 @@ $('cdSave').addEventListener('click', async () => {
 async function loadStripe() {
   try {
     const s = await api('GET', '/api/admin/stripe');
-    $('stUrl').textContent = s.webhookUrl; $('stKey').value = ''; $('stHook').value = '';
+    $('stUrl').textContent = s.webhookUrl; $('stKey').value = ''; $('stHook').value = ''; $('stKey').placeholder = saved(s.secretHint) || '(sin cambios)'; $('stHook').placeholder = saved(s.webhookHint) || '(sin cambios)';
     $('stState').textContent = s.configured ? `Configurado (${s.live ? 'modo real' : 'modo de prueba'})${s.webhookSet ? '' : ', falta el secreto del webhook'}. Cuentas con suscripción web: ${s.subscriptions}.` : 'Sin configurar: la web no ofrece suscribirse.';
   } catch (e) {}
 }
 loadStripe();
 $('stSave').addEventListener('click', async () => {
   say($('stMsg'), '…');
-  try { await api('PUT', '/api/admin/stripe', { secret: $('stKey').value, webhook: $('stHook').value }); say($('stMsg'), 'Guardado.', 'ok'); await loadStripe(); }
+  try { await api('PUT', '/api/admin/stripe', { secret: $('stKey').value, webhook: $('stHook').value }); say($('stMsg'), 'Guardado.', 'ok'); await loadStripe(); loadBusiness(); }
   catch (e) { say($('stMsg'), e.message, 'err'); }
 });
 $('stDel').addEventListener('click', async () => {
@@ -347,13 +389,13 @@ $('stDel').addEventListener('click', async () => {
 async function loadPlay() {
   try {
     const g = await api('GET', '/api/admin/play');
-    $('gpPkg').value = g.package; $('gpProd').value = g.product; $('gpSa').value = ''; $('gpUrl').value = g.storeUrl || '';
+    $('gpPkg').value = g.package; $('gpProd').value = g.product; $('gpSa').value = ''; $('gpUrl').value = g.storeUrl || ''; $('gpBucket').value = g.bucket || '';
     $('gpState').textContent = g.configured ? `Configurado con ${g.serviceAccount}. Cuentas con suscripción: ${g.subscriptions}.` : 'Sin configurar: la app no ofrece suscribirse.';
   } catch (e) {}
 }
 loadPlay();
 $('gpSave').addEventListener('click', async () => {
-  try { await api('PUT', '/api/admin/play', { package: $('gpPkg').value, product: $('gpProd').value, serviceAccount: $('gpSa').value, storeUrl: $('gpUrl').value }); say($('gpMsg'), 'Guardado.', 'ok'); await loadPlay(); }
+  try { await api('PUT', '/api/admin/play', { package: $('gpPkg').value, product: $('gpProd').value, serviceAccount: $('gpSa').value, storeUrl: $('gpUrl').value, bucket: $('gpBucket').value }); say($('gpMsg'), 'Guardado.', 'ok'); await loadPlay(); loadBusiness(); }
   catch (e) { say($('gpMsg'), e.message, 'err'); }
 });
 $('gpDel').addEventListener('click', async () => {
@@ -374,7 +416,7 @@ async function loadTranslator() {
   try {
     const t = await api('GET', '/api/admin/translator');
     $('tKey').value = '';
-    $('tKey').placeholder = t.configured ? (t.fromEnv ? '(set in the server environment)' : '(saved; type another to change it)') : 'sk-ant-…';
+    $('tKey').placeholder = t.configured ? (t.fromEnv ? '(set in the server environment)' : t.keyHint ? `saved · ends in ${t.keyHint}` : '(saved; type another to change it)') : 'sk-ant-…';
     $('tDel').hidden = !t.configured || t.fromEnv; $('tNow').disabled = !t.configured;
     $('tLibre').textContent = t.libreOk ? `working (${t.libreLanguages.length} languages)` : (t.libreUrl ? 'not reachable yet (it downloads its language models the first time)' : 'not installed');
     $('tState').textContent = (t.provider === 'libre' ? 'Translating with LibreTranslate' : t.provider === 'claude' ? `Translating with the Claude API (${t.model})` : 'No translator available: the help is shown in English') +
@@ -400,6 +442,86 @@ $('mTest').addEventListener('click', async () => {
   $('mTest').disabled = true; say($('mMsg'), 'Enviando…');
   try { const r = await api('POST', '/api/admin/test-email', {}); say($('mMsg'), 'Enviado a ' + r.to + '.', 'ok'); } catch (e) { say($('mMsg'), e.message, 'err'); } finally { $('mTest').disabled = false; }
 });
+// ---------- Business ----------
+let BZ_PER = 'all';
+try { BZ_PER = localStorage.getItem('bzPer') || 'all'; } catch (e) {}
+const eur = c => (c / 100).toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
+const num = n => n == null ? '—' : Number(n).toLocaleString('es-ES');
+const day = iso => iso ? new Date(iso.length === 10 ? iso + 'T12:00:00' : iso).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : '—';
+const monthName = ym => new Date(ym + '-15T12:00:00').toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+function ago(iso) {
+  if (!iso) return '';
+  const m = Math.max(0, Math.round((Date.now() - new Date(iso)) / 60000));
+  return m < 1 ? 'ahora mismo' : m < 60 ? `hace ${m} min` : m < 1440 ? `hace ${Math.round(m / 60)} h` : when(iso);
+}
+const tile = (label, value, note) => `<div class="tile"><small>${esc(label)}</small><b>${value}</b>${note ? `<span>${note}</span>` : ''}</div>`;
+const src = b => `<span class="src">${esc(b.source)} · ${esc(ago(b.updated))}</span>`;
+function chart(c, fmt) {
+  const pts = (c && c.points) || []; if (!pts.length) return '';
+  const max = Math.max(1, ...pts.map(p => p[1])), w = 300, h = 80, bw = w / pts.length;
+  const lab = k => c.unit === 'day' ? new Date(k + 'T12:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : new Date(k + '-15T12:00:00').toLocaleDateString('es-ES', { month: 'short', year: '2-digit' });
+  return `<svg class="chart" viewBox="0 0 ${w} ${h + 14}" preserveAspectRatio="none" role="img">` + pts.map((p, i) => { const v = Math.max(0, p[1]), bh = Math.round(h * v / max);
+    return `<rect x="${(i * bw + bw * .12).toFixed(1)}" y="${h - bh}" width="${(bw * .76).toFixed(1)}" height="${bh}" rx="1.5"><title>${esc(lab(p[0]))}: ${esc(fmt ? fmt(p[1]) : num(p[1]))}</title></rect>`; }).join('')
+    + `<text x="0" y="${h + 12}">${esc(lab(pts[0][0]))}</text><text x="${w}" y="${h + 12}" text-anchor="end">${esc(lab(pts[pts.length - 1][0]))}</text></svg>`;
+}
+// a block of an outside service: its figures, "Not configured" with a link to its setting, or the error
+function ext(b, cfg, body) {
+  if (b.state === 'unconfigured') return `<p class="note"><span>Sin configurar.</span> <a href="#" data-cfg="${cfg}">Configurar</a></p><span class="src">${esc(b.source)}</span>`;
+  if (b.state === 'error') return `<p class="note err">${esc(b.error)}</p><span class="src">${esc(b.source)}</span>`;
+  return body() + src(b);
+}
+const TRACK = { internal: 'Prueba interna', alpha: 'Prueba cerrada', beta: 'Prueba abierta', production: 'Producción' };
+function drawBusiness(o) {
+  const u = o.users, s = o.subscriptions, d = o.downloads, h = o.health, perDay = u.chart.unit === 'day';
+  const box = (title, html) => `<div class="bz"><h3>${esc(title)}</h3>${html}</div>`;
+  const cards = [];
+  cards.push(box('Usuarios', `<div class="tiles">${tile('Cuentas', num(u.accounts), `${num(u.couples)} parejas`)}${tile('Altas', num(u.new))}${tile('Activas en 7 días', num(u.active7))}${tile('Activas en 30 días', num(u.active30))}</div>`
+    + chart(u.chart) + `<p class="note"><span>${perDay ? 'Altas por día.' : 'Altas por mes.'}</span> ${u.seenSince ? `<span>Actividad contada desde el ${day(u.seenSince)}.</span>` : ''}</p>` + src(u)));
+  cards.push(box('Suscripciones', `<div class="tiles">${tile('De pago', num(s.paid), s.cancelling ? `${s.cancelling} cancelando` : '')}${tile('En prueba', num(s.trial))}${tile('Canceladas o caducadas', num(s.ended))}${tile('Solo lectura', num(s.readOnly))}`
+    + `${tile('Mensual', num(s.byPlan.monthly))}${tile('Anual', num(s.byPlan.yearly))}${tile('Web (Stripe)', num(s.byChannel.stripe))}${tile('Google Play', num(s.byChannel.play))}`
+    + `${tile('Acceso gratis', num(s.free), `${s.freeLifetime} de por vida · ${s.freeByAdmin} por administración`)}</div>`
+    + (s.codesUsed.length ? `<p class="note">Códigos usados:</p><div class="chips">${s.codesUsed.map(c => `<span class="tag"><b data-noi18n>${esc(c.code)}</b> × ${c.used}</span>`).join('')}</div>` : '')
+    + (s.promos.length ? `<p class="note">Oferta de lanzamiento:</p><div class="chips">${s.promos.map(p => `<span class="tag"><b data-noi18n>${esc(p.code)}</b> · ${p.max == null ? 'sin límite' : `Quedan {0} de {1}`.replace('{0}', p.left).replace('{1}', p.max)}</span>`).join('')}</div>` : '')
+    + `<p class="note">Google Play no dice si una suscripción está en la prueba: cuenta como de pago.</p>` + src(s)));
+  const st = o.stripe, pe = o.playEarnings;
+  cards.push(box('Ingresos', `<div class="tiles">${tile('Ingreso recurrente mensual', eur(s.mrr.total), `Web ${eur(s.mrr.stripe)} · Google Play ${eur(s.mrr.play)}`)}</div><p class="note">Con los precios de tarifa; los planes anuales cuentan ÷ 12.</p>` + src(s)
+    + `<h3 style="margin-top:16px">Web (Stripe)</h3>` + ext(st, 'cfg-stripe', () => `<div class="tiles">${tile('Cobrado', eur(st.collected))}${tile('Devoluciones', eur(st.refunded))}${tile('Neto', eur(st.net))}`
+      + `${tile('De prueba a pago', st.conversion == null ? '—' : st.conversion + ' %', `${st.converted} de ${st.trialsEnded}`)}${tile('Bajas', num(st.cancelled))}</div>` + chart(st.chart, eur) + `<p class="note">Ingresos netos por mes.</p>`)
+    + `<h3 style="margin-top:16px">Google Play</h3>` + ext(pe, 'cfg-play', () => `<div class="tiles">${tile('Neto', eur(pe.net))}${tile('Ventas', eur(pe.charged))}${tile('Devoluciones', eur(pe.refunded))}</div>` + chart(pe.chart, eur)
+      + `<p class="note"><span>${pe.latest ? `Informe de ${monthName(pe.latest)}.` : 'Todavía no hay informes de ingresos.'}</span> <span>Google publica el informe de cada mes hacia el día 5 del mes siguiente. El neto ya descuenta la comisión de Google.</span></p>`)));
+  const pi = o.playInstalls;
+  cards.push(box('Descargas', `<div class="tiles">${tile('APK de BodyLens', num(d.android.period), `${num(d.android.total)} en total`)}${tile('APK de BodyLens Bridge', num(d.bridge.period), `${num(d.bridge.total)} en total`)}</div>`
+    + `<p class="note">${d.since ? `Descargas desde este servidor, contadas desde el ${day(d.since)}.` : 'Descargas desde este servidor: todavía ninguna.'}</p>` + src(d)
+    + `<h3 style="margin-top:16px">Google Play</h3>` + ext(pi, 'cfg-play', () => `<div class="tiles">${tile('Instalaciones', num(pi.installs))}${tile('Usuarios que la han instalado', num(pi.total))}${tile('Dispositivos con la app', num(pi.activeDevices))}</div>`
+      + `<p class="note">${pi.latest ? `Datos hasta el ${day(pi.latest)}: Google los publica con unos días de retraso.` : 'Todavía no hay informes de instalaciones.'}</p>`)));
+  const pt = o.playTracks;
+  cards.push(box('Versiones en Google Play', ext(pt, 'cfg-play', () => pt.tracks.length ? `<div class="tiles">${pt.tracks.map(t => tile(TRACK[t.track] || t.track, `<span data-noi18n>${esc(t.name)}</span>`, t.status === 'completed' ? 'Publicada' : t.status === 'inProgress' ? 'Publicándose' : t.status === 'draft' ? 'Borrador' : esc(t.status))).join('')}</div>` : '<p class="note">Todavía no hay versiones publicadas.</p>')));
+  const disk = h.disk ? `${(h.disk.free / 1073741824).toFixed(1)} GB` : '—';
+  cards.push(box('Salud', `<div class="tiles">${tile('Última copia', h.lastBackup ? esc(ago(h.lastBackup)) : 'Ninguna', `${h.backups} copias guardadas`)}${tile('Correo (SMTP)', h.mail ? 'Configurado' : 'Sin configurar')}${tile('Espacio libre', `<span data-noi18n>${disk}</span>`, h.disk ? `de ${(h.disk.total / 1073741824).toFixed(0)} GB` : '')}</div>` + src(h)));
+  $('bzGrid').innerHTML = cards.join('');
+  $('sbPlans').innerHTML = tile('Mensual', eur(s.prices.monthly)) + tile('Anual', eur(s.prices.yearly)) + tile('Días de prueba', num(s.trialDays));
+}
+async function loadBusiness(refresh) {
+  document.querySelectorAll('[data-per]').forEach(b => b.classList.toggle('on', b.dataset.per === BZ_PER));
+  say($('bzMsg'), '…');
+  try { drawBusiness(await api('GET', `/api/admin/business?period=${BZ_PER}${refresh ? '&refresh=1' : ''}`)); say($('bzMsg'), ''); }
+  catch (e) { say($('bzMsg'), e.message, 'err'); }
+}
+document.querySelectorAll('[data-per]').forEach(b => b.addEventListener('click', () => { BZ_PER = b.dataset.per; try { localStorage.setItem('bzPer', BZ_PER); } catch (e) {} loadBusiness(); }));
+$('bzRefresh').addEventListener('click', () => loadBusiness(true));
+loadBusiness();
+// links inside Business go to a block of its settings; the buttons of Subscriptions open another tab
+document.addEventListener('click', e => {
+  const a = e.target.closest('[data-cfg], .bzjump a'); if (a) { e.preventDefault(); const el = document.getElementById(a.dataset.cfg || a.getAttribute('href').slice(1)); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  const g = e.target.closest('[data-go]'); if (g) { show(g.dataset.go); scrollTo(0, 0); }
+});
+async function testConn(what, msg) {
+  say(msg, '…');
+  try { const r = await api('POST', '/api/admin/business/test', { what }); say(msg, r.message, r.ok ? 'ok' : 'err'); } catch (e) { say(msg, e.message, 'err'); }
+}
+$('stTest').addEventListener('click', () => testConn('stripe', $('stMsg')));
+$('gpTest').addEventListener('click', () => testConn('play', $('gpMsg')));
+$('gpRepTest').addEventListener('click', () => testConn('reports', $('gpMsg')));
 load().catch(e => alert(e.message));
 </script>
 </body></html>

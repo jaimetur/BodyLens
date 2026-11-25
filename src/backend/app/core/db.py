@@ -215,6 +215,8 @@ def _migrate(con: sqlite3.Connection) -> None:
         con.execute("ALTER TABLE users ADD COLUMN lock_min INTEGER NOT NULL DEFAULT 1")
     if "nav" not in cols:
         con.execute("ALTER TABLE users ADD COLUMN nav TEXT NOT NULL DEFAULT '{}'")
+    if "last_seen" not in cols:   # when the account last used the service (Administration → Business)
+        con.execute("ALTER TABLE users ADD COLUMN last_seen TEXT")
     # how a website subscription is paid (card brand and last digits, Google Pay or Apple Pay), for Administration
     scols = {r[1] for r in con.execute("PRAGMA table_info(stripe_subs)")}
     if "method" not in scols:

@@ -76,7 +76,7 @@ Health Auto Export (iPhone) / Android app ────────►│  POST /
   `src/frontend/i18n/locales/<lang>.json`. The page is translated in the browser by `src/frontend/i18n/i18n.js`,
   which also formats numbers and dates; the server uses the same files for emails. The help (`help/en/`), this README and
   the changelog are written in English and translated automatically into each account's language with the Claude
-  API (set the key in Administration → Translator); each translation is kept until the English text changes.
+  API (set the key in Administration → Business → Translator); each translation is kept until the English text changes.
 - **Security:** argon2 passwords, server-side sessions (HttpOnly/Secure/SameSite cookie), anti-CSRF header on every
   write, rate limits, every account isolated, OAuth tokens encrypted; secrets only in environment variables or in
   the server database.

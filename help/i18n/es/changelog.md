@@ -1,4 +1,4 @@
-<!-- en: 607879e249982956 -->
+<!-- en: 045193c77073b7e5 -->
 # 🗓️ CHANGELOG
 [Registro de cambios](/CHANGELOG.md) de las versiones anteriores
 
@@ -9,6 +9,7 @@
 #### ⚠️ Cambios incompatibles:
 
 #### 🌟 Novedades:
+- **Negocio en Administración:** un panel con las cifras del servicio en 7 días, 30 días, 12 meses o desde el principio (cuentas y cuentas activas, suscripciones por estado, plan y canal, acceso gratis y códigos usados, ingreso recurrente mensual, cobros, devoluciones, conversión de la prueba y bajas de Stripe, ingresos, instalaciones y versiones publicadas de Google Play, descargas de los APK desde el servidor, copias, correo y disco), cada recuadro con su fuente y cuándo se tomó, y debajo la configuración que tenía sus propias pestañas (Stripe, Google Play con su bucket de informes, suscripciones, Withings, traductor, correo y datos legales), con **Probar conexión**; las claves guardadas se guardan cifradas, también la contraseña del correo, y solo se muestran por sus últimos caracteres.
 
 #### 🚀 Mejoras:
 - **Google Play va a la par que el repositorio:** la app de Android lleva la versión de la release (Play muestra, por ejemplo, «0.2.0 (45)», con el número de compilación entre paréntesis), cada compilación de una rama de versión se envía sola a Play (al canal de la variable `PLAY_TRACK`: la prueba cerrada por defecto, producción cuando Google lo permita) y los textos y capturas de la ficha se envían cuando cambian.

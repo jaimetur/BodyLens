@@ -17,7 +17,11 @@ def session_token(request: Request) -> str | None:
 
 def optional_user(request: Request) -> User | None:
     with db.ro() as con:
-        return users.session_user(con, session_token(request))
+        u = users.session_user(con, session_token(request))
+    if u:
+        from app.business import counters
+        counters.seen(u.id)
+    return u
 
 
 def signed_in_user(request: Request) -> User:

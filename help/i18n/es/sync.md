@@ -1,4 +1,4 @@
-<!-- en: 68e1b2838a3a449d -->
+<!-- en: 11320952510862c6 -->
 # Sincronización
 
 BodyLens no te pide que escribas tus datos: los recibe de tu báscula, tu móvil y tu reloj. Solo tienes que conectar
@@ -26,7 +26,7 @@ elección se aplica a los datos que llegan a partir de ese momento.
 1. Abre BodyLens y ve a **Tu cuenta → Fuentes de datos**.
 2. En el recuadro **Withings**, pulsa **Conectar Withings**.
    - Si no aparece el botón, el servidor aún no está preparado para Withings: pídeselo a quien lo administra (se hace
-     una vez en **Administración → Withings**).
+     una vez en **Administración → Negocio → Withings**).
 3. Se abre Withings. Entra con tu cuenta de Withings (la misma de la app de Withings: [App Store](https://apps.apple.com/app/id542701020), [Google Play](https://play.google.com/store/apps/details?id=com.withings.wiscale2); o créala en la [web de Withings](https://account.withings.com/)).
 4. Withings te pregunta si BodyLens puede leer tus datos: pulsa **Permitir**.
 5. Vuelves a BodyLens y el recuadro pone **conectado**. La primera vez BodyLens trae tus datos recientes; puede tardar
@@ -184,7 +184,7 @@ resultado del último envío, y en BodyLens el recuadro pasa a **recibiendo**.
 
 | Problema | Qué hacer |
 |---|---|
-| No aparece el botón **Conectar Withings** | Quien administra tiene que preparar Withings una vez (Administración → Withings). |
+| No aparece el botón **Conectar Withings** | Quien administra tiene que preparar Withings una vez (Administración → Negocio → Withings). |
 | Withings sigue **sin conectar** después de permitir | Vuelve a pulsar **Conectar Withings** y asegúrate de pulsar **Permitir** en la página de Withings. |
 | Apple Salud se queda en **esperando datos** | Comprueba que la URL de cada automatización es exactamente tu dirección de envío, que el formato es JSON versión 2 y que la automatización está activada; después envíala a mano. |
 | El sueño llega sin fases | En la automatización del sueño, desactiva el resumen y usa los últimos 2–7 días. |

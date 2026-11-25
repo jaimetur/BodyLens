@@ -543,7 +543,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}footer
     eb.replaceWith(a);
     box.hidden = false; box.querySelectorAll('.rv').forEach(el => { if (el.getBoundingClientRect().top < innerHeight) el.classList.add('in'); });
   });
-  // the Google Play link, once the app is published there (Administration → Google Play)
+  // the Google Play link, once the app is published there (Administration → Business → Google Play)
   fetch('/api/play/config').then(r => r.ok ? r.json() : null).then(c => {
     if (!c || !c.storeUrl) return;
     const a = document.getElementById('playLink'); a.href = c.storeUrl; a.target = '_blank'; a.rel = 'noopener'; a.removeAttribute('aria-disabled');

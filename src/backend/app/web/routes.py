@@ -149,16 +149,20 @@ def android_apk(request: Request):
     p = android_apk_path()
     if not p.exists():
         raise HTTPException(404, "La app de Android todavía no está disponible en este servidor.")
+    from app.business import counters
+    counters.count_download("android", request.headers.get("range"))
     return FileResponse(p, media_type="application/vnd.android.package-archive", filename="BodyLens.apk",
                         headers={"Cache-Control": "no-cache"})
 
 
 @router.get("/android-bridge.apk")
-def android_bridge_apk():
+def android_bridge_apk(request: Request):
     """BodyLens Bridge: the Android app that only sends Health Connect data (for those who use BodyLens in the browser)."""
     p = config.settings.data_dir / "downloads" / "bodylens-bridge.apk"
     if not p.exists():
         raise HTTPException(404, "La app de Android todavía no está disponible en este servidor.")
+    from app.business import counters
+    counters.count_download("bridge", request.headers.get("range"))
     return FileResponse(p, media_type="application/vnd.android.package-archive", filename="BodyLens-Bridge.apk",
                         headers={"Cache-Control": "no-cache"})
 

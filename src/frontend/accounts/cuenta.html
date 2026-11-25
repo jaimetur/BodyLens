@@ -179,7 +179,7 @@ async function loadSources() {
   $('sSrc').textContent = S.dataSource === 'server' ? 'directo al servidor' : 'ninguna todavía';
   $('wSt').textContent = w.connected ? 'conectado' : 'sin conectar'; $('wSt').dataset.on = w.connected ? '1' : '';
   $('wGo').hidden = w.connected || !w.configured; $('wOff').hidden = !w.connected;
-  $('wInfo').textContent = !w.configured ? 'El servidor aún no tiene los datos de la aplicación de Withings (Administración → Withings).'
+  $('wInfo').textContent = !w.configured ? 'El servidor aún no tiene los datos de la aplicación de Withings (Administración → Negocio → Withings).'
     : w.connected ? `Conectado desde ${when(w.connectedAt)}.` + (w.last ? ` Última lectura ${when(w.last.at)}: ${w.last.pesadas || 0} pesadas nuevas${w.last.errores && w.last.errores.length ? ' · ' + w.last.errores.join('; ') : ''}.` : '')
     : 'Pesadas y composición, actividad, entrenos, sueño, SpO2, VO2 máx y ECG, directamente de tu cuenta de Withings.';
   // which service the data comes from: Apple Health, Android or both (sent in the last 2 days)

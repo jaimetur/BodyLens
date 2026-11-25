@@ -1,5 +1,5 @@
 """Google Play: checks a subscription purchase with the Google Play Developer API (subscriptionsv2) and acknowledges
-it. The server signs in to Google with a service account of the Play Console (Administration → Google Play), whose key
+it. The server signs in to Google with a service account of the Play Console (Administration → Business → Google Play), whose key
 is stored encrypted. Nothing about the payment itself reaches BodyLens: only the purchase token and its state."""
 from __future__ import annotations
 
@@ -29,7 +29,7 @@ class PlayError(Exception):
 def settings() -> dict:
     s = db.get_setting("play", {}) or {}
     return {"package": s.get("package") or DEFAULT_PACKAGE, "product": s.get("product") or DEFAULT_PRODUCT,
-            "sa": crypto.decrypt(s.get("sa")) if s.get("sa") else None}
+            "sa": crypto.decrypt(s.get("sa")) if s.get("sa") else None, "bucket": s.get("bucket") or ""}
 
 
 def configured() -> bool:
@@ -48,17 +48,18 @@ def _b64(b: bytes) -> str:
     return base64.urlsafe_b64encode(b).rstrip(b"=").decode()
 
 
-def _access_token() -> str:
-    """OAuth access token of the service account (signed JWT, kept until shortly before it expires)."""
+def _access_token(scope: str = SCOPE) -> str:
+    """OAuth access token of the service account for a scope (signed JWT, kept until shortly before it expires)."""
     sa = settings()["sa"]
     if not sa:
         raise PlayError("Google Play no está configurado en este servidor.")
-    if _access.get("for") == sa["client_email"] and _access.get("exp", 0) > time.time() + 60:
-        return _access["token"]
+    cached = _access.get(scope) or {}
+    if cached.get("for") == sa["client_email"] and cached.get("exp", 0) > time.time() + 60:
+        return cached["token"]
     now = int(time.time())
     uri = sa.get("token_uri") or "https://oauth2.googleapis.com/token"
     head = _b64(json.dumps({"alg": "RS256", "typ": "JWT"}).encode())
-    claims = _b64(json.dumps({"iss": sa["client_email"], "scope": SCOPE, "aud": uri, "iat": now, "exp": now + 3600}).encode())
+    claims = _b64(json.dumps({"iss": sa["client_email"], "scope": scope, "aud": uri, "iat": now, "exp": now + 3600}).encode())
     key = serialization.load_pem_private_key(sa["private_key"].encode(), password=None)
     sig = _b64(key.sign(f"{head}.{claims}".encode(), padding.PKCS1v15(), hashes.SHA256()))
     r = requests.post(uri, data={"grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
@@ -66,7 +67,7 @@ def _access_token() -> str:
     if r.status_code != 200:
         raise PlayError("Google no acepta la cuenta de servicio de Google Play.")
     j = r.json()
-    _access.update({"for": sa["client_email"], "token": j["access_token"], "exp": now + int(j.get("expires_in", 3600))})
+    _access[scope] = {"for": sa["client_email"], "token": j["access_token"], "exp": now + int(j.get("expires_in", 3600))}
     return j["access_token"]
 
 

@@ -8,6 +8,7 @@
 #### ⚠️ Breaking Changes:
 
 #### 🌟 New Features:
+- **Business in Administration:** a panel with the figures of the service for 7 days, 30 days, 12 months or since the beginning (accounts and active accounts, subscriptions per state, plan and channel, free access and codes used, monthly recurring revenue, Stripe's charges, refunds, trial conversion and cancellations, Google Play's earnings, installs and published versions, APK downloads from the server, backups, email and disk), each box with its source and when it was taken, and below it the settings that had their own tabs (Stripe, Google Play with its reports bucket, subscriptions, Withings, translator, email and legal details), with **Test connection**; saved keys are stored encrypted, the email password included, and are only shown by their last characters.
 
 #### 🚀 Enhancements:
 - **Google Play follows the repository:** the Android app has the release version (Play shows e.g. "0.2.0 (45)", the build number in brackets), every build of a version branch is sent to Play by itself (to the track of the `PLAY_TRACK` variable: the closed test by default, production once Google allows it), and the listing texts and screenshots are sent whenever they change.

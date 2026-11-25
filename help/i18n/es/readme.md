@@ -1,4 +1,4 @@
-<!-- en: b957af6df5d7cb2c -->
+<!-- en: ef9f9bc2f64106e4 -->
 # BodyLens
 
 **BodyLens** es una app web de salud personal, multiusuario y autoalojada. Reúne el peso y la composición corporal
@@ -72,7 +72,7 @@ Health Auto Export (iPhone) / Android app ────────►│  POST /
   `src/frontend/i18n/locales/<lang>.json`. La página se traduce en el navegador con `src/frontend/i18n/i18n.js`,
   que también da formato a números y fechas; el servidor usa los mismos ficheros para los correos. La ayuda (`help/en/`), este README y
   el registro de cambios están escritos en inglés y se traducen automáticamente al idioma de cada cuenta con la API de
-  Claude (pon la clave en Administración → Traductor); cada traducción se conserva hasta que cambia el texto en inglés.
+  Claude (pon la clave en Administración → Negocio → Traductor); cada traducción se conserva hasta que cambia el texto en inglés.
 - **Seguridad:** contraseñas con argon2, sesiones en el servidor (cookie HttpOnly/Secure/SameSite), cabecera anti-CSRF en cada
   escritura, límites de frecuencia, cada cuenta aislada, tokens de OAuth cifrados; secretos solo en variables de entorno o en
   la base de datos del servidor.

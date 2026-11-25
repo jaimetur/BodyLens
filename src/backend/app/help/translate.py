@@ -98,7 +98,7 @@ def status() -> dict:
     s = db.get_setting(SETTING) or {}
     codes = libre_codes()
     return {"configured": configured(), "provider": provider(), "libreUrl": libre_url(), "libreOk": codes is not None,
-            "libreLanguages": sorted(codes or []), "claudeKey": bool(api_key()),
+            "libreLanguages": sorted(codes or []), "claudeKey": bool(api_key()), "keyHint": crypto.hint(api_key()),
             "fromEnv": bool(os.environ.get("ANTHROPIC_API_KEY", "").strip()),
             "model": MODEL, "lastError": s.get("lastError"), "lastOk": s.get("lastOk"), "queued": len(_busy)}
 

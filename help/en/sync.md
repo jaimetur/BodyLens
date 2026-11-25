@@ -26,7 +26,7 @@ data that arrives from then on.
 1. Open BodyLens and go to **Your account → Data sources**.
 2. In the **Withings** box, press **Connect Withings**.
    - If the button is not there, the server is not set up for Withings yet: ask the administrator (it is done once in
-     **Administration → Withings**).
+     **Administration → Business → Withings**).
 3. Withings opens. Sign in with your Withings account (the same one as in the Withings app: [App Store](https://apps.apple.com/app/id542701020), [Google Play](https://play.google.com/store/apps/details?id=com.withings.wiscale2); or create one on the [Withings website](https://account.withings.com/)).
 4. Withings asks whether BodyLens can read your data: press **Allow**.
 5. You return to BodyLens and the box shows **connected**. The first time, BodyLens fetches your recent data; it can
@@ -181,7 +181,7 @@ the last submission, and in BodyLens the box changes to **receiving**.
 
 | Problem | What to do |
 |---|---|
-| No **Connect Withings** button | The administrator has to set up Withings once (Administration → Withings). |
+| No **Connect Withings** button | The administrator has to set up Withings once (Administration → Business → Withings). |
 | Withings shows **not connected** after allowing | Press **Connect Withings** again and make sure you press **Allow** on the Withings page. |
 | Apple Health stays in **waiting for data** | Check that the URL of each automation is exactly your sending address, the format is JSON version 2, and the automation is on; then send it manually. |
 | Sleep arrives without stages | In the sleep automation, turn off summarising and use the last 2–7 days. |

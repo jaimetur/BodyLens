@@ -26,7 +26,10 @@ FIELDS = {"host": "SMTP_HOST", "port": "SMTP_PORT", "security": "SMTP_SECURITY",
 def _env() -> dict:
     """Lo guardado en Administración (si no está vacío) y, si no, la variable del .env."""
     from app.core import db
-    stored = db.get_setting("mail", {}) or {}
+    from app.core import crypto
+    stored = dict(db.get_setting("mail", {}) or {})
+    if stored.get("password_enc"):   # saved encrypted (older versions kept it as plain text in "password")
+        stored["password"] = crypto.decrypt(stored["password_enc"]) or ""
     return {k: stored[k] if stored.get(k) not in (None, "") else os.environ.get(var, "") for k, var in FIELDS.items()}
 
 
@@ -57,6 +60,8 @@ def public_settings() -> dict:
     s = settings()
     out = {k: s[k] for k in ("configured", "host", "port", "security", "username", "from_address", "from_name")}
     out["hasPassword"] = bool(s["password"])
+    from app.core import crypto
+    out["passwordHint"] = crypto.hint(s["password"])
     return out
 
 

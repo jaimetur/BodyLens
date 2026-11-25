@@ -11,7 +11,7 @@ from app.accounts import deletion, users
 from app.billing import codes
 from app.billing import routes as billing
 from app.accounts.users import User, UserError, clean_email
-from app.core import db
+from app.core import crypto, db
 from app.core.deps import admin_user, bad, base_url
 from app.mail import mailer
 from app.sync import workbook
@@ -148,6 +148,7 @@ class WithingsAppIn(BaseModel):
 def get_withings_app(u: User = Depends(admin_user)):
     from app.sources import withings
     return {"clientId": withings.client_id(), "hasSecret": bool(withings.client_secret()),
+            "secretHint": crypto.hint(withings.client_secret()),
             "configured": withings.configured(), "callback": withings.redirect_uri()}
 
 
@@ -211,9 +212,15 @@ def put_mail(body: MailIn, u: User = Depends(admin_user)):
     except UserError:
         raise HTTPException(400, "El remitente no es un correo válido.")
     stored = db.get_setting("mail", {}) or {}
+    if body.password:
+        password = body.password
+    elif stored.get("password_enc"):
+        password = crypto.decrypt(stored["password_enc"]) or ""
+    else:
+        password = stored.get("password", "")   # saved as plain text by older versions
     new = {"host": body.host.strip(), "port": body.port, "security": body.security, "username": body.username.strip(),
            "from_address": body.from_address.strip(), "from_name": body.from_name.strip() or "BodyLens",
-           "password": body.password if body.password else stored.get("password", "")}
+           "password_enc": crypto.encrypt(password) if password else None}   # encrypted in the database
     with db.tx() as con:
         db.set_setting(con, "mail", new)
     return mailer.public_settings()
